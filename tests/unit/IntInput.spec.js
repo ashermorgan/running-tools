@@ -15,15 +15,6 @@ describe('IntInput.vue', () => {
     expect(wrapper.find('input').element.value).to.equal('1');
   });
 
-  it('should update when value prop changes', () => {
-    const wrapper = mount(IntInput, {
-      propsData: { value: 1 }
-    });
-    wrapper.props().value = 2;
-    expect(wrapper.find('input').element.value).to.equal('2');
-    expect(wrapper.emitted().input).to.deep.equal([[2]]);
-  });
-
   it('up arrow should increment value', async () => {
     const wrapper = mount(IntInput);
     await wrapper.trigger('keydown', { key: 'ArrowUp' });
