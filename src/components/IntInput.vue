@@ -20,6 +20,9 @@ export default {
     min: {
       type: Number,
       default: 0,
+      validator: function(value) {
+        return value >= 0;
+      }
     },
 
     /**
@@ -28,6 +31,9 @@ export default {
     max: {
       type: Number,
       default: null,
+      validator: function(value) {
+        return value >= 0;
+      }
     },
   },
 
@@ -70,27 +76,23 @@ export default {
       // Make sure value is a number
       if (isNaN(parsedValue)) {
         if (newValue === '') {
-          parsedValue = 0;
-          this.stringValue = '0';
+          parsedValue = this.min;
         }
         else {
           parsedValue = this.intValue;
-          this.stringValue = oldValue;
         }
       }
 
       // Enforce minimum and maximum
       else if (this.min !== null && parsedValue < this.min) {
         parsedValue = this.min;
-        this.stringValue = this.min.toString();
       }
       else if (this.max !== null && parsedValue > this.max) {
         parsedValue = this.max;
-        this.stringValue = this.max.toString();
       }
 
-      // Make sure new value is correctly formatted
-      else if (newValue !== parsedValue.toString()) {
+      // Update and format string value
+      if (newValue !== parsedValue.toString()) {
         this.stringValue = parsedValue.toString();
       }
 

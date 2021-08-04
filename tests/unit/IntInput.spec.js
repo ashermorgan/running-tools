@@ -65,14 +65,14 @@ describe('IntInput.vue', () => {
     expect(wrapper.emitted().input).to.be.undefined;
   });
 
-  it('should set empty input to 0', async () => {
+  it('should set empty input to minimum', async () => {
     const wrapper = mount(IntInput, {
-      propsData: { value: 1 }
+      propsData: { value: 5, min: 2 }
     });
     wrapper.find('input').element.value = '';
     await wrapper.find('input').trigger('input');
-    expect(wrapper.find('input').element.value).to.equal('0');
-    expect(wrapper.emitted().input).to.deep.equal([[0]]);
+    expect(wrapper.find('input').element.value).to.equal('2');
+    expect(wrapper.emitted().input).to.deep.equal([[2]]);
   });
 
   it('should not allow input to be below the minimum', async () => {
