@@ -103,7 +103,7 @@ describe('IntInput.vue', () => {
   it('should format input value on blur', async () => {
     // Initialize component
     const wrapper = mount(IntInput, {
-      propsData: { value: 1 }
+      propsData: { value: 1, padding: 3 }
     });
 
     // Set value to '01'
@@ -118,7 +118,7 @@ describe('IntInput.vue', () => {
     await wrapper.find('input').trigger('blur');
 
     // Assert value was formatted but no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('1');
+    expect(wrapper.find('input').element.value).to.equal('001');
     expect(wrapper.emitted().input).to.be.undefined;
   });
 
@@ -224,5 +224,15 @@ describe('IntInput.vue', () => {
     // Assert value is still 10 and no new events were emitted
     expect(wrapper.find('input').element.value).to.equal('10');
     expect(wrapper.emitted().input).to.deep.equal([[10]]);
+  });
+
+  it('should format value according to padding prop', async () => {
+    // Initialize component
+    const wrapper = mount(IntInput, {
+      propsData: { padding: 2 }
+    });
+
+    // Assert value is correctly formatted
+    expect(wrapper.find('input').element.value).to.equal('00');
   });
 });

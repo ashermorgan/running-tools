@@ -37,6 +37,17 @@ export default {
     },
 
     /**
+     * The number of digits to show before the decimal point
+     */
+    padding: {
+      type: Number,
+      default: 0,
+      validator: function(value) {
+        return value >= 0;
+      },
+    },
+
+    /**
      * The number of digits to show after the decimal point
      */
     digits: {
@@ -53,7 +64,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value.toFixed(this.digits),
+      internalValue: this.format(this.value),
     };
   },
 
@@ -76,12 +87,12 @@ export default {
 
         // Enforce minimum
         else if (this.min !== null && parsedValue < this.min) {
-          this.internalValue = this.min.toFixed(this.digits);
+          this.internalValue = this.format(this.min);
         }
 
         // Enforce maximum
         else if (this.max !== null && parsedValue > this.max) {
-          this.internalValue = this.max.toFixed(this.digits);
+          this.internalValue = this.format(this.max);
         }
 
         // Allow valid numbers
@@ -109,7 +120,7 @@ export default {
         return isNaN(parsedValue) ? this.defaultValue : parsedValue;
       },
       set: function(newValue) {
-        this.stringValue = newValue.toFixed(this.digits);
+        this.stringValue = this.format(newValue);
       }
     },
 
@@ -179,7 +190,7 @@ export default {
      * @param {Object} e The blur event args
      */
     onblur: function(e) {
-      this.stringValue = this.decValue.toFixed(this.digits);
+      this.stringValue = this.format(this.decValue);
     },
 
     /**
@@ -189,7 +200,17 @@ export default {
      */
     parse: function(value) {
       return Number(value);
-    }
+    },
+
+    /**
+     * Format a decimal as a string
+     * @param {Number} value The decimal
+     * @returns {String} The formated string
+     */
+    format: function(value) {
+      let result = value.toFixed(this.digits);
+      return result.padStart(this.padding + this.digits + 1, '0');
+    },
   },
 }
 </script>

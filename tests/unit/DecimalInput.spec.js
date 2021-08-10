@@ -103,7 +103,7 @@ describe('DecimalInput.vue', () => {
   it('should format input value on blur', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 1 }
+      propsData: { value: 1, padding: 3, digits: 2 }
     });
 
     // Set value to '01'
@@ -118,7 +118,7 @@ describe('DecimalInput.vue', () => {
     await wrapper.find('input').trigger('blur');
 
     // Assert value was formatted but no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('1.0');
+    expect(wrapper.find('input').element.value).to.equal('001.00');
     expect(wrapper.emitted().input).to.be.undefined;
   });
 
@@ -248,13 +248,13 @@ describe('DecimalInput.vue', () => {
     expect(wrapper.emitted().input).to.deep.equal([[10.0]]);
   });
 
-  it('should format value according to digits prop', async () => {
+  it('should format value according to padding and digits props', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { digits: 3 }
+      propsData: { padding: 2, digits: 3 }
     });
 
     // Assert value is correctly formatted
-    expect(wrapper.find('input').element.value).to.equal('0.000');
+    expect(wrapper.find('input').element.value).to.equal('00.000');
   });
 });

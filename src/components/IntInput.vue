@@ -35,6 +35,17 @@ export default {
       type: Number,
       default: null,
     },
+
+    /**
+     * The number of digits to show before the decimal point
+     */
+    padding: {
+      type: Number,
+      default: 0,
+      validator: function(value) {
+        return value >= 0;
+      },
+    },
   },
 
   data: function() {
@@ -42,7 +53,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value.toString(),
+      internalValue: this.format(this.value),
     };
   },
 
@@ -65,12 +76,12 @@ export default {
 
         // Enforce minimum
         else if (this.min !== null && parsedValue < this.min) {
-          this.internalValue = this.min.toString();
+          this.internalValue = this.format(this.min);
         }
 
         // Enforce maximum
         else if (this.max !== null && parsedValue > this.max) {
-          this.internalValue = this.max.toString();
+          this.internalValue = this.format(this.max);
         }
 
         // Allow valid numbers
@@ -98,7 +109,7 @@ export default {
         return isNaN(parsedValue) ? this.defaultValue : parsedValue;
       },
       set: function(newValue) {
-        this.stringValue = newValue.toString();
+        this.stringValue = this.format(newValue);
       }
     },
 
@@ -121,7 +132,9 @@ export default {
      * @param {Number} newValue The new prop value
      */
     value: function(newValue) {
-      this.intValue = newValue;
+      if (newValue !== this.intValue) {
+        this.intValue = newValue;
+      }
     },
 
     /**
@@ -166,7 +179,7 @@ export default {
      * @param {Object} e The blur event args
      */
     onblur: function(e) {
-      this.stringValue = this.intValue.toString();
+      this.stringValue = this.format(this.intValue);
     },
 
     /**
@@ -182,7 +195,16 @@ export default {
       else {
         return Number(value);
       }
-    }
+    },
+
+    /**
+     * Format an integer as a string
+     * @param {Number} value The integer
+     * @returns {String} The formated string
+     */
+    format: function(value) {
+      return value.toString().padStart(this.padding, '0');
+    },
   },
 }
 </script>
