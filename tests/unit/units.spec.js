@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { shallowMount } from '@vue/test-utils';
 import units from '@/utils/units.js';
 
 
@@ -69,43 +68,81 @@ describe('utils/units.js', () => {
 
 
   describe('convertPace method', () => {
-    it('60 seconds per meter should equal 1000 minutes per kilometer', () => {
+    it('1 second per meter should equal 1000 seconds per kilometer', () => {
       let result = units.convertPace(
-        60,
+        1,
         units.PACE_UNITS.seconds_per_meter,
-        units.PACE_UNITS.minutes_per_kilometer
+        units.PACE_UNITS.seconds_per_kilometer
       );
       expect(result).to.equal(1000);
     });
 
-    it('1000 minutes per kilometer should equal 60 seconds per meter', () => {
+    it('1000 seconds per kilometer should equal 1 second per meter', () => {
       let result = units.convertPace(
         1000,
-        units.PACE_UNITS.minutes_per_kilometer,
+        units.PACE_UNITS.seconds_per_kilometer,
         units.PACE_UNITS.seconds_per_meter
       );
-      expect(result).to.equal(60);
+      expect(result).to.equal(1);
     });
   });
 
 
   describe('convertSpeedPace method', () => {
-    it('60 kilometers per hour should equal 1 minute per kilometer', () => {
+    it('3600 kilometers per hour should equal 1 second per kilometer', () => {
       let result = units.convertSpeedPace(
-        60,
+        3600,
         units.SPEED_UNITS.kilometers_per_hour,
-        units.PACE_UNITS.minutes_per_kilometer
+        units.PACE_UNITS.seconds_per_kilometer
       );
       expect(result).to.equal(1);
     });
 
-    it('1 minute per kilometer should equal 60 kilometers per hour', () => {
+    it('1 second per kilometer should equal 3600 kilometers per hour', () => {
       let result = units.convertSpeedPace(
-        1,
-        units.PACE_UNITS.minutes_per_kilometer,
+        3600,
+        units.PACE_UNITS.seconds_per_kilometer,
         units.SPEED_UNITS.kilometers_per_hour
       );
-      expect(result).to.equal(60);
+      expect(result).to.equal(1);
+    });
+  });
+
+  describe('formatDuration method', () => {
+    it('should correctly divide durations into parts', () => {
+      let result = units.formatDuration(3600 + 120 + 3 + 0.4);
+      expect(result).to.equal('01:02:03.40');
+    });
+
+    it('should correctly format duration when padding is 7', () => {
+      let result = units.formatDuration(3600 + 120 + 3 + 0.4, 7);
+      expect(result).to.equal('01:02:03.40');
+    });
+
+    it('should correctly format duration when padding is 3', () => {
+      let result = units.formatDuration(3600 + 120 + 3 + 0.4, 3);
+      expect(result).to.equal('1:02:03.40');
+
+      result = units.formatDuration(120 + 3 + 0.4, 3);
+      expect(result).to.equal('2:03.40');
+
+      result = units.formatDuration(3 + 0.4, 3);
+      expect(result).to.equal('0:03.40');
+    });
+
+    it('should correctly format duration when padding is 0', () => {
+      let result = units.formatDuration(0.4, 0);
+      expect(result).to.equal('0.40');
+    });
+
+    it('should correctly format duration when digits is 3', () => {
+      let result = units.formatDuration(3600 + 120 + 3 + 0.4567, 0, 3);
+      expect(result).to.equal('1:02:03.457');
+    });
+
+    it('should correctly format duration when digits is 0', () => {
+      let result = units.formatDuration(3600 + 120 + 3 + 0.456, 0, 0);
+      expect(result).to.equal('1:02:03');
     });
   });
 });

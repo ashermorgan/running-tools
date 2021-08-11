@@ -73,8 +73,8 @@ const SPEED_UNIT_VALUES = {
  */
 const PACE_UNITS = {
   seconds_per_meter: 'seconds_per_meter',
-  minutes_per_kilometer: 'minutes_per_kilometer',
-  minutes_per_mile: 'minutes_per_mile',
+  seconds_per_kilometer: 'seconds_per_kilometer',
+  seconds_per_mile: 'seconds_per_mile',
 };
 
 
@@ -84,8 +84,8 @@ const PACE_UNITS = {
  */
 const PACE_UNIT_VALUES = {
   seconds_per_meter:      1,
-  minutes_per_kilometer:  TIME_UNIT_VALUES.minute / DISTANCE_UNIT_VALUES.kilometer,
-  minutes_per_mile:       TIME_UNIT_VALUES.minute / DISTANCE_UNIT_VALUES.mile,
+  seconds_per_kilometer:  TIME_UNIT_VALUES.second / DISTANCE_UNIT_VALUES.kilometer,
+  seconds_per_mile:       TIME_UNIT_VALUES.second / DISTANCE_UNIT_VALUES.mile,
 };
 
 
@@ -170,6 +170,45 @@ function convertSpeedPace(inputValue, inputUnits, outputUnits) {
 
 
 
+/**
+ * Format a duration as a string
+ * @param {Number} value The duration (in seconds)
+ * @param {Number} padding The number of digits to show before the decimal point
+ * @param {Number} digits The number of digits to show after the decimal point
+ * @returns {String} The formatted value
+ */
+function formatDuration(value, padding=6, digits=2) {
+  // Validate padding
+  padding = Math.min(padding, 6);
+
+  // Calculate parts
+  let hours = Math.floor(value / 3600);
+  let minutes = Math.floor((value % 3600) / 60);
+  let seconds = value % 60;
+
+  // Format parts
+  let result = '';
+  if (hours !== 0 || padding >= 5) {
+    result += hours.toString().padStart(padding - 4, '0');
+    result += ':';
+    padding = 4;
+  }
+  if (minutes !== 0 || padding >= 3) {
+    result += minutes.toString().padStart(padding - 2, '0');
+    result += ':';
+    padding = 2;
+  }
+  if (digits === 0) {
+    result += seconds.toFixed(digits).padStart(padding, '0');
+  }
+  else {
+    result += seconds.toFixed(digits).padStart(padding + digits + 1, '0');
+  }
+  return result;
+}
+
+
+
 export default {
   TIME_UNITS,
   DISTANCE_UNITS,
@@ -181,4 +220,6 @@ export default {
   convertSpeed,
   convertPace,
   convertSpeedPace,
+
+  formatDuration,
 }
