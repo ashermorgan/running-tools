@@ -214,3 +214,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+input {
+  width: 5em;  /* can fit 999.99 comfortably */
+  text-align: center;
+}
+</style>

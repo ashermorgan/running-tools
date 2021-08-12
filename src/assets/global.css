@@ -4,3 +4,9 @@
   padding: 0px;
   box-sizing: border-box;
 }
+body {
+  font-family: Segoe UI, sans-serif;
+}
+input, select {
+  padding: 0.2em;
+}

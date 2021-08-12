@@ -89,8 +89,8 @@ export default {
 </script>
 
 <style scoped>
-input {
-  text-align: center;
+div {
+  display: inline-block;
 }
 .hours, .minutes {
   width: 2em;
