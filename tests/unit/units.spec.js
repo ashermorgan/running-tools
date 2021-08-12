@@ -144,5 +144,28 @@ describe('utils/units.js', () => {
       let result = units.formatDuration(3600 + 120 + 3 + 0.456, 0, 0);
       expect(result).to.equal('1:02:03');
     });
+
+    it('should correctly format NaN', () => {
+      let result = units.formatDuration(NaN);
+      expect(result).to.equal('NaN');
+    });
+
+    it('should correctly format +/- Infinity', () => {
+      let result = units.formatDuration(Infinity);
+      expect(result).to.equal('Infinity');
+
+      result = units.formatDuration(-Infinity);
+      expect(result).to.equal('-Infinity');
+    });
+
+    it('should correctly format 0 when padding is 0', () => {
+      let result = units.formatDuration(0, 0);
+      expect(result).to.equal('0.00');
+    });
+
+    it('should correctly format negative durations', () => {
+      let result = units.formatDuration(-3600 - 120 - 3 - 0.4);
+      expect(result).to.equal('-01:02:03.40');
+    });
   });
 });

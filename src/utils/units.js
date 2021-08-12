@@ -10,6 +10,28 @@ const TIME_UNITS = {
 
 
 /**
+ * The time unit names
+ */
+const TIME_UNIT_NAMES = {
+  second: 'Second',
+  minute: 'Minute',
+  hour: 'Hour',
+};
+
+
+
+/**
+ * The time unit symbols
+ */
+const TIME_UNIT_SYMBOLS = {
+  second: 's',
+  minute: 'min',
+  hour: 'hr',
+};
+
+
+
+/**
  * The value of each time unit in seconds
  */
 const TIME_UNIT_VALUES = {
@@ -28,6 +50,32 @@ const DISTANCE_UNITS = {
   kilometer: 'kilometer',
   yard: 'yard',
   mile: 'mile',
+  marathon: 'marathon',
+};
+
+
+
+/**
+ * The distance unit names
+ */
+const DISTANCE_UNIT_NAMES = {
+  meter: 'Meter',
+  kilometer: 'Kilometer',
+  yard: 'Yard',
+  mile: 'Mile',
+  marathon: 'Marathon',
+};
+
+
+
+/**
+ * The distance unit symbols
+ */
+const DISTANCE_UNIT_SYMBOLS = {
+  meter: 'm',
+  kilometer: 'km',
+  yard: 'yd',
+  mile: 'mi',
   marathon: 'marathon',
 };
 
@@ -58,6 +106,28 @@ const SPEED_UNITS = {
 
 
 /**
+ * The speed unit names
+ */
+const SPEED_UNIT_NAMES = {
+  meters_per_second: 'Meters per Second',
+  kilometers_per_hour: 'Kilometers per Hour',
+  miles_per_hour: 'Miles per Hour',
+};
+
+
+
+/**
+ * The speed unit symbols
+ */
+const SPEED_UNIT_SYMBOLS = {
+  meters_per_second: 'm/s',
+  kilometers_per_hour: 'kph',
+  miles_per_hour: 'mph',
+};
+
+
+
+/**
  * The value of each speed unit in meters per second
  */
 const SPEED_UNIT_VALUES = {
@@ -75,6 +145,28 @@ const PACE_UNITS = {
   seconds_per_meter: 'seconds_per_meter',
   seconds_per_kilometer: 'seconds_per_kilometer',
   seconds_per_mile: 'seconds_per_mile',
+};
+
+
+
+/**
+ * The pace unit names
+ */
+const PACE_UNIT_NAMES = {
+  seconds_per_meter: 'Seconds per Meter',
+  minutes_per_kilometer: 'Minutes per kilometer',
+  minutes_per_mile: 'Minutes per Mile',
+};
+
+
+
+/**
+ * The pace unit symbols
+ */
+const PACE_UNIT_SYMBOLS = {
+  seconds_per_meter: 's/m',
+  minutes_per_kilometer: 'min/km',
+  minutes_per_mile: 'min/mi',
 };
 
 
@@ -178,6 +270,25 @@ function convertSpeedPace(inputValue, inputUnits, outputUnits) {
  * @returns {String} The formatted value
  */
 function formatDuration(value, padding=6, digits=2) {
+  // Check if value is NaN
+  if (isNaN(value)) {
+    return 'NaN';
+  }
+
+  // Initialize result
+  let result = '';
+
+  // Check value sign
+  if (value < 0) {
+    result += '-';
+    value = Math.abs(value);
+  }
+
+  // Check if value is valid
+  if (value === Infinity) {
+    return result + 'Infinity';
+  }
+
   // Validate padding
   padding = Math.min(padding, 6);
 
@@ -187,7 +298,6 @@ function formatDuration(value, padding=6, digits=2) {
   let seconds = value % 60;
 
   // Format parts
-  let result = '';
   if (hours !== 0 || padding >= 5) {
     result += hours.toString().padStart(padding - 4, '0');
     result += ':';
@@ -214,6 +324,16 @@ export default {
   DISTANCE_UNITS,
   SPEED_UNITS,
   PACE_UNITS,
+
+  TIME_UNIT_NAMES,
+  DISTANCE_UNIT_NAMES,
+  SPEED_UNIT_NAMES,
+  PACE_UNIT_NAMES,
+
+  TIME_UNIT_SYMBOLS,
+  DISTANCE_UNIT_SYMBOLS,
+  SPEED_UNIT_SYMBOLS,
+  PACE_UNIT_SYMBOLS,
 
   convertTime,
   convertDistance,
