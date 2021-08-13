@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import PaceCalculator from '../views/PaceCalculator.vue';
+import UnitCalculator from '../views/UnitCalculator.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ const routes = [
     path: '/calculate/paces',
     name: 'calculate-paces',
     component: PaceCalculator,
+  },
+  {
+    path: '/calculate/units',
+    name: 'calculate-units',
+    component: UnitCalculator,
   },
 ];
 

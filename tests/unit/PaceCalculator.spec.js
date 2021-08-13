@@ -8,7 +8,7 @@ describe('PaceCalculator.vue', () => {
     const wrapper = shallowMount(PaceCalculator);
 
     // Override input values
-    wrapper.setData({
+    await wrapper.setData({
       inputDistance: 1,
       inputUnit: 'kilometers',
       inputTime: 100,
@@ -36,7 +36,7 @@ describe('PaceCalculator.vue', () => {
     const wrapper = shallowMount(PaceCalculator);
 
     // Override input values
-    wrapper.setData({
+    await wrapper.setData({
       inputDistance: 1,
       inputUnit: 'kilometers',
       inputTime: 100,

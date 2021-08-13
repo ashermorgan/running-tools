@@ -1,5 +1,5 @@
 <template>
-  <div class="calc-pace">
+  <div class="pace-calculator">
     <div class="input">
       Running
       <decimal-input v-model="inputDistance" :min="0" :digits="2"/>
@@ -48,7 +48,7 @@ import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 export default {
-  name: 'Home',
+  name: 'PaceCalculator',
 
   components: {
     DecimalInput,
@@ -166,9 +166,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* container */
-.calc-pace {
+.pace-calculator {
   display: flex;
   flex-direction: column;
   align-items: center;
