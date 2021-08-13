@@ -11,6 +11,17 @@ input, select {
   padding: 0.2em;
 }
 
+/* styles for icons */
+.icon {
+  border: none;
+  background-color: #00000000;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.icon img {
+  width: 100%;
+  height: 100%;
+}
 
 /* default styles for mobile devices */
 @media only screen and (max-width: 800px) {

@@ -15,6 +15,10 @@ const routes = [
     path: '/home',
     name: 'home',
     component: Home,
+    meta: {
+      title: null,
+      back: null,
+    },
   },
   {
     path: '/calculate',
@@ -24,16 +28,33 @@ const routes = [
     path: '/calculate/paces',
     name: 'calculate-paces',
     component: PaceCalculator,
+    meta: {
+      title: 'Pace Calculator',
+      back: 'home',
+    },
   },
   {
     path: '/calculate/units',
     name: 'calculate-units',
     component: UnitCalculator,
+    meta: {
+      title: 'Unit Calculator',
+      back: 'home',
+    },
   },
 ];
 
 const router = new VueRouter({
   routes
+});
+
+router.afterEach((to, from) => {
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - running-calculator`;
+  }
+  else {
+    document.title = 'running-calculator';
+  }
 });
 
 export default router;
