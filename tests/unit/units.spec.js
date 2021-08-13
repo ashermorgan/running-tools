@@ -8,8 +8,8 @@ describe('utils/units.js', () => {
     it('90 seconds should equal 1.5 minutes', () => {
       let result = units.convertTime(
         90,
-        units.TIME_UNITS.second,
-        units.TIME_UNITS.minute
+        units.TIME_UNITS.seconds,
+        units.TIME_UNITS.minutes,
       );
       expect(result).to.equal(1.5);
     });
@@ -17,8 +17,8 @@ describe('utils/units.js', () => {
     it('1.5 minutes should equal 95 seconds', () => {
       let result = units.convertTime(
         1.5,
-        units.TIME_UNITS.minute,
-        units.TIME_UNITS.second
+        units.TIME_UNITS.minutes,
+        units.TIME_UNITS.seconds,
       );
       expect(result).to.equal(90);
     });
@@ -29,8 +29,8 @@ describe('utils/units.js', () => {
     it('100 meters should equal 0.1 kilometers', () => {
       let result = units.convertDistance(
         100,
-        units.DISTANCE_UNITS.meter,
-        units.DISTANCE_UNITS.kilometer
+        units.DISTANCE_UNITS.meters,
+        units.DISTANCE_UNITS.kilometers,
       );
       expect(result).to.equal(0.1);
     });
@@ -38,8 +38,8 @@ describe('utils/units.js', () => {
     it('0.1 kilometers should equal 100 meters', () => {
       let result = units.convertDistance(
         0.1,
-        units.DISTANCE_UNITS.kilometer,
-        units.DISTANCE_UNITS.meter
+        units.DISTANCE_UNITS.kilometers,
+        units.DISTANCE_UNITS.meters,
       );
       expect(result).to.equal(100);
     });
@@ -51,7 +51,7 @@ describe('utils/units.js', () => {
       let result = units.convertSpeed(
         1000,
         units.SPEED_UNITS.meters_per_second,
-        units.SPEED_UNITS.kilometers_per_hour
+        units.SPEED_UNITS.kilometers_per_hour,
       );
       expect(result).to.equal(3600);
     });
@@ -60,7 +60,7 @@ describe('utils/units.js', () => {
       let result = units.convertSpeed(
         3600,
         units.SPEED_UNITS.kilometers_per_hour,
-        units.SPEED_UNITS.meters_per_second
+        units.SPEED_UNITS.meters_per_second,
       );
       expect(result).to.equal(1000);
     });
@@ -72,7 +72,7 @@ describe('utils/units.js', () => {
       let result = units.convertPace(
         1,
         units.PACE_UNITS.seconds_per_meter,
-        units.PACE_UNITS.seconds_per_kilometer
+        units.PACE_UNITS.seconds_per_kilometer,
       );
       expect(result).to.equal(1000);
     });
@@ -81,7 +81,7 @@ describe('utils/units.js', () => {
       let result = units.convertPace(
         1000,
         units.PACE_UNITS.seconds_per_kilometer,
-        units.PACE_UNITS.seconds_per_meter
+        units.PACE_UNITS.seconds_per_meter,
       );
       expect(result).to.equal(1);
     });
@@ -93,7 +93,7 @@ describe('utils/units.js', () => {
       let result = units.convertSpeedPace(
         3600,
         units.SPEED_UNITS.kilometers_per_hour,
-        units.PACE_UNITS.seconds_per_kilometer
+        units.PACE_UNITS.seconds_per_kilometer,
       );
       expect(result).to.equal(1);
     });
@@ -102,7 +102,7 @@ describe('utils/units.js', () => {
       let result = units.convertSpeedPace(
         3600,
         units.PACE_UNITS.seconds_per_kilometer,
-        units.SPEED_UNITS.kilometers_per_hour
+        units.SPEED_UNITS.kilometers_per_hour,
       );
       expect(result).to.equal(1);
     });
@@ -166,6 +166,11 @@ describe('utils/units.js', () => {
     it('should correctly format negative durations', () => {
       let result = units.formatDuration(-3600 - 120 - 3 - 0.4);
       expect(result).to.equal('-01:02:03.40');
+    });
+
+    it('should correctly format 59.9999', () => {
+      let result = units.formatDuration(59.9999);
+      expect(result).to.equal('00:01:00.00');
     });
   });
 });

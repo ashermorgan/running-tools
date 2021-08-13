@@ -10,24 +10,24 @@ describe('PaceCalculator.vue', () => {
     // Override input values
     wrapper.setData({
       inputDistance: 1,
-      inputUnit: 'kilometer',
+      inputUnit: 'kilometers',
       inputTime: 100,
     });
 
     // Override targets
     await wrapper.setData({ targets: [
-      { distanceValue: 10,  distanceUnit: 'meter' },
-      { distanceValue: 20,  distanceUnit: 'meter' },
-      { distanceValue: 100, distanceUnit: 'meter' },
-      { distanceValue: 1,   distanceUnit: 'kilometer' },
+      { distanceValue: 10,  distanceUnit: 'meters' },
+      { distanceValue: 20,  distanceUnit: 'meters' },
+      { distanceValue: 100, distanceUnit: 'meters' },
+      { distanceValue: 1,   distanceUnit: 'kilometers' },
     ]});
 
     // Assert results are correct
     expect(wrapper.vm._computedWatchers.results.value).to.deep.equal([
-      { distanceValue: 10,  distanceUnit: 'meter',     time: 1 },
-      { distanceValue: 20,  distanceUnit: 'meter',     time: 2 },
-      { distanceValue: 100, distanceUnit: 'meter',     time: 10 },
-      { distanceValue: 1,   distanceUnit: 'kilometer', time: 100 },
+      { distanceValue: 10,  distanceUnit: 'meters',     time: 1 },
+      { distanceValue: 20,  distanceUnit: 'meters',     time: 2 },
+      { distanceValue: 100, distanceUnit: 'meters',     time: 10 },
+      { distanceValue: 1,   distanceUnit: 'kilometers', time: 100 },
     ]);
   });
 
@@ -38,24 +38,24 @@ describe('PaceCalculator.vue', () => {
     // Override input values
     wrapper.setData({
       inputDistance: 1,
-      inputUnit: 'kilometer',
+      inputUnit: 'kilometers',
       inputTime: 100,
     });
 
     // Override targets
     await wrapper.setData({ targets: [
-      { distanceValue: 20,  distanceUnit: 'meter' },
-      { distanceValue: 100, distanceUnit: 'meter' },
-      { distanceValue: 1,   distanceUnit: 'kilometer' },
-      { distanceValue: 10,  distanceUnit: 'meter' },
+      { distanceValue: 20,  distanceUnit: 'meters' },
+      { distanceValue: 100, distanceUnit: 'meters' },
+      { distanceValue: 1,   distanceUnit: 'kilometers' },
+      { distanceValue: 10,  distanceUnit: 'meters' },
     ]});
 
     // Assert results are correct
     expect(wrapper.vm._computedWatchers.results.value).to.deep.equal([
-      { distanceValue: 10,  distanceUnit: 'meter',     time: 1 },
-      { distanceValue: 20,  distanceUnit: 'meter',     time: 2 },
-      { distanceValue: 100, distanceUnit: 'meter',     time: 10 },
-      { distanceValue: 1,   distanceUnit: 'kilometer', time: 100 },
+      { distanceValue: 10,  distanceUnit: 'meters',     time: 1 },
+      { distanceValue: 20,  distanceUnit: 'meters',     time: 2 },
+      { distanceValue: 100, distanceUnit: 'meters',     time: 10 },
+      { distanceValue: 1,   distanceUnit: 'kilometers', time: 100 },
     ]);
   });
 });

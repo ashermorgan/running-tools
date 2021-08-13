@@ -2,9 +2,9 @@
  * The time units
  */
 const TIME_UNITS = {
-  second: 'second',
-  minute: 'minute',
-  hour: 'hour',
+  seconds: 'seconds',
+  minutes: 'minutes',
+  hours: 'hours',
 };
 
 
@@ -13,9 +13,9 @@ const TIME_UNITS = {
  * The time unit names
  */
 const TIME_UNIT_NAMES = {
-  second: 'Second',
-  minute: 'Minute',
-  hour: 'Hour',
+  seconds: 'Seconds',
+  minutes: 'Minutes',
+  hours: 'Hours',
 };
 
 
@@ -24,9 +24,9 @@ const TIME_UNIT_NAMES = {
  * The time unit symbols
  */
 const TIME_UNIT_SYMBOLS = {
-  second: 's',
-  minute: 'min',
-  hour: 'hr',
+  seconds: 's',
+  minutes: 'min',
+  hours: 'hr',
 };
 
 
@@ -35,9 +35,9 @@ const TIME_UNIT_SYMBOLS = {
  * The value of each time unit in seconds
  */
 const TIME_UNIT_VALUES = {
-  second: 1,
-  minute: 1 * 60,
-  hour:   1 * 60 * 60,
+  seconds: 1,
+  minutes: 1 * 60,
+  hours:   1 * 60 * 60,
 };
 
 
@@ -46,11 +46,11 @@ const TIME_UNIT_VALUES = {
  * The distance units
  */
 const DISTANCE_UNITS = {
-  meter: 'meter',
-  kilometer: 'kilometer',
-  yard: 'yard',
-  mile: 'mile',
-  marathon: 'marathon',
+  meters: 'meters',
+  kilometers: 'kilometers',
+  yards: 'yards',
+  miles: 'miles',
+  marathons: 'marathons',
 };
 
 
@@ -59,11 +59,11 @@ const DISTANCE_UNITS = {
  * The distance unit names
  */
 const DISTANCE_UNIT_NAMES = {
-  meter: 'Meter',
-  kilometer: 'Kilometer',
-  yard: 'Yard',
-  mile: 'Mile',
-  marathon: 'Marathon',
+  meters: 'Meters',
+  kilometers: 'Kilometers',
+  yards: 'Yards',
+  miles: 'Miles',
+  marathons: 'Marathons',
 };
 
 
@@ -72,11 +72,11 @@ const DISTANCE_UNIT_NAMES = {
  * The distance unit symbols
  */
 const DISTANCE_UNIT_SYMBOLS = {
-  meter: 'm',
-  kilometer: 'km',
-  yard: 'yd',
-  mile: 'mi',
-  marathon: 'marathon',
+  meters: 'm',
+  kilometers: 'km',
+  yards: 'yd',
+  miles: 'mi',
+  marathons: 'marathons',
 };
 
 
@@ -85,11 +85,11 @@ const DISTANCE_UNIT_SYMBOLS = {
  * The value of each distance unit in meters
  */
 const DISTANCE_UNIT_VALUES = {
-  meter:      1,
-  kilometer:  1000,
-  yard:       0.9144,
-  mile:       1609.3499,
-  marathon:   42195,
+  meters:     1,
+  kilometers: 1000,
+  yards:      0.9144,
+  miles:      1609.3499,
+  marathons:  42195,
 };
 
 
@@ -132,8 +132,8 @@ const SPEED_UNIT_SYMBOLS = {
  */
 const SPEED_UNIT_VALUES = {
   meters_per_second:    1,
-  kilometers_per_hour:  DISTANCE_UNIT_VALUES.kilometer / TIME_UNIT_VALUES.hour,
-  miles_per_hour:       DISTANCE_UNIT_VALUES.mile / TIME_UNIT_VALUES.hour,
+  kilometers_per_hour:  DISTANCE_UNIT_VALUES.kilometers / TIME_UNIT_VALUES.hours,
+  miles_per_hour:       DISTANCE_UNIT_VALUES.miles / TIME_UNIT_VALUES.hours,
 };
 
 
@@ -154,8 +154,8 @@ const PACE_UNITS = {
  */
 const PACE_UNIT_NAMES = {
   seconds_per_meter: 'Seconds per Meter',
-  minutes_per_kilometer: 'Minutes per kilometer',
-  minutes_per_mile: 'Minutes per Mile',
+  seconds_per_kilometer: 'Time per Kilometer',
+  seconds_per_mile: 'Time per Mile',
 };
 
 
@@ -165,8 +165,8 @@ const PACE_UNIT_NAMES = {
  */
 const PACE_UNIT_SYMBOLS = {
   seconds_per_meter: 's/m',
-  minutes_per_kilometer: 'min/km',
-  minutes_per_mile: 'min/mi',
+  seconds_er_kilometer: '/km',
+  seconds_per_mile: '/mi',
 };
 
 
@@ -176,8 +176,8 @@ const PACE_UNIT_SYMBOLS = {
  */
 const PACE_UNIT_VALUES = {
   seconds_per_meter:      1,
-  seconds_per_kilometer:  TIME_UNIT_VALUES.second / DISTANCE_UNIT_VALUES.kilometer,
-  seconds_per_mile:       TIME_UNIT_VALUES.second / DISTANCE_UNIT_VALUES.mile,
+  seconds_per_kilometer:  TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.kilometers,
+  seconds_per_mile:       TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.miles,
 };
 
 
@@ -291,6 +291,9 @@ function formatDuration(value, padding=6, digits=2) {
 
   // Validate padding
   padding = Math.min(padding, 6);
+
+  // Prevent rounding errors
+  value = parseFloat(value.toFixed(digits));
 
   // Calculate parts
   let hours = Math.floor(value / 3600);
