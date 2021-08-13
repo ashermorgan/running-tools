@@ -1,12 +1,12 @@
 <template>
   <div class="time-input">
-    <int-input class="hours"
+    <int-input class="hours" aria-label="hours"
       :min="0" :max="23" :padding="1" v-model="hours"/>
     <span>:</span>
-    <int-input class="minutes"
+    <int-input class="minutes" aria-label="minutes"
       :min="0" :max="59" :padding="2" v-model="minutes"/>
     <span>:</span>
-    <decimal-input class="seconds"
+    <decimal-input class="seconds" aria-label="seconds"
       :min="0" :max="59.99" :padding="2" :digits="2" v-model="seconds"/>
   </div>
 </template>

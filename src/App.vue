@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <header>
-      <router-link class="title" to="/home">running-calculator</router-link>
+      <h1>
+        running-calculator
+      </h1>
     </header>
     <div id="route-content">
       <router-view/>

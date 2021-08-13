@@ -2,8 +2,9 @@
   <div class="pace-calculator">
     <div class="input">
       Running
-      <decimal-input v-model="inputDistance" :min="0" :digits="2"/>
-      <select v-model="inputUnit">
+      <decimal-input v-model="inputDistance" aria-label="distance value"
+        :min="0" :digits="2"/>
+      <select v-model="inputUnit" aria-label="distance unit">
         <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
           {{ value }}
         </option>
@@ -31,7 +32,7 @@
 
           <td>in</td>
 
-          <td class="output-value">
+          <td>
             {{ formatDuration(item.time, 0, 2) }}
           </td>
         </tr>
@@ -193,14 +194,11 @@ table {
   min-width: 300px;
 }
 tr {
-  border: 1px solid #000000;
+  border: 0.1em solid #000000;
 }
 th, td {
   padding: 0.2em;
   text-align: left;
-}
-.output-value {
-  font-weight: bold;
 }
 @media only screen and (max-width: 400px) {
   table {

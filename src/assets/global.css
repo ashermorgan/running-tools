@@ -10,3 +10,11 @@ body {
 input, select {
   padding: 0.2em;
 }
+
+
+/* default styles for mobile devices */
+@media only screen and (max-width: 800px) {
+  input, select {
+    font-size: 1em;
+  }
+}

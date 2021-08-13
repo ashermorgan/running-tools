@@ -8,10 +8,10 @@
 
     <time-input v-if="getUnitType(inputUnit) === 'time'" class="input-value"
       v-model="inputValue"/>
-    <decimal-input v-else class="input-value" v-model="inputValue" :min="0"
-      :digits="2"/>
+    <decimal-input v-else class="input-value" aria-label="input value"
+      v-model="inputValue" :min="0" :digits="2"/>
 
-    <select v-model="inputUnit" class="input-units">
+    <select v-model="inputUnit" class="input-units" aria-label="input units">
       <option v-for="(value, key) in unitNames" :key="key" :value="key">
         {{ value }}
       </option>
@@ -26,7 +26,7 @@
       {{ outputValue.toFixed(2) }}
     </span>
 
-    <select v-model="outputUnit" class="output-units">
+    <select v-model="outputUnit" class="output-units" aria-label="output units">
       <option v-for="(value, key) in unitNames" :key="key" :value="key">
         {{ value }}
       </option>
@@ -184,7 +184,7 @@ export default {
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: auto auto auto;
   width: 450px;
-  grid-gap: 0.2em;
+  grid-gap: 0.4em;
 }
 .unit-calculator .category {
   grid-row: 1;
