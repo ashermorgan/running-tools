@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67.733332 67.733335" height="256" width="256">
+  <g style="display:inline">
+    <rect y="0" x="-3.5527137e-15" height="67.73333" width="67.73333" style="fill:#ff8000;fill-opacity:1;stroke-width:4;stroke-linejoin:round;paint-order:fill markers stroke" />
+  </g>
+  <g style="display:inline">
+    <rect ry="3.175" rx="3.175" transform="rotate(-45)" y="42.310822" x="-36.942577" height="5.8668556" width="32.300724" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-30)" y="58.820942" x="-10.501601" height="5.8668561" width="23.467415" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-60)" y="30.206549" x="0.67529052" height="20.533987" width="5.8668537" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-60)" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" width="20.533987" height="5.8668561" x="-13.991851" y="30.206549" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-45)" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" width="5.8668537" height="11.733703" x="12.925675" y="48.177658" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-45)" y="54.044518" x="12.925675" height="5.8668556" width="17.600559" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <circle transform="rotate(-45)" r="5.8668556" cy="45.244225" cx="27.592806" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <rect transform="rotate(-45)" style="display:inline;fill:#ff8000;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" width="2.9334269" height="5.8668537" x="-7.6083212" y="42.310822" />
+    <rect transform="rotate(-45)" y="48.177643" x="12.925675" height="2.9334278" width="5.8668537" style="display:inline;fill:#ff8000;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" />
+    <rect ry="3.175" rx="3.175" transform="rotate(-30)" style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:4.00001;stroke-linejoin:round;paint-order:fill markers stroke" width="5.8668561" height="23.467415" x="7.0989666" y="41.220364" />
+  </g>
+</svg>
