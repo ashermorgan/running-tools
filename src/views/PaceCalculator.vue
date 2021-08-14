@@ -203,6 +203,7 @@ th, td {
 @media only screen and (max-width: 400px) {
   table {
     width: 100%;
+    min-width: 0px;
   }
 }
 </style>
