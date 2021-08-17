@@ -42,7 +42,7 @@ export default {
     padding: {
       type: Number,
       default: 0,
-      validator: function(value) {
+      validator(value) {
         return value >= 0;
       },
     },
@@ -53,13 +53,13 @@ export default {
     digits: {
       type: Number,
       default: 1,
-      validator: function(value) {
+      validator(value) {
         return value > 0;
       },
     },
   },
 
-  data: function() {
+  data() {
     return {
       /**
        * The internal value
@@ -73,30 +73,24 @@ export default {
      * The value of the input element
      */
     stringValue: {
-      get: function() {
+      get() {
         return this.internalValue;
       },
-      set: function(newValue) {
+      set(newValue) {
         // Parse new value
-        let parsedValue = this.parse(newValue);
+        const parsedValue = this.parse(newValue);
 
-        // Allow input to be '' or '-' or '.'
         if (newValue === '' || newValue === '-' || newValue === '.') {
+          // Allow input to be '' or '-' or '.'
           this.internalValue = newValue;
-        }
-
-        // Enforce minimum
-        else if (this.min !== null && parsedValue < this.min) {
+        } else if (this.min !== null && parsedValue < this.min) {
+          // Enforce minimum
           this.internalValue = this.format(this.min);
-        }
-
-        // Enforce maximum
-        else if (this.max !== null && parsedValue > this.max) {
+        } else if (this.max !== null && parsedValue > this.max) {
+          // Enforce maximum
           this.internalValue = this.format(this.max);
-        }
-
-        // Allow valid numbers
-        else if (!isNaN(parsedValue)) {
+        } else if (!Number.isNaN(parsedValue)) {
+          // Allow valid numbers
           this.internalValue = newValue;
         }
 
@@ -115,26 +109,24 @@ export default {
      * The value of the component
      */
     decValue: {
-      get: function() {
-        let parsedValue = parseFloat(this.stringValue);
-        return isNaN(parsedValue) ? this.defaultValue : parsedValue;
+      get() {
+        const parsedValue = parseFloat(this.stringValue);
+        return Number.isNaN(parsedValue) ? this.defaultValue : parsedValue;
       },
-      set: function(newValue) {
+      set(newValue) {
         this.stringValue = this.format(newValue);
-      }
+      },
     },
 
     /**
      * The default value of the component
      */
-    defaultValue: function() {
-      if (0 < this.min || 0 > this.max) {
+    defaultValue() {
+      if (this.min > 0 || this.max < 0) {
         return this.min;
       }
-      else {
-        return 0;
-      }
-    }
+      return 0;
+    },
   },
 
   watch: {
@@ -142,7 +134,7 @@ export default {
      * Update the component value when the value prop changes
      * @param {Number} newValue The new prop value
      */
-    value: function(newValue) {
+    value(newValue) {
       if (newValue !== this.decValue) {
         this.decValue = newValue;
       }
@@ -152,7 +144,7 @@ export default {
      * Emit the input event when the component value changes
      * @param {Number} newValue The new component value
      */
-    decValue: function(newValue) {
+    decValue(newValue) {
       this.$emit('input', newValue);
     },
   },
@@ -162,8 +154,8 @@ export default {
      * Restrict input to valid keys
      * @param {Object} e The keypress event args
      */
-    onkeypress: function(e) {
-      let valid = ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    onkeypress(e) {
+      const valid = ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
       if (!valid.includes(e.key)) {
         /* key was not valid */
         e.preventDefault();
@@ -174,22 +166,20 @@ export default {
      * Process up and down arrow presses
      * @param {Object} e The keydown event args
      */
-    onkeydown: function(e) {
+    onkeydown(e) {
       if (e.key === 'ArrowUp') {
-        this.decValue++;
+        this.decValue += 1;
         e.preventDefault();
-      }
-      else if (e.key === 'ArrowDown') {
-        this.decValue--;
+      } else if (e.key === 'ArrowDown') {
+        this.decValue -= 1;
         e.preventDefault();
       }
     },
 
     /**
      * Reformat display value
-     * @param {Object} e The blur event args
      */
-    onblur: function(e) {
+    onblur() {
       this.stringValue = this.format(this.decValue);
     },
 
@@ -198,7 +188,7 @@ export default {
      * @param {String} value The string
      * @returns {Number} The parsed decimal
      */
-    parse: function(value) {
+    parse(value) {
       return Number(value);
     },
 
@@ -207,12 +197,12 @@ export default {
      * @param {Number} value The decimal
      * @returns {String} The formated string
      */
-    format: function(value) {
-      let result = value.toFixed(this.digits);
+    format(value) {
+      const result = value.toFixed(this.digits);
       return result.padStart(this.padding + this.digits + 1, '0');
     },
   },
-}
+};
 </script>
 
 <style scoped>

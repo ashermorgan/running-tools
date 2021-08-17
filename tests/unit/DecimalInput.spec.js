@@ -14,7 +14,7 @@ describe('DecimalInput.vue', () => {
   it('should read value prop', () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 1 }
+      propsData: { value: 1 },
     });
 
     // Assert value is 1.0
@@ -73,7 +73,7 @@ describe('DecimalInput.vue', () => {
   it('should accept decimal values', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 1 }
+      propsData: { value: 1 },
     });
 
     // Try to set value to 1.5
@@ -88,7 +88,7 @@ describe('DecimalInput.vue', () => {
   it('should not accept non numerical values', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 1 }
+      propsData: { value: 1 },
     });
 
     // Try to set value to a
@@ -97,13 +97,13 @@ describe('DecimalInput.vue', () => {
 
     // Assert value was not accepted and no events were emitted
     expect(wrapper.find('input').element.value).to.equal('1.0');
-    expect(wrapper.emitted().input).to.be.undefined;
+    expect(wrapper.emitted().input).to.equal(undefined);
   });
 
   it('should format input value on blur', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 1, padding: 3, digits: 2 }
+      propsData: { value: 1, padding: 3, digits: 2 },
     });
 
     // Set value to '01'
@@ -112,20 +112,20 @@ describe('DecimalInput.vue', () => {
 
     // Assert value was not updated and no events were emitted
     expect(wrapper.find('input').element.value).to.equal('01');
-    expect(wrapper.emitted().input).to.be.undefined;
+    expect(wrapper.emitted().input).to.equal(undefined);
 
     // Trigger blur event
     await wrapper.find('input').trigger('blur');
 
     // Assert value was formatted but no events were emitted
     expect(wrapper.find('input').element.value).to.equal('001.00');
-    expect(wrapper.emitted().input).to.be.undefined;
+    expect(wrapper.emitted().input).to.equal(undefined);
   });
 
   it('should allow input to be empty until blur', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 5 }
+      propsData: { value: 5 },
     });
 
     // Set value to ''
@@ -147,7 +147,7 @@ describe('DecimalInput.vue', () => {
   it('should allow input to be "-" until blur', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 5 }
+      propsData: { value: 5 },
     });
 
     // Set value to '-'
@@ -169,7 +169,7 @@ describe('DecimalInput.vue', () => {
   it('should allow input to be "." until blur', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 5 }
+      propsData: { value: 5 },
     });
 
     // Set value to '.'
@@ -191,7 +191,7 @@ describe('DecimalInput.vue', () => {
   it('default value should be the minimum if 0.0 is not valid', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { value: 3, max: 4, min: 2 }
+      propsData: { value: 3, max: 4, min: 2 },
     });
 
     // Set value to '' and trigger blur event so value must be updated
@@ -207,7 +207,7 @@ describe('DecimalInput.vue', () => {
   it('should not allow input to be below the minimum', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { min: 10, value: 20 }
+      propsData: { min: 10, value: 20 },
     });
 
     // Try to set value to 9, which is below the minimum
@@ -229,7 +229,7 @@ describe('DecimalInput.vue', () => {
   it('should not allow input to be above the maximum', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { max: 10 }
+      propsData: { max: 10 },
     });
 
     // Try to set value to 11, which is above the maximum
@@ -251,7 +251,7 @@ describe('DecimalInput.vue', () => {
   it('should format value according to padding and digits props', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
-      propsData: { padding: 2, digits: 3 }
+      propsData: { padding: 2, digits: 3 },
     });
 
     // Assert value is correctly formatted

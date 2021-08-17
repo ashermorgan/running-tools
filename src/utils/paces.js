@@ -8,8 +8,6 @@ function getPace(distance, time) {
   return time / distance;
 }
 
-
-
 /**
  * Calculate time from pace and distance
  * @param {Number} pace The pace (in seconds per meter)
@@ -18,10 +16,7 @@ function getPace(distance, time) {
  */
 function getTime(pace, distance) {
   return pace * distance;
-
 }
-
-
 
 /**
  * Calculate distance from pace and time
@@ -33,10 +28,8 @@ function getDistance(pace, time) {
   return time / pace;
 }
 
-
-
 export default {
   getPace,
   getTime,
   getDistance,
-}
+};

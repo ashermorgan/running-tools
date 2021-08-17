@@ -19,7 +19,7 @@
 
     <span class="equals"> = </span>
 
-    <span v-if="getUnitType(outputUnit) === 'time' "class="output-value">
+    <span v-if="getUnitType(outputUnit) === 'time'" class="output-value">
       {{ formatDuration(outputValue) }}
     </span>
     <span v-else class="output-value">
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import unitUtils from '@/utils/units.js';
+import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
@@ -48,7 +48,7 @@ export default {
     TimeInput,
   },
 
-  data: function() {
+  data() {
     return {
       /**
        * The input value
@@ -81,48 +81,55 @@ export default {
     /**
      * The names of the units in the current category
      */
-    unitNames: function() {
-      if (this.category === 'distance') {
-        return unitUtils.DISTANCE_UNIT_NAMES;
-      }
-      else if (this.category === 'time') {
-        return {...unitUtils.TIME_UNIT_NAMES, 'hh:mm:ss': 'hh:mm:ss'};
-      }
-      else if (this.category === 'speed_and_pace') {
-        return {...unitUtils.PACE_UNIT_NAMES, ...unitUtils.SPEED_UNIT_NAMES};
+    unitNames() {
+      switch (this.category) {
+        case 'distance': {
+          return unitUtils.DISTANCE_UNIT_NAMES;
+        }
+        case 'time': {
+          return { ...unitUtils.TIME_UNIT_NAMES, 'hh:mm:ss': 'hh:mm:ss' };
+        }
+        case 'speed_and_pace': {
+          return { ...unitUtils.PACE_UNIT_NAMES, ...unitUtils.SPEED_UNIT_NAMES };
+        }
+        default: {
+          return {};
+        }
       }
     },
 
     /**
      * The output value
      */
-    outputValue: function() {
-      if (this.category === 'distance') {
-        return unitUtils.convertDistance(this.inputValue, this.inputUnit,
-          this.outputUnit);
-      }
-      else if (this.category === 'time') {
-        // Correct input and output units for 'hh:mm:ss' unit
-        let realInput, realOutput;
-        if (this.inputUnit === 'hh:mm:ss') {
-          realInput = unitUtils.TIME_UNITS.seconds;
+    outputValue() {
+      switch (this.category) {
+        case 'distance': {
+          return unitUtils.convertDistance(this.inputValue, this.inputUnit, this.outputUnit);
         }
-        else {
-          realInput = this.inputUnit;
-        }
-        if (this.outputUnit === 'hh:mm:ss') {
-          realOutput = unitUtils.TIME_UNITS.seconds;
-        }
-        else {
-          realOutput = this.outputUnit;
-        }
+        case 'time': {
+          // Correct input and output units for 'hh:mm:ss' unit
+          let realInput;
+          if (this.inputUnit === 'hh:mm:ss') {
+            realInput = unitUtils.TIME_UNITS.seconds;
+          } else {
+            realInput = this.inputUnit;
+          }
+          let realOutput;
+          if (this.outputUnit === 'hh:mm:ss') {
+            realOutput = unitUtils.TIME_UNITS.seconds;
+          } else {
+            realOutput = this.outputUnit;
+          }
 
-        // Calculate conversion
-        return unitUtils.convertTime(this.inputValue, realInput, realOutput);
-      }
-      else if (this.category === 'speed_and_pace') {
-        return unitUtils.convertSpeedPace(this.inputValue, this.inputUnit,
-          this.outputUnit);
+          // Calculate conversion
+          return unitUtils.convertTime(this.inputValue, realInput, realOutput);
+        }
+        case 'speed_and_pace': {
+          return unitUtils.convertSpeedPace(this.inputValue, this.inputUnit, this.outputUnit);
+        }
+        default: {
+          return null;
+        }
       }
     },
   },
@@ -131,21 +138,29 @@ export default {
     /**
      * Reset inputValue, inputUnit, and outputUnit
      */
-    category: function(newValue) {
-      if (newValue === 'distance') {
-        this.inputValue = 1;
-        this.inputUnit = 'miles';
-        this.outputUnit = 'meters';
-      }
-      else if (newValue === 'time') {
-        this.inputValue = 1;
-        this.inputUnit = 'seconds';
-        this.outputUnit = 'hh:mm:ss';
-      }
-      else if (newValue === 'speed_and_pace') {
-        this.inputValue = 1;
-        this.inputUnit = 'miles_per_hour';
-        this.outputUnit = 'seconds_per_mile';
+    category(newValue) {
+      switch (newValue) {
+        case 'distance': {
+          this.inputValue = 1;
+          this.inputUnit = 'miles';
+          this.outputUnit = 'meters';
+          break;
+        }
+        case 'time': {
+          this.inputValue = 1;
+          this.inputUnit = 'seconds';
+          this.outputUnit = 'hh:mm:ss';
+          break;
+        }
+        case 'speed_and_pace': {
+          this.inputValue = 1;
+          this.inputUnit = 'miles_per_hour';
+          this.outputUnit = 'seconds_per_mile';
+          break;
+        }
+        default: {
+          break;
+        }
       }
     },
   },
@@ -156,22 +171,20 @@ export default {
      * @param {String} unit The unit
      * @returns {String} The type ('decimal' or 'time')
      */
-    getUnitType: function(unit) {
+    getUnitType(unit) {
       if (unit in unitUtils.DISTANCE_UNITS) {
         return 'decimal';
       }
-      else if (unit in unitUtils.TIME_UNITS) {
+      if (unit in unitUtils.TIME_UNITS) {
         return 'decimal';
       }
-      else if (unit === 'hh:mm:ss') {
+      if (unit === 'hh:mm:ss') {
         return 'time';
       }
-      else if (['seconds_per_kilometer', 'seconds_per_mile'].includes(unit)) {
+      if (['seconds_per_kilometer', 'seconds_per_mile'].includes(unit)) {
         return 'time';
       }
-      else {
-        return 'decimal';
-      }
+      return 'decimal';
     },
   },
 };

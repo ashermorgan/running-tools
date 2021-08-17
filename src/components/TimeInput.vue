@@ -30,13 +30,13 @@ export default {
     value: {
       type: Number,
       default: 0,
-      validator: function(value) {
+      validator(value) {
         return value >= 0 && value <= 86399.99;
       },
     },
   },
 
-  data: function() {
+  data() {
     return {
       /**
        * The number of hours in the component value
@@ -59,7 +59,7 @@ export default {
     /**
      * The value of the component
      */
-    intValue: function() {
+    intValue() {
       return (this.hours * 3600) + (this.minutes * 60) + this.seconds;
     },
   },
@@ -69,7 +69,7 @@ export default {
      * Update the component value when the value prop changes
      * @param {Number} newValue The new prop value
      */
-    value: function(newValue) {
+    value(newValue) {
       if (newValue !== this.intValue) {
         this.hours = Math.floor(newValue / 3600);
         this.minutes = Math.floor((newValue % 3600) / 60);
@@ -81,11 +81,11 @@ export default {
      * Emit the input event when the component value changes
      * @param {Number} newValue The new component value
      */
-    intValue: function(newValue) {
+    intValue(newValue) {
       this.$emit('input', newValue);
     },
   },
-}
+};
 </script>
 
 <style scoped>

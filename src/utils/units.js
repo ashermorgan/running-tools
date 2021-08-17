@@ -7,8 +7,6 @@ const TIME_UNITS = {
   hours: 'hours',
 };
 
-
-
 /**
  * The time unit names
  */
@@ -17,8 +15,6 @@ const TIME_UNIT_NAMES = {
   minutes: 'Minutes',
   hours: 'Hours',
 };
-
-
 
 /**
  * The time unit symbols
@@ -29,18 +25,14 @@ const TIME_UNIT_SYMBOLS = {
   hours: 'hr',
 };
 
-
-
 /**
  * The value of each time unit in seconds
  */
 const TIME_UNIT_VALUES = {
   seconds: 1,
   minutes: 1 * 60,
-  hours:   1 * 60 * 60,
+  hours: 1 * 60 * 60,
 };
-
-
 
 /**
  * The distance units
@@ -53,8 +45,6 @@ const DISTANCE_UNITS = {
   marathons: 'marathons',
 };
 
-
-
 /**
  * The distance unit names
  */
@@ -65,8 +55,6 @@ const DISTANCE_UNIT_NAMES = {
   miles: 'Miles',
   marathons: 'Marathons',
 };
-
-
 
 /**
  * The distance unit symbols
@@ -79,20 +67,16 @@ const DISTANCE_UNIT_SYMBOLS = {
   marathons: 'marathons',
 };
 
-
-
 /**
  * The value of each distance unit in meters
  */
 const DISTANCE_UNIT_VALUES = {
-  meters:     1,
+  meters: 1,
   kilometers: 1000,
-  yards:      0.9144,
-  miles:      1609.3499,
-  marathons:  42195,
+  yards: 0.9144,
+  miles: 1609.3499,
+  marathons: 42195,
 };
-
-
 
 /**
  * The speed units
@@ -103,8 +87,6 @@ const SPEED_UNITS = {
   miles_per_hour: 'miles_per_hour',
 };
 
-
-
 /**
  * The speed unit names
  */
@@ -113,8 +95,6 @@ const SPEED_UNIT_NAMES = {
   kilometers_per_hour: 'Kilometers per Hour',
   miles_per_hour: 'Miles per Hour',
 };
-
-
 
 /**
  * The speed unit symbols
@@ -125,18 +105,14 @@ const SPEED_UNIT_SYMBOLS = {
   miles_per_hour: 'mph',
 };
 
-
-
 /**
  * The value of each speed unit in meters per second
  */
 const SPEED_UNIT_VALUES = {
-  meters_per_second:    1,
-  kilometers_per_hour:  DISTANCE_UNIT_VALUES.kilometers / TIME_UNIT_VALUES.hours,
-  miles_per_hour:       DISTANCE_UNIT_VALUES.miles / TIME_UNIT_VALUES.hours,
+  meters_per_second: 1,
+  kilometers_per_hour: DISTANCE_UNIT_VALUES.kilometers / TIME_UNIT_VALUES.hours,
+  miles_per_hour: DISTANCE_UNIT_VALUES.miles / TIME_UNIT_VALUES.hours,
 };
-
-
 
 /**
  * The pace units
@@ -147,8 +123,6 @@ const PACE_UNITS = {
   seconds_per_mile: 'seconds_per_mile',
 };
 
-
-
 /**
  * The pace unit names
  */
@@ -157,8 +131,6 @@ const PACE_UNIT_NAMES = {
   seconds_per_kilometer: 'Time per Kilometer',
   seconds_per_mile: 'Time per Mile',
 };
-
-
 
 /**
  * The pace unit symbols
@@ -169,18 +141,14 @@ const PACE_UNIT_SYMBOLS = {
   seconds_per_mile: '/mi',
 };
 
-
-
 /**
  * The value of each pace unit in seconds per meter
  */
 const PACE_UNIT_VALUES = {
-  seconds_per_meter:      1,
-  seconds_per_kilometer:  TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.kilometers,
-  seconds_per_mile:       TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.miles,
+  seconds_per_meter: 1,
+  seconds_per_kilometer: TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.kilometers,
+  seconds_per_mile: TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.miles,
 };
-
-
 
 /**
  * Convert between time units
@@ -190,10 +158,8 @@ const PACE_UNIT_VALUES = {
  * @returns {Number} The output
  */
 function convertTime(inputValue, inputUnits, outputUnits) {
-  return inputValue * TIME_UNIT_VALUES[inputUnits] / TIME_UNIT_VALUES[outputUnits];
+  return (inputValue * TIME_UNIT_VALUES[inputUnits]) / TIME_UNIT_VALUES[outputUnits];
 }
-
-
 
 /**
  * Convert between distance units
@@ -203,10 +169,8 @@ function convertTime(inputValue, inputUnits, outputUnits) {
  * @returns {Number} The output
  */
 function convertDistance(inputValue, inputUnits, outputUnits) {
-  return inputValue * DISTANCE_UNIT_VALUES[inputUnits] / DISTANCE_UNIT_VALUES[outputUnits];
+  return (inputValue * DISTANCE_UNIT_VALUES[inputUnits]) / DISTANCE_UNIT_VALUES[outputUnits];
 }
-
-
 
 /**
  * Convert between speed units
@@ -216,10 +180,8 @@ function convertDistance(inputValue, inputUnits, outputUnits) {
  * @returns {Number} The output
  */
 function convertSpeed(inputValue, inputUnits, outputUnits) {
-  return inputValue * SPEED_UNIT_VALUES[inputUnits] / SPEED_UNIT_VALUES[outputUnits];
+  return (inputValue * SPEED_UNIT_VALUES[inputUnits]) / SPEED_UNIT_VALUES[outputUnits];
 }
-
-
 
 /**
  * Convert between pace units
@@ -229,10 +191,8 @@ function convertSpeed(inputValue, inputUnits, outputUnits) {
  * @returns {Number} The output
  */
 function convertPace(inputValue, inputUnits, outputUnits) {
-  return inputValue * PACE_UNIT_VALUES[inputUnits] / PACE_UNIT_VALUES[outputUnits];
+  return (inputValue * PACE_UNIT_VALUES[inputUnits]) / PACE_UNIT_VALUES[outputUnits];
 }
-
-
 
 /**
  * Convert between speed and/or pace units
@@ -244,23 +204,18 @@ function convertPace(inputValue, inputUnits, outputUnits) {
 function convertSpeedPace(inputValue, inputUnits, outputUnits) {
   // Calculate input speed
   let speed;
-  if (PACE_UNIT_VALUES.hasOwnProperty(inputUnits)) {
+  if (inputUnits in PACE_UNIT_VALUES) {
     speed = 1 / (inputValue * PACE_UNIT_VALUES[inputUnits]);
-  }
-  else {
+  } else {
     speed = inputValue * SPEED_UNIT_VALUES[inputUnits];
   }
 
   // Calculate output
-  if (PACE_UNIT_VALUES.hasOwnProperty(outputUnits)) {
+  if (outputUnits in PACE_UNIT_VALUES) {
     return (1 / speed) / PACE_UNIT_VALUES[outputUnits];
   }
-  else {
-    return speed / SPEED_UNIT_VALUES[outputUnits];
-  }
+  return speed / SPEED_UNIT_VALUES[outputUnits];
 }
-
-
 
 /**
  * Format a duration as a string
@@ -269,9 +224,9 @@ function convertSpeedPace(inputValue, inputUnits, outputUnits) {
  * @param {Number} digits The number of digits to show after the decimal point
  * @returns {String} The formatted value
  */
-function formatDuration(value, padding=6, digits=2) {
+function formatDuration(value, padding = 6, digits = 2) {
   // Check if value is NaN
-  if (isNaN(value)) {
+  if (Number.isNaN(value)) {
     return 'NaN';
   }
 
@@ -281,46 +236,42 @@ function formatDuration(value, padding=6, digits=2) {
   // Check value sign
   if (value < 0) {
     result += '-';
-    value = Math.abs(value);
   }
 
   // Check if value is valid
-  if (value === Infinity) {
-    return result + 'Infinity';
+  if (Math.abs(value) === Infinity) {
+    return `${result}Infinity`;
   }
 
   // Validate padding
-  padding = Math.min(padding, 6);
+  let fixedPadding = Math.min(padding, 6);
 
   // Prevent rounding errors
-  value = parseFloat(value.toFixed(digits));
+  const fixedValue = parseFloat(Math.abs(value).toFixed(digits));
 
   // Calculate parts
-  let hours = Math.floor(value / 3600);
-  let minutes = Math.floor((value % 3600) / 60);
-  let seconds = value % 60;
+  const hours = Math.floor(fixedValue / 3600);
+  const minutes = Math.floor((fixedValue % 3600) / 60);
+  const seconds = fixedValue % 60;
 
   // Format parts
-  if (hours !== 0 || padding >= 5) {
-    result += hours.toString().padStart(padding - 4, '0');
+  if (hours !== 0 || fixedPadding >= 5) {
+    result += hours.toString().padStart(fixedPadding - 4, '0');
     result += ':';
-    padding = 4;
+    fixedPadding = 4;
   }
-  if (minutes !== 0 || padding >= 3) {
-    result += minutes.toString().padStart(padding - 2, '0');
+  if (minutes !== 0 || fixedPadding >= 3) {
+    result += minutes.toString().padStart(fixedPadding - 2, '0');
     result += ':';
-    padding = 2;
+    fixedPadding = 2;
   }
   if (digits === 0) {
-    result += seconds.toFixed(digits).padStart(padding, '0');
-  }
-  else {
-    result += seconds.toFixed(digits).padStart(padding + digits + 1, '0');
+    result += seconds.toFixed(digits).padStart(fixedPadding, '0');
+  } else {
+    result += seconds.toFixed(digits).padStart(fixedPadding + digits + 1, '0');
   }
   return result;
 }
-
-
 
 export default {
   TIME_UNITS,
@@ -345,4 +296,4 @@ export default {
   convertSpeedPace,
 
   formatDuration,
-}
+};

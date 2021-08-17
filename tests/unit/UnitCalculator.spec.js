@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import UnitCalculator from '@/views/UnitCalculator.vue';
@@ -41,7 +43,7 @@ describe('UnitCalculator.vue', () => {
     await wrapper.setData({
       inputValue: 2,
       inputUnit: 'kilometers',
-      outputUnit: 'meters'
+      outputUnit: 'meters',
     });
 
     // Assert controls are correct

@@ -49,14 +49,13 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
-router.afterEach((to, from) => {
+router.afterEach((to) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} - running-calculator`;
-  }
-  else {
+  } else {
     document.title = 'running-calculator';
   }
 });

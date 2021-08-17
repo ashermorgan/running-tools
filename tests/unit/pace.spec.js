@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-import pace from '@/utils/paces.js';
-
-
+import pace from '@/utils/paces';
 
 describe('utils/pace.js', () => {
   describe('getPace method', () => {

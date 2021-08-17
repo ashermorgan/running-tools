@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import TimeInput from '@/components/TimeInput.vue';
@@ -16,7 +18,7 @@ describe('TimeInput.vue', () => {
   it('should read value prop', () => {
     // Initialize component
     const wrapper = shallowMount(TimeInput, {
-      propsData: { value: 3600 + 60 + 1.5 }
+      propsData: { value: 3600 + 60 + 1.5 },
     });
 
     // Assert value is 1:01:01.50
