@@ -1,7 +1,7 @@
-# running-calculator
-An all-around tool for runners that calculates units, paces, splits, and more
+# running-tools
+A collection of tools for runners that calculate splits, convert units, and more
 
-Try it out [here](https://ashermorgan.github.io/running-calculator/)
+Try it out [here](https://ashermorgan.github.io/running-tools/)
 
 
 

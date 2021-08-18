@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <p class="description">
-      An all-around tool for runners that calculates units, paces, splits, and more
+      A collection of tools for runners that calculate splits, convert units, and more
     </p>
     <p>
       <router-link :to="{ name: 'calculate-paces' }">

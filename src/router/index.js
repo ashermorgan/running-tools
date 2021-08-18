@@ -54,9 +54,9 @@ const router = new VueRouter({
 
 router.afterEach((to) => {
   if (to.meta.title) {
-    document.title = `${to.meta.title} - running-calculator`;
+    document.title = `${to.meta.title} - Running Tools`;
   } else {
-    document.title = 'running-calculator';
+    document.title = 'Running Tools';
   }
 });
 

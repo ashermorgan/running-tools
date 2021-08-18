@@ -10,7 +10,7 @@
         {{ $route.meta.title }}
       </h1>
       <h1 v-else>
-        running-calculator
+        Running Tools
       </h1>
     </header>
 
