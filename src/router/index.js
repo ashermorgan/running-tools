@@ -1,6 +1,8 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
+import PaceCalculator from '../views/PaceCalculator.vue';
+import UnitCalculator from '../views/UnitCalculator.vue';
 
 Vue.use(VueRouter);
 
@@ -13,11 +15,49 @@ const routes = [
     path: '/home',
     name: 'home',
     component: Home,
+    meta: {
+      title: null,
+      back: null,
+    },
+  },
+  {
+    path: '/calculate',
+    redirect: '/home',
+  },
+  {
+    path: '/calculate/paces',
+    name: 'calculate-paces',
+    component: PaceCalculator,
+    meta: {
+      title: 'Pace Calculator',
+      back: 'home',
+    },
+  },
+  {
+    path: '/calculate/units',
+    name: 'calculate-units',
+    component: UnitCalculator,
+    meta: {
+      title: 'Unit Calculator',
+      back: 'home',
+    },
+  },
+  {
+    path: '*',
+    redirect: '/home',
   },
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
-export default router
+router.afterEach((to) => {
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - Running Tools`;
+  } else {
+    document.title = 'Running Tools';
+  }
+});
+
+export default router;

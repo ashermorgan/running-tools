@@ -1,24 +1,27 @@
-# running-calculator
+# running-tools
+A collection of tools for runners that calculate splits, convert units, and more
 
-## Project setup
+Try it out [here](https://ashermorgan.github.io/running-tools/)
+
+
+
+## Setup
+Install dependencies
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Run development server
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
+Run unit tests
 ```
 npm run test:unit
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Build for production
+```
+npm run build
+```
