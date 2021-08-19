@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: process.env.NODE_ENV === 'production' ? '/running-tools/' : '/',
   pwa: {
     name: 'Running Tools',
     themeColor: '#ff8000',
@@ -15,6 +16,7 @@ module.exports = {
       background_color: '#ff8000',
       display: 'fullscreen',
       lang: 'en-US',
+      scope: './',
     },
   },
 };

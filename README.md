@@ -25,3 +25,8 @@ Build for production
 ```
 npm run build
 ```
+
+Deploy to GitHub Pages
+```
+. scripts/deploy.sh
+```
