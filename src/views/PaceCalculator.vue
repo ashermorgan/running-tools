@@ -15,12 +15,16 @@
 
     <p>is the same pace as running</p>
 
-    <table class="output">
+    <table class="output" v-if="!inEditMode">
       <thead>
         <tr>
-          <th>Distance</th>
-          <th></th>
+          <th colspan="2">Distance</th>
           <th>Time</th>
+          <th>
+            <button class="icon" title="Edit Targets" @click="inEditMode=true">
+              <img alt="" src="@/assets/edit.svg">
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -32,8 +36,69 @@
 
           <td>in</td>
 
-          <td>
+          <td colspan="2">
             {{ formatDuration(item.time, 0, 2) }}
+          </td>
+        </tr>
+
+        <tr v-if="results.length === 0" class="empty-message">
+          <td colspan="4">
+            There aren't any targets,<br>
+            click
+            <img alt="Edit Targets" src="@/assets/edit.svg">
+            to add one
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="edit-targets" v-if="inEditMode">
+      <thead>
+        <tr>
+          <th>
+            Edit Targets
+          </th>
+          <th>
+            <button class="icon" title="Close" @click="inEditMode=false">
+              <img alt="" src="@/assets/x.svg">
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in targets" :key="index">
+          <td>
+            <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
+              :min="0" :digits="2"/>
+            <select v-model="item.distanceUnit" aria-label="Distance Unit">
+              <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
+                {{ value }}
+              </option>
+            </select>
+          </td>
+
+          <td>
+            <button class="icon" title="Remove Target" @click="targets.splice(index, 1)">
+              <img alt="" src="@/assets/trash-2.svg">
+            </button>
+          </td>
+        </tr>
+
+        <tr v-if="targets.length === 0" class="empty-message">
+          <td colspan="4">
+            There aren't any targets,<br>
+            click
+            <img alt="Add Target" src="@/assets/plus-circle.svg">
+            to add one
+          </td>
+        </tr>
+
+        <tr class="add-target">
+          <td colspan="4">
+            <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
+            distanceUnit: 'miles'})">
+              <img alt="" src="@/assets/plus-circle.svg">
+            </button>
           </td>
         </tr>
       </tbody>
@@ -87,6 +152,11 @@ export default {
        * The formatDuration method
        */
       formatDuration: unitUtils.formatDuration,
+
+      /**
+       * Whether the calculator is in edit targets mode
+       */
+      inEditMode: false,
 
       /**
        * The output targets
@@ -188,22 +258,52 @@ export default {
 }
 
 /* calculator output */
+.output th:last-child {
+  text-align: right;
+}
+
+/* edit targets table */
+.edit-targets th:last-child, .edit-targets td:last-child {
+  text-align: right;
+}
+.edit-targets td select {
+  margin-left: 0.2em;
+}
+.edit-targets .add-target td {
+  text-align: center;
+  padding: 0.5em 0.2em;
+}
+
+/* general table styles */
 table {
   margin-top: 10px;
   border-collapse: collapse;
   min-width: 300px;
-}
-tr {
-  border: 0.1em solid #000000;
-}
-th, td {
-  padding: 0.2em;
   text-align: left;
 }
-@media only screen and (max-width: 400px) {
+table tr {
+  border: 0.1em solid #000000;
+}
+table th, table td {
+  padding: 0.2em;
+}
+table button.icon {
+  height: 2em;
+  width: 2em;
+}
+@media only screen and (max-width: 500px) {
   table {
     width: 100%;
     min-width: 0px;
   }
+}
+
+/* empty table message */
+.empty-message td {
+  text-align: center !important;
+}
+.empty-message img {
+  height: 1em;
+  width: 1em;
 }
 </style>

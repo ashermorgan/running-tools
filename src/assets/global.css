@@ -25,7 +25,7 @@ input, select {
 
 /* default styles for mobile devices */
 @media only screen and (max-width: 800px) {
-  input, select {
+  input, select, button {
     font-size: 1em;
   }
 }
