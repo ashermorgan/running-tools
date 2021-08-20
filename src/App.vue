@@ -15,7 +15,9 @@
     </header>
 
     <div id="route-content">
-      <router-view/>
+      <keep-alive>
+        <router-view/>
+      </keep-alive>
     </div>
   </div>
 </template>
