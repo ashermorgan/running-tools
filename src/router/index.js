@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import PaceCalculator from '../views/PaceCalculator.vue';
+import RaceCalculator from '../views/RaceCalculator.vue';
 import UnitCalculator from '../views/UnitCalculator.vue';
 
 Vue.use(VueRouter);
@@ -30,6 +31,15 @@ const routes = [
     component: PaceCalculator,
     meta: {
       title: 'Pace Calculator',
+      back: 'home',
+    },
+  },
+  {
+    path: '/calculate/races',
+    name: 'calculate-races',
+    component: RaceCalculator,
+    meta: {
+      title: 'Race Calculator',
       back: 'home',
     },
   },

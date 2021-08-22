@@ -4,12 +4,17 @@
       A collection of tools for runners that calculate splits, convert units, and more
     </p>
     <div class="calculators">
-      <router-link :to="{ name: 'calculate-paces' }" v-slot="{ navigate }">
+      <router-link :to="{ name: 'calculate-paces' }" v-slot="{ navigate }" custom>
         <button @click="navigate">
           Pace Calculator
         </button>
       </router-link>
-      <router-link :to="{ name: 'calculate-units' }" v-slot="{ navigate }">
+      <router-link :to="{ name: 'calculate-races' }" v-slot="{ navigate }" custom>
+        <button @click="navigate">
+          Race Calculator
+        </button>
+      </router-link>
+      <router-link :to="{ name: 'calculate-units' }" v-slot="{ navigate }" custom>
         <button @click="navigate">
           Unit Calculator
         </button>
