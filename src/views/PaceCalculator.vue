@@ -15,94 +15,7 @@
 
     <p>is the same pace as running</p>
 
-    <table class="output" v-if="!inEditMode">
-      <thead>
-        <tr>
-          <th colspan="2">Distance</th>
-          <th>Time</th>
-          <th>
-            <button class="icon" title="Edit Targets" @click="inEditMode=true">
-              <img alt="" src="@/assets/edit.svg">
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in results" :key="index">
-          <td>
-            {{ item.distanceValue.toFixed(2) }}
-            {{ distanceSymbols[item.distanceUnit] }}
-          </td>
-
-          <td>in</td>
-
-          <td colspan="2">
-            {{ formatDuration(item.time, 0, 2) }}
-          </td>
-        </tr>
-
-        <tr v-if="results.length === 0" class="empty-message">
-          <td colspan="4">
-            There aren't any targets,<br>
-            click
-            <img alt="Edit Targets" src="@/assets/edit.svg">
-            to add one
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table class="edit-targets" v-if="inEditMode">
-      <thead>
-        <tr>
-          <th>
-            Edit Targets
-          </th>
-          <th>
-            <button class="icon" title="Close" @click="inEditMode=false">
-              <img alt="" src="@/assets/x.svg">
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in targets" :key="index">
-          <td>
-            <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
-              :min="0" :digits="2"/>
-            <select v-model="item.distanceUnit" aria-label="Distance Unit">
-              <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-                {{ value }}
-              </option>
-            </select>
-          </td>
-
-          <td>
-            <button class="icon" title="Remove Target" @click="targets.splice(index, 1)">
-              <img alt="" src="@/assets/trash-2.svg">
-            </button>
-          </td>
-        </tr>
-
-        <tr v-if="targets.length === 0" class="empty-message">
-          <td colspan="4">
-            There aren't any targets,<br>
-            click
-            <img alt="Add Target" src="@/assets/plus-circle.svg">
-            to add one
-          </td>
-        </tr>
-
-        <tr class="add-target">
-          <td colspan="4">
-            <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
-            distanceUnit: 'miles'})">
-              <img alt="" src="@/assets/plus-circle.svg">
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"/>
   </div>
 </template>
 
@@ -112,6 +25,7 @@ import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
+import TimeTable from '@/components/TimeTable.vue';
 
 export default {
   name: 'PaceCalculator',
@@ -119,6 +33,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
+    TimeTable,
   },
 
   data() {
@@ -144,24 +59,9 @@ export default {
       distanceUnits: unitUtils.DISTANCE_UNIT_NAMES,
 
       /**
-       * The symbols of the distance units
+       * The default output targets
        */
-      distanceSymbols: unitUtils.DISTANCE_UNIT_SYMBOLS,
-
-      /**
-       * The formatDuration method
-       */
-      formatDuration: unitUtils.formatDuration,
-
-      /**
-       * Whether the calculator is in edit targets mode
-       */
-      inEditMode: false,
-
-      /**
-       * The output targets
-       */
-      targets: [
+      defaultTargets: [
         { distanceValue: 100, distanceUnit: 'meters' },
         { distanceValue: 200, distanceUnit: 'meters' },
         { distanceValue: 300, distanceUnit: 'meters' },
@@ -204,34 +104,28 @@ export default {
         this.inputUnit, unitUtils.DISTANCE_UNITS.meters);
       return paceUtils.getPace(distance, this.inputTime);
     },
+  },
 
+  methods: {
     /**
-     * The output results
+     * Calculate paces from a target
+     * @param {Object} target The target
+     * @returns {Object} The result
      */
-    results() {
-      // Calculate results
-      const result = [];
-      this.targets.forEach((row) => {
-        // Convert distance into meters
-        const distance = unitUtils.convertDistance(row.distanceValue,
-          row.distanceUnit, unitUtils.DISTANCE_UNITS.meters);
+    calculatePace(target) {
+      // Convert distance into meters
+      const distance = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
+        unitUtils.DISTANCE_UNITS.meters);
 
-        // Calculate time to travel distance at input pace
-        const time = paceUtils.getTime(this.pace, distance);
+      // Calculate time to travel distance at input pace
+      const time = paceUtils.getTime(this.pace, distance);
 
-        // Add result
-        result.push({
-          distanceValue: row.distanceValue,
-          distanceUnit: row.distanceUnit,
-          time,
-        });
-      });
-
-      // Sort results by time
-      result.sort((a, b) => a.time - b.time);
-
-      // Return results
-      return result;
+      // Return result
+      return {
+        distanceValue: target.distanceValue,
+        distanceUnit: target.distanceUnit,
+        time,
+      };
     },
   },
 };
@@ -258,52 +152,13 @@ export default {
 }
 
 /* calculator output */
-.output th:last-child {
-  text-align: right;
-}
-
-/* edit targets table */
-.edit-targets th:last-child, .edit-targets td:last-child {
-  text-align: right;
-}
-.edit-targets td select {
-  margin-left: 0.2em;
-}
-.edit-targets .add-target td {
-  text-align: center;
-  padding: 0.5em 0.2em;
-}
-
-/* general table styles */
-table {
+.output {
   margin-top: 10px;
-  border-collapse: collapse;
-  min-width: 300px;
-  text-align: left;
-}
-table tr {
-  border: 0.1em solid #000000;
-}
-table th, table td {
-  padding: 0.2em;
-}
-table button.icon {
-  height: 2em;
-  width: 2em;
 }
 @media only screen and (max-width: 500px) {
-  table {
+  .output {
     width: 100%;
     min-width: 0px;
   }
-}
-
-/* empty table message */
-.empty-message td {
-  text-align: center !important;
-}
-.empty-message img {
-  height: 1em;
-  width: 1em;
 }
 </style>
