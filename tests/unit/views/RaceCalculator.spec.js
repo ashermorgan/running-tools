@@ -5,7 +5,7 @@ import { shallowMount } from '@vue/test-utils';
 import raceUtils from '@/utils/races';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 
-describe('RaceCalculator.vue', () => {
+describe('views/RaceCalculator.vue', () => {
   it('should correctly predict race times', async () => {
     // Initialize component
     const wrapper = shallowMount(RaceCalculator);

@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import TimeInput from '@/components/TimeInput.vue';
 
-describe('TimeInput.vue', () => {
+describe('components/TimeInput.vue', () => {
   it('value should be 0:00:0.00 by default', () => {
     // Initialize component
     const wrapper = shallowMount(TimeInput);

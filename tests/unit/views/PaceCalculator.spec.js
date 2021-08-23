@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 
-describe('PaceCalculator.vue', () => {
+describe('views/PaceCalculator.vue', () => {
   it('should correctly calculate paces', async () => {
     // Initialize component
     const wrapper = shallowMount(PaceCalculator);
