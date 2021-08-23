@@ -37,6 +37,22 @@ export default {
     },
 
     /**
+     * The step value
+     */
+    step: {
+      type: Number,
+      default: 1,
+    },
+
+    /**
+     * Whether to wrap around at the minimum and maximum values
+     */
+    wrap: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
      * The number of digits to show before the decimal point
      */
     padding: {
@@ -168,10 +184,18 @@ export default {
      */
     onkeydown(e) {
       if (e.key === 'ArrowUp') {
-        this.decValue += 1;
+        if (this.decValue === this.max && this.wrap && this.min !== null) {
+          this.decValue = this.min;
+        } else {
+          this.decValue += this.step;
+        }
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
-        this.decValue -= 1;
+        if (this.decValue === this.min && this.wrap && this.max !== null) {
+          this.decValue = this.max;
+        } else {
+          this.decValue -= this.step;
+        }
         e.preventDefault();
       }
     },
