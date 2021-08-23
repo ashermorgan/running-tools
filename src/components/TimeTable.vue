@@ -191,17 +191,14 @@ export default {
 .targets .add-target td {
   text-align: center;
   padding: 0.5em 0.2em;
+  background-color: var(--background1) !important;
 }
 
 /* general table styles */
 table {
   border-collapse: collapse;
-  min-width: 300px;
   width: 100%;
   text-align: left;
-}
-table tr {
-  border: 0.1em solid #000000;
 }
 table th, table td {
   padding: 0.2em;
@@ -218,5 +215,10 @@ table button.icon {
 .empty-message img {
   height: 1em;
   width: 1em;
+}
+@media (prefers-color-scheme: dark) {
+  .empty-message img {
+    filter: invert(90%);
+  }
 }
 </style>

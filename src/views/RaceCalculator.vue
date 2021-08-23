@@ -137,6 +137,7 @@ export default {
 /* calculator output */
 .output {
   margin-top: 10px;
+  min-width: 300px;
 }
 @media only screen and (max-width: 500px) {
   .output {

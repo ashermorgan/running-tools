@@ -93,7 +93,7 @@ div {
   display: inline-block;
 }
 .hours, .minutes {
-  width: 2em;
+  width: 2.5em;
 }
 .seconds {
   width: 4em;

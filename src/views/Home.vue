@@ -55,6 +55,7 @@ export default {
   }
   .calculators button {
     margin: 0.3em 0em;
+    padding: 0.75em 0.5em;
   }
 }
 </style>

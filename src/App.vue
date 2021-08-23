@@ -24,7 +24,7 @@
 
 <style scoped>
 header {
-  background-color: hsl(30, 100%, 50%);
+  background-color: var(--theme);
   padding: 0.5em;
   display: grid;
   grid-template-columns: 2em 1fr auto 1fr 2em;
@@ -35,6 +35,10 @@ header a {
   margin: auto;
   height: 2em;
   width: 2em;
+}
+header a img {
+  padding: 0em;
+  filter: invert(0%) !important;
 }
 h1 {
   grid-column: 3;
