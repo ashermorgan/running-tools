@@ -80,8 +80,10 @@
             to add one
           </td>
         </tr>
+      </tbody>
 
-        <tr class="add-target">
+      <tfoot>
+        <tr>
           <td colspan="4">
             <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
             distanceUnit: 'miles'})">
@@ -89,7 +91,7 @@
             </button>
           </td>
         </tr>
-      </tbody>
+      </tfoot>
     </table>
   </div>
 </template>
@@ -188,10 +190,9 @@ export default {
 .targets td select {
   margin-left: 0.2em;
 }
-.targets .add-target td {
-  text-align: center;
+.targets tfoot td {
+  text-align: center !important;
   padding: 0.5em 0.2em;
-  background-color: var(--background1) !important;
 }
 
 /* general table styles */
