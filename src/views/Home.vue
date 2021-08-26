@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <p class="description">
-      A collection of tools for runners that calculate splits, convert units, and more
+      A collection of tools for runners and their coaches
     </p>
     <div class="calculators">
       <router-link :to="{ name: 'calculate-paces' }" v-slot="{ navigate }" custom>
@@ -32,12 +32,12 @@ export default {
 <style scoped>
 .home {
   text-align: center;
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
 }
 .description {
   font-size: 1.5em;
-  margin-bottom: 10px;
+  margin-bottom: 1em;
 }
 .calculators {
   display: flex;
