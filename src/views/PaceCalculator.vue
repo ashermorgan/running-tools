@@ -15,7 +15,8 @@
 
     <p>is the same pace as running</p>
 
-    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"/>
+    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
+      storage-key="pace-calculator-targets"/>
   </div>
 </template>
 
@@ -74,12 +75,6 @@ export default {
         { distanceValue: 1600, distanceUnit: 'meters' },
         { distanceValue: 3200, distanceUnit: 'meters' },
 
-        { distanceValue: 1, distanceUnit: 'miles' },
-        { distanceValue: 2, distanceUnit: 'miles' },
-        { distanceValue: 3, distanceUnit: 'miles' },
-        { distanceValue: 5, distanceUnit: 'miles' },
-        { distanceValue: 10, distanceUnit: 'miles' },
-
         { distanceValue: 2, distanceUnit: 'kilometers' },
         { distanceValue: 3, distanceUnit: 'kilometers' },
         { distanceValue: 4, distanceUnit: 'kilometers' },
@@ -88,6 +83,14 @@ export default {
         { distanceValue: 8, distanceUnit: 'kilometers' },
         { distanceValue: 10, distanceUnit: 'kilometers' },
         { distanceValue: 15, distanceUnit: 'kilometers' },
+
+        { distanceValue: 1, distanceUnit: 'miles' },
+        { distanceValue: 2, distanceUnit: 'miles' },
+        { distanceValue: 3, distanceUnit: 'miles' },
+        { distanceValue: 5, distanceUnit: 'miles' },
+        { distanceValue: 6, distanceUnit: 'miles' },
+        { distanceValue: 8, distanceUnit: 'miles' },
+        { distanceValue: 10, distanceUnit: 'miles' },
 
         { distanceValue: 0.5, distanceUnit: 'marathons' },
         { distanceValue: 1, distanceUnit: 'marathons' },

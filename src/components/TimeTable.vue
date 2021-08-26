@@ -46,6 +46,9 @@
           <th>Edit Targets</th>
 
           <th>
+            <button class="icon" title="Reset Targets" @click="resetTargets">
+              <img alt="" src="@/assets/rotate-ccw.svg">
+            </button>
             <button class="icon" title="Close" @click="inEditMode=false">
               <img alt="" src="@/assets/x.svg">
             </button>
@@ -73,7 +76,7 @@
         </tr>
 
         <tr v-if="targets.length === 0" class="empty-message">
-          <td colspan="4">
+          <td colspan="2">
             There aren't any targets,<br>
             click
             <img alt="Add Target" src="@/assets/plus-circle.svg">
@@ -84,9 +87,9 @@
 
       <tfoot>
         <tr>
-          <td colspan="4">
+          <td colspan="2">
             <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
-            distanceUnit: 'miles'})">
+              distanceUnit: 'miles'})">
               <img alt="" src="@/assets/plus-circle.svg">
             </button>
           </td>
@@ -98,6 +101,7 @@
 
 <script>
 import unitUtils from '@/utils/units';
+import storage from '@/utils/localStorage';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 
@@ -123,6 +127,14 @@ export default {
     defaultTargets: {
       type: Array,
       default: () => [],
+    },
+
+    /**
+     * The localStorage key for the list of targets
+     */
+    storageKey: {
+      type: String,
+      default: null,
     },
   },
 
@@ -151,7 +163,7 @@ export default {
       /**
        * The time table targets
        */
-      targets: this.defaultTargets,
+      targets: storage.get(this.storageKey, this.defaultTargets),
     };
   },
 
@@ -173,6 +185,55 @@ export default {
       // Return results
       return result;
     },
+  },
+
+  watch: {
+    /**
+     * Sort targets
+     */
+    inEditMode() {
+      this.sortTargets();
+    },
+
+    /**
+     * Save targets
+     */
+    targets: {
+      handler(newValue) {
+        if (this.storageKey !== null) {
+          storage.set(this.storageKey, newValue);
+        }
+      },
+      deep: true,
+    },
+  },
+
+  methods: {
+    /**
+     * Restore the default targets
+     */
+    resetTargets() {
+      // Clone default targets array
+      this.targets = JSON.parse(JSON.stringify(this.defaultTargets));
+
+      // Sort targets
+      this.sortTargets();
+    },
+
+    /**
+     * Sort the targets by distance
+     */
+    sortTargets() {
+      this.targets.sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit,
+        'meters') - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters'));
+    },
+  },
+
+  /**
+   * Close edit targets table
+   */
+  deactivated() {
+    this.inEditMode = false;
   },
 };
 </script>
