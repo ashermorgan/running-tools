@@ -2,26 +2,67 @@ import { expect } from 'chai';
 import raceUtils from '@/utils/races';
 
 describe('utils/races.js', () => {
-  describe('RiegelFormula method', () => {
+  describe('PurdyPointsModel method', () => {
     it('Predictions should be approximately correct', () => {
-      const result = raceUtils.RiegelFormula(400, 60, 800);
-      expect(result).to.be.closeTo(125, 0.5);
+      const result = raceUtils.PurdyPointsModel(5000, 1200, 10000);
+      expect(result).to.be.closeTo(2490, 1);
+    });
+
+    it('Should predict identical times for itentical distances', () => {
+      const result = raceUtils.PurdyPointsModel(5000, 1200, 5000);
+      expect(result).to.be.closeTo(1200, 0.001);
     });
   });
 
-  describe('CameronFormula method', () => {
+  describe('VO2MaxModel method', () => {
     it('Predictions should be approximately correct', () => {
-      const result = raceUtils.CameronFormula(800, 115, 1500);
-      expect(result).to.be.closeTo(238.48, 0.5);
+      const result = raceUtils.VO2MaxModel(5000, 1200, 10000);
+      expect(result).to.be.closeTo(2488, 1);
+    });
+
+    it('Should predict identical times for itentical distances', () => {
+      const result = raceUtils.VO2MaxModel(5000, 1200, 5000);
+      expect(result).to.be.closeTo(1200, 0.001);
     });
   });
 
-  describe('AverageFormula method', () => {
+  describe('CameronModel method', () => {
+    it('Predictions should be approximately correct', () => {
+      const result = raceUtils.CameronModel(5000, 1200, 10000);
+      expect(result).to.be.closeTo(2500, 1);
+    });
+
+    it('Should predict identical times for itentical distances', () => {
+      const result = raceUtils.CameronModel(5000, 1200, 5000);
+      expect(result).to.be.closeTo(1200, 0.001);
+    });
+  });
+
+  describe('RiegelModel method', () => {
+    it('Predictions should be approximately correct', () => {
+      const result = raceUtils.RiegelModel(5000, 1200, 10000);
+      expect(result).to.be.closeTo(2502, 1);
+    });
+
+    it('Should predict identical times for itentical distances', () => {
+      const result = raceUtils.RiegelModel(5000, 1200, 5000);
+      expect(result).to.be.closeTo(1200, 0.001);
+    });
+  });
+
+  describe('AverageModel method', () => {
     it('Predictions should be correct', () => {
-      const result = raceUtils.AverageFormula(5000, 20 * 60, 10000);
-      const riegel = raceUtils.RiegelFormula(5000, 20 * 60, 10000);
-      const cameron = raceUtils.CameronFormula(5000, 20 * 60, 10000);
-      expect(result).to.equal((riegel + cameron) / 2);
+      const result = raceUtils.AverageModel(5000, 1200, 10000);
+      const riegel = raceUtils.RiegelModel(5000, 1200, 10000);
+      const cameron = raceUtils.CameronModel(5000, 1200, 10000);
+      const purdyPoints = raceUtils.PurdyPointsModel(5000, 1200, 10000);
+      const vo2Max = raceUtils.VO2MaxModel(5000, 1200, 10000);
+      expect(result).to.equal((riegel + cameron + purdyPoints + vo2Max) / 4);
+    });
+
+    it('Should predict identical times for itentical distances', () => {
+      const result = raceUtils.AverageModel(5000, 1200, 5000);
+      expect(result).to.be.closeTo(1200, 0.001);
     });
   });
 });

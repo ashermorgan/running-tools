@@ -24,12 +24,11 @@ describe('views/RaceCalculator.vue', () => {
     });
 
     // Assert result is correct
-    const riegel = raceUtils.RiegelFormula(5000, 20 * 60, 10000);
-    const cameron = raceUtils.CameronFormula(5000, 20 * 60, 10000);
+    const prediction = raceUtils.AverageModel(5000, 1200, 10000);
     expect(result).to.deep.equal({
       distanceValue: 10,
       distanceUnit: 'kilometers',
-      time: (riegel + cameron) / 2,
+      time: prediction,
     });
   });
 });

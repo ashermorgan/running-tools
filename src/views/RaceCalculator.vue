@@ -102,7 +102,7 @@ export default {
         unitUtils.DISTANCE_UNITS.meters);
 
       // Get prediction
-      const time = raceUtils.AverageFormula(d1, this.inputTime, d2);
+      const time = raceUtils.AverageModel(d1, this.inputTime, d2);
 
       // Return result
       return {
