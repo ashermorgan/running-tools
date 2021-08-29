@@ -8,7 +8,7 @@
           <th>Time</th>
 
           <th>
-            <button class="icon" title="Edit Targets" @click="inEditMode=true">
+            <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
               <img alt="" src="@/assets/edit.svg">
             </button>
           </th>
@@ -46,10 +46,10 @@
           <th>Edit Targets</th>
 
           <th>
-            <button class="icon" title="Reset Targets" @click="resetTargets">
+            <button class="icon" title="Reset Targets" @click="resetTargets" v-blur>
               <img alt="" src="@/assets/rotate-ccw.svg">
             </button>
-            <button class="icon" title="Close" @click="inEditMode=false">
+            <button class="icon" title="Close" @click="inEditMode=false" v-blur>
               <img alt="" src="@/assets/x.svg">
             </button>
           </th>
@@ -69,7 +69,7 @@
           </td>
 
           <td>
-            <button class="icon" title="Remove Target" @click="targets.splice(index, 1)">
+            <button class="icon" title="Remove Target" @click="targets.splice(index, 1)" v-blur>
               <img alt="" src="@/assets/trash-2.svg">
             </button>
           </td>
@@ -89,7 +89,7 @@
         <tr>
           <td colspan="2">
             <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
-              distanceUnit: 'miles'})">
+              distanceUnit: 'miles'})" v-blur>
               <img alt="" src="@/assets/plus-circle.svg">
             </button>
           </td>
@@ -105,11 +105,17 @@ import storage from '@/utils/localStorage';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 
+import blur from '@/directives/blur';
+
 export default {
   name: 'TimeTable',
 
   components: {
     DecimalInput,
+  },
+
+  directives: {
+    blur,
   },
 
   props: {
