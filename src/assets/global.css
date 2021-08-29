@@ -81,7 +81,7 @@ button, input, select, tr {
 }
 
 /* dark mode */
-@media (prefers-color-scheme: dark) {
+@media only screen and (prefers-color-scheme: dark) {
   :root {
     --background1: hsl(210, 20%, 10%);
     --background2: hsl(210, 20%, 15%);
@@ -92,5 +92,17 @@ button, input, select, tr {
   }
   .icon img {
     filter: invert(90%);
+  }
+}
+
+/* print media mode */
+@media only print {
+  :root {
+    --background1: #ffffff;
+    --background2: #ffffff;
+    --background3: #ffffff;
+    --background4: #ffffff;
+    --background5: #000000;
+    --foreground: #000000;
   }
 }
