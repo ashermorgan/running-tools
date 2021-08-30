@@ -6,6 +6,7 @@
 }
 body {
   font-family: Segoe UI, sans-serif;
+  touch-action: manipulation;
 }
 input, select, button {
   padding: 0.3em 0.5em;
@@ -46,8 +47,13 @@ body {
 button, input, select, option, tr:nth-child(2n) {
   background-color: var(--background2);
 }
-button:hover, button:focus, select:hover, select:focus, input:hover, input:focus {
+button:focus, select:focus, input:focus {
   background-color: var(--background3);
+}
+@media (hover: hover) {
+  button:hover, select:hover, input:hover {
+    background-color: var(--background3);
+  }
 }
 button:active {
   background-color: var(--background4);
