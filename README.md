@@ -1,8 +1,12 @@
 # running-tools
-A collection of tools for runners and their coaches that calculate splits,
-predict race times, convert units, and more
+A collection of tools for runners and their coaches. Try it out [here](https://ashermorgan.github.io/running-tools/).
 
-Try it out [here](https://ashermorgan.github.io/running-tools/)
+
+
+## Features
+- [Pace Calculator](https://ashermorgan.github.io/running-tools/#/calculate/paces): Calculate times for different distances at the same pace
+- [Race Calculator](https://ashermorgan.github.io/running-tools/#/calculate/races): Estimate equivalent times for races of different distances
+- [Unit Calculator](https://ashermorgan.github.io/running-tools/#/calculate/units): Convert between different distance, time, speed, and pace units
 
 
 
