@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { mount } from '@vue/test-utils';
 import IntInput from '@/components/IntInput.vue';
 
-describe('IntInput.vue', () => {
+describe('components/IntInput.vue', () => {
   it('value should be 0 by default', () => {
     // Initialize component
     const wrapper = mount(IntInput);
@@ -21,28 +21,32 @@ describe('IntInput.vue', () => {
     expect(wrapper.find('input').element.value).to.equal('1');
   });
 
-  it('up arrow should increment value', async () => {
+  it('up arrow should increment value by step', async () => {
     // Initialize component
-    const wrapper = mount(IntInput);
+    const wrapper = mount(IntInput, {
+      propsData: { step: 2 },
+    });
 
     // Press up arrow
     await wrapper.trigger('keydown', { key: 'ArrowUp' });
 
     // Assert value is 1 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('1');
-    expect(wrapper.emitted().input).to.deep.equal([[1]]);
+    expect(wrapper.find('input').element.value).to.equal('2');
+    expect(wrapper.emitted().input).to.deep.equal([[2]]);
   });
 
-  it('down arrow should increment value', async () => {
+  it('down arrow should increment value by step', async () => {
     // Initialize component
-    const wrapper = mount(IntInput);
+    const wrapper = mount(IntInput, {
+      propsData: { step: 2 },
+    });
 
     // Press down arrow
     await wrapper.trigger('keydown', { key: 'ArrowDown' });
 
     // Assert value is -1 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('-1');
-    expect(wrapper.emitted().input).to.deep.equal([[-1]]);
+    expect(wrapper.find('input').element.value).to.equal('-2');
+    expect(wrapper.emitted().input).to.deep.equal([[-2]]);
   });
 
   it('should fire input event when value changes', async () => {
@@ -224,6 +228,84 @@ describe('IntInput.vue', () => {
     // Assert value is still 10 and no new events were emitted
     expect(wrapper.find('input').element.value).to.equal('10');
     expect(wrapper.emitted().input).to.deep.equal([[10]]);
+  });
+
+  it('should not wrap to the maximum if it is null', async () => {
+    // Initialize component
+    const wrapper = mount(IntInput, {
+      propsData: {
+        min: -10, max: null, value: -10, step: 2, wrap: true,
+      },
+    });
+
+    // Try to decrement value
+    await wrapper.trigger('keydown', { key: 'ArrowDown' });
+
+    // Assert value is still -10 and no events were emitted
+    expect(wrapper.find('input').element.value).to.equal('-10');
+    expect(wrapper.emitted().input).to.equal(undefined);
+  });
+
+  it('should not wrap to the minimum if it is null', async () => {
+    // Initialize component
+    const wrapper = mount(IntInput, {
+      propsData: {
+        min: null, max: 10, value: 10, step: 2, wrap: true,
+      },
+    });
+
+    // Try to increment value
+    await wrapper.trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is still 10 and no events were emitted
+    expect(wrapper.find('input').element.value).to.equal('10');
+    expect(wrapper.emitted().input).to.equal(undefined);
+  });
+
+  it('should correctly wrap from the minimum to maximum', async () => {
+    // Initialize component
+    const wrapper = mount(IntInput, {
+      propsData: {
+        min: -10, max: 10, value: -9, step: 2, wrap: true,
+      },
+    });
+
+    // Decrement value
+    await wrapper.trigger('keydown', { key: 'ArrowDown' });
+
+    // Assert value is -10 and input event was emitted
+    expect(wrapper.find('input').element.value).to.equal('-10');
+    expect(wrapper.emitted().input).to.deep.equal([[-10]]);
+
+    // Decrement value
+    await wrapper.trigger('keydown', { key: 'ArrowDown' });
+
+    // Assert value is 10 and input event was emitted
+    expect(wrapper.find('input').element.value).to.equal('10');
+    expect(wrapper.emitted().input).to.deep.equal([[-10], [10]]);
+  });
+
+  it('should correctly wrap from the maximum to minimum', async () => {
+    // Initialize component
+    const wrapper = mount(IntInput, {
+      propsData: {
+        min: -10, max: 10, value: 9, step: 2, wrap: true,
+      },
+    });
+
+    // Increment value
+    await wrapper.trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is 10 and input event was emitted
+    expect(wrapper.find('input').element.value).to.equal('10');
+    expect(wrapper.emitted().input).to.deep.equal([[10]]);
+
+    // Increment value
+    await wrapper.trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is -10 and input event was emitted
+    expect(wrapper.find('input').element.value).to.equal('-10');
+    expect(wrapper.emitted().input).to.deep.equal([[10], [-10]]);
   });
 
   it('should format value according to padding prop', async () => {

@@ -15,14 +15,16 @@
     </header>
 
     <div id="route-content">
-      <router-view/>
+      <keep-alive>
+        <router-view/>
+      </keep-alive>
     </div>
   </div>
 </template>
 
 <style scoped>
 header {
-  background-color: hsl(30, 100%, 50%);
+  background-color: var(--theme);
   padding: 0.5em;
   display: grid;
   grid-template-columns: 2em 1fr auto 1fr 2em;
@@ -34,6 +36,10 @@ header a {
   height: 2em;
   width: 2em;
 }
+header a img {
+  padding: 0em;
+  filter: invert(0%) !important;
+}
 h1 {
   grid-column: 3;
   font-size: 2em;
@@ -43,5 +49,11 @@ h1 {
 }
 #route-content {
   margin: 1em;
+}
+@media only screen and (max-width: 320px) {
+  /* adjust title size to fit small devices */
+  h1 {
+    font-size: 8vw;
+  }
 }
 </style>

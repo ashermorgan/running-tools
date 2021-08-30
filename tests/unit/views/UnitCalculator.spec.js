@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import UnitCalculator from '@/views/UnitCalculator.vue';
 
-describe('UnitCalculator.vue', () => {
+describe('views/UnitCalculator.vue', () => {
   it('should correctly update controls when category changes', async () => {
     // Initialize component
     const wrapper = shallowMount(UnitCalculator);

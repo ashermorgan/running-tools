@@ -1,13 +1,13 @@
 <template>
   <div class="time-input">
     <int-input class="hours" aria-label="hours"
-      :min="0" :max="23" :padding="1" v-model="hours"/>
+      :min="0" :max="99" :padding="1" v-model="hours"/>
     <span>:</span>
     <int-input class="minutes" aria-label="minutes"
-      :min="0" :max="59" :padding="2" v-model="minutes"/>
+      :min="0" :max="59" wrap :padding="2" v-model="minutes"/>
     <span>:</span>
     <decimal-input class="seconds" aria-label="seconds"
-      :min="0" :max="59.99" :padding="2" :digits="2" v-model="seconds"/>
+      :min="0" :max="59.99" wrap :padding="2" :digits="2" v-model="seconds"/>
   </div>
 </template>
 
@@ -93,7 +93,7 @@ div {
   display: inline-block;
 }
 .hours, .minutes {
-  width: 2em;
+  width: 2.5em;
 }
 .seconds {
   width: 4em;

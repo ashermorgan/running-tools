@@ -1,10 +1,9 @@
 <template>
-  <div class="pace-calculator">
+  <div class="race-calculator">
     <div class="input">
       Running
-      <decimal-input v-model="inputDistance" aria-label="distance value"
-        :min="0" :digits="2"/>
-      <select v-model="inputUnit" aria-label="distance unit">
+      <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
+      <select v-model="inputUnit" aria-label="Distance unit">
         <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
           {{ value }}
         </option>
@@ -13,15 +12,15 @@
       <time-input v-model="inputTime"/>
     </div>
 
-    <p>is the same pace as running</p>
+    <p>is approximately equivalent to running</p>
 
-    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
-      storage-key="pace-calculator-targets"/>
+    <time-table class="output" :calculate-result="predictTime" :default-targets="defaultTargets"
+      storage-key="race-calculator-targets"/>
   </div>
 </template>
 
 <script>
-import paceUtils from '@/utils/paces';
+import raceUtils from '@/utils/races';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -29,7 +28,7 @@ import TimeInput from '@/components/TimeInput.vue';
 import TimeTable from '@/components/TimeTable.vue';
 
 export default {
-  name: 'PaceCalculator',
+  name: 'RaceCalculator',
 
   components: {
     DecimalInput,
@@ -42,17 +41,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 1,
+      inputDistance: 5,
 
       /**
        * The input distance unit
        */
-      inputUnit: 'miles',
+      inputUnit: 'kilometers',
 
       /**
        * The input time value
        */
-      inputTime: 10 * 60,
+      inputTime: 20 * 60,
 
       /**
        * The names of the distance units
@@ -63,11 +62,7 @@ export default {
        * The default output targets
        */
       defaultTargets: [
-        { distanceValue: 100, distanceUnit: 'meters' },
-        { distanceValue: 200, distanceUnit: 'meters' },
-        { distanceValue: 300, distanceUnit: 'meters' },
         { distanceValue: 400, distanceUnit: 'meters' },
-        { distanceValue: 600, distanceUnit: 'meters' },
         { distanceValue: 800, distanceUnit: 'meters' },
         { distanceValue: 1000, distanceUnit: 'meters' },
         { distanceValue: 1200, distanceUnit: 'meters' },
@@ -75,11 +70,8 @@ export default {
         { distanceValue: 1600, distanceUnit: 'meters' },
         { distanceValue: 3200, distanceUnit: 'meters' },
 
-        { distanceValue: 2, distanceUnit: 'kilometers' },
         { distanceValue: 3, distanceUnit: 'kilometers' },
-        { distanceValue: 4, distanceUnit: 'kilometers' },
         { distanceValue: 5, distanceUnit: 'kilometers' },
-        { distanceValue: 6, distanceUnit: 'kilometers' },
         { distanceValue: 8, distanceUnit: 'kilometers' },
         { distanceValue: 10, distanceUnit: 'kilometers' },
         { distanceValue: 15, distanceUnit: 'kilometers' },
@@ -88,8 +80,6 @@ export default {
         { distanceValue: 2, distanceUnit: 'miles' },
         { distanceValue: 3, distanceUnit: 'miles' },
         { distanceValue: 5, distanceUnit: 'miles' },
-        { distanceValue: 6, distanceUnit: 'miles' },
-        { distanceValue: 8, distanceUnit: 'miles' },
         { distanceValue: 10, distanceUnit: 'miles' },
 
         { distanceValue: 0.5, distanceUnit: 'marathons' },
@@ -98,30 +88,21 @@ export default {
     };
   },
 
-  computed: {
-    /**
-     * The input pace (in seconds per meter)
-     */
-    pace() {
-      const distance = unitUtils.convertDistance(this.inputDistance,
-        this.inputUnit, unitUtils.DISTANCE_UNITS.meters);
-      return paceUtils.getPace(distance, this.inputTime);
-    },
-  },
-
   methods: {
     /**
-     * Calculate paces from a target
+     * Predict race times from a target
      * @param {Object} target The target
      * @returns {Object} The result
      */
-    calculatePace(target) {
-      // Convert distance into meters
-      const distance = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
+    predictTime(target) {
+      // Convert distances into meters
+      const d1 = unitUtils.convertDistance(this.inputDistance, this.inputUnit,
+        unitUtils.DISTANCE_UNITS.meters);
+      const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
         unitUtils.DISTANCE_UNITS.meters);
 
-      // Calculate time to travel distance at input pace
-      const time = paceUtils.getTime(this.pace, distance);
+      // Get prediction
+      const time = raceUtils.AverageModel(d1, this.inputTime, d2);
 
       // Return result
       return {
@@ -136,7 +117,7 @@ export default {
 
 <style scoped>
 /* container */
-.pace-calculator {
+.race-calculator {
   display: flex;
   flex-direction: column;
   align-items: center;
