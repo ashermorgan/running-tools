@@ -24,7 +24,7 @@ describe('views/RaceCalculator.vue', () => {
     });
 
     // Assert result is correct
-    const prediction = raceUtils.AverageModel(5000, 1200, 10000);
+    const prediction = raceUtils.AverageModel.predictTime(5000, 1200, 10000);
     expect(result).to.deep.equal({
       distanceValue: 10,
       distanceUnit: 'kilometers',
