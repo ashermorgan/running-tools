@@ -2,12 +2,12 @@
 
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
-import TimeTable from '@/components/TimeTable.vue';
+import TargetTable from '@/components/TargetTable.vue';
 
-describe('components/TimeTable.vue', () => {
+describe('components/TargetTable.vue', () => {
   it('results should be correct and sorted by time', () => {
     // Initialize component
-    const wrapper = shallowMount(TimeTable, {
+    const wrapper = shallowMount(TargetTable, {
       propsData: {
         calculateResult: (row) => ({
           distanceValue: row.distanceValue,

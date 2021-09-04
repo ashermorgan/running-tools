@@ -15,7 +15,7 @@
 
     <p>is the same pace as running</p>
 
-    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
+    <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
       storage-key="pace-calculator-targets"/>
   </div>
 </template>
@@ -26,7 +26,7 @@ import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TimeTable from '@/components/TimeTable.vue';
+import TargetTable from '@/components/TargetTable.vue';
 
 export default {
   name: 'PaceCalculator',
@@ -34,7 +34,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TimeTable,
+    TargetTable,
   },
 
   data() {
