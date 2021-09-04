@@ -52,7 +52,7 @@ export default {
       /**
        * The input time value
        */
-      inputTime: 10 * 60,
+      inputTime: 8 * 60,
 
       /**
        * The names of the distance units
