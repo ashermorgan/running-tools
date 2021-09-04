@@ -17,24 +17,24 @@
 
       <tbody>
         <tr v-for="(item, index) in results" :key="index">
-          <td>
+          <td :class="item.result === 'distance' ? 'result' : ''">
             {{ item.distanceValue.toFixed(2) }}
             {{ distanceSymbols[item.distanceUnit] }}
           </td>
 
           <td>in</td>
 
-          <td colspan="2">
+          <td colspan="2" :class="item.result === 'time' ? 'result' : ''">
             {{ formatDuration(item.time, 0, 2) }}
           </td>
         </tr>
 
         <tr v-if="results.length === 0" class="empty-message">
           <td colspan="4">
-            There aren't any targets,<br>
+            There aren't any targets yet,<br>
             click
             <img alt="Edit Targets" src="@/assets/edit.svg">
-            to add one
+            to edit the list of targets
           </td>
         </tr>
       </tbody>
@@ -58,7 +58,7 @@
 
       <tbody>
         <tr v-for="(item, index) in targets" :key="index">
-          <td>
+          <td v-if="item.result === 'time'">
             <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
               :min="0" :digits="2"/>
             <select v-model="item.distanceUnit" aria-label="Distance Unit">
@@ -66,6 +66,10 @@
                 {{ value }}
               </option>
             </select>
+          </td>
+
+          <td v-else>
+            <time-input v-model="item.time" aria-label="Time"/>
           </td>
 
           <td>
@@ -77,10 +81,7 @@
 
         <tr v-if="targets.length === 0" class="empty-message">
           <td colspan="2">
-            There aren't any targets,<br>
-            click
-            <img alt="Add Target" src="@/assets/plus-circle.svg">
-            to add one
+            There aren't any targets yet
           </td>
         </tr>
       </tbody>
@@ -88,9 +89,13 @@
       <tfoot>
         <tr>
           <td colspan="2">
-            <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
-              distanceUnit: 'miles'})" v-blur>
-              <img alt="" src="@/assets/plus-circle.svg">
+            <button title="Add Distance Target" @click="targets.push({ result: 'time',
+              distanceValue: 1, distanceUnit: 'miles' })" v-blur>
+              Add distance target
+            </button>
+            <button title="Add Time Target" @click="targets.push({ result: 'distance',
+              time: 600 })" v-blur>
+              Add time target
             </button>
           </td>
         </tr>
@@ -104,6 +109,7 @@ import unitUtils from '@/utils/units';
 import storage from '@/utils/localStorage';
 
 import DecimalInput from '@/components/DecimalInput.vue';
+import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
 
@@ -112,6 +118,7 @@ export default {
 
   components: {
     DecimalInput,
+    TimeInput,
   },
 
   directives: {
@@ -230,8 +237,14 @@ export default {
      * Sort the targets by distance
      */
     sortTargets() {
-      this.targets.sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit,
-        'meters') - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters'));
+      this.targets = [
+        ...this.targets.filter((item) => item.result === 'time')
+          .sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit, 'meters')
+            - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters')),
+
+        ...this.targets.filter((item) => item.result === 'distance')
+          .sort((a, b) => a.time - b.time),
+      ];
     },
   },
 
@@ -249,6 +262,9 @@ export default {
 .results th:last-child {
   text-align: right;
 }
+.results .result {
+  font-weight: bold;
+}
 
 /* edit targets table */
 .targets th:last-child, .targets td:last-child {
@@ -256,10 +272,14 @@ export default {
 }
 .targets td select {
   margin-left: 0.2em;
+  width: 8em;
 }
 .targets tfoot td {
   text-align: center !important;
   padding: 0.5em 0.2em;
+}
+.targets tfoot button {
+  margin: 0.5em;
 }
 
 /* general table styles */

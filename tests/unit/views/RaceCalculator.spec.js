@@ -3,6 +3,7 @@
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import raceUtils from '@/utils/races';
+import unitUtils from '@/utils/units';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 
 describe('views/RaceCalculator.vue', () => {
@@ -14,13 +15,14 @@ describe('views/RaceCalculator.vue', () => {
     await wrapper.setData({
       inputDistance: 5,
       inputUnit: 'kilometers',
-      inputTime: 20 * 60,
+      inputTime: 1200,
     });
 
     // Predict race times
     const result = wrapper.vm.predictTime({
       distanceValue: 10,
       distanceUnit: 'kilometers',
+      result: 'time',
     });
 
     // Assert result is correct
@@ -29,6 +31,34 @@ describe('views/RaceCalculator.vue', () => {
       distanceValue: 10,
       distanceUnit: 'kilometers',
       time: prediction,
+      result: 'time',
+    });
+  });
+
+  it('should correctly predict race distances', async () => {
+    // Initialize component
+    const wrapper = shallowMount(RaceCalculator);
+
+    // Override input values
+    await wrapper.setData({
+      inputDistance: 5,
+      inputUnit: 'kilometers',
+      inputTime: 1200,
+    });
+
+    // Predict race distances
+    const result = wrapper.vm.predictTime({
+      time: 2460,
+      result: 'distance',
+    });
+
+    // Assert result is correct
+    const prediction = raceUtils.AverageModel.predictDistance(1200, 5000, 2460);
+    expect(result).to.deep.equal({
+      distanceValue: unitUtils.convertDistance(prediction, 'meters', 'miles'),
+      distanceUnit: 'miles',
+      time: 2460,
+      result: 'distance',
     });
   });
 });
