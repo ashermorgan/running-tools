@@ -15,7 +15,7 @@
 
     <p>is the same pace as running</p>
 
-    <time-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
+    <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
       storage-key="pace-calculator-targets"/>
   </div>
 </template>
@@ -26,7 +26,7 @@ import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TimeTable from '@/components/TimeTable.vue';
+import TargetTable from '@/components/TargetTable.vue';
 
 export default {
   name: 'PaceCalculator',
@@ -34,7 +34,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TimeTable,
+    TargetTable,
   },
 
   data() {
@@ -52,7 +52,7 @@ export default {
       /**
        * The input time value
        */
-      inputTime: 10 * 60,
+      inputTime: 8 * 60,
 
       /**
        * The names of the distance units
@@ -63,37 +63,41 @@ export default {
        * The default output targets
        */
       defaultTargets: [
-        { distanceValue: 100, distanceUnit: 'meters' },
-        { distanceValue: 200, distanceUnit: 'meters' },
-        { distanceValue: 300, distanceUnit: 'meters' },
-        { distanceValue: 400, distanceUnit: 'meters' },
-        { distanceValue: 600, distanceUnit: 'meters' },
-        { distanceValue: 800, distanceUnit: 'meters' },
-        { distanceValue: 1000, distanceUnit: 'meters' },
-        { distanceValue: 1200, distanceUnit: 'meters' },
-        { distanceValue: 1500, distanceUnit: 'meters' },
-        { distanceValue: 1600, distanceUnit: 'meters' },
-        { distanceValue: 3200, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 100, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 200, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 300, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 600, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
 
-        { distanceValue: 2, distanceUnit: 'kilometers' },
-        { distanceValue: 3, distanceUnit: 'kilometers' },
-        { distanceValue: 4, distanceUnit: 'kilometers' },
-        { distanceValue: 5, distanceUnit: 'kilometers' },
-        { distanceValue: 6, distanceUnit: 'kilometers' },
-        { distanceValue: 8, distanceUnit: 'kilometers' },
-        { distanceValue: 10, distanceUnit: 'kilometers' },
-        { distanceValue: 15, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 4, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
 
-        { distanceValue: 1, distanceUnit: 'miles' },
-        { distanceValue: 2, distanceUnit: 'miles' },
-        { distanceValue: 3, distanceUnit: 'miles' },
-        { distanceValue: 5, distanceUnit: 'miles' },
-        { distanceValue: 6, distanceUnit: 'miles' },
-        { distanceValue: 8, distanceUnit: 'miles' },
-        { distanceValue: 10, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 6, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 8, distanceUnit: 'miles' },
+        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
 
-        { distanceValue: 0.5, distanceUnit: 'marathons' },
-        { distanceValue: 1, distanceUnit: 'marathons' },
+        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
+        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
+
+        { result: 'distance', distanceUnit: 'miles', time: 600 },
+        { result: 'distance', distanceUnit: 'miles', time: 1800 },
+        { result: 'distance', distanceUnit: 'miles', time: 3600 },
       ],
     };
   },
@@ -116,19 +120,40 @@ export default {
      * @returns {Object} The result
      */
     calculatePace(target) {
-      // Convert distance into meters
-      const distance = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
-        unitUtils.DISTANCE_UNITS.meters);
-
-      // Calculate time to travel distance at input pace
-      const time = paceUtils.getTime(this.pace, distance);
-
-      // Return result
-      return {
+      // Initialize result
+      const result = {
         distanceValue: target.distanceValue,
         distanceUnit: target.distanceUnit,
-        time,
+        time: target.time,
+        result: target.result,
       };
+
+      // Add missing value to result
+      if (target.result === 'time') {
+        // Convert target distance into meters
+        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
+          unitUtils.DISTANCE_UNITS.meters);
+
+        // Calculate time to travel distance at input pace
+        const time = paceUtils.getTime(this.pace, d2);
+
+        // Update result
+        result.time = time;
+      } else {
+        // Calculate distance traveled in time at input pace
+        let distance = paceUtils.getDistance(this.pace, target.time);
+
+        // Convert output distance into miles
+        distance = unitUtils.convertDistance(distance, unitUtils.DISTANCE_UNITS.meters,
+          unitUtils.DISTANCE_UNITS.miles);
+
+        // Update result
+        result.distanceValue = distance;
+        result.distanceUnit = 'miles';
+      }
+
+      // Return result
+      return result;
     },
   },
 };
