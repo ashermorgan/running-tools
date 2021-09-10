@@ -6,7 +6,7 @@
         :min="0" :digits="2"/>
       <select v-model="inputUnit" aria-label="distance unit">
         <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-          {{ value }}
+          {{ value.name }}
         </option>
       </select>
       in
@@ -57,7 +57,7 @@ export default {
       /**
        * The names of the distance units
        */
-      distanceUnits: unitUtils.DISTANCE_UNIT_NAMES,
+      distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
        * The default output targets
@@ -107,8 +107,7 @@ export default {
      * The input pace (in seconds per meter)
      */
     pace() {
-      const distance = unitUtils.convertDistance(this.inputDistance,
-        this.inputUnit, unitUtils.DISTANCE_UNITS.meters);
+      const distance = unitUtils.convertDistance(this.inputDistance, this.inputUnit, 'meters');
       return paceUtils.getPace(distance, this.inputTime);
     },
   },
@@ -131,8 +130,7 @@ export default {
       // Add missing value to result
       if (target.result === 'time') {
         // Convert target distance into meters
-        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
-          unitUtils.DISTANCE_UNITS.meters);
+        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
         // Calculate time to travel distance at input pace
         const time = paceUtils.getTime(this.pace, d2);
@@ -144,8 +142,7 @@ export default {
         let distance = paceUtils.getDistance(this.pace, target.time);
 
         // Convert output distance into miles
-        distance = unitUtils.convertDistance(distance, unitUtils.DISTANCE_UNITS.meters,
-          unitUtils.DISTANCE_UNITS.miles);
+        distance = unitUtils.convertDistance(distance, 'meters', 'miles');
 
         // Update result
         result.distanceValue = distance;

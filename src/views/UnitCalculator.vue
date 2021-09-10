@@ -12,8 +12,8 @@
       v-model="inputValue" :min="0" :digits="2"/>
 
     <select v-model="inputUnit" class="input-units" aria-label="input units">
-      <option v-for="(value, key) in unitNames" :key="key" :value="key">
-        {{ value }}
+      <option v-for="(value, key) in units" :key="key" :value="key">
+        {{ value.name }}
       </option>
     </select>
 
@@ -27,8 +27,8 @@
     </span>
 
     <select v-model="outputUnit" class="output-units" aria-label="output units">
-      <option v-for="(value, key) in unitNames" :key="key" :value="key">
-        {{ value }}
+      <option v-for="(value, key) in units" :key="key" :value="key">
+        {{ value.name }}
       </option>
     </select>
   </div>
@@ -81,16 +81,23 @@ export default {
     /**
      * The names of the units in the current category
      */
-    unitNames() {
+    units() {
       switch (this.category) {
         case 'distance': {
-          return unitUtils.DISTANCE_UNIT_NAMES;
+          return unitUtils.DISTANCE_UNITS;
         }
         case 'time': {
-          return { ...unitUtils.TIME_UNIT_NAMES, 'hh:mm:ss': 'hh:mm:ss' };
+          return {
+            ...unitUtils.TIME_UNITS,
+            'hh:mm:ss': {
+              name: 'hh:mm:ss',
+              symbol: '',
+              value: null,
+            },
+          };
         }
         case 'speed_and_pace': {
-          return { ...unitUtils.PACE_UNIT_NAMES, ...unitUtils.SPEED_UNIT_NAMES };
+          return { ...unitUtils.PACE_UNITS, ...unitUtils.SPEED_UNITS };
         }
         default: {
           return {};
@@ -108,18 +115,8 @@ export default {
         }
         case 'time': {
           // Correct input and output units for 'hh:mm:ss' unit
-          let realInput;
-          if (this.inputUnit === 'hh:mm:ss') {
-            realInput = unitUtils.TIME_UNITS.seconds;
-          } else {
-            realInput = this.inputUnit;
-          }
-          let realOutput;
-          if (this.outputUnit === 'hh:mm:ss') {
-            realOutput = unitUtils.TIME_UNITS.seconds;
-          } else {
-            realOutput = this.outputUnit;
-          }
+          const realInput = this.inputUnit === 'hh:mm:ss' ? 'seconds' : this.inputUnit;
+          const realOutput = this.outputUnit === 'hh:mm:ss' ? 'seconds' : this.outputUnit;
 
           // Calculate conversion
           return unitUtils.convertTime(this.inputValue, realInput, realOutput);

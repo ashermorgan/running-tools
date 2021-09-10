@@ -5,7 +5,7 @@
       <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
       <select v-model="inputUnit" aria-label="Distance unit">
         <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-          {{ value }}
+          {{ value.name }}
         </option>
       </select>
       in
@@ -56,7 +56,7 @@ export default {
       /**
        * The names of the distance units
        */
-      distanceUnits: unitUtils.DISTANCE_UNIT_NAMES,
+      distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
        * The default output targets
@@ -99,8 +99,7 @@ export default {
      */
     predictTime(target) {
       // Convert input race distance into meters
-      const d1 = unitUtils.convertDistance(this.inputDistance, this.inputUnit,
-        unitUtils.DISTANCE_UNITS.meters);
+      const d1 = unitUtils.convertDistance(this.inputDistance, this.inputUnit, 'meters');
 
       // Initialize result
       const result = {
@@ -113,8 +112,7 @@ export default {
       // Add missing value to result
       if (target.result === 'time') {
         // Convert target distance into meters
-        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit,
-          unitUtils.DISTANCE_UNITS.meters);
+        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
         // Get prediction
         const time = raceUtils.AverageModel.predictTime(d1, this.inputTime, d2);
@@ -126,8 +124,7 @@ export default {
         let distance = raceUtils.AverageModel.predictDistance(this.inputTime, d1, target.time);
 
         // Convert output distance into miles
-        distance = unitUtils.convertDistance(distance, unitUtils.DISTANCE_UNITS.meters,
-          unitUtils.DISTANCE_UNITS.miles);
+        distance = unitUtils.convertDistance(distance, 'meters', 'miles');
 
         // Update result
         result.distanceValue = distance;

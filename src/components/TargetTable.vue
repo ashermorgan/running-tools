@@ -19,7 +19,7 @@
         <tr v-for="(item, index) in results" :key="index">
           <td :class="item.result === 'distance' ? 'result' : ''">
             {{ item.distanceValue.toFixed(2) }}
-            {{ distanceSymbols[item.distanceUnit] }}
+            {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
 
           <td>in</td>
@@ -63,7 +63,7 @@
               :min="0" :digits="2"/>
             <select v-model="item.distanceUnit" aria-label="Distance Unit">
               <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-                {{ value }}
+                {{ value.name }}
               </option>
             </select>
           </td>
@@ -154,14 +154,9 @@ export default {
   data() {
     return {
       /**
-       * The names of the distance units
+       * The distance units
        */
-      distanceUnits: unitUtils.DISTANCE_UNIT_NAMES,
-
-      /**
-       * The symbols of the distance units
-       */
-      distanceSymbols: unitUtils.DISTANCE_UNIT_SYMBOLS,
+      distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
        * The formatDuration method
