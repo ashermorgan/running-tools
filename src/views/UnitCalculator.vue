@@ -20,10 +20,10 @@
     <span class="equals"> = </span>
 
     <span v-if="getUnitType(outputUnit) === 'time'" class="output-value">
-      {{ formatDuration(outputValue) }}
+      {{ formatDuration(outputValue, 6, 3) }}
     </span>
     <span v-else class="output-value">
-      {{ outputValue.toFixed(2) }}
+      {{ outputValue.toFixed(3) }}
     </span>
 
     <select v-model="outputUnit" class="output-units" aria-label="output units">
