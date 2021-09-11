@@ -3,7 +3,7 @@
     <table class="results" v-show="!inEditMode">
       <thead>
         <tr>
-          <th colspan="2">Distance</th>
+          <th>Distance</th>
 
           <th>Time</th>
 
@@ -21,8 +21,6 @@
             {{ item.distanceValue.toFixed(2) }}
             {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
-
-          <td>in</td>
 
           <td colspan="2" :class="item.result === 'time' ? 'result' : ''">
             {{ formatDuration(item.time, 0, 2) }}

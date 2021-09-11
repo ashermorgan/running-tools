@@ -1,18 +1,23 @@
 <template>
   <div class="race-calculator">
+    <h2>Input Race Result:</h2>
     <div class="input">
-      Running
-      <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
-      <select v-model="inputUnit" aria-label="Distance unit">
-        <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-          {{ value.name }}
-        </option>
-      </select>
-      in
-      <time-input v-model="inputTime"/>
+      <div>
+        Distance:
+        <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
+        <select v-model="inputUnit" aria-label="Distance unit">
+          <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
+            {{ value.name }}
+          </option>
+        </select>
+      </div>
+      <div>
+        Time:
+        <time-input v-model="inputTime"/>
+      </div>
     </div>
 
-    <p>is approximately equivalent to running</p>
+    <h2>Equivalent Race Results:</h2>
 
     <target-table class="output" :calculate-result="predictTime" :default-targets="defaultTargets"
       storage-key="race-calculator-targets"/>
@@ -146,11 +151,16 @@ export default {
   align-items: center;
 }
 
-/* calculator input */
-.input {
-  text-align: center;
-  margin-bottom: 5px;
+/* headings */
+h2 {
+  font-size: 1.3em;
+  margin-bottom: 0.2em;
 }
+* + h2 {
+  margin-top: 0.5em;
+}
+
+/* calculator input */
 .input>* {
   margin-bottom: 5px;  /* adds space between wrapped lines */
 }
@@ -160,7 +170,6 @@ export default {
 
 /* calculator output */
 .output {
-  margin-top: 10px;
   min-width: 300px;
 }
 @media only screen and (max-width: 500px) {
