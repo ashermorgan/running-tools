@@ -7,6 +7,8 @@
 
           <th>Time</th>
 
+          <th v-if="showPace">Pace</th>
+
           <th>
             <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
               <img alt="" src="@/assets/edit.svg">
@@ -22,8 +24,13 @@
             {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
 
-          <td colspan="2" :class="item.result === 'time' ? 'result' : ''">
+          <td :colspan="showPace ? 1 : 2" :class="item.result === 'time' ? 'result' : ''">
             {{ formatDuration(item.time, 0, 2) }}
+          </td>
+
+          <td v-if="showPace" colspan="2">
+            {{ formatDuration(getPace(item), 0, 0) }}
+            / mi
           </td>
         </tr>
 
@@ -147,6 +154,14 @@ export default {
       type: String,
       default: null,
     },
+
+    /**
+     * Whether to show result paces
+     */
+    showPace: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -238,6 +253,15 @@ export default {
         ...this.targets.filter((item) => item.result === 'distance')
           .sort((a, b) => a.time - b.time),
       ];
+    },
+
+    /**
+     * Get the pace of a result
+     * @param {Object} result The result
+     */
+    getPace(result) {
+      return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
+        'miles');
     },
   },
 

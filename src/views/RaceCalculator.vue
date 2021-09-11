@@ -20,7 +20,7 @@
     <h2>Equivalent Race Results:</h2>
 
     <target-table class="output" :calculate-result="predictTime" :default-targets="defaultTargets"
-      storage-key="race-calculator-targets"/>
+      storage-key="race-calculator-targets" show-pace/>
   </div>
 </template>
 
