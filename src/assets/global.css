@@ -15,6 +15,21 @@ input, select, button {
 button {
   cursor: pointer;
 }
+.link, .link:focus, .link:active, .link:hover {
+  border: none;
+  background: none;
+}
+a, .link {
+  text-decoration: none;
+}
+a:focus, .link:focus {
+  text-decoration: underline;
+}
+@media (hover: hover) {
+  a:hover, .link:hover {
+    text-decoration: underline;
+  }
+}
 
 /* styles for icons */
 .icon {
@@ -61,6 +76,9 @@ button:active {
 button, input, select, tr {
   border: 1px solid var(--background5);
 }
+a, .link {
+  color: var(--link);
+}
 
 /* light/default theme */
 :root {
@@ -84,6 +102,9 @@ button, input, select, tr {
 
   /* The foreground color of app elements */
   --foreground: #000000;
+
+  /* The color of links */
+  --link: hsl(210, 100%, 40%);
 }
 
 /* dark mode */
@@ -95,6 +116,7 @@ button, input, select, tr {
     --background4: hsl(210, 20%, 25%);
     --background5: hsl(210, 20%, 30%);
     --foreground: #e8e8e8;
+    --link: hsl(210, 100%, 65%);
   }
   .icon img {
     filter: invert(90%);
@@ -110,5 +132,6 @@ button, input, select, tr {
     --background4: #ffffff;
     --background5: #000000;
     --foreground: #000000;
+    --link: #0000ff;
   }
 }

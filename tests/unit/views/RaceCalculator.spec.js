@@ -19,7 +19,7 @@ describe('views/RaceCalculator.vue', () => {
     });
 
     // Predict race times
-    const result = wrapper.vm.predictTime({
+    const result = wrapper.vm.predictResult({
       distanceValue: 10,
       distanceUnit: 'kilometers',
       result: 'time',
@@ -47,7 +47,7 @@ describe('views/RaceCalculator.vue', () => {
     });
 
     // Predict race distances
-    const result = wrapper.vm.predictTime({
+    const result = wrapper.vm.predictResult({
       time: 2460,
       result: 'distance',
     });
