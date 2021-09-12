@@ -1,6 +1,6 @@
 <template>
   <div class="race-calculator">
-    <h2>Input Race Result:</h2>
+    <h2>Input Race Result</h2>
     <div class="input">
       <div>
         Distance:
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <h2>Equivalent Race Results:</h2>
+    <h2>Equivalent Race Results</h2>
 
     <target-table class="output" :calculate-result="predictTime" :default-targets="defaultTargets"
       storage-key="race-calculator-targets" show-pace/>

@@ -1,6 +1,6 @@
 <template>
   <div class="pace-calculator">
-    <h2>Input Pace:</h2>
+    <h2>Input Pace</h2>
     <div class="input">
       <div>
         Distance:
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <h2>Equivalent Paces:</h2>
+    <h2>Equivalent Paces</h2>
 
     <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
       storage-key="pace-calculator-targets"/>
