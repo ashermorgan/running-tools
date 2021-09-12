@@ -31,7 +31,7 @@ export default {
       type: Number,
       default: 0,
       validator(value) {
-        return value >= 0 && value <= 86399.99;
+        return value >= 0 && value <= 359999.99;
       },
     },
   },
