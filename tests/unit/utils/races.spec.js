@@ -3,6 +3,13 @@ import raceUtils from '@/utils/races';
 
 describe('utils/races.js', () => {
   describe('PurdyPointsModel', () => {
+    describe('getPurdyPoints method', () => {
+      it('Result should be approximately correct', () => {
+        const result = raceUtils.PurdyPointsModel.getPurdyPoints(5000, 1200);
+        expect(result).to.be.closeTo(454, 1);
+      });
+    });
+
     describe('PredictTime method', () => {
       it('Predictions should be approximately correct', () => {
         const result = raceUtils.PurdyPointsModel.predictTime(5000, 1200, 10000);
@@ -29,6 +36,27 @@ describe('utils/races.js', () => {
   });
 
   describe('VO2MaxModel', () => {
+    describe('getVO2 method', () => {
+      it('Result should be approximately correct', () => {
+        const result = raceUtils.VO2MaxModel.getVO2(5000, 1200);
+        expect(result).to.be.closeTo(47.4, 0.1);
+      });
+    });
+
+    describe('getVO2Percentage method', () => {
+      it('Result should be approximately correct', () => {
+        const result = raceUtils.VO2MaxModel.getVO2Percentage(660);
+        expect(result).to.be.closeTo(1, 0.001);
+      });
+    });
+
+    describe('getVO2Max method', () => {
+      it('Result should be approximately correct', () => {
+        const result = raceUtils.VO2MaxModel.getVO2Max(5000, 1200);
+        expect(result).to.be.closeTo(49.8, 0.1);
+      });
+    });
+
     describe('PredictTime method', () => {
       it('Predictions should be approximately correct', () => {
         const result = raceUtils.VO2MaxModel.predictTime(5000, 1200, 10000);

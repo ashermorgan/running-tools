@@ -36,13 +36,11 @@ function NewtonsMethod(initialEstimate, target, method, derivative, precision, i
  */
 const PurdyPointsModel = {
   /**
-   * Predict a race time using the Purdy Points Model
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @returns {Number} The predicted time for the output race in seconds
+   * Calculate the Purdy Point variables for a distance
+   * @param {Number} d The distance in meters
+   * @returns {Object} The Purdy Point variables
    */
-  predictTime(d1, t1, d2) {
+  getVariables(d) {
     // Declare constants
     const c1 = 11.15895;
     const c2 = 4.304605;
@@ -56,34 +54,59 @@ const PurdyPointsModel = {
     const r5 = 5.220990e-9;
 
     // Calculate world record velocity from running curve
-    const v1 = (-c1 * Math.exp(-r1 * d1))
-              + (c2 * Math.exp(-r2 * d1))
-              + (c3 * Math.exp(-r3 * d1))
-              + (c4 * Math.exp(-r4 * d1))
-              + (c5 * Math.exp(-r5 * d1));
-    const v2 = (-c1 * Math.exp(-r1 * d2))
-              + (c2 * Math.exp(-r2 * d2))
-              + (c3 * Math.exp(-r3 * d2))
-              + (c4 * Math.exp(-r4 * d2))
-              + (c5 * Math.exp(-r5 * d2));
+    const v = (-c1 * Math.exp(-r1 * d))
+              + (c2 * Math.exp(-r2 * d))
+              + (c3 * Math.exp(-r3 * d))
+              + (c4 * Math.exp(-r4 * d))
+              + (c5 * Math.exp(-r5 * d));
 
     // Calculate world record time
-    const twsec1 = d1 / v1;
-    const twsec2 = d2 / v2;
+    const twsec = d / v;
 
     // Calculate constants
-    const k1 = 0.0654 - (0.00258 * v1);
-    const k2 = 0.0654 - (0.00258 * v2);
-    const a1 = 85 / k1;
-    const a2 = 85 / k2;
-    const b1 = 1 - (1035 / a1);
-    const b2 = 1 - (1035 / a2);
+    const k = 0.0654 - (0.00258 * v);
+    const a = 85 / k;
+    const b = 1 - (1035 / a);
 
+    // Return Purdy Point variables
+    return {
+      twsec,
+      a,
+      b,
+    };
+  },
+
+  /**
+   * Get the Purdy Points for a race
+   * @param {Number} d The distance of the race in meters
+   * @param {Number} t The finish time of the race in seconds
+   * @returns {Number} The Purdy Points for the race
+   */
+  getPurdyPoints(d, t) {
+    // Get variables
+    const variables = this.getVariables(d);
+
+    // Calculate Purdy Points
+    const points = variables.a * ((variables.twsec / t) - variables.b);
+
+    // Return Purdy Points
+    return points;
+  },
+
+  /**
+   * Predict a race time using the Purdy Points Model
+   * @param {Number} d1 The distance of the input race in meters
+   * @param {Number} t1 The finish time of the input race in seconds
+   * @param {Number} d2 The distance of the output race in meters
+   * @returns {Number} The predicted time for the output race in seconds
+   */
+  predictTime(d1, t1, d2) {
     // Calculate Purdy Points for distance 1
-    const points = a1 * ((twsec1 / t1) - b1);
+    const points = this.getPurdyPoints(d1, t1);
 
     // Calculate time for distance 2
-    const seconds = (a2 * twsec2) / (points + (a2 * b2));
+    const variables = this.getVariables(d2);
+    const seconds = (variables.a * variables.twsec) / (points + (variables.a * variables.b));
 
     // Return predicted time
     return seconds;
@@ -154,27 +177,54 @@ const PurdyPointsModel = {
  */
 const VO2MaxModel = {
   /**
-   * Calculate a runner's VO2 max from their performance in a race
+   * Calculate the VO2 of a runner during a race
    * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in minutes
+   * @param {Number} t The finish time in seconds
+   * @returns {Number} The VO2
+   */
+  getVO2(d, t) {
+    const minutes = t / 60;
+    const v = d / minutes;
+    const result = -4.6 + (0.182 * v) + (0.000104 * (v ** 2));
+    return result;
+  },
+
+  /**
+   * Calculate the percentage of VO2 max a runner is at during a race
+   * @param {Number} t The race time in seconds
+   * @returns {Number} The percentage of VO2 max
+   */
+  getVO2Percentage(t) {
+    const minutes = t / 60;
+    const result = 0.8 + (0.189 * Math.exp(-0.0128 * minutes)) + (0.299 * Math.exp(-0.193
+      * minutes));
+    return result;
+  },
+
+  /**
+   * Calculate a runner's VO2 max from a race result
+   * @param {Number} d The race distance in meters
+   * @param {Number} t The finish time in seconds
    * @returns {Number} The runner's VO2 max
    */
-  VO2Max(d, t) {
-    const v = d / t;
-    const result = (-4.6 + (0.182 * v) + (0.000104 * (v ** 2)))
-      / (0.8 + (0.189 * Math.exp(-0.0128 * t)) + (0.299 * Math.exp(-0.193 * t)));
+  getVO2Max(d, t) {
+    const result = this.getVO2(d, t) / this.getVO2Percentage(t);
     return result;
   },
 
   /**
    * Calculate the derivative with respect to time of the VO2 max curve at a specific point
    * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in minutes
+   * @param {Number} t The finish time in seconds
    * @return {Number} The derivative with respect to time
    */
   VO2MaxTimeDerivative(d, t) {
-    const result = -((-575000 * (t ** 2)) + (22750 * d * t) + (13 * (d ** 2))) / (125
-      * (t ** 2) * (189 * Math.exp((-8 * t) / 625) + (299 * Math.exp((-193 * t) / 1000) + 800)));
+    const result = (-(273 * d) / (25 * (t ** 2)) - (468 * (d ** 2)) / (625 * (t ** 3))) / ((189
+      * Math.exp(-(2 * t) / 9375)) / 1000 + (299 * Math.exp(-(193 * t) / 60000)) / 1000 + 4 / 5)
+      - (((273 * d) / (25 * t) + (234 * (d ** 2)) / (625 * (t ** 2)) - 23 / 5) * (-(63
+      * Math.exp(-(2 * t) / 9375)) / 1562500 - (57707 * Math.exp(-(193 * t) / 60000)) / 60000000))
+      / (((189 * Math.exp(-(2 * t) / 9375)) / 1000 + (299 * Math.exp(-(193 * t) / 60000)) / 1000
+      + 4 / 5) ** 2);
     return result;
   },
 
@@ -187,29 +237,29 @@ const VO2MaxModel = {
    */
   predictTime(d1, t1, d2) {
     // Calculate input VO2 max
-    const inputVO2 = this.VO2Max(d1, t1 / 60);
+    const inputVO2 = this.getVO2Max(d1, t1);
 
     // Initialize estimate
-    let estimate = (t1 * d2) / (d1 * 60);
+    let estimate = (t1 * d2) / d1;
 
     // Refine estimate
-    const method = (x) => this.VO2Max(d2, x);
+    const method = (x) => this.getVO2Max(d2, x);
     const derivative = (x) => this.VO2MaxTimeDerivative(d2, x);
     estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
 
     // Return estimate
-    return estimate * 60;
+    return estimate;
   },
 
   /**
    * Calculate the derivative with respect to distance of the VO2 max curve at a specific point
    * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in minutes
+   * @param {Number} t The finish time in seconds
    * @return {Number} The derivative with respect to distance
    */
   VO2MaxDistanceDerivative(d, t) {
-    const result = ((26 * d) + (22750 * t)) / (125 * (t ** 2) * ((189 * Math.exp(-(8 * t) / 625))
-      + (299 * Math.exp(-(193 * t) / 1000)) + 800));
+    const result = ((468 * d) / (625 * (t ** 2)) + 273 / (25 * t)) / ((189 * Math.exp(-(2 * t)
+      / 9375)) / 1000 + (299 * Math.exp(-(193 * t) / 60000)) / 1000 + 4 / 5);
     return result;
   },
 
@@ -222,14 +272,14 @@ const VO2MaxModel = {
    */
   predictDistance(t1, d1, t2) {
     // Calculate input VO2 max
-    const inputVO2 = this.VO2Max(d1, t1 / 60);
+    const inputVO2 = this.getVO2Max(d1, t1);
 
     // Initialize estimate
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate
-    const method = (x) => this.VO2Max(x, t2 / 60);
-    const derivative = (x) => this.VO2MaxDistanceDerivative(x, t2 / 60);
+    const method = (x) => this.getVO2Max(x, t2);
+    const derivative = (x) => this.VO2MaxDistanceDerivative(x, t2);
     estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
 
     // Return estimate
