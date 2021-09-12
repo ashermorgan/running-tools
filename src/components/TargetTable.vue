@@ -11,7 +11,7 @@
 
           <th>
             <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
-              <img alt="" src="@/assets/edit.svg">
+              <edit-icon/>
             </button>
           </th>
         </tr>
@@ -38,7 +38,7 @@
           <td colspan="4">
             There aren't any targets yet,<br>
             click
-            <img alt="Edit Targets" src="@/assets/edit.svg">
+            <edit-icon/>
             to edit the list of targets
           </td>
         </tr>
@@ -52,10 +52,10 @@
 
           <th>
             <button class="icon" title="Reset Targets" @click="resetTargets" v-blur>
-              <img alt="" src="@/assets/rotate-ccw.svg">
+              <rotate-ccw-icon/>
             </button>
             <button class="icon" title="Close" @click="inEditMode=false" v-blur>
-              <img alt="" src="@/assets/x.svg">
+              <x-icon/>
             </button>
           </th>
         </tr>
@@ -79,7 +79,7 @@
 
           <td>
             <button class="icon" title="Remove Target" @click="targets.splice(index, 1)" v-blur>
-              <img alt="" src="@/assets/trash-2.svg">
+              <trash-2-icon/>
             </button>
           </td>
         </tr>
@@ -110,6 +110,13 @@
 </template>
 
 <script>
+import {
+  EditIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+  XIcon,
+} from 'vue-feather-icons';
+
 import unitUtils from '@/utils/units';
 import storage from '@/utils/localStorage';
 
@@ -124,6 +131,11 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
+
+    EditIcon,
+    RotateCcwIcon,
+    Trash2Icon,
+    XIcon,
   },
 
   directives: {
@@ -317,13 +329,9 @@ table button.icon {
 .empty-message td {
   text-align: center !important;
 }
-.empty-message img {
+.empty-message svg {
   height: 1em;
   width: 1em;
-}
-@media (prefers-color-scheme: dark) {
-  .empty-message img {
-    filter: invert(90%);
-  }
+  color: var(--foreground);
 }
 </style>
