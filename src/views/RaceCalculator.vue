@@ -141,8 +141,8 @@ export default {
         { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
         { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
 
-        { result: 'distance', distanceUnit: 'miles', time: 600 },
-        { result: 'distance', distanceUnit: 'miles', time: 3600 },
+        { result: 'distance', time: 600 },
+        { result: 'distance', time: 3600 },
       ],
     };
   },
@@ -217,12 +217,12 @@ export default {
             break;
         }
 
-        // Convert output distance into miles
-        distance = unitUtils.convertDistance(distance, 'meters', 'miles');
+        // Convert output distance into default distance unit
+        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = 'miles';
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
       }
 
       // Return result

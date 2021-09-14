@@ -63,7 +63,7 @@ export default {
       /**
        * The unit of the output
        */
-      outputUnit: 'meters',
+      outputUnit: 'kilometers',
 
       /**
        * The unit category
@@ -140,7 +140,7 @@ export default {
         case 'distance': {
           this.inputValue = 1;
           this.inputUnit = 'miles';
-          this.outputUnit = 'meters';
+          this.outputUnit = 'kilometers';
           break;
         }
         case 'time': {
@@ -150,9 +150,9 @@ export default {
           break;
         }
         case 'speed_and_pace': {
-          this.inputValue = 1;
-          this.inputUnit = 'miles_per_hour';
-          this.outputUnit = 'seconds_per_mile';
+          this.inputValue = unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300;
+          this.inputUnit = unitUtils.getDefaultPaceUnit();
+          this.outputUnit = unitUtils.getDefaultSpeedUnit();
           break;
         }
         default: {

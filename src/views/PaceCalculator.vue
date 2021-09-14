@@ -47,17 +47,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 1,
+      inputDistance: 5,
 
       /**
        * The input distance unit
        */
-      inputUnit: 'miles',
+      inputUnit: 'kilometers',
 
       /**
        * The input time value
        */
-      inputTime: 8 * 60,
+      inputTime: 20 * 60,
 
       /**
        * The names of the distance units
@@ -100,9 +100,8 @@ export default {
         { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
         { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
 
-        { result: 'distance', distanceUnit: 'miles', time: 600 },
-        { result: 'distance', distanceUnit: 'miles', time: 1800 },
-        { result: 'distance', distanceUnit: 'miles', time: 3600 },
+        { result: 'distance', time: 600 },
+        { result: 'distance', time: 1800 },
       ],
     };
   },
@@ -146,12 +145,12 @@ export default {
         // Calculate distance traveled in time at input pace
         let distance = paceUtils.getDistance(this.pace, target.time);
 
-        // Convert output distance into miles
-        distance = unitUtils.convertDistance(distance, 'meters', 'miles');
+        // Convert output distance into default distance unit
+        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = 'miles';
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
       }
 
       // Return result

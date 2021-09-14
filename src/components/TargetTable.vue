@@ -30,7 +30,7 @@
 
           <td v-if="showPace" colspan="2">
             {{ formatDuration(getPace(item), 0, 0) }}
-            / mi
+            / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
           </td>
         </tr>
 
@@ -95,7 +95,7 @@
         <tr>
           <td colspan="2">
             <button title="Add Distance Target" @click="targets.push({ result: 'time',
-              distanceValue: 1, distanceUnit: 'miles' })" v-blur>
+              distanceValue: 1, distanceUnit: getDefaultDistanceUnit() })" v-blur>
               Add distance target
             </button>
             <button title="Add Time Target" @click="targets.push({ result: 'distance',
@@ -189,6 +189,11 @@ export default {
       formatDuration: unitUtils.formatDuration,
 
       /**
+       * The getDefaultDistanceUnit method
+       */
+      getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
+
+      /**
        * Whether the table is in edit mode
        */
       inEditMode: false,
@@ -273,7 +278,7 @@ export default {
      */
     getPace(result) {
       return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
-        'miles');
+        unitUtils.getDefaultDistanceUnit());
     },
   },
 

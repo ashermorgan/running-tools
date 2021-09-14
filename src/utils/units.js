@@ -215,6 +215,42 @@ function formatDuration(value, padding = 6, digits = 2) {
   return result;
 }
 
+/**
+ * Get the default unit system
+ * @returns {String} The default unit system
+ */
+function getDefaultUnitSystem() {
+  const language = navigator.language || navigator.userLanguage;
+  if (language.endsWith('-US') || language.endsWith('-MM')) {
+    return 'imperial';
+  }
+  return 'metric';
+}
+
+/**
+ * Get the default distance unit
+ * @returns {String} The default distance unit
+ */
+function getDefaultDistanceUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'kilometers' : 'miles';
+}
+
+/**
+ * Get the default speed unit
+ * @returns {String} The default speed unit
+ */
+function getDefaultSpeedUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
+}
+
+/**
+ * Get the default pace unit
+ * @returns {String} The default pace unit
+ */
+function getDefaultPaceUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
+}
+
 export default {
   TIME_UNITS,
   DISTANCE_UNITS,
@@ -228,4 +264,9 @@ export default {
   convertSpeedPace,
 
   formatDuration,
+
+  getDefaultUnitSystem,
+  getDefaultDistanceUnit,
+  getDefaultSpeedUnit,
+  getDefaultPaceUnit,
 };
