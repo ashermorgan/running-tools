@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0] - 2021-09-16
+
+### Added
+- Time based targets in pace and race calculators
+- Advanced race calculator options and output
+
+### Changed
+- Pace calculator shows pace of each result
+- Improved calculator interfaces
+- Default units are chosen automatically
+
 ## [1.0.0] - 2021-08-30
 
 ### Added
@@ -23,6 +34,7 @@
 ### Added
 - Basic app structure
 
-[1.0.0]: https://github.com/ashermorgan/running-tools/compare/0.2.0...1.0.0
-[0.2.0]: https://github.com/ashermorgan/running-tools/compare/0.1.0...0.2.0
+[1.1.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.1.0
+[1.0.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.0.0
+[0.2.0]: https://github.com/ashermorgan/running-tools/releases/tag/0.2.0
 [0.1.0]: https://github.com/ashermorgan/running-tools/releases/tag/0.1.0
