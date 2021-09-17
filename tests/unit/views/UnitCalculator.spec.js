@@ -2,6 +2,7 @@
 
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
+import unitUtils from '@/utils/units';
 import UnitCalculator from '@/views/UnitCalculator.vue';
 
 describe('views/UnitCalculator.vue', () => {
@@ -21,9 +22,11 @@ describe('views/UnitCalculator.vue', () => {
     await wrapper.setData({ category: 'speed_and_pace' });
 
     // Assert controls are correct
-    expect(wrapper.vm._data.inputValue).to.equal(1);
-    expect(wrapper.vm._data.inputUnit).to.equal('miles_per_hour');
-    expect(wrapper.vm._data.outputUnit).to.equal('seconds_per_mile');
+    expect(wrapper.vm._data.inputValue).to.equal(
+      unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300,
+    );
+    expect(wrapper.vm._data.inputUnit).to.equal(unitUtils.getDefaultPaceUnit());
+    expect(wrapper.vm._data.outputUnit).to.equal(unitUtils.getDefaultSpeedUnit());
 
     // Change category
     await wrapper.setData({ category: 'distance' });
@@ -31,7 +34,7 @@ describe('views/UnitCalculator.vue', () => {
     // Assert controls are correct
     expect(wrapper.vm._data.inputValue).to.equal(1);
     expect(wrapper.vm._data.inputUnit).to.equal('miles');
-    expect(wrapper.vm._data.outputUnit).to.equal('meters');
+    expect(wrapper.vm._data.outputUnit).to.equal('kilometers');
   });
 
   it('outputValue should be correct', async () => {

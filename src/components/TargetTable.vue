@@ -3,13 +3,15 @@
     <table class="results" v-show="!inEditMode">
       <thead>
         <tr>
-          <th colspan="2">Distance</th>
+          <th>Distance</th>
 
           <th>Time</th>
 
+          <th v-if="showPace">Pace</th>
+
           <th>
             <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
-              <img alt="" src="@/assets/edit.svg">
+              <edit-icon/>
             </button>
           </th>
         </tr>
@@ -17,24 +19,27 @@
 
       <tbody>
         <tr v-for="(item, index) in results" :key="index">
-          <td>
+          <td :class="item.result === 'distance' ? 'result' : ''">
             {{ item.distanceValue.toFixed(2) }}
-            {{ distanceSymbols[item.distanceUnit] }}
+            {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
 
-          <td>in</td>
-
-          <td colspan="2">
+          <td :colspan="showPace ? 1 : 2" :class="item.result === 'time' ? 'result' : ''">
             {{ formatDuration(item.time, 0, 2) }}
+          </td>
+
+          <td v-if="showPace" colspan="2">
+            {{ formatDuration(getPace(item), 0, 0) }}
+            / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
           </td>
         </tr>
 
         <tr v-if="results.length === 0" class="empty-message">
           <td colspan="4">
-            There aren't any targets,<br>
+            There aren't any targets yet,<br>
             click
-            <img alt="Edit Targets" src="@/assets/edit.svg">
-            to add one
+            <edit-icon/>
+            to edit the list of targets
           </td>
         </tr>
       </tbody>
@@ -47,10 +52,10 @@
 
           <th>
             <button class="icon" title="Reset Targets" @click="resetTargets" v-blur>
-              <img alt="" src="@/assets/rotate-ccw.svg">
+              <rotate-ccw-icon/>
             </button>
             <button class="icon" title="Close" @click="inEditMode=false" v-blur>
-              <img alt="" src="@/assets/x.svg">
+              <x-icon/>
             </button>
           </th>
         </tr>
@@ -58,29 +63,30 @@
 
       <tbody>
         <tr v-for="(item, index) in targets" :key="index">
-          <td>
+          <td v-if="item.result === 'time'">
             <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
               :min="0" :digits="2"/>
             <select v-model="item.distanceUnit" aria-label="Distance Unit">
               <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-                {{ value }}
+                {{ value.name }}
               </option>
             </select>
           </td>
 
+          <td v-else>
+            <time-input v-model="item.time" aria-label="Time"/>
+          </td>
+
           <td>
             <button class="icon" title="Remove Target" @click="targets.splice(index, 1)" v-blur>
-              <img alt="" src="@/assets/trash-2.svg">
+              <trash-2-icon/>
             </button>
           </td>
         </tr>
 
         <tr v-if="targets.length === 0" class="empty-message">
           <td colspan="2">
-            There aren't any targets,<br>
-            click
-            <img alt="Add Target" src="@/assets/plus-circle.svg">
-            to add one
+            There aren't any targets yet
           </td>
         </tr>
       </tbody>
@@ -88,9 +94,13 @@
       <tfoot>
         <tr>
           <td colspan="2">
-            <button class="icon" title="Add Target" @click="targets.push({distanceValue: 1,
-              distanceUnit: 'miles'})" v-blur>
-              <img alt="" src="@/assets/plus-circle.svg">
+            <button title="Add Distance Target" @click="targets.push({ result: 'time',
+              distanceValue: 1, distanceUnit: getDefaultDistanceUnit() })" v-blur>
+              Add distance target
+            </button>
+            <button title="Add Time Target" @click="targets.push({ result: 'distance',
+              time: 600 })" v-blur>
+              Add time target
             </button>
           </td>
         </tr>
@@ -100,10 +110,18 @@
 </template>
 
 <script>
+import {
+  EditIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+  XIcon,
+} from 'vue-feather-icons';
+
 import unitUtils from '@/utils/units';
 import storage from '@/utils/localStorage';
 
 import DecimalInput from '@/components/DecimalInput.vue';
+import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
 
@@ -112,6 +130,12 @@ export default {
 
   components: {
     DecimalInput,
+    TimeInput,
+
+    EditIcon,
+    RotateCcwIcon,
+    Trash2Icon,
+    XIcon,
   },
 
   directives: {
@@ -142,24 +166,32 @@ export default {
       type: String,
       default: null,
     },
+
+    /**
+     * Whether to show result paces
+     */
+    showPace: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       /**
-       * The names of the distance units
+       * The distance units
        */
-      distanceUnits: unitUtils.DISTANCE_UNIT_NAMES,
-
-      /**
-       * The symbols of the distance units
-       */
-      distanceSymbols: unitUtils.DISTANCE_UNIT_SYMBOLS,
+      distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
        * The formatDuration method
        */
       formatDuration: unitUtils.formatDuration,
+
+      /**
+       * The getDefaultDistanceUnit method
+       */
+      getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
 
       /**
        * Whether the table is in edit mode
@@ -230,8 +262,23 @@ export default {
      * Sort the targets by distance
      */
     sortTargets() {
-      this.targets.sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit,
-        'meters') - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters'));
+      this.targets = [
+        ...this.targets.filter((item) => item.result === 'time')
+          .sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit, 'meters')
+            - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters')),
+
+        ...this.targets.filter((item) => item.result === 'distance')
+          .sort((a, b) => a.time - b.time),
+      ];
+    },
+
+    /**
+     * Get the pace of a result
+     * @param {Object} result The result
+     */
+    getPace(result) {
+      return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
+        unitUtils.getDefaultDistanceUnit());
     },
   },
 
@@ -249,6 +296,9 @@ export default {
 .results th:last-child {
   text-align: right;
 }
+.results .result {
+  font-weight: bold;
+}
 
 /* edit targets table */
 .targets th:last-child, .targets td:last-child {
@@ -256,10 +306,14 @@ export default {
 }
 .targets td select {
   margin-left: 0.2em;
+  width: 8em;
 }
 .targets tfoot td {
   text-align: center !important;
   padding: 0.5em 0.2em;
+}
+.targets tfoot button {
+  margin: 0.5em;
 }
 
 /* general table styles */
@@ -280,13 +334,9 @@ table button.icon {
 .empty-message td {
   text-align: center !important;
 }
-.empty-message img {
+.empty-message svg {
   height: 1em;
   width: 1em;
-}
-@media (prefers-color-scheme: dark) {
-  .empty-message img {
-    filter: invert(90%);
-  }
+  color: var(--foreground);
 }
 </style>

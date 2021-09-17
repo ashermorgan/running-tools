@@ -2,152 +2,94 @@
  * The time units
  */
 const TIME_UNITS = {
-  seconds: 'seconds',
-  minutes: 'minutes',
-  hours: 'hours',
-};
-
-/**
- * The time unit names
- */
-const TIME_UNIT_NAMES = {
-  seconds: 'Seconds',
-  minutes: 'Minutes',
-  hours: 'Hours',
-};
-
-/**
- * The time unit symbols
- */
-const TIME_UNIT_SYMBOLS = {
-  seconds: 's',
-  minutes: 'min',
-  hours: 'hr',
-};
-
-/**
- * The value of each time unit in seconds
- */
-const TIME_UNIT_VALUES = {
-  seconds: 1,
-  minutes: 1 * 60,
-  hours: 1 * 60 * 60,
+  seconds: {
+    name: 'Seconds',
+    symbol: 's',
+    value: 1,
+  },
+  minutes: {
+    name: 'Minutes',
+    symbol: 'min',
+    value: 60,
+  },
+  hours: {
+    name: 'Hours',
+    symbol: 'hr',
+    value: 3600,
+  },
 };
 
 /**
  * The distance units
  */
 const DISTANCE_UNITS = {
-  meters: 'meters',
-  kilometers: 'kilometers',
-  yards: 'yards',
-  miles: 'miles',
-  marathons: 'marathons',
-};
-
-/**
- * The distance unit names
- */
-const DISTANCE_UNIT_NAMES = {
-  meters: 'Meters',
-  kilometers: 'Kilometers',
-  yards: 'Yards',
-  miles: 'Miles',
-  marathons: 'Marathons',
-};
-
-/**
- * The distance unit symbols
- */
-const DISTANCE_UNIT_SYMBOLS = {
-  meters: 'm',
-  kilometers: 'km',
-  yards: 'yd',
-  miles: 'mi',
-  marathons: 'marathons',
-};
-
-/**
- * The value of each distance unit in meters
- */
-const DISTANCE_UNIT_VALUES = {
-  meters: 1,
-  kilometers: 1000,
-  yards: 0.9144,
-  miles: 1609.3499,
-  marathons: 42195,
+  meters: {
+    name: 'Meters',
+    symbol: 'm',
+    value: 1,
+  },
+  yards: {
+    name: 'Yards',
+    symbol: 'yd',
+    value: 0.9144,
+  },
+  kilometers: {
+    name: 'Kilometers',
+    symbol: 'km',
+    value: 1000,
+  },
+  miles: {
+    name: 'Miles',
+    symbol: 'mi',
+    value: 1609.3499,
+  },
+  marathons: {
+    name: 'Marathons',
+    symbol: 'marathons',
+    value: 42195,
+  },
 };
 
 /**
  * The speed units
  */
 const SPEED_UNITS = {
-  meters_per_second: 'meters_per_second',
-  kilometers_per_hour: 'kilometers_per_hour',
-  miles_per_hour: 'miles_per_hour',
-};
-
-/**
- * The speed unit names
- */
-const SPEED_UNIT_NAMES = {
-  meters_per_second: 'Meters per Second',
-  kilometers_per_hour: 'Kilometers per Hour',
-  miles_per_hour: 'Miles per Hour',
-};
-
-/**
- * The speed unit symbols
- */
-const SPEED_UNIT_SYMBOLS = {
-  meters_per_second: 'm/s',
-  kilometers_per_hour: 'kph',
-  miles_per_hour: 'mph',
-};
-
-/**
- * The value of each speed unit in meters per second
- */
-const SPEED_UNIT_VALUES = {
-  meters_per_second: 1,
-  kilometers_per_hour: DISTANCE_UNIT_VALUES.kilometers / TIME_UNIT_VALUES.hours,
-  miles_per_hour: DISTANCE_UNIT_VALUES.miles / TIME_UNIT_VALUES.hours,
-};
-
-/**
- * The pace units
- */
-const PACE_UNITS = {
-  seconds_per_meter: 'seconds_per_meter',
-  seconds_per_kilometer: 'seconds_per_kilometer',
-  seconds_per_mile: 'seconds_per_mile',
-};
-
-/**
- * The pace unit names
- */
-const PACE_UNIT_NAMES = {
-  seconds_per_meter: 'Seconds per Meter',
-  seconds_per_kilometer: 'Time per Kilometer',
-  seconds_per_mile: 'Time per Mile',
-};
-
-/**
- * The pace unit symbols
- */
-const PACE_UNIT_SYMBOLS = {
-  seconds_per_meter: 's/m',
-  seconds_er_kilometer: '/km',
-  seconds_per_mile: '/mi',
+  meters_per_second: {
+    name: 'Meters per Second',
+    symbol: 'm/s',
+    value: 1,
+  },
+  kilometers_per_hour: {
+    name: 'Kilometers per Hour',
+    symbol: 'kph',
+    value: DISTANCE_UNITS.kilometers.value / TIME_UNITS.hours.value,
+  },
+  miles_per_hour: {
+    name: 'Miles per Hour',
+    symbol: 'mph',
+    value: DISTANCE_UNITS.miles.value / TIME_UNITS.hours.value,
+  },
 };
 
 /**
  * The value of each pace unit in seconds per meter
  */
-const PACE_UNIT_VALUES = {
-  seconds_per_meter: 1,
-  seconds_per_kilometer: TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.kilometers,
-  seconds_per_mile: TIME_UNIT_VALUES.seconds / DISTANCE_UNIT_VALUES.miles,
+const PACE_UNITS = {
+  seconds_per_meter: {
+    name: 'Seconds per Meter',
+    symbol: 's/m',
+    value: 1,
+  },
+  seconds_per_kilometer: {
+    name: 'Time per Kilometer',
+    symbol: '/ km',
+    value: TIME_UNITS.seconds.value / DISTANCE_UNITS.kilometers.value,
+  },
+  seconds_per_mile: {
+    name: 'Time per Mile',
+    symbol: '/ mi',
+    value: TIME_UNITS.seconds.value / DISTANCE_UNITS.miles.value,
+  },
 };
 
 /**
@@ -157,8 +99,8 @@ const PACE_UNIT_VALUES = {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertTime(inputValue, inputUnits, outputUnits) {
-  return (inputValue * TIME_UNIT_VALUES[inputUnits]) / TIME_UNIT_VALUES[outputUnits];
+function convertTime(inputValue, inputUnit, outputUnit) {
+  return (inputValue * TIME_UNITS[inputUnit].value) / TIME_UNITS[outputUnit].value;
 }
 
 /**
@@ -168,8 +110,8 @@ function convertTime(inputValue, inputUnits, outputUnits) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertDistance(inputValue, inputUnits, outputUnits) {
-  return (inputValue * DISTANCE_UNIT_VALUES[inputUnits]) / DISTANCE_UNIT_VALUES[outputUnits];
+function convertDistance(inputValue, inputUnit, outputUnit) {
+  return (inputValue * DISTANCE_UNITS[inputUnit].value) / DISTANCE_UNITS[outputUnit].value;
 }
 
 /**
@@ -179,8 +121,8 @@ function convertDistance(inputValue, inputUnits, outputUnits) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertSpeed(inputValue, inputUnits, outputUnits) {
-  return (inputValue * SPEED_UNIT_VALUES[inputUnits]) / SPEED_UNIT_VALUES[outputUnits];
+function convertSpeed(inputValue, inputUnit, outputUnit) {
+  return (inputValue * SPEED_UNITS[inputUnit].value) / SPEED_UNITS[outputUnit].value;
 }
 
 /**
@@ -190,8 +132,8 @@ function convertSpeed(inputValue, inputUnits, outputUnits) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertPace(inputValue, inputUnits, outputUnits) {
-  return (inputValue * PACE_UNIT_VALUES[inputUnits]) / PACE_UNIT_VALUES[outputUnits];
+function convertPace(inputValue, inputUnit, outputUnit) {
+  return (inputValue * PACE_UNITS[inputUnit].value) / PACE_UNITS[outputUnit].value;
 }
 
 /**
@@ -201,20 +143,20 @@ function convertPace(inputValue, inputUnits, outputUnits) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertSpeedPace(inputValue, inputUnits, outputUnits) {
+function convertSpeedPace(inputValue, inputUnit, outputUnit) {
   // Calculate input speed
   let speed;
-  if (inputUnits in PACE_UNIT_VALUES) {
-    speed = 1 / (inputValue * PACE_UNIT_VALUES[inputUnits]);
+  if (inputUnit in PACE_UNITS) {
+    speed = 1 / (inputValue * PACE_UNITS[inputUnit].value);
   } else {
-    speed = inputValue * SPEED_UNIT_VALUES[inputUnits];
+    speed = inputValue * SPEED_UNITS[inputUnit].value;
   }
 
   // Calculate output
-  if (outputUnits in PACE_UNIT_VALUES) {
-    return (1 / speed) / PACE_UNIT_VALUES[outputUnits];
+  if (outputUnit in PACE_UNITS) {
+    return (1 / speed) / PACE_UNITS[outputUnit].value;
   }
-  return speed / SPEED_UNIT_VALUES[outputUnits];
+  return speed / SPEED_UNITS[outputUnit].value;
 }
 
 /**
@@ -273,21 +215,47 @@ function formatDuration(value, padding = 6, digits = 2) {
   return result;
 }
 
+/**
+ * Get the default unit system
+ * @returns {String} The default unit system
+ */
+function getDefaultUnitSystem() {
+  const language = navigator.language || navigator.userLanguage;
+  if (language.endsWith('-US') || language.endsWith('-MM')) {
+    return 'imperial';
+  }
+  return 'metric';
+}
+
+/**
+ * Get the default distance unit
+ * @returns {String} The default distance unit
+ */
+function getDefaultDistanceUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'kilometers' : 'miles';
+}
+
+/**
+ * Get the default speed unit
+ * @returns {String} The default speed unit
+ */
+function getDefaultSpeedUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
+}
+
+/**
+ * Get the default pace unit
+ * @returns {String} The default pace unit
+ */
+function getDefaultPaceUnit() {
+  return getDefaultUnitSystem() === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
+}
+
 export default {
   TIME_UNITS,
   DISTANCE_UNITS,
   SPEED_UNITS,
   PACE_UNITS,
-
-  TIME_UNIT_NAMES,
-  DISTANCE_UNIT_NAMES,
-  SPEED_UNIT_NAMES,
-  PACE_UNIT_NAMES,
-
-  TIME_UNIT_SYMBOLS,
-  DISTANCE_UNIT_SYMBOLS,
-  SPEED_UNIT_SYMBOLS,
-  PACE_UNIT_SYMBOLS,
 
   convertTime,
   convertDistance,
@@ -296,4 +264,9 @@ export default {
   convertSpeedPace,
 
   formatDuration,
+
+  getDefaultUnitSystem,
+  getDefaultDistanceUnit,
+  getDefaultSpeedUnit,
+  getDefaultPaceUnit,
 };

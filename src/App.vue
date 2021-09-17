@@ -3,7 +3,7 @@
     <header>
       <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
         class="icon" title="Back">
-        <img alt="" src="@/assets/chevron-left.svg"/>
+        <chevron-left-icon/>
       </router-link>
 
       <h1 v-if="$route.meta.title">
@@ -22,6 +22,18 @@
   </div>
 </template>
 
+<script>
+import { ChevronLeftIcon } from 'vue-feather-icons';
+
+export default {
+  name: 'App',
+
+  components: {
+    ChevronLeftIcon,
+  },
+};
+</script>
+
 <style scoped>
 header {
   background-color: var(--theme);
@@ -36,9 +48,9 @@ header a {
   height: 2em;
   width: 2em;
 }
-header a img {
+header a svg {
   padding: 0em;
-  filter: invert(0%) !important;
+  color: #000000;
 }
 h1 {
   grid-column: 3;
