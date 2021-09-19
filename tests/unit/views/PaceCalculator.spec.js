@@ -3,6 +3,7 @@
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
 import PaceCalculator from '@/views/PaceCalculator.vue';
+import unitUtils from '@/utils/units';
 
 describe('views/PaceCalculator.vue', () => {
   it('should correctly calculate times', async () => {
@@ -51,8 +52,8 @@ describe('views/PaceCalculator.vue', () => {
 
     // Assert result is correct
     expect(result).to.deep.equal({
-      distanceValue: 2,
-      distanceUnit: 'miles',
+      distanceValue: unitUtils.convertDistance(2, 'miles', unitUtils.getDefaultDistanceUnit()),
+      distanceUnit: unitUtils.getDefaultDistanceUnit(),
       time: 200,
       result: 'distance',
     });
