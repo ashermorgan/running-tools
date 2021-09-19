@@ -55,8 +55,9 @@ describe('views/RaceCalculator.vue', () => {
     // Assert result is correct
     const prediction = raceUtils.AverageModel.predictDistance(1200, 5000, 2460);
     expect(result).to.deep.equal({
-      distanceValue: unitUtils.convertDistance(prediction, 'meters', 'miles'),
-      distanceUnit: 'miles',
+      distanceValue: unitUtils.convertDistance(prediction, 'meters',
+        unitUtils.getDefaultDistanceUnit()),
+      distanceUnit: unitUtils.getDefaultDistanceUnit(),
       time: 2460,
       result: 'distance',
     });

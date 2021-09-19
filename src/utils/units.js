@@ -220,8 +220,8 @@ function formatDuration(value, padding = 6, digits = 2) {
  * @returns {String} The default unit system
  */
 function getDefaultUnitSystem() {
-  const language = navigator.language || navigator.userLanguage;
-  if (language.endsWith('-US') || language.endsWith('-MM')) {
+  const language = (navigator.language || navigator.userLanguage).toLowerCase();
+  if (language.endsWith('-us') || language.endsWith('-mm')) {
     return 'imperial';
   }
   return 'metric';

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1] - 2021-09-19
+
+### Fixed
+- Bug in how default units were chosen
+- Issue that caused all pace and race calculator results to be NaN
+
 ## [1.1.0] - 2021-09-16
 
 ### Added
@@ -34,6 +40,7 @@
 ### Added
 - Basic app structure
 
+[1.1.1]: https://github.com/ashermorgan/running-tools/releases/tag/1.1.1
 [1.1.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.1.0
 [1.0.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.0.0
 [0.2.0]: https://github.com/ashermorgan/running-tools/releases/tag/0.2.0

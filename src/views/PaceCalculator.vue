@@ -21,7 +21,7 @@
     <h2>Equivalent Paces</h2>
 
     <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
-      storage-key="pace-calculator-targets"/>
+      storage-key="pace-calculator-targets-v2"/>
   </div>
 </template>
 
