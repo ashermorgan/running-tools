@@ -55,7 +55,7 @@
     <h2>Equivalent Race Results</h2>
 
     <target-table class="output" :calculate-result="predictResult" :default-targets="defaultTargets"
-      storage-key="race-calculator-targets" show-pace/>
+      storage-key="race-calculator-targets-v2" show-pace/>
   </div>
 </template>
 
