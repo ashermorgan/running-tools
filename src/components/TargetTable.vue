@@ -1,5 +1,5 @@
 <template>
-  <div class="time-table">
+  <div class="target-table">
     <table class="results" v-show="!inEditMode">
       <thead>
         <tr>
@@ -126,7 +126,7 @@ import TimeInput from '@/components/TimeInput.vue';
 import blur from '@/directives/blur';
 
 export default {
-  name: 'TimeTable',
+  name: 'TargetTable',
 
   components: {
     DecimalInput,
@@ -292,7 +292,7 @@ export default {
 </script>
 
 <style scoped>
-/* time table */
+/* target table */
 .results th:last-child {
   text-align: right;
 }
