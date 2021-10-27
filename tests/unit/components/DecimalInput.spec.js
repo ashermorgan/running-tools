@@ -252,84 +252,6 @@ describe('components/DecimalInput.vue', () => {
     expect(wrapper.emitted().input).to.deep.equal([[10.0]]);
   });
 
-  it('should not wrap to the maximum if it is null', async () => {
-    // Initialize component
-    const wrapper = mount(DecimalInput, {
-      propsData: {
-        min: -1.0, max: null, value: -1.0, step: 0.2, wrap: true,
-      },
-    });
-
-    // Try to decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is still -1.0 and no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('-1.0');
-    expect(wrapper.emitted().input).to.equal(undefined);
-  });
-
-  it('should not wrap to the minimum if it is null', async () => {
-    // Initialize component
-    const wrapper = mount(DecimalInput, {
-      propsData: {
-        min: null, max: 1.0, value: 1.0, step: 0.2, wrap: true,
-      },
-    });
-
-    // Try to increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is still 1.0 and no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('1.0');
-    expect(wrapper.emitted().input).to.equal(undefined);
-  });
-
-  it('should correctly wrap from the minimum to maximum', async () => {
-    // Initialize component
-    const wrapper = mount(DecimalInput, {
-      propsData: {
-        min: -1.0, max: 1.0, value: -0.9, step: 0.2, wrap: true,
-      },
-    });
-
-    // Decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is -1.0 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('-1.0');
-    expect(wrapper.emitted().input).to.deep.equal([[-1.0]]);
-
-    // Decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is 1.0 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('1.0');
-    expect(wrapper.emitted().input).to.deep.equal([[-1.0], [1.0]]);
-  });
-
-  it('should correctly wrap from the maximum to minimum', async () => {
-    // Initialize component
-    const wrapper = mount(DecimalInput, {
-      propsData: {
-        min: -1.0, max: 1.0, value: 0.9, step: 0.2, wrap: true,
-      },
-    });
-
-    // Increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is 1.0 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('1.0');
-    expect(wrapper.emitted().input).to.deep.equal([[1.0]]);
-
-    // Increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is -1.0 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('-1.0');
-    expect(wrapper.emitted().input).to.deep.equal([[1.0], [-1.0]]);
-  });
-
   it('should format value according to padding and digits props', async () => {
     // Initialize component
     const wrapper = mount(DecimalInput, {
@@ -338,5 +260,18 @@ describe('components/DecimalInput.vue', () => {
 
     // Assert value is correctly formatted
     expect(wrapper.find('input').element.value).to.equal('00.000');
+  });
+
+  it('should emit keydown event if arrow-keys is false', async () => {
+    // Initialize component
+    const wrapper = mount(DecimalInput, {
+      propsData: { arrowKeys: false },
+    });
+
+    // Try to increment value
+    await wrapper.trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert keydown event emitted
+    expect(wrapper.emitted().keydown.length).to.equal(1);
   });
 });
