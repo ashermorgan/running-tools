@@ -54,8 +54,8 @@
 
     <h2>Equivalent Race Results</h2>
 
-    <target-table class="output" :calculate-result="predictResult" :default-targets="defaultTargets"
-      storage-key="race-calculator-targets-v2" show-pace/>
+    <simple-target-table class="output" :calculate-result="predictResult"
+      :default-targets="defaultTargets" storage-key="race-calculator-targets-v2" show-pace/>
   </div>
 </template>
 
@@ -66,7 +66,7 @@ import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TargetTable from '@/components/TargetTable.vue';
+import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 
 export default {
   name: 'RaceCalculator',
@@ -74,7 +74,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TargetTable,
+    SimpleTargetTable,
   },
 
   data() {

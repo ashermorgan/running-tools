@@ -20,8 +20,8 @@
 
     <h2>Equivalent Paces</h2>
 
-    <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
-      storage-key="pace-calculator-targets-v2"/>
+    <simple-target-table class="output" :calculate-result="calculatePace"
+      :default-targets="defaultTargets" storage-key="pace-calculator-targets-v2"/>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TargetTable from '@/components/TargetTable.vue';
+import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 
 export default {
   name: 'PaceCalculator',
@@ -39,7 +39,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TargetTable,
+    SimpleTargetTable,
   },
 
   data() {
