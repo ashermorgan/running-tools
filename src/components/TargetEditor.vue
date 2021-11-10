@@ -51,7 +51,7 @@
           <button title="Add Distance Target" @click="addDistanceTarget" v-blur>
             Add distance target
           </button>
-          <button title="Add Time Target" @click="addTimeTarget" v-blur>
+          <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget" v-blur>
             Add time target
           </button>
         </td>
@@ -97,6 +97,14 @@ export default {
     value: {
       type: Array,
       default: () => [],
+    },
+
+    /**
+     * Whether to allow the user to add time based targets
+     */
+    timeTargets: {
+      type: Boolean,
+      default: true,
     },
   },
 

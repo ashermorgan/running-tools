@@ -55,9 +55,9 @@ import {
   EditIcon,
 } from 'vue-feather-icons';
 
+import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
-import storage from '@/utils/localStorage';
 
 import TargetEditor from '@/components/TargetEditor.vue';
 
@@ -78,7 +78,7 @@ export default {
 
   props: {
     /**
-     * The method that generates the time table rows
+     * The method that generates the target table rows
      */
     calculateResult: {
       type: Function,
@@ -86,7 +86,7 @@ export default {
     },
 
     /**
-     * The default time table targets
+     * The default targets
      */
     defaultTargets: {
       type: Array,
@@ -133,7 +133,7 @@ export default {
       inEditMode: false,
 
       /**
-       * The time table targets
+       * The target table targets
        */
       targets: storage.get(this.storageKey, this.defaultTargets),
     };
@@ -141,7 +141,7 @@ export default {
 
   computed: {
     /**
-     * The time table results
+     * The target table results
      */
     results() {
       // Calculate results
