@@ -29,7 +29,7 @@
           </td>
 
           <td v-if="showPace" colspan="2">
-            {{ formatDuration(getPace(item), 0, 0) }}
+            {{ formatDuration(getPace(item), 3, 0) }}
             / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
           </td>
         </tr>
