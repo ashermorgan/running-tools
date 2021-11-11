@@ -32,7 +32,7 @@
             </td>
 
             <td>
-              <time-input v-model="targets[index].split"/>
+              <time-input v-model="targets[index].split" :showHours="false"/>
             </td>
 
             <td colspan="2">

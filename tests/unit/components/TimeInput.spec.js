@@ -78,10 +78,38 @@ describe('components/TimeInput.vue', () => {
     expect(wrapper.emitted().input).to.deep.equal([[3659], [3660]]);
   });
 
-  it('up arrow should not increment value past the maximum', async () => {
+  it('up arrow should not increment value past the 2 field maximum', async () => {
     // Initialize component
     const wrapper = mount(TimeInput, {
-      propsData: { value: 359998 },
+      propsData: { value: 3598, showHours: false },
+    });
+
+    // Press up arrow in seconds field
+    await wrapper.find('input.seconds').trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is 59:59.00 and input event was emitted
+    expect(wrapper.vm.internalValue).to.equal(3599);
+    expect(wrapper.emitted().input).to.deep.equal([[3599]]);
+
+    // Press up arrow in seconds field
+    await wrapper.find('input.seconds').trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is 59:59.99 and input event was gmitted
+    expect(wrapper.vm.internalValue).to.equal(3599.99);
+    expect(wrapper.emitted().input).to.deep.equal([[3599], [3599.99]]);
+
+    // Press up arrow in seconds field
+    await wrapper.find('input.seconds').trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert value is still 59:59.99 and input event was not emitted
+    expect(wrapper.vm.internalValue).to.equal(3599.99);
+    expect(wrapper.emitted().input).to.deep.equal([[3599], [3599.99]]);
+  });
+
+  it('up arrow should not increment value past the 3 field maximum', async () => {
+    // Initialize component
+    const wrapper = mount(TimeInput, {
+      propsData: { value: 359998, showHours: true },
     });
 
     // Press up arrow in seconds field

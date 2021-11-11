@@ -1,9 +1,9 @@
 <template>
   <div class="time-input">
-    <int-input class="hours" aria-label="hours"
+    <int-input class="hours" aria-label="hours" v-if="showHours"
       :min="0" :max="99" :padding="1" v-model="hours"
       :arrow-keys="false" @keydown="onkeydown($event, 3600)"/>
-    <span>:</span>
+    <span v-if="showHours">:</span>
     <int-input class="minutes" aria-label="minutes"
       :min="0" :max="59" :padding="2" v-model="minutes"
       :arrow-keys="false" @keydown="onkeydown($event, 60)"/>
@@ -37,6 +37,14 @@ export default {
         return value >= 0 && value <= 359999.99;
       },
     },
+
+    /**
+     * Whether to show the hour field
+     */
+    showHours: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -49,6 +57,13 @@ export default {
   },
 
   computed: {
+    /**
+     * The maximum value
+     */
+    max() {
+      return this.showHours ? 359999.99 : 3599.99;
+    },
+
     /**
      * The value of the hours field
      */
@@ -113,8 +128,8 @@ export default {
      */
     onkeydown(e, step = 1) {
       if (e.key === 'ArrowUp') {
-        if (this.internalValue + step > 359999.99) {
-          this.internalValue = 359999.99;
+        if (this.internalValue + step > this.max) {
+          this.internalValue = this.max;
         } else {
           this.internalValue += step;
         }
