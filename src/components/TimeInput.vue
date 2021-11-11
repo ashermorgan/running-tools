@@ -1,10 +1,10 @@
 <template>
   <div class="time-input">
-    <int-input class="hours" aria-label="hours" v-if="showHours"
+    <integer-input class="hours" aria-label="hours" v-if="showHours"
       :min="0" :max="99" :padding="1" v-model="hours"
       :arrow-keys="false" @keydown="onkeydown($event, 3600)"/>
     <span v-if="showHours">:</span>
-    <int-input class="minutes" aria-label="minutes"
+    <integer-input class="minutes" aria-label="minutes"
       :min="0" :max="59" :padding="2" v-model="minutes"
       :arrow-keys="false" @keydown="onkeydown($event, 60)"/>
     <span>:</span>
@@ -15,14 +15,14 @@
 </template>
 
 <script>
-import IntInput from '@/components/IntInput.vue';
+import IntegerInput from '@/components/IntegerInput.vue';
 import DecimalInput from '@/components/DecimalInput.vue';
 
 export default {
   name: 'TimeInput',
 
   components: {
-    IntInput,
+    IntegerInput,
     DecimalInput,
   },
 

@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'IntInput',
+  name: 'IntegerInput',
 
   props: {
     /**
