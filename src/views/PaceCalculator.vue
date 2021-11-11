@@ -27,6 +27,7 @@
 
 <script>
 import paceUtils from '@/utils/paces';
+import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -47,17 +48,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 5,
+      inputDistance: storage.get('pace-calculator-input-distance', 5),
 
       /**
        * The input distance unit
        */
-      inputUnit: 'kilometers',
+      inputUnit: storage.get('pace-calculator-input-unit', 'kilometers'),
 
       /**
        * The input time value
        */
-      inputTime: 20 * 60,
+      inputTime: storage.get('pace-calculator-input-time', 20 * 60),
 
       /**
        * The names of the distance units
@@ -104,6 +105,29 @@ export default {
         { result: 'distance', time: 1800 },
       ],
     };
+  },
+
+  watch: {
+    /**
+     * Save input distance value
+     */
+    inputDistance(newValue) {
+      storage.set('pace-calculator-input-distance', newValue);
+    },
+
+    /**
+     * Save input distance unit
+     */
+    inputUnit(newValue) {
+      storage.set('pace-calculator-input-unit', newValue);
+    },
+
+    /**
+     * Save input time value
+     */
+    inputTime(newValue) {
+      storage.set('pace-calculator-input-time', newValue);
+    },
   },
 
   computed: {

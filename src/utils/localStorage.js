@@ -29,7 +29,9 @@ function get(key, defaultValue) {
  * @param {Object} value The value
  * */
 function set(key, value) {
-  localStorage.setItem(`${prefix}.${key}`, JSON.stringify(value));
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(`${prefix}.${key}`, JSON.stringify(value));
+  }
 }
 
 export default {

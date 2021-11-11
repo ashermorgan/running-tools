@@ -82,17 +82,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 5,
+      inputDistance: storage.get('race-calculator-input-distance', 5),
 
       /**
        * The input distance unit
        */
-      inputUnit: 'kilometers',
+      inputUnit: storage.get('race-calculator-input-unit', 'kilometers'),
 
       /**
        * The input time value
        */
-      inputTime: 20 * 60,
+      inputTime: storage.get('race-calculator-input-time', 20 * 60),
 
       /**
       * The race prediction model
@@ -273,22 +273,43 @@ export default {
 
   watch: {
     /**
-    * Save prediction model
-    */
+     * Save input distance value
+     */
+    inputDistance(newValue) {
+      storage.set('race-calculator-input-distance', newValue);
+    },
+
+    /**
+     * Save input distance unit
+     */
+    inputUnit(newValue) {
+      storage.set('race-calculator-input-unit', newValue);
+    },
+
+    /**
+     * Save input time value
+     */
+    inputTime(newValue) {
+      storage.set('race-calculator-input-time', newValue);
+    },
+
+    /**
+     * Save prediction model
+     */
     model(newValue) {
       storage.set('race-calculator-model', newValue);
     },
 
     /**
-    * Save Riegel Model exponent
-    */
+     * Save Riegel Model exponent
+     */
     riegelExponent(newValue) {
       storage.set('race-calculator-riegel-exponent', newValue);
     },
 
     /**
-    * Save advanced options state
-    */
+     * Save advanced options state
+     */
     showAdvancedOptions(newValue) {
       storage.set('race-calculator-show-advanced-options', newValue);
     },
