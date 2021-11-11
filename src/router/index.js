@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import PaceCalculator from '../views/PaceCalculator.vue';
 import RaceCalculator from '../views/RaceCalculator.vue';
+import SplitCalculator from '../views/SplitCalculator.vue';
 import UnitCalculator from '../views/UnitCalculator.vue';
 
 Vue.use(VueRouter);
@@ -40,6 +41,15 @@ const routes = [
     component: RaceCalculator,
     meta: {
       title: 'Race Calculator',
+      back: 'home',
+    },
+  },
+  {
+    path: '/calculate/splits',
+    name: 'calculate-splits',
+    component: SplitCalculator,
+    meta: {
+      title: 'Split Calculator',
       back: 'home',
     },
   },

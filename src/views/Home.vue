@@ -14,6 +14,11 @@
           Race Calculator
         </button>
       </router-link>
+      <router-link :to="{ name: 'calculate-splits' }" v-slot="{ navigate }" custom>
+        <button @click="navigate">
+          Split Calculator
+        </button>
+      </router-link>
       <router-link :to="{ name: 'calculate-units' }" v-slot="{ navigate }" custom>
         <button @click="navigate">
           Unit Calculator
@@ -32,7 +37,7 @@ export default {
 <style scoped>
 .home {
   text-align: center;
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
 }
 .description {
@@ -49,7 +54,7 @@ export default {
   padding: 0.5em;
   margin: 0em 0.3em;
 }
-@media only screen and (max-width: 550px) {
+@media only screen and (max-width: 600px) {
   .calculators {
     flex-direction: column;
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="target-table">
+  <div class="simple-target-table">
     <table class="results" v-show="!inEditMode">
       <thead>
         <tr>
@@ -45,97 +45,31 @@
       </tbody>
     </table>
 
-    <table class="targets" v-show="inEditMode">
-      <thead>
-        <tr>
-          <th>Edit Targets</th>
-
-          <th>
-            <button class="icon" title="Reset Targets" @click="resetTargets" v-blur>
-              <rotate-ccw-icon/>
-            </button>
-            <button class="icon" title="Close" @click="inEditMode=false" v-blur>
-              <x-icon/>
-            </button>
-          </th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr v-for="(item, index) in targets" :key="index">
-          <td v-if="item.result === 'time'">
-            <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
-              :min="0" :digits="2"/>
-            <select v-model="item.distanceUnit" aria-label="Distance Unit">
-              <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-                {{ value.name }}
-              </option>
-            </select>
-          </td>
-
-          <td v-else>
-            <time-input v-model="item.time" aria-label="Time"/>
-          </td>
-
-          <td>
-            <button class="icon" title="Remove Target" @click="targets.splice(index, 1)" v-blur>
-              <trash-2-icon/>
-            </button>
-          </td>
-        </tr>
-
-        <tr v-if="targets.length === 0" class="empty-message">
-          <td colspan="2">
-            There aren't any targets yet
-          </td>
-        </tr>
-      </tbody>
-
-      <tfoot>
-        <tr>
-          <td colspan="2">
-            <button title="Add Distance Target" @click="targets.push({ result: 'time',
-              distanceValue: 1, distanceUnit: getDefaultDistanceUnit() })" v-blur>
-              Add distance target
-            </button>
-            <button title="Add Time Target" @click="targets.push({ result: 'distance',
-              time: 600 })" v-blur>
-              Add time target
-            </button>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+    <target-editor v-show="inEditMode" v-model="targets" @close="inEditMode=false"
+      @reset="resetTargets"/>
   </div>
 </template>
 
 <script>
 import {
   EditIcon,
-  RotateCcwIcon,
-  Trash2Icon,
-  XIcon,
 } from 'vue-feather-icons';
 
-import unitUtils from '@/utils/units';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
+import unitUtils from '@/utils/units';
 
-import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
+import TargetEditor from '@/components/TargetEditor.vue';
 
 import blur from '@/directives/blur';
 
 export default {
-  name: 'TargetTable',
+  name: 'SimpleTargetTable',
 
   components: {
-    DecimalInput,
-    TimeInput,
+    TargetEditor,
 
     EditIcon,
-    RotateCcwIcon,
-    Trash2Icon,
-    XIcon,
   },
 
   directives: {
@@ -144,7 +78,7 @@ export default {
 
   props: {
     /**
-     * The method that generates the time table rows
+     * The method that generates the target table rows
      */
     calculateResult: {
       type: Function,
@@ -152,7 +86,7 @@ export default {
     },
 
     /**
-     * The default time table targets
+     * The default targets
      */
     defaultTargets: {
       type: Array,
@@ -199,7 +133,7 @@ export default {
       inEditMode: false,
 
       /**
-       * The time table targets
+       * The target table targets
        */
       targets: storage.get(this.storageKey, this.defaultTargets),
     };
@@ -207,7 +141,7 @@ export default {
 
   computed: {
     /**
-     * The time table results
+     * The target table results
      */
     results() {
       // Calculate results
@@ -230,7 +164,7 @@ export default {
      * Sort targets
      */
     inEditMode() {
-      this.sortTargets();
+      this.targets = targetUtils.sort(this.targets);
     },
 
     /**
@@ -255,21 +189,7 @@ export default {
       this.targets = JSON.parse(JSON.stringify(this.defaultTargets));
 
       // Sort targets
-      this.sortTargets();
-    },
-
-    /**
-     * Sort the targets by distance
-     */
-    sortTargets() {
-      this.targets = [
-        ...this.targets.filter((item) => item.result === 'time')
-          .sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit, 'meters')
-            - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters')),
-
-        ...this.targets.filter((item) => item.result === 'distance')
-          .sort((a, b) => a.time - b.time),
-      ];
+      this.targets = targetUtils.sort(this.targets);
     },
 
     /**
@@ -298,36 +218,6 @@ export default {
 }
 .results .result {
   font-weight: bold;
-}
-
-/* edit targets table */
-.targets th:last-child, .targets td:last-child {
-  text-align: right;
-}
-.targets td select {
-  margin-left: 0.2em;
-  width: 8em;
-}
-.targets tfoot td {
-  text-align: center !important;
-  padding: 0.5em 0.2em;
-}
-.targets tfoot button {
-  margin: 0.5em;
-}
-
-/* general table styles */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  text-align: left;
-}
-table th, table td {
-  padding: 0.2em;
-}
-table button.icon {
-  height: 2em;
-  width: 2em;
 }
 
 /* empty table message */

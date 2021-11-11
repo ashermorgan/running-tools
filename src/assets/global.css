@@ -31,6 +31,20 @@ a:focus, .link:focus {
   }
 }
 
+/* styles for tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+}
+table th, table td {
+  padding: 0.2em;
+}
+table button.icon {
+  height: 2em;
+  width: 2em;
+}
+
 /* styles for icons */
 .icon {
   border: none;
