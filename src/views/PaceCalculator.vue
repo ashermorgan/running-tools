@@ -88,7 +88,6 @@ export default {
         { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
         { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
         { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
 
         { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
         { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
@@ -103,6 +102,7 @@ export default {
 
         { result: 'distance', time: 600 },
         { result: 'distance', time: 1800 },
+        { result: 'distance', time: 3600 },
       ],
     };
   },
