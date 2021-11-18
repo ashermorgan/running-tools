@@ -41,14 +41,14 @@
         (default: 1.06)
       </div>
       <div>
-        Purdy Points: <b>{{ purdyPoints.toFixed(1) }}</b>
+        Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
-        V&#775;O&#8322;: <b>{{ vo2.toFixed(1) }}</b> ml/kg/min
-          (<b>{{ vo2Percentage.toFixed(1) }}%</b> of max)
+        V&#775;O&#8322;: <b>{{ formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
       </div>
       <div>
-        V&#775;O&#8322; Max: <b>{{ vo2Max.toFixed(1) }}</b> ml/kg/min
+        V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
       </div>
     </div>
 
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
@@ -113,6 +114,11 @@ export default {
        * The names of the distance units
        */
       distanceUnits: unitUtils.DISTANCE_UNITS,
+
+      /**
+       * The formatNumber method
+       */
+      formatNumber: formatUtils.formatNumber,
 
       /**
        * The default output targets

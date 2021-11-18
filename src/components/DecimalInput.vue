@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
+
 export default {
   name: 'DecimalInput',
 
@@ -216,8 +218,7 @@ export default {
      * @returns {String} The formated string
      */
     format(value) {
-      const result = value.toFixed(this.digits);
-      return result.padStart(this.padding + this.digits + 1, '0');
+      return formatUtils.formatNumber(value, this.padding, this.digits, true);
     },
   },
 };

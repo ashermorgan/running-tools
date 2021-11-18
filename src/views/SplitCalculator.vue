@@ -23,12 +23,12 @@
         <tbody>
           <tr v-for="(item, index) in results" :key="index">
             <td>
-              {{ item.distanceValue.toFixed(2) }}
+              {{ formatNumber(item.distanceValue, 0, 2, true) }}
               {{ distanceUnits[item.distanceUnit].symbol }}
             </td>
 
             <td>
-              {{ formatDuration(item.totalTime, 3, 2) }}
+              {{ formatDuration(item.totalTime, 3, 2, true) }}
             </td>
 
             <td>
@@ -36,7 +36,7 @@
             </td>
 
             <td colspan="2">
-              {{ formatDuration(item.pace, 3, 0) }}
+              {{ formatDuration(item.pace, 3, 0, true) }}
               / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
             </td>
           </tr>
@@ -63,6 +63,7 @@ import {
   EditIcon,
 } from 'vue-feather-icons';
 
+import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
@@ -103,7 +104,12 @@ export default {
       /**
        * The formatDuration method
        */
-      formatDuration: unitUtils.formatDuration,
+      formatDuration: formatUtils.formatDuration,
+
+      /**
+       * The formatNumber method
+       */
+      formatNumber: formatUtils.formatNumber,
 
       /**
        * The getDefaultDistanceUnit method

@@ -20,10 +20,10 @@
     <span class="equals"> = </span>
 
     <span v-if="getUnitType(outputUnit) === 'time'" class="output-value">
-      {{ formatDuration(outputValue, 6, 3) }}
+      {{ formatDuration(outputValue, 6, 3, true) }}
     </span>
     <span v-else class="output-value">
-      {{ outputValue.toFixed(3) }}
+      {{ formatNumber(outputValue, 0, 3, true) }}
     </span>
 
     <select v-model="outputUnit" class="output-units" aria-label="output units">
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
 
@@ -74,7 +75,12 @@ export default {
       /**
        * The formatDuration method
        */
-      formatDuration: unitUtils.formatDuration,
+      formatDuration: formatUtils.formatDuration,
+
+      /**
+       * The formatNumber method
+       */
+      formatNumber: formatUtils.formatNumber,
     };
   },
 
