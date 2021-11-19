@@ -20,12 +20,12 @@
       <tbody>
         <tr v-for="(item, index) in results" :key="index">
           <td :class="item.result === 'distance' ? 'result' : ''">
-            {{ formatNumber(item.distanceValue, 0, 2, true) }}
+            {{ formatNumber(item.distanceValue, 0, 2, item.result === 'distance') }}
             {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
 
           <td :colspan="showPace ? 1 : 2" :class="item.result === 'time' ? 'result' : ''">
-            {{ formatDuration(item.time, 0, 2, true) }}
+            {{ formatDuration(item.time, 3, 2, item.result === 'time') }}
           </td>
 
           <td v-if="showPace" colspan="2">

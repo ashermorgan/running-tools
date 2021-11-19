@@ -23,7 +23,7 @@
         <tbody>
           <tr v-for="(item, index) in results" :key="index">
             <td>
-              {{ formatNumber(item.distanceValue, 0, 2, true) }}
+              {{ formatNumber(item.distanceValue, 0, 2, false) }}
               {{ distanceUnits[item.distanceUnit].symbol }}
             </td>
 
