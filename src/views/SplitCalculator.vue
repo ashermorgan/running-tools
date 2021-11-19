@@ -4,7 +4,10 @@
       <table class="results" v-show="!inEditMode">
         <thead>
           <tr>
-            <th>Distance</th>
+            <th>
+              <span>Distance</span>
+              <span class="mobile-abbreviation">Dist</span>
+            </th>
 
             <th>Time</th>
 
@@ -221,6 +224,9 @@ export default {
 .results th:last-child {
   text-align: right;
 }
+.results th:first-child span.mobile-abbreviation {
+  display: none;
+}
 
 /* calculator output */
 .output {
@@ -231,6 +237,13 @@ export default {
     width: 100%;
     min-width: 0px;
   }
+  .results th:first-child span:not(.mobile-abbreviation) {
+    display: none;
+  }
+  .results th:first-child span.mobile-abbreviation {
+    display: inherit;
+  }
+
 }
 
 /* empty table message */
