@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
-import PaceCalculator from '../views/PaceCalculator.vue';
-import RaceCalculator from '../views/RaceCalculator.vue';
-import SplitCalculator from '../views/SplitCalculator.vue';
-import UnitCalculator from '../views/UnitCalculator.vue';
+import Error404 from '@/views/Error404.vue';
+import Home from '@/views/Home.vue';
+import PaceCalculator from '@/views/PaceCalculator.vue';
+import RaceCalculator from '@/views/RaceCalculator.vue';
+import SplitCalculator from '@/views/SplitCalculator.vue';
+import UnitCalculator from '@/views/UnitCalculator.vue';
 
 Vue.use(VueRouter);
 
@@ -64,7 +65,7 @@ const routes = [
   },
   {
     path: '*',
-    redirect: '/home',
+    component: Error404,
   },
 ];
 
