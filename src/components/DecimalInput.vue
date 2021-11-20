@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
+
 export default {
   name: 'DecimalInput',
 
@@ -45,11 +47,11 @@ export default {
     },
 
     /**
-     * Whether to wrap around at the minimum and maximum values
+     * Whether to allow the user to increment/decrement the value using the arrow keys
      */
-    wrap: {
+    arrowKeys: {
       type: Boolean,
-      default: false,
+      default: true,
     },
 
     /**
@@ -183,19 +185,13 @@ export default {
      * @param {Object} e The keydown event args
      */
     onkeydown(e) {
-      if (e.key === 'ArrowUp') {
-        if (this.decValue === this.max && this.wrap && this.min !== null) {
-          this.decValue = this.min;
-        } else {
-          this.decValue += this.step;
-        }
+      if (!this.arrowKeys) {
+        this.$emit('keydown', e);
+      } else if (e.key === 'ArrowUp') {
+        this.decValue += this.step;
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
-        if (this.decValue === this.min && this.wrap && this.max !== null) {
-          this.decValue = this.max;
-        } else {
-          this.decValue -= this.step;
-        }
+        this.decValue -= this.step;
         e.preventDefault();
       }
     },
@@ -222,8 +218,7 @@ export default {
      * @returns {String} The formated string
      */
     format(value) {
-      const result = value.toFixed(this.digits);
-      return result.padStart(this.padding + this.digits + 1, '0');
+      return formatUtils.formatNumber(value, this.padding, this.digits, true);
     },
   },
 };

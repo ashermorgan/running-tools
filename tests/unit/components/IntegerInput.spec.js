@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { mount } from '@vue/test-utils';
-import IntInput from '@/components/IntInput.vue';
+import IntegerInput from '@/components/IntegerInput.vue';
 
-describe('components/IntInput.vue', () => {
+describe('components/IntegerInput.vue', () => {
   it('value should be 0 by default', () => {
     // Initialize component
-    const wrapper = mount(IntInput);
+    const wrapper = mount(IntegerInput);
 
     // Assert value is 0
     expect(wrapper.find('input').element.value).to.equal('0');
@@ -13,7 +13,7 @@ describe('components/IntInput.vue', () => {
 
   it('should read value prop', () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 1 },
     });
 
@@ -23,7 +23,7 @@ describe('components/IntInput.vue', () => {
 
   it('up arrow should increment value by step', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { step: 2 },
     });
 
@@ -37,7 +37,7 @@ describe('components/IntInput.vue', () => {
 
   it('down arrow should increment value by step', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { step: 2 },
     });
 
@@ -51,7 +51,7 @@ describe('components/IntInput.vue', () => {
 
   it('should fire input event when value changes', async () => {
     // Initialize component
-    const wrapper = mount(IntInput);
+    const wrapper = mount(IntegerInput);
 
     // Set value to 1
     wrapper.find('input').element.value = '1';
@@ -63,7 +63,7 @@ describe('components/IntInput.vue', () => {
 
   it('should accept numerical values', async () => {
     // Initialize component
-    const wrapper = mount(IntInput);
+    const wrapper = mount(IntegerInput);
 
     // Try to set value to 1
     wrapper.find('input').element.value = '1';
@@ -76,7 +76,7 @@ describe('components/IntInput.vue', () => {
 
   it('should not accept decimal values', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 1 },
     });
 
@@ -91,7 +91,7 @@ describe('components/IntInput.vue', () => {
 
   it('should not accept non numerical values', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 1 },
     });
 
@@ -106,7 +106,7 @@ describe('components/IntInput.vue', () => {
 
   it('should format input value on blur', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 1, padding: 3 },
     });
 
@@ -128,7 +128,7 @@ describe('components/IntInput.vue', () => {
 
   it('should allow input to be empty until blur', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 5 },
     });
 
@@ -150,7 +150,7 @@ describe('components/IntInput.vue', () => {
 
   it('should allow input to be "-" until blur', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 5 },
     });
 
@@ -172,7 +172,7 @@ describe('components/IntInput.vue', () => {
 
   it('default value should be the minimum if 0 is not valid', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { value: 3, max: 4, min: 2 },
     });
 
@@ -188,7 +188,7 @@ describe('components/IntInput.vue', () => {
 
   it('should not allow input to be below the minimum', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { min: 10, value: 20 },
     });
 
@@ -210,7 +210,7 @@ describe('components/IntInput.vue', () => {
 
   it('should not allow input to be above the maximum', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { max: 10 },
     });
 
@@ -230,91 +230,26 @@ describe('components/IntInput.vue', () => {
     expect(wrapper.emitted().input).to.deep.equal([[10]]);
   });
 
-  it('should not wrap to the maximum if it is null', async () => {
-    // Initialize component
-    const wrapper = mount(IntInput, {
-      propsData: {
-        min: -10, max: null, value: -10, step: 2, wrap: true,
-      },
-    });
-
-    // Try to decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is still -10 and no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('-10');
-    expect(wrapper.emitted().input).to.equal(undefined);
-  });
-
-  it('should not wrap to the minimum if it is null', async () => {
-    // Initialize component
-    const wrapper = mount(IntInput, {
-      propsData: {
-        min: null, max: 10, value: 10, step: 2, wrap: true,
-      },
-    });
-
-    // Try to increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is still 10 and no events were emitted
-    expect(wrapper.find('input').element.value).to.equal('10');
-    expect(wrapper.emitted().input).to.equal(undefined);
-  });
-
-  it('should correctly wrap from the minimum to maximum', async () => {
-    // Initialize component
-    const wrapper = mount(IntInput, {
-      propsData: {
-        min: -10, max: 10, value: -9, step: 2, wrap: true,
-      },
-    });
-
-    // Decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is -10 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('-10');
-    expect(wrapper.emitted().input).to.deep.equal([[-10]]);
-
-    // Decrement value
-    await wrapper.trigger('keydown', { key: 'ArrowDown' });
-
-    // Assert value is 10 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('10');
-    expect(wrapper.emitted().input).to.deep.equal([[-10], [10]]);
-  });
-
-  it('should correctly wrap from the maximum to minimum', async () => {
-    // Initialize component
-    const wrapper = mount(IntInput, {
-      propsData: {
-        min: -10, max: 10, value: 9, step: 2, wrap: true,
-      },
-    });
-
-    // Increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is 10 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('10');
-    expect(wrapper.emitted().input).to.deep.equal([[10]]);
-
-    // Increment value
-    await wrapper.trigger('keydown', { key: 'ArrowUp' });
-
-    // Assert value is -10 and input event was emitted
-    expect(wrapper.find('input').element.value).to.equal('-10');
-    expect(wrapper.emitted().input).to.deep.equal([[10], [-10]]);
-  });
-
   it('should format value according to padding prop', async () => {
     // Initialize component
-    const wrapper = mount(IntInput, {
+    const wrapper = mount(IntegerInput, {
       propsData: { padding: 2 },
     });
 
     // Assert value is correctly formatted
     expect(wrapper.find('input').element.value).to.equal('00');
+  });
+
+  it('should emit keydown event if arrow-keys is false', async () => {
+    // Initialize component
+    const wrapper = mount(IntegerInput, {
+      propsData: { arrowKeys: false },
+    });
+
+    // Try to increment value
+    await wrapper.trigger('keydown', { key: 'ArrowUp' });
+
+    // Assert keydown event emitted
+    expect(wrapper.emitted().keydown.length).to.equal(1);
   });
 });

@@ -31,6 +31,30 @@ a:focus, .link:focus {
   }
 }
 
+/* styles for tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+}
+table th, table td {
+  padding: 0.2em;
+}
+table button.icon {
+  height: 2em;
+  width: 2em;
+}
+
+/* empty table message */
+table .empty-message td {
+  text-align: center !important;
+}
+table .empty-message svg {
+  height: 1em;
+  width: 1em;
+  color: var(--foreground);
+}
+
 /* styles for icons */
 .icon {
   border: none;

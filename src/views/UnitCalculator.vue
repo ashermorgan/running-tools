@@ -3,7 +3,7 @@
     <select class="category" v-model="category">
       <option value="distance">Distance</option>
       <option value="time">Time</option>
-      <option value="speed_and_pace">Speed & Pace</option>
+      <option value="speed_and_pace">Speed &amp; Pace</option>
     </select>
 
     <time-input v-if="getUnitType(inputUnit) === 'time'" class="input-value"
@@ -20,10 +20,10 @@
     <span class="equals"> = </span>
 
     <span v-if="getUnitType(outputUnit) === 'time'" class="output-value">
-      {{ formatDuration(outputValue, 6, 3) }}
+      {{ formatDuration(outputValue, 6, 3, true) }}
     </span>
     <span v-else class="output-value">
-      {{ outputValue.toFixed(3) }}
+      {{ formatNumber(outputValue, 0, 3, true) }}
     </span>
 
     <select v-model="outputUnit" class="output-units" aria-label="output units">
@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
+import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -53,17 +55,17 @@ export default {
       /**
        * The input value
        */
-      inputValue: 1.0,
+      inputValue: storage.get('unit-calculator-distance-input-value', 1.0),
 
       /**
        * The unit of the input
        */
-      inputUnit: 'miles',
+      inputUnit: storage.get('unit-calculator-distance-input-unit', 'miles'),
 
       /**
        * The unit of the output
        */
-      outputUnit: 'kilometers',
+      outputUnit: storage.get('unit-calculator-distance-output-unit', 'kilometers'),
 
       /**
        * The unit category
@@ -73,7 +75,12 @@ export default {
       /**
        * The formatDuration method
        */
-      formatDuration: unitUtils.formatDuration,
+      formatDuration: formatUtils.formatDuration,
+
+      /**
+       * The formatNumber method
+       */
+      formatNumber: formatUtils.formatNumber,
     };
   },
 
@@ -138,21 +145,93 @@ export default {
     category(newValue) {
       switch (newValue) {
         case 'distance': {
-          this.inputValue = 1;
-          this.inputUnit = 'miles';
-          this.outputUnit = 'kilometers';
+          this.inputValue = storage.get('unit-calculator-distance-input-value', 1);
+          this.inputUnit = storage.get('unit-calculator-distance-input-unit', 'miles');
+          this.outputUnit = storage.get('unit-calculator-distance-output-unit', 'kilometers');
           break;
         }
         case 'time': {
-          this.inputValue = 1;
-          this.inputUnit = 'seconds';
-          this.outputUnit = 'hh:mm:ss';
+          this.inputValue = storage.get('unit-calculator-time-input-value', 1);
+          this.inputUnit = storage.get('unit-calculator-time-input-unit', 'seconds');
+          this.outputUnit = storage.get('unit-calculator-time-ouput-unit', 'hh:mm:ss');
           break;
         }
         case 'speed_and_pace': {
-          this.inputValue = unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300;
-          this.inputUnit = unitUtils.getDefaultPaceUnit();
-          this.outputUnit = unitUtils.getDefaultSpeedUnit();
+          this.inputValue = storage.get('unit-calculator-speed-input-value',
+            unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300);
+          this.inputUnit = storage.get('unit-calculator-speed-input-unit',
+            unitUtils.getDefaultPaceUnit());
+          this.outputUnit = storage.get('unit-calculator-speed-output-unit',
+            unitUtils.getDefaultSpeedUnit());
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+
+    /**
+     * Save input value
+     */
+    inputValue(newValue) {
+      switch (this.category) {
+        case 'distance': {
+          storage.set('unit-calculator-distance-input-value', newValue);
+          break;
+        }
+        case 'time': {
+          storage.set('unit-calculator-time-input-value', newValue);
+          break;
+        }
+        case 'speed_and_pace': {
+          storage.set('unit-calculator-speed-input-value', newValue);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+
+    /**
+     * Save input unit
+     */
+    inputUnit(newValue) {
+      switch (this.category) {
+        case 'distance': {
+          storage.set('unit-calculator-distance-input-unit', newValue);
+          break;
+        }
+        case 'time': {
+          storage.set('unit-calculator-time-input-unit', newValue);
+          break;
+        }
+        case 'speed_and_pace': {
+          storage.set('unit-calculator-speed-input-unit', newValue);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+
+    /**
+     * Save output unit
+     */
+    outputUnit(newValue) {
+      switch (this.category) {
+        case 'distance': {
+          storage.set('unit-calculator-distance-output-unit', newValue);
+          break;
+        }
+        case 'time': {
+          storage.set('unit-calculator-time-output-unit', newValue);
+          break;
+        }
+        case 'speed_and_pace': {
+          storage.set('unit-calculator-speed-output-unit', newValue);
           break;
         }
         default: {

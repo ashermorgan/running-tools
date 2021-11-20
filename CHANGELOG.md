@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] - 2021-11-20
+
+### Added
+- Split calculator
+
+### Changed
+- Calculator state is saved between sessions
+- Improved arrow key behavior in time input fields
+- Improved formatting of distances and durations
+
 ## [1.1.1] - 2021-09-19
 
 ### Fixed
@@ -40,6 +50,7 @@
 ### Added
 - Basic app structure
 
+[1.2.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.2.0
 [1.1.1]: https://github.com/ashermorgan/running-tools/releases/tag/1.1.1
 [1.1.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.1.0
 [1.0.0]: https://github.com/ashermorgan/running-tools/releases/tag/1.0.0

@@ -20,18 +20,19 @@
 
     <h2>Equivalent Paces</h2>
 
-    <target-table class="output" :calculate-result="calculatePace" :default-targets="defaultTargets"
-      storage-key="pace-calculator-targets-v2"/>
+    <simple-target-table class="output" :calculate-result="calculatePace"
+      :default-targets="defaultTargets" storage-key="pace-calculator-targets-v2"/>
   </div>
 </template>
 
 <script>
 import paceUtils from '@/utils/paces';
+import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TargetTable from '@/components/TargetTable.vue';
+import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 
 export default {
   name: 'PaceCalculator',
@@ -39,7 +40,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TargetTable,
+    SimpleTargetTable,
   },
 
   data() {
@@ -47,17 +48,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 5,
+      inputDistance: storage.get('pace-calculator-input-distance', 5),
 
       /**
        * The input distance unit
        */
-      inputUnit: 'kilometers',
+      inputUnit: storage.get('pace-calculator-input-unit', 'kilometers'),
 
       /**
        * The input time value
        */
-      inputTime: 20 * 60,
+      inputTime: storage.get('pace-calculator-input-time', 20 * 60),
 
       /**
        * The names of the distance units
@@ -87,7 +88,6 @@ export default {
         { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
         { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
         { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
 
         { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
         { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
@@ -102,8 +102,32 @@ export default {
 
         { result: 'distance', time: 600 },
         { result: 'distance', time: 1800 },
+        { result: 'distance', time: 3600 },
       ],
     };
+  },
+
+  watch: {
+    /**
+     * Save input distance value
+     */
+    inputDistance(newValue) {
+      storage.set('pace-calculator-input-distance', newValue);
+    },
+
+    /**
+     * Save input distance unit
+     */
+    inputUnit(newValue) {
+      storage.set('pace-calculator-input-unit', newValue);
+    },
+
+    /**
+     * Save input time value
+     */
+    inputTime(newValue) {
+      storage.set('pace-calculator-input-time', newValue);
+    },
   },
 
   computed: {

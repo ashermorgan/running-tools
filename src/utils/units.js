@@ -160,62 +160,6 @@ function convertSpeedPace(inputValue, inputUnit, outputUnit) {
 }
 
 /**
- * Format a duration as a string
- * @param {Number} value The duration (in seconds)
- * @param {Number} padding The number of digits to show before the decimal point
- * @param {Number} digits The number of digits to show after the decimal point
- * @returns {String} The formatted value
- */
-function formatDuration(value, padding = 6, digits = 2) {
-  // Check if value is NaN
-  if (Number.isNaN(value)) {
-    return 'NaN';
-  }
-
-  // Initialize result
-  let result = '';
-
-  // Check value sign
-  if (value < 0) {
-    result += '-';
-  }
-
-  // Check if value is valid
-  if (Math.abs(value) === Infinity) {
-    return `${result}Infinity`;
-  }
-
-  // Validate padding
-  let fixedPadding = Math.min(padding, 6);
-
-  // Prevent rounding errors
-  const fixedValue = parseFloat(Math.abs(value).toFixed(digits));
-
-  // Calculate parts
-  const hours = Math.floor(fixedValue / 3600);
-  const minutes = Math.floor((fixedValue % 3600) / 60);
-  const seconds = fixedValue % 60;
-
-  // Format parts
-  if (hours !== 0 || fixedPadding >= 5) {
-    result += hours.toString().padStart(fixedPadding - 4, '0');
-    result += ':';
-    fixedPadding = 4;
-  }
-  if (minutes !== 0 || fixedPadding >= 3) {
-    result += minutes.toString().padStart(fixedPadding - 2, '0');
-    result += ':';
-    fixedPadding = 2;
-  }
-  if (digits === 0) {
-    result += seconds.toFixed(digits).padStart(fixedPadding, '0');
-  } else {
-    result += seconds.toFixed(digits).padStart(fixedPadding + digits + 1, '0');
-  }
-  return result;
-}
-
-/**
  * Get the default unit system
  * @returns {String} The default unit system
  */
@@ -262,8 +206,6 @@ export default {
   convertSpeed,
   convertPace,
   convertSpeedPace,
-
-  formatDuration,
 
   getDefaultUnitSystem,
   getDefaultDistanceUnit,

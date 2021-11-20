@@ -41,32 +41,33 @@
         (default: 1.06)
       </div>
       <div>
-        Purdy Points: <b>{{ purdyPoints.toFixed(1) }}</b>
+        Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
-        V&#775;O&#8322;: <b>{{ vo2.toFixed(1) }}</b> ml/kg/min
-          (<b>{{ vo2Percentage.toFixed(1) }}%</b> of max)
+        V&#775;O&#8322;: <b>{{ formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
       </div>
       <div>
-        V&#775;O&#8322; Max: <b>{{ vo2Max.toFixed(1) }}</b> ml/kg/min
+        V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
       </div>
     </div>
 
     <h2>Equivalent Race Results</h2>
 
-    <target-table class="output" :calculate-result="predictResult" :default-targets="defaultTargets"
-      storage-key="race-calculator-targets-v2" show-pace/>
+    <simple-target-table class="output" :calculate-result="predictResult"
+      :default-targets="defaultTargets" storage-key="race-calculator-targets-v2" show-pace/>
   </div>
 </template>
 
 <script>
+import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TargetTable from '@/components/TargetTable.vue';
+import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 
 export default {
   name: 'RaceCalculator',
@@ -74,7 +75,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-    TargetTable,
+    SimpleTargetTable,
   },
 
   data() {
@@ -82,17 +83,17 @@ export default {
       /**
        * The input distance value
        */
-      inputDistance: 5,
+      inputDistance: storage.get('race-calculator-input-distance', 5),
 
       /**
        * The input distance unit
        */
-      inputUnit: 'kilometers',
+      inputUnit: storage.get('race-calculator-input-unit', 'kilometers'),
 
       /**
        * The input time value
        */
-      inputTime: 20 * 60,
+      inputTime: storage.get('race-calculator-input-time', 20 * 60),
 
       /**
       * The race prediction model
@@ -113,6 +114,11 @@ export default {
        * The names of the distance units
        */
       distanceUnits: unitUtils.DISTANCE_UNITS,
+
+      /**
+       * The formatNumber method
+       */
+      formatNumber: formatUtils.formatNumber,
 
       /**
        * The default output targets
@@ -273,22 +279,43 @@ export default {
 
   watch: {
     /**
-    * Save prediction model
-    */
+     * Save input distance value
+     */
+    inputDistance(newValue) {
+      storage.set('race-calculator-input-distance', newValue);
+    },
+
+    /**
+     * Save input distance unit
+     */
+    inputUnit(newValue) {
+      storage.set('race-calculator-input-unit', newValue);
+    },
+
+    /**
+     * Save input time value
+     */
+    inputTime(newValue) {
+      storage.set('race-calculator-input-time', newValue);
+    },
+
+    /**
+     * Save prediction model
+     */
     model(newValue) {
       storage.set('race-calculator-model', newValue);
     },
 
     /**
-    * Save Riegel Model exponent
-    */
+     * Save Riegel Model exponent
+     */
     riegelExponent(newValue) {
       storage.set('race-calculator-riegel-exponent', newValue);
     },
 
     /**
-    * Save advanced options state
-    */
+     * Save advanced options state
+     */
     showAdvancedOptions(newValue) {
       storage.set('race-calculator-show-advanced-options', newValue);
     },
