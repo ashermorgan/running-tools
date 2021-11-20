@@ -211,14 +211,4 @@ export default {
 .target-editor tfoot button {
   margin: 0.5em;
 }
-
-/* empty table message */
-.empty-message td {
-  text-align: center !important;
-}
-.empty-message svg {
-  height: 1em;
-  width: 1em;
-  color: var(--foreground);
-}
 </style>

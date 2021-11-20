@@ -45,6 +45,16 @@ table button.icon {
   width: 2em;
 }
 
+/* empty table message */
+table .empty-message td {
+  text-align: center !important;
+}
+table .empty-message svg {
+  height: 1em;
+  width: 1em;
+  color: var(--foreground);
+}
+
 /* styles for icons */
 .icon {
   border: none;

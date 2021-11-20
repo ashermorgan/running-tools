@@ -243,16 +243,5 @@ export default {
   .results th:first-child span.mobile-abbreviation {
     display: inherit;
   }
-
-}
-
-/* empty table message */
-.empty-message td {
-  text-align: center !important;
-}
-.empty-message svg {
-  height: 1em;
-  width: 1em;
-  color: var(--foreground);
 }
 </style>
