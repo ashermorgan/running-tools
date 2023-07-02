@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 
 // TODO: fix icons
 // import { ChevronLeftIcon } from 'vue-feather-icons';
@@ -22,11 +21,13 @@ import HelloWorld from './components/HelloWorld.vue'
     </h1>
   </header>
 
-  <router-view v-slot="{ Component }">
-    <keep-alive>
-      <component :is="Component"/>
-    </keep-alive>
-  </router-view>
+  <div id="route-content">
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component"/>
+      </keep-alive>
+    </router-view>
+  </div>
 </template>
 
 <style scoped>

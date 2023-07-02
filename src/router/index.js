@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Home from '../views/Home.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,26 +11,12 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: HomeView,
+      component: Home,
       meta: {
         title: null,
         back: null,
       },
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-      meta: {
-        title: 'About',
-        back: 'home',
-      }
-    },
-    /*
-     * TODO: add back in all routes
     {
       path: '/calculate',
       redirect: '/home',
@@ -38,7 +24,7 @@ const router = createRouter({
     {
       path: '/calculate/paces',
       name: 'calculate-paces',
-      component: PaceCalculator,
+      component: () => import('../views/PaceCalculator.vue'),
       meta: {
         title: 'Pace Calculator',
         back: 'home',
@@ -47,7 +33,7 @@ const router = createRouter({
     {
       path: '/calculate/races',
       name: 'calculate-races',
-      component: RaceCalculator,
+      component: () => import('../views/RaceCalculator.vue'),
       meta: {
         title: 'Race Calculator',
         back: 'home',
@@ -56,7 +42,7 @@ const router = createRouter({
     {
       path: '/calculate/splits',
       name: 'calculate-splits',
-      component: SplitCalculator,
+      component: () => import('../views/SplitCalculator.vue'),
       meta: {
         title: 'Split Calculator',
         back: 'home',
@@ -65,17 +51,16 @@ const router = createRouter({
     {
       path: '/calculate/units',
       name: 'calculate-units',
-      component: UnitCalculator,
+      component: () => import('../views/UnitCalculator.vue'),
       meta: {
         title: 'Unit Calculator',
         back: 'home',
       },
     },
     {
-      path: '*',
-      component: Error404,
+      path: '/:pathMatch(.*)*',
+      component: () => import('../views/Error404.vue'),
     },
-    */
   ]
 })
 
