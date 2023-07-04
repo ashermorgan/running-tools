@@ -17,7 +17,7 @@
 
             <th>
               <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
-                <edit-icon/>
+                <vue-feather type="edit"/>
               </button>
             </th>
           </tr>
@@ -48,7 +48,7 @@
             <td colspan="5">
               There aren't any targets yet,<br>
               click
-              <edit-icon/>
+              <vue-feather type="edit"/>
               to edit the list of targets
             </td>
           </tr>
@@ -62,9 +62,7 @@
 </template>
 
 <script>
-import {
-  EditIcon,
-} from 'vue-feather-icons';
+import VueFeather from 'vue-feather';
 
 import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
@@ -89,8 +87,7 @@ export default {
   components: {
     TimeInput,
     TargetEditor,
-
-    EditIcon,
+    VueFeather,
   },
 
   directives: {

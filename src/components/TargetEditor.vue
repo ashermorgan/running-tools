@@ -6,10 +6,10 @@
 
         <th>
           <button class="icon" title="Reset Targets" @click="reset" v-blur>
-            <rotate-ccw-icon/>
+            <vue-feather type="rotate-ccw"/>
           </button>
           <button class="icon" title="Close" @click="close" v-blur>
-            <x-icon/>
+            <vue-feather type="x"/>
           </button>
         </th>
       </tr>
@@ -33,7 +33,7 @@
 
         <td>
           <button class="icon" title="Remove Target" @click="removeTarget(index)" v-blur>
-            <trash-2-icon/>
+            <vue-feather type="trash-2"/>
           </button>
         </td>
       </tr>
@@ -61,11 +61,7 @@
 </template>
 
 <script>
-import {
-  RotateCcwIcon,
-  Trash2Icon,
-  XIcon,
-} from 'vue-feather-icons';
+import VueFeather from 'vue-feather';
 
 import unitUtils from '@/utils/units';
 
@@ -80,10 +76,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-
-    RotateCcwIcon,
-    Trash2Icon,
-    XIcon,
+    VueFeather,
   },
 
   directives: {

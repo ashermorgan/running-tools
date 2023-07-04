@@ -1,16 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-
-// TODO: fix icons
-// import { ChevronLeftIcon } from 'vue-feather-icons';
+import VueFeather from 'vue-feather';
 </script>
 
 <template>
   <header>
     <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
       class="icon" title="Back">
-      <!-- <chevron-left-icon/> -->
-      &#8592;
+      <vue-feather type="chevron-left"/>
     </router-link>
 
     <h1 v-if="$route.meta.title">
@@ -44,8 +41,10 @@ header a {
   height: 2em;
   width: 2em;
 }
-header a svg {
+::v-deep(.feather-chevron-left) {
   padding: 0em;
+  height: 2em;
+  width: 2em;
   color: #000000;
 }
 h1 {
