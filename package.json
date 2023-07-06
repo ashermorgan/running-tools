@@ -1,12 +1,14 @@
 {
   "name": "running-tools",
-  "version": "0.0.0",
+  "version": "1.2.0",
+  "description": "A collection of tools for runners and their coaches that calculate splits, predict race times, convert units, and more",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "test:unit": "vitest"
   },
   "dependencies": {
     "feather-icons": "^4.29.0",
@@ -16,8 +18,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/test-utils": "^2.4.0",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
-    "vite": "^4.3.9"
+    "jsdom": "^22.1.0",
+    "vite": "^4.3.9",
+    "vitest": "^0.32.4"
   }
 }
