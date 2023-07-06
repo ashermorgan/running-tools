@@ -87,7 +87,7 @@ export default {
     /**
      * The targets
      */
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -106,7 +106,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value,
+      internalValue: this.modelValue,
 
       /**
        * The distance units
@@ -117,10 +117,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value: {
+    modelValue: {
       deep: true,
       handler(newValue) {
         this.internalValue = newValue;
@@ -134,7 +134,7 @@ export default {
     internalValue: {
       deep: true,
       handler(newValue) {
-        this.$emit('input', newValue);
+        this.$emit('update:modelValue', newValue);
       },
     },
   },

@@ -30,7 +30,7 @@ export default {
     /**
      * The input value
      */
-    value: {
+    modelValue: {
       type: Number,
       default: 0,
       validator(value) {
@@ -52,7 +52,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value,
+      internalValue: this.modelValue,
     };
   },
 
@@ -69,7 +69,7 @@ export default {
      */
     hours: {
       get() {
-        return Math.floor(this.value / 3600);
+        return Math.floor(this.modelValue / 3600);
       },
       set(newValue) {
         this.internalValue = (newValue * 3600) + (this.minutes * 60) + this.seconds;
@@ -81,7 +81,7 @@ export default {
      */
     minutes: {
       get() {
-        return Math.floor((this.value % 3600) / 60);
+        return Math.floor((this.modelValue % 3600) / 60);
       },
       set(newValue) {
         this.internalValue = (this.hours * 3600) + (newValue * 60) + this.seconds;
@@ -93,7 +93,7 @@ export default {
      */
     seconds: {
       get() {
-        return this.value % 60;
+        return this.modelValue % 60;
       },
       set(newValue) {
         this.internalValue = (this.hours * 3600) + (this.minutes * 60) + newValue;
@@ -103,10 +103,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value(newValue) {
+    modelValue(newValue) {
       if (newValue !== this.internalValue) {
         this.internalValue = newValue;
       }
@@ -117,7 +117,7 @@ export default {
      * @param {Number} newValue The new component value
      */
     internalValue(newValue) {
-      this.$emit('input', newValue);
+      this.$emit('update:modelValue', newValue);
     },
   },
 

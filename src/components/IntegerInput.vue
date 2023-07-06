@@ -15,7 +15,7 @@ export default {
     /**
      * The input value
      */
-    value: {
+    modelValue: {
       type: Number,
       default: 0,
     },
@@ -69,7 +69,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.format(this.value),
+      internalValue: this.format(this.modelValue),
     };
   },
 
@@ -136,10 +136,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value(newValue) {
+    modelValue(newValue) {
       if (newValue !== this.intValue) {
         this.intValue = newValue;
       }
@@ -150,7 +150,7 @@ export default {
      * @param {Number} newValue The new component value
      */
     intValue(newValue) {
-      this.$emit('input', newValue);
+      this.$emit('update:modelValue', newValue);
     },
   },
 
@@ -172,13 +172,12 @@ export default {
      * @param {Object} e The keydown event args
      */
     onkeydown(e) {
-      if (!this.arrowKeys) {
-        this.$emit('keydown', e);
-      } else if (e.key === 'ArrowUp') {
-        this.intValue += this.step;
-        e.preventDefault();
-      } else if (e.key === 'ArrowDown') {
-        this.intValue -= this.step;
+      if (this.arrowKeys) {
+        if (e.key === 'ArrowUp') {
+          this.intValue += this.step;
+        } else if (e.key === 'ArrowDown') {
+          this.intValue -= this.step;
+        }
         e.preventDefault();
       }
     },
