@@ -1,5 +1,10 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import { createRouter, createWebHashHistory } from 'vue-router';
+import Home from '@/views/Home.vue';
+import PaceCalculator from '@/views/PaceCalculator.vue';
+import RaceCalculator from '@/views/RaceCalculator.vue';
+import SplitCalculator from '@/views/SplitCalculator.vue';
+import UnitCalculator from '@/views/UnitCalculator.vue';
+import Error404 from '@/views/Error404.vue';
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -24,7 +29,7 @@ const router = createRouter({
     {
       path: '/calculate/paces',
       name: 'calculate-paces',
-      component: () => import('../views/PaceCalculator.vue'),
+      component: PaceCalculator,
       meta: {
         title: 'Pace Calculator',
         back: 'home',
@@ -33,7 +38,7 @@ const router = createRouter({
     {
       path: '/calculate/races',
       name: 'calculate-races',
-      component: () => import('../views/RaceCalculator.vue'),
+      component: RaceCalculator,
       meta: {
         title: 'Race Calculator',
         back: 'home',
@@ -42,7 +47,7 @@ const router = createRouter({
     {
       path: '/calculate/splits',
       name: 'calculate-splits',
-      component: () => import('../views/SplitCalculator.vue'),
+      component: SplitCalculator,
       meta: {
         title: 'Split Calculator',
         back: 'home',
@@ -51,7 +56,7 @@ const router = createRouter({
     {
       path: '/calculate/units',
       name: 'calculate-units',
-      component: () => import('../views/UnitCalculator.vue'),
+      component: UnitCalculator,
       meta: {
         title: 'Unit Calculator',
         back: 'home',
@@ -59,17 +64,17 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      component: () => import('../views/Error404.vue'),
+      component: Error404,
     },
   ]
-})
+});
 
 router.afterEach((to) => {
   if (to.meta.title) {
-    document.title = `${to.meta.title} - Running Tools`
+    document.title = `${to.meta.title} - Running Tools`;
   } else {
-    document.title = 'Running Tools'
+    document.title = 'Running Tools';
   }
-})
+});
 
-export default router
+export default router;
