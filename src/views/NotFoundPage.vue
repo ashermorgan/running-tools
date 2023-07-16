@@ -1,5 +1,5 @@
 <template>
-  <div class="error404">
+  <div class="not-found-page">
     <h1>404 Not Found</h1>
     <p><router-link to="/home">homepage</router-link></p>
   </div>
@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'Error404',
+  name: 'NotFoundPage',
 };
 </script>
 
@@ -15,7 +15,7 @@ export default {
 h1 {
   font-size: 1.5em;
 }
-.error404 {
+.not-found-page {
   text-align: center;
 }
 </style>

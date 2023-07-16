@@ -1,38 +1,31 @@
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import VueFeather from 'vue-feather';
+</script>
+
 <template>
-  <div id="app">
-    <header>
-      <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
-        class="icon" title="Back">
-        <chevron-left-icon/>
-      </router-link>
+  <header>
+    <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
+      class="icon" title="Back">
+      <vue-feather type="chevron-left"/>
+    </router-link>
 
-      <h1 v-if="$route.meta.title">
-        {{ $route.meta.title }}
-      </h1>
-      <h1 v-else>
-        Running Tools
-      </h1>
-    </header>
+    <h1 v-if="$route.meta.title">
+      {{ $route.meta.title }}
+    </h1>
+    <h1 v-else>
+      Running Tools
+    </h1>
+  </header>
 
-    <div id="route-content">
+  <div id="route-content">
+    <router-view v-slot="{ Component }">
       <keep-alive>
-        <router-view/>
+        <component :is="Component"/>
       </keep-alive>
-    </div>
+    </router-view>
   </div>
 </template>
-
-<script>
-import { ChevronLeftIcon } from 'vue-feather-icons';
-
-export default {
-  name: 'App',
-
-  components: {
-    ChevronLeftIcon,
-  },
-};
-</script>
 
 <style scoped>
 header {
@@ -48,8 +41,10 @@ header a {
   height: 2em;
   width: 2em;
 }
-header a svg {
+::v-deep(.feather-chevron-left) {
   padding: 0em;
+  height: 2em;
+  width: 2em;
   color: #000000;
 }
 h1 {

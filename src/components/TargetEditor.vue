@@ -6,10 +6,10 @@
 
         <th>
           <button class="icon" title="Reset Targets" @click="reset" v-blur>
-            <rotate-ccw-icon/>
+            <vue-feather type="rotate-ccw"/>
           </button>
           <button class="icon" title="Close" @click="close" v-blur>
-            <x-icon/>
+            <vue-feather type="x"/>
           </button>
         </th>
       </tr>
@@ -33,7 +33,7 @@
 
         <td>
           <button class="icon" title="Remove Target" @click="removeTarget(index)" v-blur>
-            <trash-2-icon/>
+            <vue-feather type="trash-2"/>
           </button>
         </td>
       </tr>
@@ -61,11 +61,7 @@
 </template>
 
 <script>
-import {
-  RotateCcwIcon,
-  Trash2Icon,
-  XIcon,
-} from 'vue-feather-icons';
+import VueFeather from 'vue-feather';
 
 import unitUtils from '@/utils/units';
 
@@ -80,10 +76,7 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-
-    RotateCcwIcon,
-    Trash2Icon,
-    XIcon,
+    VueFeather,
   },
 
   directives: {
@@ -94,7 +87,7 @@ export default {
     /**
      * The targets
      */
-    value: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -113,7 +106,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value,
+      internalValue: this.modelValue,
 
       /**
        * The distance units
@@ -124,10 +117,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value: {
+    modelValue: {
       deep: true,
       handler(newValue) {
         this.internalValue = newValue;
@@ -141,7 +134,7 @@ export default {
     internalValue: {
       deep: true,
       handler(newValue) {
-        this.$emit('input', newValue);
+        this.$emit('update:modelValue', newValue);
       },
     },
   },
