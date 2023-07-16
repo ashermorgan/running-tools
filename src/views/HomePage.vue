@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home-page">
     <p class="description">
       A collection of tools for runners and their coaches
     </p>
@@ -30,12 +30,12 @@
 
 <script>
 export default {
-  name: 'Home',
+  name: 'HomePage',
 };
 </script>
 
 <style scoped>
-.home {
+.home-page {
   text-align: center;
   max-width: 700px;
   margin: auto;
