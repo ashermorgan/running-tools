@@ -188,10 +188,11 @@ export default {
       if (this.arrowKeys) {
         if (e.key === 'ArrowUp') {
           this.decValue += this.step;
+          e.preventDefault();
         } else if (e.key === 'ArrowDown') {
           this.decValue -= this.step;
+          e.preventDefault();
         }
-        e.preventDefault();
       }
     },
 

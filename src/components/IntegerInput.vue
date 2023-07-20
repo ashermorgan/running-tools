@@ -175,10 +175,11 @@ export default {
       if (this.arrowKeys) {
         if (e.key === 'ArrowUp') {
           this.intValue += this.step;
+          e.preventDefault();
         } else if (e.key === 'ArrowDown') {
           this.intValue -= this.step;
+          e.preventDefault();
         }
-        e.preventDefault();
       }
     },
 
