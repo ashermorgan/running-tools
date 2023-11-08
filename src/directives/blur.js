@@ -1,5 +1,5 @@
 export default {
-  inserted(el, binding) {
+  mounted(el, binding) {
     el.addEventListener(binding.value ? binding.value : 'click', () => el.blur());
   },
 };
