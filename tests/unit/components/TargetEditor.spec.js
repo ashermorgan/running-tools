@@ -8,10 +8,13 @@ test('addDistanceTarget method should correctly add distance target', async () =
   // Initialize component
   const wrapper = mount(TargetEditor, {
     propsData: {
-      modelValue: [
-        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-        { time: 0, result: 'distance' },
-      ],
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+          { time: 0, result: 'distance' },
+        ],
+      },
     },
   });
 
@@ -20,11 +23,14 @@ test('addDistanceTarget method should correctly add distance target', async () =
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
-    [[
-      { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-      { time: 0, result: 'distance' },
-      { distanceUnit: 'miles', distanceValue: 1, result: 'time'},
-    ]],
+    [{
+      name: 'My target set',
+      targets: [
+        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+        { time: 0, result: 'distance' },
+        { distanceUnit: 'miles', distanceValue: 1, result: 'time'},
+      ],
+    }],
   ]);
 });
 
@@ -32,10 +38,13 @@ test('addTimeTarget method should correctly add time target', async () => {
   // Initialize component
   const wrapper = mount(TargetEditor, {
     propsData: {
-      modelValue: [
-        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-        { time: 0, result: 'distance' },
-      ],
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+          { time: 0, result: 'distance' },
+        ],
+      },
     },
   });
 
@@ -44,11 +53,13 @@ test('addTimeTarget method should correctly add time target', async () => {
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
-    [[
-      { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-      { time: 0, result: 'distance' },
-      { time: 600, result: 'distance' },
-    ]],
+    [{ name: 'My target set',
+      targets: [
+        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+        { time: 0, result: 'distance' },
+        { time: 600, result: 'distance' },
+      ],
+    }],
   ]);
 });
 
@@ -56,9 +67,12 @@ test('should emit input event when targets are updated', async () => {
   // Initialize component
   const wrapper = mount(TargetEditor, {
     propsData: {
-      modelValue: [
-        { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
-      ],
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+        ],
+      },
     },
   });
 
@@ -67,9 +81,14 @@ test('should emit input event when targets are updated', async () => {
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
-    [[
-      { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
-    ]],
+    [
+      {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+        ],
+      },
+    ],
   ]);
 });
 
@@ -77,11 +96,14 @@ test('removeTarget method should correctly remove target', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
     propsData: {
-      modelValue: [
-        { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
-        { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
-        { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
-      ],
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+        ],
+      },
     },
   });
 
@@ -90,9 +112,12 @@ test('removeTarget method should correctly remove target', async () => {
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
-    [[
-      { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
-      { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
-    ]],
+    [{
+      name: 'My target set',
+      targets: [
+        { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
+        { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+      ],
+    }],
   ]);
 });

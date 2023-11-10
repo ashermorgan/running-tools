@@ -35,7 +35,7 @@
             </td>
 
             <td>
-              <time-input v-model="targetSets[selectedTargetSet][index].split" :showHours="false"/>
+              <time-input v-model="targetSets[selectedTargetSet].targets[index].split" :showHours="false"/>
             </td>
 
             <td>
@@ -44,7 +44,7 @@
             </td>
           </tr>
 
-          <tr v-if="targetSets[selectedTargetSet].length === 0" class="empty-message">
+          <tr v-if="targetSets[selectedTargetSet].targets.length === 0" class="empty-message">
             <td colspan="5">
               There aren't any targets in this set yet.
             </td>
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import VueFeather from 'vue-feather';
+
 import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
@@ -72,6 +74,7 @@ export default {
   components: {
     TargetEditor,
     TimeInput,
+    VueFeather,
   },
 
   directives: {
@@ -132,8 +135,8 @@ export default {
      * Sort target set
      */
     editingTargetSets() {
-      this.targetSets[this.selectedTargetSet] =
-        targetUtils.sort(this.targetSets[this.selectedTargetSet]);
+      this.targetSets[this.selectedTargetSet].targets =
+        targetUtils.sort(this.targetSets[this.selectedTargetSet].targets);
     },
   },
 
@@ -145,16 +148,16 @@ export default {
       // Initialize results array
       const results = [];
 
-      for (let i = 0; i < (this.targetSets[this.selectedTargetSet] || []).length; i += 1) {
-        if (this.targetSets[this.selectedTargetSet][i].result === 'time') {
+      for (let i = 0; i < this.targetSets[this.selectedTargetSet].targets.length; i += 1) {
+        if (this.targetSets[this.selectedTargetSet].targets[i].result === 'time') {
           // Calculate split and total times
-          const splitTime = this.targetSets[this.selectedTargetSet][i].split || 0;
+          const splitTime = this.targetSets[this.selectedTargetSet].targets[i].split || 0;
           const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
 
           // Calculate split and total distances
           const totalDistance = unitUtils.convertDistance(
-            this.targetSets[this.selectedTargetSet][i].distanceValue,
-            this.targetSets[this.selectedTargetSet][i].distanceUnit, 'meters',
+            this.targetSets[this.selectedTargetSet].targets[i].distanceValue,
+            this.targetSets[this.selectedTargetSet].targets[i].distanceUnit, 'meters',
           );
           const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
@@ -165,8 +168,8 @@ export default {
           // Add row to results array
           results.push({
             distance: totalDistance,
-            distanceValue: this.targetSets[this.selectedTargetSet][i].distanceValue,
-            distanceUnit: this.targetSets[this.selectedTargetSet][i].distanceUnit,
+            distanceValue: this.targetSets[this.selectedTargetSet].targets[i].distanceValue,
+            distanceUnit: this.targetSets[this.selectedTargetSet].targets[i].distanceUnit,
             totalTime,
             splitTime,
             pace,

@@ -11,11 +11,14 @@ test('should correctly calculate split paces and total times', async () => {
     data() {
       return {
         targetSets: {
-          '_split_targets': [
-            { result: 'time', distanceValue: 2, distanceUnit: 'miles', split: 60 },
-            { result: 'time', distanceValue: 4, distanceUnit: 'miles', split: 70 },
-            { result: 'time', distanceValue: 10, distanceUnit: 'kilometers', split: 80 },
-          ],
+          '_split_targets': {
+            name: 'Split targets',
+            targets: [
+              { result: 'time', distanceValue: 2, distanceUnit: 'miles', split: 60 },
+              { result: 'time', distanceValue: 4, distanceUnit: 'miles', split: 70 },
+              { result: 'time', distanceValue: 10, distanceUnit: 'kilometers', split: 80 },
+            ],
+          },
         },
       };
     },

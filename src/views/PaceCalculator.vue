@@ -26,12 +26,14 @@
         Edit Target Set
       </button>
       <simple-target-table v-show="!editingTargetSets" :calculate-result="calculatePace"
-       :targets="targetSets[selectedTargetSet] || []"/>
+       :targets="targetSets[selectedTargetSet].targets"/>
     </div>
   </div>
 </template>
 
 <script>
+import VueFeather from 'vue-feather';
+
 import paceUtils from '@/utils/paces';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
@@ -52,6 +54,7 @@ export default {
     SimpleTargetTable,
     TargetEditor,
     TimeInput,
+    VueFeather,
   },
 
   directives: {
@@ -133,8 +136,8 @@ export default {
      * Sort target set
      */
     editingTargetSets() {
-      this.targetSets[this.selectedTargetSet] =
-        targetUtils.sort(this.targetSets[this.selectedTargetSet]);
+      this.targetSets[this.selectedTargetSet].targets =
+        targetUtils.sort(this.targetSets[this.selectedTargetSet].targets);
     },
   },
 

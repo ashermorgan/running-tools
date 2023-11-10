@@ -2,7 +2,9 @@
   <table class="target-editor">
     <thead>
       <tr>
-        <th>Edit Targets</th>
+        <th>
+          Edit {{ internalValue.name }}
+        </th>
 
         <th>
           <button class="icon" title="Reset Targets" @click="reset" v-blur>
@@ -16,7 +18,7 @@
     </thead>
 
     <tbody>
-      <tr v-for="(item, index) in internalValue" :key="index">
+      <tr v-for="(item, index) in internalValue.targets" :key="index">
         <td v-if="item.result === 'time'">
           <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
             :min="0" :digits="2"/>
@@ -38,7 +40,7 @@
         </td>
       </tr>
 
-      <tr v-if="internalValue.length === 0" class="empty-message">
+      <tr v-if="internalValue.targets.length === 0" class="empty-message">
         <td colspan="2">
           There aren't any targets yet
         </td>
@@ -63,6 +65,7 @@
 <script>
 import VueFeather from 'vue-feather';
 
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -88,8 +91,8 @@ export default {
      * The targets
      */
     modelValue: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: JSON.parse(JSON.stringify(targetUtils.defaultTargetSet)),
     },
 
     /**
@@ -160,7 +163,7 @@ export default {
      * Add a new distance based target
      */
     addDistanceTarget() {
-      this.internalValue.push({
+      this.internalValue.targets.push({
         result: 'time',
         distanceValue: 1,
         distanceUnit: unitUtils.getDefaultDistanceUnit(),
@@ -171,7 +174,7 @@ export default {
      * Add a new time based target
      */
     addTimeTarget() {
-      this.internalValue.push({
+      this.internalValue.targets.push({
         result: 'distance',
         time: 600,
       });
@@ -182,7 +185,7 @@ export default {
      * @param {Number} index The index of the target
      */
     removeTarget(index) {
-      this.internalValue.splice(index, 1);
+      this.internalValue.targets.splice(index, 1);
     },
   },
 };

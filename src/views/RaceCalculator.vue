@@ -60,12 +60,14 @@
         Edit Target Set
       </button>
       <simple-target-table v-show="!editingTargetSets" :calculate-result="predictResult"
-       :targets="targetSets[selectedTargetSet] || []" show-pace/>
+       :targets="targetSets[selectedTargetSet].targets" show-pace/>
     </div>
   </div>
 </template>
 
 <script>
+import VueFeather from 'vue-feather';
+
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
@@ -87,6 +89,7 @@ export default {
     SimpleTargetTable,
     TargetEditor,
     TimeInput,
+    VueFeather,
   },
 
   directives: {
@@ -157,8 +160,8 @@ export default {
      * Restore the default target set
      */
     resetTargetSet() {
-      this.targetSets[this.selectedTargetSet] =
-        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet]));
+      this.targetSets[this.selectedTargetSet].targets =
+        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet].targets));
     },
 
     /**
@@ -341,8 +344,8 @@ export default {
      * Sort target set
      */
     editingTargetSets() {
-      this.targetSets[this.selectedTargetSet] =
-        targetUtils.sort(this.targetSets[this.selectedTargetSet]);
+      this.targetSets[this.selectedTargetSet].targets =
+        targetUtils.sort(this.targetSets[this.selectedTargetSet].targets);
     },
   },
 
