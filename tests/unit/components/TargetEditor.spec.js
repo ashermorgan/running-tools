@@ -6,7 +6,14 @@ import TargetEditor from '@/components/TargetEditor.vue';
 
 test('addDistanceTarget method should correctly add distance target', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = mount(TargetEditor, {
+    propsData: {
+      modelValue: [
+        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+        { time: 0, result: 'distance' },
+      ],
+    },
+  });
 
   // Add distance target
   await wrapper.vm.addDistanceTarget();
@@ -14,14 +21,23 @@ test('addDistanceTarget method should correctly add distance target', async () =
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
     [[
-      { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
+      { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+      { time: 0, result: 'distance' },
+      { distanceUnit: 'miles', distanceValue: 1, result: 'time'},
     ]],
   ]);
 });
 
 test('addTimeTarget method should correctly add time target', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = mount(TargetEditor, {
+    propsData: {
+      modelValue: [
+        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+        { time: 0, result: 'distance' },
+      ],
+    },
+  });
 
   // Add time target
   await wrapper.vm.addTimeTarget();
@@ -29,6 +45,8 @@ test('addTimeTarget method should correctly add time target', async () => {
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
     [[
+      { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
+      { time: 0, result: 'distance' },
       { time: 600, result: 'distance' },
     ]],
   ]);

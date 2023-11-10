@@ -1,6 +1,6 @@
 <template>
   <div class="simple-target-table">
-    <table class="results" v-show="!inEditMode">
+    <table class="results">
       <thead>
         <tr>
           <th>Distance</th>
@@ -8,12 +8,6 @@
           <th>Time</th>
 
           <th v-if="showPace">Pace</th>
-
-          <th>
-            <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
-              <vue-feather type="edit"/>
-            </button>
-          </th>
         </tr>
       </thead>
 
@@ -24,11 +18,11 @@
             {{ distanceUnits[item.distanceUnit].symbol }}
           </td>
 
-          <td :colspan="showPace ? 1 : 2" :class="item.result === 'time' ? 'result' : ''">
+          <td :class="item.result === 'time' ? 'result' : ''">
             {{ formatDuration(item.time, 3, 2, item.result === 'time') }}
           </td>
 
-          <td v-if="showPace" colspan="2">
+          <td v-if="showPace">
             {{ formatDuration(getPace(item), 3, 0, true) }}
             / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
           </td>
@@ -36,17 +30,11 @@
 
         <tr v-if="results.length === 0" class="empty-message">
           <td colspan="4">
-            There aren't any targets yet,<br>
-            click
-            <vue-feather type="edit"/>
-            to edit the list of targets
+            There aren't any targets in this set yet.
           </td>
         </tr>
       </tbody>
     </table>
-
-    <target-editor v-show="inEditMode" v-model="targets" @close="inEditMode=false"
-      @reset="resetTargets"/>
   </div>
 </template>
 
@@ -54,11 +42,7 @@
 import VueFeather from 'vue-feather';
 
 import formatUtils from '@/utils/format';
-import storage from '@/utils/localStorage';
-import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
-
-import TargetEditor from '@/components/TargetEditor.vue';
 
 import blur from '@/directives/blur';
 
@@ -66,7 +50,6 @@ export default {
   name: 'SimpleTargetTable',
 
   components: {
-    TargetEditor,
     VueFeather,
   },
 
@@ -84,19 +67,11 @@ export default {
     },
 
     /**
-     * The default targets
+     * The target set
      */
-    defaultTargets: {
+    targets: {
       type: Array,
       default: () => [],
-    },
-
-    /**
-     * The localStorage key for the list of targets
-     */
-    storageKey: {
-      type: String,
-      default: null,
     },
 
     /**
@@ -129,16 +104,6 @@ export default {
        * The getDefaultDistanceUnit method
        */
       getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
-
-      /**
-       * Whether the table is in edit mode
-       */
-      inEditMode: false,
-
-      /**
-       * The target table targets
-       */
-      targets: storage.get(this.storageKey, this.defaultTargets),
     };
   },
 
@@ -162,39 +127,7 @@ export default {
     },
   },
 
-  watch: {
-    /**
-     * Sort targets
-     */
-    inEditMode() {
-      this.targets = targetUtils.sort(this.targets);
-    },
-
-    /**
-     * Save targets
-     */
-    targets: {
-      handler(newValue) {
-        if (this.storageKey !== null) {
-          storage.set(this.storageKey, newValue);
-        }
-      },
-      deep: true,
-    },
-  },
-
   methods: {
-    /**
-     * Restore the default targets
-     */
-    resetTargets() {
-      // Clone default targets array
-      this.targets = JSON.parse(JSON.stringify(this.defaultTargets));
-
-      // Sort targets
-      this.targets = targetUtils.sort(this.targets);
-    },
-
     /**
      * Get the pace of a result
      * @param {Object} result The result
@@ -204,21 +137,11 @@ export default {
         unitUtils.getDefaultDistanceUnit());
     },
   },
-
-  /**
-   * Close edit targets table
-   */
-  deactivated() {
-    this.inEditMode = false;
-  },
 };
 </script>
 
 <style scoped>
 /* target table */
-.results th:last-child {
-  text-align: right;
-}
 .results .result {
   font-weight: bold;
 }

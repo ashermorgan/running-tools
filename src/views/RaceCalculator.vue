@@ -19,7 +19,7 @@
 
     <h2>
       Advanced
-      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions">
+      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions" v-blur>
         {{ showAdvancedOptions ? '[hide]' : '[show]' }}
       </button>
     </h2>
@@ -53,9 +53,15 @@
     </div>
 
     <h2>Equivalent Race Results</h2>
-
-    <simple-target-table class="output" :calculate-result="predictResult"
-      :default-targets="defaultTargets" storage-key="race-calculator-targets-v2" show-pace/>
+    <div class="output">
+      <target-editor v-show="editingTargetSets" v-model="targetSets[selectedTargetSet]"
+        @close="editingTargetSets = false" @reset="resetTargetSet"/>
+      <button v-show="!editingTargetSets" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
+        Edit Target Set
+      </button>
+      <simple-target-table v-show="!editingTargetSets" :calculate-result="predictResult"
+       :targets="targetSets[selectedTargetSet] || []" show-pace/>
+    </div>
   </div>
 </template>
 
@@ -63,19 +69,28 @@
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import TargetEditor from '@/components/TargetEditor.vue';
+import TimeInput from '@/components/TimeInput.vue';
+
+import blur from '@/directives/blur';
 
 export default {
   name: 'RaceCalculator',
 
   components: {
     DecimalInput,
-    TimeInput,
     SimpleTargetTable,
+    TargetEditor,
+    TimeInput,
+  },
+
+  directives: {
+    blur,
   },
 
   data() {
@@ -121,39 +136,31 @@ export default {
       formatNumber: formatUtils.formatNumber,
 
       /**
-       * The default output targets
+       * The current selected target set
        */
-      defaultTargets: [
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
+      selectedTargetSet: '_race_targets',
 
-        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
+      /**
+       * The target sets
+       */
+      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
 
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
-
-        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-        { result: 'distance', time: 600 },
-        { result: 'distance', time: 3600 },
-      ],
+      /**
+       * Whether the target set is being edited
+       */
+      editingTargetSets: false,
     };
   },
 
   methods: {
+    /**
+     * Restore the default target set
+     */
+    resetTargetSet() {
+      this.targetSets[this.selectedTargetSet] =
+        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet]));
+    },
+
     /**
      * Predict race results from a target
      * @param {Object} target The target
@@ -319,6 +326,29 @@ export default {
     showAdvancedOptions(newValue) {
       storage.set('race-calculator-show-advanced-options', newValue);
     },
+
+    /**
+     * Save the target sets
+     */
+    targetSets: {
+      deep: true,
+      handler(newValue) {
+        storage.set('target-sets', newValue);
+      },
+    },
+
+    /**
+     * Sort target set
+     */
+    editingTargetSets() {
+      this.targetSets[this.selectedTargetSet] =
+        targetUtils.sort(this.targetSets[this.selectedTargetSet]);
+    },
+  },
+
+  activated() {
+    this.editingTargetSets = false;
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
   },
 };
 </script>
@@ -356,6 +386,9 @@ h2 {
 /* calculator output */
 .output {
   min-width: 300px;
+}
+.output>* {
+  margin-bottom: 5px;
 }
 @media only screen and (max-width: 500px) {
   .output {
