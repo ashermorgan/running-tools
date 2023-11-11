@@ -48,6 +48,7 @@ table button.icon {
 /* empty table message */
 table .empty-message td {
   text-align: center !important;
+  padding: 0.5em;
 }
 table .empty-message svg {
   height: 1em;

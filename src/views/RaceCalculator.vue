@@ -53,15 +53,24 @@
     </div>
 
     <h2>Equivalent Race Results</h2>
-    <div class="output">
-      <target-editor v-show="editingTargetSets" v-model="targetSets[selectedTargetSet]"
-        @close="editingTargetSets = false" @reset="resetTargetSet"/>
-      <button v-show="!editingTargetSets" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
-        Edit Target Set
+    <div class="target-set">
+      Target Set:
+      <select v-model="selectedTargetSet">
+        <option v-for="(item, index) in targetSets" :key="index" :value="index">
+          {{ item.name }}
+        </option>
+      </select>
+      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
+        <vue-feather type="edit"/>
       </button>
-      <simple-target-table v-show="!editingTargetSets" :calculate-result="predictResult"
-       :targets="targetSets[selectedTargetSet].targets" show-pace/>
     </div>
+
+    <simple-target-table class="output" :calculate-result="predictResult"
+     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
+
+    <Modal v-show="editingTargetSets">
+      <target-set-editor @close="editingTargetSets = false"/>
+    </Modal>
   </div>
 </template>
 
@@ -75,8 +84,9 @@ import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
+import Modal from '@/components/Modal.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
-import TargetEditor from '@/components/TargetEditor.vue';
+import TargetSetEditor from '@/components/TargetSetEditor.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
@@ -86,8 +96,9 @@ export default {
 
   components: {
     DecimalInput,
+    Modal,
     SimpleTargetTable,
-    TargetEditor,
+    TargetSetEditor,
     TimeInput,
     VueFeather,
   },
@@ -141,7 +152,7 @@ export default {
       /**
        * The current selected target set
        */
-      selectedTargetSet: '_race_targets',
+      selectedTargetSet: storage.get('race-calculator-target-set', '_race_targets'),
 
       /**
        * The target sets
@@ -331,26 +342,23 @@ export default {
     },
 
     /**
-     * Save the target sets
+     * Save the current selected target set
      */
-    targetSets: {
-      deep: true,
-      handler(newValue) {
-        storage.set('target-sets', newValue);
-      },
+    selectedTargetSet(newValue) {
+      storage.set('pace-calculator-target-set', newValue);
     },
 
     /**
-     * Sort target set
+     * Refresh the target sets
      */
-    editingTargetSets() {
-      this.targetSets[this.selectedTargetSet].targets =
-        targetUtils.sort(this.targetSets[this.selectedTargetSet].targets);
-    },
+    editingTargetSets(newValue) {
+      if (!newValue) {
+        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+      }
+    }
   },
 
   activated() {
-    this.editingTargetSets = false;
     this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
   },
 };
@@ -389,9 +397,6 @@ h2 {
 /* calculator output */
 .output {
   min-width: 300px;
-}
-.output>* {
-  margin-bottom: 5px;
 }
 @media only screen and (max-width: 500px) {
   .output {

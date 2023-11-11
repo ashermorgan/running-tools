@@ -1,13 +1,19 @@
 <template>
   <div class="split-calculator">
-    <div class="output">
-      <target-editor v-show="editingTargetSets" v-model="targetSets[selectedTargetSet]"
-        @close="editingTargetSets = false" @reset="resetTargetSet"/>
-      <button v-show="!editingTargetSets" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
-        Edit Target Set
+    <div class="target-set">
+      Target Set:
+      <select v-model="selectedTargetSet">
+        <option v-for="(item, index) in targetSets" :key="index" :value="index">
+          {{ item.name }}
+        </option>
+      </select>
+      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
+        <vue-feather type="edit"/>
       </button>
+    </div>
 
-      <table class="results" v-show="!editingTargetSets">
+    <div class="output">
+      <table class="results">
         <thead>
           <tr>
             <th>
@@ -34,7 +40,7 @@
               {{ formatDuration(item.totalTime, 3, 2, true) }}
             </td>
 
-            <td>
+            <td v-if="targetSets[selectedTargetSet]">
               <time-input v-model="targetSets[selectedTargetSet].targets[index].split" :showHours="false"/>
             </td>
 
@@ -44,7 +50,7 @@
             </td>
           </tr>
 
-          <tr v-if="targetSets[selectedTargetSet].targets.length === 0" class="empty-message">
+          <tr v-if="!targetSets[selectedTargetSet] || targetSets[selectedTargetSet].targets.length === 0" class="empty-message">
             <td colspan="5">
               There aren't any targets in this set yet.
             </td>
@@ -52,6 +58,10 @@
         </tbody>
       </table>
     </div>
+
+    <Modal v-show="editingTargetSets">
+      <target-set-editor @close="editingTargetSets = false"/>
+    </Modal>
   </div>
 </template>
 
@@ -63,7 +73,8 @@ import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import TargetEditor from '@/components/TargetEditor.vue';
+import Modal from '@/components/Modal.vue';
+import TargetSetEditor from '@/components/TargetSetEditor.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
@@ -72,7 +83,8 @@ export default {
   name: 'SplitCalculator',
 
   components: {
-    TargetEditor,
+    Modal,
+    TargetSetEditor,
     TimeInput,
     VueFeather,
   },
@@ -106,7 +118,7 @@ export default {
       /**
        * The current selected target set
        */
-      selectedTargetSet: '_split_targets',
+      selectedTargetSet: storage.get('split-calculator-target-set', '_split_targets'),
 
       /**
        * The default output targets
@@ -122,22 +134,20 @@ export default {
 
   watch: {
     /**
-     * Save the target sets
+     * Save the current selected target set
      */
-    targetSets: {
-      deep: true,
-      handler(newValue) {
-        storage.set('target-sets', newValue);
-      },
+    selectedTargetSet(newValue) {
+      storage.set('split-calculator-target-set', newValue);
     },
 
     /**
-     * Sort target set
+     * Refresh the target sets
      */
-    editingTargetSets() {
-      this.targetSets[this.selectedTargetSet].targets =
-        targetUtils.sort(this.targetSets[this.selectedTargetSet].targets);
-    },
+    editingTargetSets(newValue) {
+      if (!newValue) {
+        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+      }
+    }
   },
 
   computed: {
@@ -147,6 +157,9 @@ export default {
     results() {
       // Initialize results array
       const results = [];
+
+      // Check for missing target set
+      if (!this.targetSets[this.selectedTargetSet]) return [];
 
       for (let i = 0; i < this.targetSets[this.selectedTargetSet].targets.length; i += 1) {
         if (this.targetSets[this.selectedTargetSet].targets[i].result === 'time') {
@@ -193,7 +206,6 @@ export default {
   },
 
   activated() {
-    this.editingTargetSets = false;
     this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
   },
 };
@@ -207,18 +219,16 @@ export default {
   align-items: center;
 }
 
+/* calculator output */
+.output {
+  min-width: 400px;
+}
+
 /* target table */
 .results th:first-child span.mobile-abbreviation {
   display: none;
 }
 
-/* calculator output */
-.output {
-  min-width: 400px;
-}
-.output>* {
-  margin-bottom: 5px;
-}
 @media only screen and (max-width: 500px) {
   .output {
     width: 100%;

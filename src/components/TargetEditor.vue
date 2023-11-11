@@ -3,13 +3,11 @@
     <thead>
       <tr>
         <th>
-          Edit {{ internalValue.name }}
+          Edit
+          <input v-model="internalValue.name" placeholder="Target set name"/>
         </th>
 
         <th>
-          <button class="icon" title="Reset Targets" @click="reset" v-blur>
-            <vue-feather type="rotate-ccw"/>
-          </button>
           <button class="icon" title="Close" @click="close" v-blur>
             <vue-feather type="x"/>
           </button>
@@ -42,7 +40,7 @@
 
       <tr v-if="internalValue.targets.length === 0" class="empty-message">
         <td colspan="2">
-          There aren't any targets yet
+          There aren't any targets in this set yet
         </td>
       </tr>
     </tbody>
@@ -143,14 +141,6 @@ export default {
   },
 
   methods: {
-    /**
-     * Restore the default targets
-     */
-    reset() {
-      // Emit reset event
-      this.$emit('reset');
-    },
-
     /**
      * Close the target editor
      */

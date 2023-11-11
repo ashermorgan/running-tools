@@ -92,6 +92,35 @@ test('should emit input event when targets are updated', async () => {
   ]);
 });
 
+test('should emit input event when target set name is updated', async () => {
+  // Initialize component
+  const wrapper = mount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+        ],
+      },
+    },
+  });
+
+  // Update distance value
+  await wrapper.find('thead input').setValue('My target set #2');
+
+  // Assert input event was emitted
+  expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
+    [
+      {
+        name: 'My target set #2',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+        ],
+      },
+    ],
+  ]);
+});
+
 test('removeTarget method should correctly remove target', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
