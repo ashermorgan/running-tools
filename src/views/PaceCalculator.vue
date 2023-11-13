@@ -241,6 +241,14 @@ h2 {
   margin-left: 5px;
 }
 
+/* target set */
+.target-set {
+  margin-bottom: 5px;
+}
+.target-set button {
+  margin-left: 3px;
+}
+
 /* calculator output */
 .output {
   min-width: 300px;
