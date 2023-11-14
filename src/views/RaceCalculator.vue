@@ -1,5 +1,5 @@
 <template>
-  <div class="race-calculator">
+  <div class="calculator">
     <h2>Input Race Result</h2>
     <div class="input">
       <div>
@@ -19,7 +19,7 @@
 
     <h2>
       Advanced
-      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions">
+      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions" v-blur>
         {{ showAdvancedOptions ? '[hide]' : '[show]' }}
       </button>
     </h2>
@@ -53,29 +53,58 @@
     </div>
 
     <h2>Equivalent Race Results</h2>
+    <div class="target-set">
+      Target Set:
+      <select v-model="selectedTargetSet">
+        <option v-for="(item, index) in targetSets" :key="index" :value="index">
+          {{ item.name }}
+        </option>
+      </select>
+      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
+        <vue-feather type="edit"/>
+      </button>
+    </div>
 
     <simple-target-table class="output" :calculate-result="predictResult"
-      :default-targets="defaultTargets" storage-key="race-calculator-targets-v2" show-pace/>
+     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
+
+    <Modal v-show="editingTargetSets">
+      <target-set-editor @close="editingTargetSets = false"/>
+    </Modal>
   </div>
 </template>
 
 <script>
+import VueFeather from 'vue-feather';
+
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
+import Modal from '@/components/Modal.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import TargetSetEditor from '@/components/TargetSetEditor.vue';
+import TimeInput from '@/components/TimeInput.vue';
+
+import blur from '@/directives/blur';
 
 export default {
   name: 'RaceCalculator',
 
   components: {
     DecimalInput,
-    TimeInput,
+    Modal,
     SimpleTargetTable,
+    TargetSetEditor,
+    TimeInput,
+    VueFeather,
+  },
+
+  directives: {
+    blur,
   },
 
   data() {
@@ -121,39 +150,31 @@ export default {
       formatNumber: formatUtils.formatNumber,
 
       /**
-       * The default output targets
+       * The current selected target set
        */
-      defaultTargets: [
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
+      selectedTargetSet: storage.get('race-calculator-target-set', '_race_targets'),
 
-        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
+      /**
+       * The target sets
+       */
+      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
 
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
-
-        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-        { result: 'distance', time: 600 },
-        { result: 'distance', time: 3600 },
-      ],
+      /**
+       * Whether the target set is being edited
+       */
+      editingTargetSets: false,
     };
   },
 
   methods: {
+    /**
+     * Restore the default target set
+     */
+    resetTargetSet() {
+      this.targetSets[this.selectedTargetSet].targets =
+        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet].targets));
+    },
+
     /**
      * Predict race results from a target
      * @param {Object} target The target
@@ -319,48 +340,35 @@ export default {
     showAdvancedOptions(newValue) {
       storage.set('race-calculator-show-advanced-options', newValue);
     },
+
+    /**
+     * Save the current selected target set
+     */
+    selectedTargetSet(newValue) {
+      storage.set('pace-calculator-target-set', newValue);
+    },
+
+    /**
+     * Refresh the target sets
+     */
+    editingTargetSets(newValue) {
+      if (!newValue) {
+        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+      }
+    }
+  },
+
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
   },
 };
 </script>
 
 <style scoped>
-/* container */
-.race-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* headings */
-h2 {
-  font-size: 1.3em;
-  margin-bottom: 0.2em;
-}
-* + h2 {
-  margin-top: 0.5em;
-}
-
-/* calculator input */
-.input>* {
-  margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
-}
+@import '@/assets/target-calculator.css';
 
 /* advanced options */
 .advanced-options>* {
   margin-bottom: 5px;
-}
-
-/* calculator output */
-.output {
-  min-width: 300px;
-}
-@media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
 }
 </style>

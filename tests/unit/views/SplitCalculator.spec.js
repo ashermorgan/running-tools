@@ -7,15 +7,21 @@ import unitUtils from '@/utils/units';
 
 test('should correctly calculate split paces and total times', async () => {
   // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Override input values
-  await wrapper.setData({
-    targets: [
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles', split: 60 },
-      { result: 'time', distanceValue: 4, distanceUnit: 'miles', split: 70 },
-      { result: 'time', distanceValue: 10, distanceUnit: 'kilometers', split: 80 },
-    ],
+  const wrapper = shallowMount(SplitCalculator, {
+    data() {
+      return {
+        targetSets: {
+          '_split_targets': {
+            name: 'Split targets',
+            targets: [
+              { result: 'time', distanceValue: 2, distanceUnit: 'miles', split: 60 },
+              { result: 'time', distanceValue: 4, distanceUnit: 'miles', split: 70 },
+              { result: 'time', distanceValue: 10, distanceUnit: 'kilometers', split: 80 },
+            ],
+          },
+        },
+      };
+    },
   });
 
   // Assert results are correct

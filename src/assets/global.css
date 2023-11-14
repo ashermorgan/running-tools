@@ -40,14 +40,11 @@ table {
 table th, table td {
   padding: 0.2em;
 }
-table button.icon {
-  height: 2em;
-  width: 2em;
-}
 
 /* empty table message */
 table .empty-message td {
   text-align: center !important;
+  padding: 0.5em;
 }
 table .empty-message svg {
   height: 1em;
@@ -64,8 +61,8 @@ table .empty-message svg {
   vertical-align: middle;
 }
 .icon svg {
-  width: 100%;
-  height: 100%;
+  height: 2em;
+  width: 2em;
   padding: 0.3em;
 }
 

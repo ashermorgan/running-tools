@@ -43,8 +43,6 @@ header a {
 }
 ::v-deep(.feather-chevron-left) {
   padding: 0em;
-  height: 2em;
-  width: 2em;
   color: #000000;
 }
 h1 {

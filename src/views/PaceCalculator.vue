@@ -1,5 +1,5 @@
 <template>
-  <div class="pace-calculator">
+  <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
       <div>
@@ -19,28 +19,57 @@
     </div>
 
     <h2>Equivalent Paces</h2>
+    <div class="target-set">
+      Target Set:
+      <select v-model="selectedTargetSet">
+        <option v-for="(item, index) in targetSets" :key="index" :value="index">
+          {{ item.name }}
+        </option>
+      </select>
+      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
+        <vue-feather type="edit"/>
+      </button>
+    </div>
 
     <simple-target-table class="output" :calculate-result="calculatePace"
-      :default-targets="defaultTargets" storage-key="pace-calculator-targets-v2"/>
+     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+
+    <Modal v-show="editingTargetSets">
+      <target-set-editor @close="editingTargetSets = false"/>
+    </Modal>
   </div>
 </template>
 
 <script>
+import VueFeather from 'vue-feather';
+
 import paceUtils from '@/utils/paces';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
+import Modal from '@/components/Modal.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import TargetSetEditor from '@/components/TargetSetEditor.vue';
+import TimeInput from '@/components/TimeInput.vue';
+
+import blur from '@/directives/blur';
 
 export default {
   name: 'PaceCalculator',
 
   components: {
     DecimalInput,
-    TimeInput,
+    Modal,
     SimpleTargetTable,
+    TargetSetEditor,
+    TimeInput,
+    VueFeather,
+  },
+
+  directives: {
+    blur,
   },
 
   data() {
@@ -66,44 +95,19 @@ export default {
       distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
-       * The default output targets
+       * The current selected target set
        */
-      defaultTargets: [
-        { result: 'time', distanceValue: 100, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 300, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
+      selectedTargetSet: storage.get('pace-calculator-target-set', '_pace_targets'),
 
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 4, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+      /**
+       * The target sets
+       */
+      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
 
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 6, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
-
-        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-        { result: 'distance', time: 600 },
-        { result: 'distance', time: 1800 },
-        { result: 'distance', time: 3600 },
-      ],
+      /**
+       * Whether the target set is being edited
+       */
+      editingTargetSets: false,
     };
   },
 
@@ -128,6 +132,22 @@ export default {
     inputTime(newValue) {
       storage.set('pace-calculator-input-time', newValue);
     },
+
+    /**
+     * Save the current selected target set
+     */
+    selectedTargetSet(newValue) {
+      storage.set('pace-calculator-target-set', newValue);
+    },
+
+    /**
+     * Refresh the target sets
+     */
+    editingTargetSets(newValue) {
+      if (!newValue) {
+        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+      }
+    }
   },
 
   computed: {
@@ -141,6 +161,14 @@ export default {
   },
 
   methods: {
+    /**
+     * Restore the default target set
+     */
+    resetTargetSet() {
+      this.targetSets[this.selectedTargetSet] =
+        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet]));
+    },
+
     /**
      * Calculate paces from a target
      * @param {Object} target The target
@@ -181,42 +209,13 @@ export default {
       return result;
     },
   },
+
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+  },
 };
 </script>
 
 <style scoped>
-/* container */
-.pace-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* headings */
-h2 {
-  font-size: 1.3em;
-  margin-bottom: 0.2em;
-}
-* + h2 {
-  margin-top: 0.5em;
-}
-
-/* calculator input */
-.input>* {
-  margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
-}
-
-/* calculator output */
-.output {
-  min-width: 300px;
-}
-@media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
-}
+@import '@/assets/target-calculator.css';
 </style>

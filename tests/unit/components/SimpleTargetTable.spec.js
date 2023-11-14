@@ -13,7 +13,7 @@ test('results should be correct and sorted by time', () => {
         distanceUnit: row.distanceUnit,
         time: row.distanceValue + 1,
       }),
-      defaultTargets: [
+      targets: [
         { distanceValue: 20, distanceUnit: 'meters' },
         { distanceValue: 100, distanceUnit: 'meters' },
         { distanceValue: 1, distanceUnit: 'kilometers' },
