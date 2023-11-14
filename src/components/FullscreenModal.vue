@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div class="fullscreen-modal">
     <div class="backdrop"></div>
     <div class="content-container">
       <div class="content">
@@ -11,12 +11,12 @@
 
 <script>
 export default {
-  name: 'Modal',
+  name: 'FullscreenModal',
 };
 </script>
 
 <style scoped>
-.modal .backdrop {
+.fullscreen-modal .backdrop {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -25,7 +25,7 @@ export default {
   z-index: 1000;
   background-color: #00000080;
 }
-.modal .content-container {
+.fullscreen-modal .content-container {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -35,7 +35,7 @@ export default {
   overflow: scroll;
 }
 
-.modal .content {
+.fullscreen-modal .content {
   max-width: 500px;
   margin: 75px auto 1em;
   padding: 1em;

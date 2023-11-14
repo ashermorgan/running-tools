@@ -18,7 +18,7 @@
           <tr>
             <th>
               <span>Distance</span>
-              <span class="mobile-abbreviation">Dist</span>
+              <span class="mobile-abbreviation">Dist.</span>
             </th>
 
             <th>Time</th>
@@ -59,9 +59,9 @@
       </table>
     </div>
 
-    <Modal v-show="editingTargetSets">
+    <fullscreen-modal v-show="editingTargetSets">
       <target-set-editor @close="editingTargetSets = false"/>
-    </Modal>
+    </fullscreen-modal>
   </div>
 </template>
 
@@ -73,7 +73,7 @@ import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import Modal from '@/components/Modal.vue';
+import FullscreenModal from '@/components/FullscreenModal.vue';
 import TargetSetEditor from '@/components/TargetSetEditor.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
@@ -83,7 +83,7 @@ export default {
   name: 'SplitCalculator',
 
   components: {
-    Modal,
+    FullscreenModal,
     TargetSetEditor,
     TimeInput,
     VueFeather,

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { test, expect } from 'vitest';
-import { shallowMount, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import TargetSetEditor from '@/components/TargetSetEditor.vue';
 import targetUtils from '@/utils/targets';
 

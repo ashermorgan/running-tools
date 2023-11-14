@@ -66,9 +66,7 @@ import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import DecimalInput from '@/components/DecimalInput.vue';
 import TargetEditor from '@/components/TargetEditor.vue';
-import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
 
@@ -76,9 +74,7 @@ export default {
   name: 'TargetSetEditor',
 
   components: {
-    DecimalInput,
     TargetEditor,
-    TimeInput,
     VueFeather,
   },
 
@@ -133,7 +129,7 @@ export default {
       let old_sets = this.internalValue;
       this.internalValue = JSON.parse(JSON.stringify(targetUtils.defaultTargetSets));
       for (let key in old_sets) {
-        if (!this.internalValue.hasOwnProperty(key)) {
+        if (!Object.keys(this.internalValue).includes(key)) {
           this.internalValue[key] = old_sets[key];
         }
       }

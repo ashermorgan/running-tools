@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import VueFeather from 'vue-feather';
-
 import formatUtils from '@/utils/format';
 import unitUtils from '@/utils/units';
 
@@ -48,10 +46,6 @@ import blur from '@/directives/blur';
 
 export default {
   name: 'SimpleTargetTable',
-
-  components: {
-    VueFeather,
-  },
 
   directives: {
     blur,

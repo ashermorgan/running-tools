@@ -68,9 +68,9 @@
     <simple-target-table class="output" :calculate-result="predictResult"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
 
-    <Modal v-show="editingTargetSets">
+    <fullscreen-modal v-show="editingTargetSets">
       <target-set-editor @close="editingTargetSets = false"/>
-    </Modal>
+    </fullscreen-modal>
   </div>
 </template>
 
@@ -84,7 +84,7 @@ import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import Modal from '@/components/Modal.vue';
+import FullscreenModal from '@/components/FullscreenModal.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetEditor from '@/components/TargetSetEditor.vue';
 import TimeInput from '@/components/TimeInput.vue';
@@ -96,7 +96,7 @@ export default {
 
   components: {
     DecimalInput,
-    Modal,
+    FullscreenModal,
     SimpleTargetTable,
     TargetSetEditor,
     TimeInput,
