@@ -1,5 +1,5 @@
 <template>
-  <div class="split-calculator">
+  <div class="calculator">
     <div class="target-set">
       Target Set:
       <select v-model="selectedTargetSet">
@@ -212,36 +212,20 @@ export default {
 </script>
 
 <style scoped>
-/* container */
-.split-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+@import '@/assets/target-calculator.css';
+
+/* Widen default calculator output */
+@media only screen and (min-width: 501px) {
+  .output {
+    min-width: 400px;
+  }
 }
 
-/* target set */
-.target-set {
-  margin-bottom: 5px;
-}
-.target-set button {
-  margin-left: 3px;
-}
-
-/* calculator output */
-.output {
-  min-width: 400px;
-}
-
-/* target table */
+/* Show/hide mobile abbreviations */
 .results th:first-child span.mobile-abbreviation {
   display: none;
 }
-
 @media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
   .results th:first-child span:not(.mobile-abbreviation) {
     display: none;
   }

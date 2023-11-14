@@ -1,5 +1,5 @@
 <template>
-  <div class="pace-calculator">
+  <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
       <div>
@@ -217,46 +217,5 @@ export default {
 </script>
 
 <style scoped>
-/* container */
-.pace-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* headings */
-h2 {
-  font-size: 1.3em;
-  margin-bottom: 0.2em;
-}
-* + h2 {
-  margin-top: 0.5em;
-}
-
-/* calculator input */
-.input>* {
-  margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
-}
-
-/* target set */
-.target-set {
-  margin-bottom: 5px;
-}
-.target-set button {
-  margin-left: 3px;
-}
-
-/* calculator output */
-.output {
-  min-width: 300px;
-}
-@media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
-}
+@import '@/assets/target-calculator.css';
 </style>
