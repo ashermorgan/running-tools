@@ -47,7 +47,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: process.env.NODE_ENV === 'production' ? '/running-tools/' : '/',
+  base: process.env.BASE_URL ? process.env.BASE_URL : '/',
   test: {
     environment: 'jsdom',
   },
