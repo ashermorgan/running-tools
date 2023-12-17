@@ -25,6 +25,11 @@
         </button>
       </router-link>
     </div>
+    <p class="about-link">
+      <router-link :to="{ name: 'about' }">
+        About Running Tools
+      </router-link>
+    </p>
   </div>
 </template>
 
@@ -53,6 +58,9 @@ export default {
   font-size: 1em;
   padding: 0.5em;
   margin: 0em 0.3em;
+}
+.about-link {
+  margin-top: 1em;
 }
 @media only screen and (max-width: 600px) {
   .calculators {

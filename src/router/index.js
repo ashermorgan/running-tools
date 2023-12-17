@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
+import AboutPage from '@/views/AboutPage.vue';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 import SplitCalculator from '@/views/SplitCalculator.vue';
@@ -20,6 +21,15 @@ const router = createRouter({
       meta: {
         title: null,
         back: null,
+      },
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutPage,
+      meta: {
+        title: 'About',
+        back: 'home',
       },
     },
     {
