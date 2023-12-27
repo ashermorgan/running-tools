@@ -5,6 +5,10 @@
         <th>
           Edit
           <input v-model="internalValue.name" placeholder="Target set name"/>
+          <button class="icon" :title="isCustomSet ? 'Delete Target Set' : 'Revert Target Set'"
+            @click="revert" v-blur>
+            <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'"/>
+          </button>
         </th>
 
         <th>
@@ -54,6 +58,8 @@
           <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget" v-blur>
             Add time target
           </button>
+          <br/>
+          <p>Note: time targets are ignored by the Split Calculator</p>
         </td>
       </tr>
     </tfoot>
@@ -100,6 +106,14 @@ export default {
       type: Boolean,
       default: true,
     },
+
+    /**
+     * Whether the target set is a custom or default set
+     */
+    isCustomSet: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -142,6 +156,14 @@ export default {
 
   methods: {
     /**
+     * Revert the target set
+     */
+    revert() {
+      // Emit revert event
+      this.$emit('revert');
+    },
+
+    /**
      * Close the target editor
      */
     close() {
@@ -183,6 +205,9 @@ export default {
 
 <style scoped>
 /* edit targets table */
+.target-editor th .icon {
+  margin-left: 0.3em;
+}
 .target-editor th:last-child, .target-editor td:last-child {
   text-align: right;
 }
@@ -196,5 +221,8 @@ export default {
 }
 .target-editor tfoot button {
   margin: 0.5em;
+}
+.target-editor tfoot p {
+  margin-top: 0.5em;
 }
 </style>

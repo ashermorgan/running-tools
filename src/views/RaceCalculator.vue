@@ -55,28 +55,15 @@
     <h2>Equivalent Race Results</h2>
     <div class="target-set">
       Target Set:
-      <select v-model="selectedTargetSet">
-        <option v-for="(item, index) in targetSets" :key="index" :value="index">
-          {{ item.name }}
-        </option>
-      </select>
-      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
-        <vue-feather type="edit"/>
-      </button>
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"/>
     </div>
 
     <simple-target-table class="output" :calculate-result="predictResult"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
-
-    <fullscreen-modal v-show="editingTargetSets">
-      <target-set-editor @close="editingTargetSets = false"/>
-    </fullscreen-modal>
   </div>
 </template>
 
 <script>
-import VueFeather from 'vue-feather';
-
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
@@ -84,9 +71,8 @@ import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import FullscreenModal from '@/components/FullscreenModal.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
-import TargetSetEditor from '@/components/TargetSetEditor.vue';
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
@@ -96,11 +82,9 @@ export default {
 
   components: {
     DecimalInput,
-    FullscreenModal,
     SimpleTargetTable,
-    TargetSetEditor,
+    TargetSetSelector,
     TimeInput,
-    VueFeather,
   },
 
   directives: {
@@ -168,11 +152,10 @@ export default {
 
   methods: {
     /**
-     * Restore the default target set
+     * Reload the target sets
      */
-    resetTargetSet() {
-      this.targetSets[this.selectedTargetSet].targets =
-        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet].targets));
+    reloadTargets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
     },
 
     /**

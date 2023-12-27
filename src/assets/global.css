@@ -54,6 +54,7 @@ table .empty-message svg {
 
 /* styles for icons */
 .icon {
+  height: 2em;
   border: none;
   padding: 0em;
   background-color: #00000000;

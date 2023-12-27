@@ -2,14 +2,7 @@
   <div class="calculator">
     <div class="target-set">
       Target Set:
-      <select v-model="selectedTargetSet">
-        <option v-for="(item, index) in targetSets" :key="index" :value="index">
-          {{ item.name }}
-        </option>
-      </select>
-      <button class="icon" title="Edit Target Sets" @click="editingTargetSets = true" v-blur>
-        <vue-feather type="edit"/>
-      </button>
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"/>
     </div>
 
     <div class="output">
@@ -58,23 +51,16 @@
         </tbody>
       </table>
     </div>
-
-    <fullscreen-modal v-show="editingTargetSets">
-      <target-set-editor @close="editingTargetSets = false"/>
-    </fullscreen-modal>
   </div>
 </template>
 
 <script>
-import VueFeather from 'vue-feather';
-
 import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import FullscreenModal from '@/components/FullscreenModal.vue';
-import TargetSetEditor from '@/components/TargetSetEditor.vue';
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import blur from '@/directives/blur';
@@ -83,10 +69,8 @@ export default {
   name: 'SplitCalculator',
 
   components: {
-    FullscreenModal,
-    TargetSetEditor,
+    TargetSetSelector,
     TimeInput,
-    VueFeather,
   },
 
   directives: {
@@ -161,33 +145,34 @@ export default {
       // Check for missing target set
       if (!this.targetSets[this.selectedTargetSet]) return [];
 
-      for (let i = 0; i < this.targetSets[this.selectedTargetSet].targets.length; i += 1) {
-        if (this.targetSets[this.selectedTargetSet].targets[i].result === 'time') {
-          // Calculate split and total times
-          const splitTime = this.targetSets[this.selectedTargetSet].targets[i].split || 0;
-          const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
+      let targets = this.targetSets[this.selectedTargetSet].targets.filter(x => x.result ===
+        'time');
 
-          // Calculate split and total distances
-          const totalDistance = unitUtils.convertDistance(
-            this.targetSets[this.selectedTargetSet].targets[i].distanceValue,
-            this.targetSets[this.selectedTargetSet].targets[i].distanceUnit, 'meters',
-          );
-          const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
+      for (let i = 0; i < targets.length; i += 1) {
+        // Calculate split and total times
+        const splitTime = targets[i].split || 0;
+        const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
 
-          // Calculate pace
-          const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
-            unitUtils.getDefaultDistanceUnit());
+        // Calculate split and total distances
+        const totalDistance = unitUtils.convertDistance(
+          targets[i].distanceValue,
+          targets[i].distanceUnit, 'meters',
+        );
+        const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
-          // Add row to results array
-          results.push({
-            distance: totalDistance,
-            distanceValue: this.targetSets[this.selectedTargetSet].targets[i].distanceValue,
-            distanceUnit: this.targetSets[this.selectedTargetSet].targets[i].distanceUnit,
-            totalTime,
-            splitTime,
-            pace,
-          });
-        }
+        // Calculate pace
+        const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
+          unitUtils.getDefaultDistanceUnit());
+
+        // Add row to results array
+        results.push({
+          distance: totalDistance,
+          distanceValue: targets[i].distanceValue,
+          distanceUnit: targets[i].distanceUnit,
+          totalTime,
+          splitTime,
+          pace,
+        });
       }
 
       // Return results array
@@ -197,11 +182,10 @@ export default {
 
   methods: {
     /**
-     * Restore the default target set
+     * Reload the target sets
      */
-    resetTargetSet() {
-      this.targetSets[this.selectedTargetSet] =
-        JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.selectedTargetSet]));
+    reloadTargets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
     },
   },
 
