@@ -63,18 +63,12 @@ import unitUtils from '@/utils/units';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-import blur from '@/directives/blur';
-
 export default {
   name: 'SplitCalculator',
 
   components: {
     TargetSetSelector,
     TimeInput,
-  },
-
-  directives: {
-    blur,
   },
 
   data() {

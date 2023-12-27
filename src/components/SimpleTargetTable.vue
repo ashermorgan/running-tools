@@ -42,14 +42,8 @@
 import formatUtils from '@/utils/format';
 import unitUtils from '@/utils/units';
 
-import blur from '@/directives/blur';
-
 export default {
   name: 'SimpleTargetTable',
-
-  directives: {
-    blur,
-  },
 
   props: {
     /**

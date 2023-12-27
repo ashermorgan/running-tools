@@ -6,13 +6,13 @@
           Edit
           <input v-model="internalValue.name" placeholder="Target set name"/>
           <button class="icon" :title="isCustomSet ? 'Delete Target Set' : 'Revert Target Set'"
-            @click="revert" v-blur>
+            @click="revert">
             <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'"/>
           </button>
         </th>
 
         <th>
-          <button class="icon" title="Close" @click="close" v-blur>
+          <button class="icon" title="Close" @click="close">
             <vue-feather type="x"/>
           </button>
         </th>
@@ -36,7 +36,7 @@
         </td>
 
         <td>
-          <button class="icon" title="Remove Target" @click="removeTarget(index)" v-blur>
+          <button class="icon" title="Remove Target" @click="removeTarget(index)">
             <vue-feather type="trash-2"/>
           </button>
         </td>
@@ -52,10 +52,10 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <button title="Add Distance Target" @click="addDistanceTarget" v-blur>
+          <button title="Add Distance Target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget" v-blur>
+          <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget">
             Add time target
           </button>
           <br/>
@@ -75,8 +75,6 @@ import unitUtils from '@/utils/units';
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-import blur from '@/directives/blur';
-
 export default {
   name: 'TargetEditor',
 
@@ -84,10 +82,6 @@ export default {
     DecimalInput,
     TimeInput,
     VueFeather,
-  },
-
-  directives: {
-    blur,
   },
 
   props: {

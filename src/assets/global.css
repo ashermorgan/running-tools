@@ -84,9 +84,6 @@ body {
 button, input, select, option, tr:nth-child(2n) {
   background-color: var(--background2);
 }
-button:focus, select:focus, input:focus {
-  background-color: var(--background3);
-}
 @media (hover: hover) {
   button:hover, select:hover, input:hover {
     background-color: var(--background3);

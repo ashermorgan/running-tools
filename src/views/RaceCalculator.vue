@@ -19,7 +19,7 @@
 
     <h2>
       Advanced
-      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions" v-blur>
+      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions">
         {{ showAdvancedOptions ? '[hide]' : '[show]' }}
       </button>
     </h2>
@@ -75,8 +75,6 @@ import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-import blur from '@/directives/blur';
-
 export default {
   name: 'RaceCalculator',
 
@@ -85,10 +83,6 @@ export default {
     SimpleTargetTable,
     TargetSetSelector,
     TimeInput,
-  },
-
-  directives: {
-    blur,
   },
 
   data() {

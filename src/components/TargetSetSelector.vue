@@ -7,7 +7,7 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit Target Set" @click="editingTargetSets = true" v-blur>
+    <button class="icon" title="Edit Target Set" @click="editingTargetSets = true">
       <vue-feather type="edit"/>
     </button>
 
@@ -28,8 +28,6 @@ import targetUtils from '@/utils/targets';
 import FullscreenModal from '@/components/FullscreenModal.vue';
 import TargetEditor from '@/components/TargetEditor.vue';
 
-import blur from '@/directives/blur';
-
 export default {
   name: 'TargetSetSelector',
 
@@ -37,10 +35,6 @@ export default {
     FullscreenModal,
     TargetEditor,
     VueFeather,
-  },
-
-  directives: {
-    blur,
   },
 
   props: {
