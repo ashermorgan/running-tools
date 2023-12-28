@@ -1,10 +1,19 @@
 import { fileURLToPath, URL } from 'node:url';
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, 'index.html'),
+        not_found: resolve(__dirname, '404.html'),
+      },
+    },
+  },
   plugins: [
     vue(),
     VitePWA({
