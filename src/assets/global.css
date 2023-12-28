@@ -67,6 +67,15 @@ table .empty-message svg {
   padding: 0.3em;
 }
 
+/* styles for modals */
+dialog {
+  margin: auto;
+  border-radius: 5px;
+}
+dialog::backdrop {
+  background: #00000080;
+}
+
 /* styles for mobile devices */
 @media only screen and (max-width: 800px) {
   input, select, button {
@@ -75,10 +84,10 @@ table .empty-message svg {
 }
 
 /* element colors */
-body, input, select, button, option, .icon svg {
+body, input, select, button, option, .icon svg, dialog {
   color: var(--foreground);
 }
-body {
+body, dialog {
   background-color: var(--background1);
 }
 button, input, select, option, tr:nth-child(2n) {
@@ -94,6 +103,9 @@ button:active {
 }
 button, input, select, tr {
   border: 1px solid var(--background5);
+}
+dialog {
+  border: 2px solid var(--background5);
 }
 a, .link {
   color: var(--link);

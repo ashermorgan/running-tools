@@ -7,15 +7,15 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit Target Set" @click="editingTargetSets = true">
+    <button class="icon" title="Edit Target Set" @click="$refs.dialog.showModal()">
       <vue-feather type="edit"/>
     </button>
 
-    <fullscreen-modal v-show="editingTargetSets">
-      <target-editor @close="editingTargetSets = false" v-model="targetSets[internalValue]"
-        @revert="revertTargetSet(); editingTargetSets = false"
+    <dialog ref="dialog" class="target-set-editor-dialog">
+      <target-editor @close="$refs.dialog.close()" v-model="targetSets[internalValue]"
+        @revert="revertTargetSet(); $refs.dialog.close()"
         :isCustomSet="!internalValue.startsWith('_')"/>
-    </fullscreen-modal>
+    </dialog>
   </span>
 </template>
 
@@ -25,14 +25,12 @@ import VueFeather from 'vue-feather';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 
-import FullscreenModal from '@/components/FullscreenModal.vue';
 import TargetEditor from '@/components/TargetEditor.vue';
 
 export default {
   name: 'TargetSetSelector',
 
   components: {
-    FullscreenModal,
     TargetEditor,
     VueFeather,
   },
@@ -132,6 +130,10 @@ export default {
         this.internalValue = [...Object.keys(this.targetSets), '_new'][0];
       }
     },
+  },
+
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
   },
 };
 </script>

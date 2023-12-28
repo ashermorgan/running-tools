@@ -4,7 +4,7 @@
       <tr>
         <th>
           Edit
-          <input v-model="internalValue.name" placeholder="Target set name"/>
+          <input v-model="internalValue.name" placeholder="Target set label"/>
           <button class="icon" :title="isCustomSet ? 'Delete Target Set' : 'Revert Target Set'"
             @click="revert">
             <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'"/>
@@ -218,5 +218,11 @@ export default {
 }
 .target-editor tfoot p {
   margin-top: 0.5em;
+}
+@media only screen and (max-width: 800px) {
+  /* leave space for revert button on mobile devices */
+  .target-editor th input {
+    width: 12em;
+  }
 }
 </style>
