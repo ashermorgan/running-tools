@@ -4,8 +4,8 @@
     <div class="input">
       <div>
         Distance:
-        <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="Distance unit">
+        <decimal-input v-model="inputDistance" aria-label="Input distance value" :min="0" :digits="2"/>
+        <select v-model="inputUnit" aria-label="Input distance unit">
           <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
             {{ value.name }}
           </option>
@@ -13,7 +13,7 @@
       </div>
       <div>
         Time:
-        <time-input v-model="inputTime"/>
+        <time-input v-model="inputTime" label="Input race duration"/>
       </div>
     </div>
 
@@ -26,7 +26,7 @@
     <div class="advanced-options" v-show="showAdvancedOptions">
       <div>
         Prediction Model:
-        <select v-model="model" aria-label="Prediction Model">
+        <select v-model="model" aria-label="Prediction model">
           <option value="AverageModel">Average</option>
           <option value="PurdyPointsModel">Purdy Points Model</option>
           <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
@@ -36,7 +36,7 @@
       </div>
       <div>
         Riegel Exponent:
-        <decimal-input v-model="riegelExponent" aria-label="Riegel Exponent" :min="1" :max="1.3"
+        <decimal-input v-model="riegelExponent" aria-label="Riegel exponent" :min="1" :max="1.3"
           :digits="2" :step="0.01"/>
         (default: 1.06)
       </div>

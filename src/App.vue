@@ -7,7 +7,7 @@ import VueFeather from 'vue-feather';
   <header>
     <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
       class="icon" title="Back">
-      <vue-feather type="chevron-left"/>
+      <vue-feather type="chevron-left" aria-hidden="true"/>
     </router-link>
 
     <h1 v-if="$route.meta.title">

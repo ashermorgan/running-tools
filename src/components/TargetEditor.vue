@@ -4,16 +4,17 @@
       <tr>
         <th>
           Edit
-          <input v-model="internalValue.name" placeholder="Target set label"/>
-          <button class="icon" :title="isCustomSet ? 'Delete Target Set' : 'Revert Target Set'"
+          <input v-model="internalValue.name" placeholder="Target set label"
+            aria-label="Target set label"/>
+          <button class="icon" :title="isCustomSet ? 'Delete target set' : 'Revert target set'"
             @click="revert">
-            <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'"/>
+            <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'" aria-hidden="true"/>
           </button>
         </th>
 
         <th>
           <button class="icon" title="Close" @click="close">
-            <vue-feather type="x"/>
+            <vue-feather type="x" aria-hidden="true"/>
           </button>
         </th>
       </tr>
@@ -22,9 +23,9 @@
     <tbody>
       <tr v-for="(item, index) in internalValue.targets" :key="index">
         <td v-if="item.result === 'time'">
-          <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
+          <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
             :min="0" :digits="2"/>
-          <select v-model="item.distanceUnit" aria-label="Distance Unit">
+          <select v-model="item.distanceUnit" aria-label="Target distance unit">
             <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
               {{ value.name }}
             </option>
@@ -32,12 +33,12 @@
         </td>
 
         <td v-else>
-          <time-input v-model="item.time" aria-label="Time"/>
+          <time-input v-model="item.time" label="Target duration"/>
         </td>
 
         <td>
-          <button class="icon" title="Remove Target" @click="removeTarget(index)">
-            <vue-feather type="trash-2"/>
+          <button class="icon" title="Remove target" @click="removeTarget(index)">
+            <vue-feather type="trash-2" aria-hidden="true"/>
           </button>
         </td>
       </tr>
@@ -52,10 +53,10 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <button title="Add Distance Target" @click="addDistanceTarget">
+          <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget">
+          <button v-if="timeTargets" title="Add time target" @click="addTimeTarget">
             Add time target
           </button>
           <br/>

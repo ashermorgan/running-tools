@@ -34,7 +34,8 @@
             </td>
 
             <td v-if="targetSets[selectedTargetSet]">
-              <time-input v-model="targetSets[selectedTargetSet].targets[index].split" :showHours="false"/>
+              <time-input v-model="targetSets[selectedTargetSet].targets[index].split"
+                label="Split duration" :showHours="false"/>
             </td>
 
             <td>

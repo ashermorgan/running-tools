@@ -4,9 +4,9 @@
     <div class="input">
       <div>
         Distance:
-        <decimal-input v-model="inputDistance" aria-label="distance value"
+        <decimal-input v-model="inputDistance" aria-label="Input distance value"
           :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="distance unit">
+        <select v-model="inputUnit" aria-label="Input distance unit">
           <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
             {{ value.name }}
           </option>
@@ -14,7 +14,7 @@
       </div>
       <div>
         Time:
-        <time-input v-model="inputTime"/>
+        <time-input v-model="inputTime" label="Input duration"/>
       </div>
     </div>
 

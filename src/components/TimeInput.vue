@@ -1,14 +1,14 @@
 <template>
   <div class="time-input">
-    <integer-input class="hours" aria-label="hours" v-if="showHours"
+    <integer-input class="hours" :aria-label="label + ' hours'" v-if="showHours"
       :min="0" :max="99" :padding="1" v-model="hours"
       :arrow-keys="false" @keydown="onkeydown($event, 3600)"/>
     <span v-if="showHours">:</span>
-    <integer-input class="minutes" aria-label="minutes"
+    <integer-input class="minutes" :aria-label="label + ' minutes'"
       :min="0" :max="59" :padding="2" v-model="minutes"
       :arrow-keys="false" @keydown="onkeydown($event, 60)"/>
     <span>:</span>
-    <decimal-input class="seconds" aria-label="seconds"
+    <decimal-input class="seconds" :aria-label="label + ' seconds'"
       :min="0" :max="59.99" :padding="2" :digits="2" v-model="seconds"
       :arrow-keys="false" @keydown="onkeydown($event, 1)"/>
   </div>
@@ -44,6 +44,14 @@ export default {
     showHours: {
       type: Boolean,
       default: true,
+    },
+
+    /**
+     * The prefix for each field's aria-label
+     */
+    label: {
+      type: String,
+      default: '',
     },
   },
 

@@ -1,19 +1,19 @@
 <template>
   <span class="target-set-selector">
-    <select v-model="internalValue">
+    <select v-model="internalValue" aria-label="Selected target set">
       <option v-for="(item, index) in targetSets" :key="index" :value="index">
         {{ item.name }}
       </option>
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit Target Set" @click="$refs.dialog.showModal()">
-      <vue-feather type="edit"/>
+    <button class="icon" title="Edit target set" @click="$refs.dialog.showModal()">
+      <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
-    <dialog ref="dialog" class="target-set-editor-dialog">
+    <dialog ref="dialog" class="target-set-editor-dialog" aria-label="Edit target set">
       <target-editor @close="$refs.dialog.close()" v-model="targetSets[internalValue]"
-        @revert="revertTargetSet(); $refs.dialog.close()"
+        @revert="revertTargetSet"
         :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
@@ -128,6 +128,7 @@ export default {
         // Remove custom set
         delete this.targetSets[this.internalValue];
         this.internalValue = [...Object.keys(this.targetSets), '_new'][0];
+        if (this.$refs.dialog.close) this.$refs.dialog.close();
       }
     },
   },
