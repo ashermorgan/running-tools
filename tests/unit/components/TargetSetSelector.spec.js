@@ -111,7 +111,7 @@ test('revertTargetSet method should correctly reset target sets', async () => {
   expect(wrapper.vm.internalValue).to.equal('_split_targets');
 });
 
-test('Target sets should be correctly sorted', async () => {
+test('sortTargetSet method should correctly sort target sets', async () => {
   // Initialize component
   const wrapper = mount(TargetSetSelector, {
     data() {
@@ -122,9 +122,11 @@ test('Target sets should be correctly sorted', async () => {
           '_split_targets': {
             name: '5K Mile Splits',
             targets: [
+              { result: 'distance', timeValue: 60 },
               { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
               { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
               { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+              { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
             ],
           },
         },
@@ -132,21 +134,8 @@ test('Target sets should be correctly sorted', async () => {
     },
   });
 
-  // Edit target set
-  wrapper.vm.editingTargetSets = true;
-  await wrapper.vm.$nextTick();
-  wrapper.vm.targetSets['_split_targets'] = {
-    name: '5K Mile Splits',
-    targets: [
-      { result: 'distance', timeValue: 60 },
-      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-      { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-    ],
-  };
-  wrapper.vm.editingTargetSets = false;
-  await wrapper.vm.$nextTick();
+  // Sort target set
+  await wrapper.vm.sortTargetSet();
 
   // Assert target set was sorted
   expect(wrapper.vm.targetSets).to.deep.equal({

@@ -140,8 +140,8 @@ export default {
       // Check for missing target set
       if (!this.targetSets[this.selectedTargetSet]) return [];
 
-      let targets = this.targetSets[this.selectedTargetSet].targets.filter(x => x.result ===
-        'time');
+      let targets = targetUtils.sort(this.targetSets[this.selectedTargetSet].targets.filter(x =>
+        x.result === 'time'));
 
       for (let i = 0; i < targets.length; i += 1) {
         // Calculate split and total times

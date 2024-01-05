@@ -7,7 +7,7 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit target set" @click="$refs.dialog.showModal()">
+    <button class="icon" title="Edit target set" @click="sortTargetSet(); $refs.dialog.showModal()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
@@ -56,11 +56,6 @@ export default {
        * The target sets
        */
       targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
-
-      /**
-       * Whether the target set is being edited
-       */
-      editingTargetSets: false,
     };
   },
 
@@ -103,16 +98,6 @@ export default {
         this.$emit('targets-updated');
       },
     },
-
-    /**
-     * Sort target set
-     */
-    editingTargetSets(newValue) {
-      if (!newValue) {
-        this.targetSets[this.internalValue].targets =
-          targetUtils.sort(this.targetSets[this.internalValue].targets);
-      }
-    },
   },
 
   methods: {
@@ -124,12 +109,21 @@ export default {
         // Revert default set
         this.targetSets[this.internalValue] =
           JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.internalValue]));
+        this.sortTargetSet();
       } else {
         // Remove custom set
         delete this.targetSets[this.internalValue];
         this.internalValue = [...Object.keys(this.targetSets), '_new'][0];
         if (this.$refs.dialog.close) this.$refs.dialog.close();
       }
+    },
+
+    /**
+     * Sort the current target set
+     */
+    sortTargetSet() {
+      this.targetSets[this.internalValue].targets =
+        targetUtils.sort(this.targetSets[this.internalValue].targets);
     },
   },
 
