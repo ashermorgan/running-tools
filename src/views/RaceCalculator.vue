@@ -342,7 +342,7 @@ export default {
      * Save the current selected target set
      */
     selectedTargetSet(newValue) {
-      storage.set('pace-calculator-target-set', newValue);
+      storage.set('race-calculator-target-set', newValue);
     },
   },
 
