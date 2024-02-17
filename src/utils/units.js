@@ -160,10 +160,10 @@ function convertSpeedPace(inputValue, inputUnit, outputUnit) {
 }
 
 /**
- * Get the default unit system
+ * Detect the user's default unit system
  * @returns {String} The default unit system
  */
-function getDefaultUnitSystem() {
+function detectDefaultUnitSystem() {
   const language = (navigator.language || navigator.userLanguage).toLowerCase();
   if (language.endsWith('-us') || language.endsWith('-mm')) {
     return 'imperial';
@@ -172,27 +172,30 @@ function getDefaultUnitSystem() {
 }
 
 /**
- * Get the default distance unit
+ * Get the default distance unit in a unit system
+ * @param {String} unitSystem The unit system
  * @returns {String} The default distance unit
  */
-function getDefaultDistanceUnit() {
-  return getDefaultUnitSystem() === 'metric' ? 'kilometers' : 'miles';
+function getDefaultDistanceUnit(unitSystem) {
+  return unitSystem === 'metric' ? 'kilometers' : 'miles';
 }
 
 /**
- * Get the default speed unit
+ * Get the default speed unit in a unit system
+ * @param {String} unitSystem The unit system
  * @returns {String} The default speed unit
  */
-function getDefaultSpeedUnit() {
-  return getDefaultUnitSystem() === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
+function getDefaultSpeedUnit(unitSystem) {
+  return unitSystem === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
 }
 
 /**
- * Get the default pace unit
+ * Get the default pace unit in a unit system
+ * @param {String} unitSystem The unit system
  * @returns {String} The default pace unit
  */
-function getDefaultPaceUnit() {
-  return getDefaultUnitSystem() === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
+function getDefaultPaceUnit(unitSystem) {
+  return unitSystem === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
 }
 
 export default {
@@ -207,7 +210,7 @@ export default {
   convertPace,
   convertSpeedPace,
 
-  getDefaultUnitSystem,
+  detectDefaultUnitSystem,
   getDefaultDistanceUnit,
   getDefaultSpeedUnit,
   getDefaultPaceUnit,

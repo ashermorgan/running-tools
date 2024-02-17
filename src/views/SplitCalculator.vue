@@ -1,8 +1,17 @@
 <template>
   <div class="calculator">
+    <div class="default-units">
+      Default units:
+      <select v-model="defaultUnitSystem" aria-label="Default units">
+        <option value="imperial">Miles</option>
+        <option value="metric">Kilometers</option>
+      </select>
+    </div>
+
     <div class="target-set">
       Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"/>
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+        :default-unit-system="defaultUnitSystem"/>
     </div>
 
     <div class="output">
@@ -40,7 +49,7 @@
 
             <td>
               {{ formatDuration(item.pace, 3, 0, true) }}
-              / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
+              / {{ distanceUnits[getDefaultDistanceUnit(defaultUnitSystem)].symbol }}
             </td>
           </tr>
 
@@ -75,6 +84,13 @@ export default {
   data() {
     return {
       /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
+      /**
        * The distance units
        */
       distanceUnits: unitUtils.DISTANCE_UNITS,
@@ -101,32 +117,27 @@ export default {
 
       /**
        * The default output targets
+       *
+       * Loaded in activate() method
        */
-      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
-
-      /**
-       * Whether the target set is being edited
-       */
-      editingTargetSets: false,
+      targetSets: {},
     };
   },
 
   watch: {
+    /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
+    },
+
     /**
      * Save the current selected target set
      */
     selectedTargetSet(newValue) {
       storage.set('split-calculator-target-set', newValue);
     },
-
-    /**
-     * Refresh the target sets
-     */
-    editingTargetSets(newValue) {
-      if (!newValue) {
-        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-      }
-    }
   },
 
   computed: {
@@ -157,7 +168,7 @@ export default {
 
         // Calculate pace
         const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
-          unitUtils.getDefaultDistanceUnit());
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Add row to results array
         results.push({
@@ -184,8 +195,12 @@ export default {
     },
   },
 
+  /**
+   * (Re)load settings used in multiple calculators
+   */
   activated() {
     this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
   },
 };
 </script>

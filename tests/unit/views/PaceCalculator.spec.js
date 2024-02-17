@@ -51,8 +51,8 @@ test('should correctly calculate distances', async () => {
 
   // Assert result is correct
   expect(result).to.deep.equal({
-    distanceValue: unitUtils.convertDistance(2, 'miles', unitUtils.getDefaultDistanceUnit()),
-    distanceUnit: unitUtils.getDefaultDistanceUnit(),
+    distanceValue: unitUtils.convertDistance(2, 'miles', unitUtils.getDefaultDistanceUnit(unitUtils.detectDefaultUnitSystem())),
+    distanceUnit: unitUtils.getDefaultDistanceUnit(unitUtils.detectDefaultUnitSystem()),
     time: 200,
     result: 'distance',
   });

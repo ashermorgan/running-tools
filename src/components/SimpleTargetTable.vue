@@ -24,7 +24,7 @@
 
           <td v-if="showPace">
             {{ formatDuration(getPace(item), 3, 0, true) }}
-            / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
+            / {{ distanceUnits[getDefaultDistanceUnit(defaultUnitSystem)].symbol }}
           </td>
         </tr>
 
@@ -68,6 +68,14 @@ export default {
     showPace: {
       type: Boolean,
       default: false,
+    },
+
+    /**
+     * The unit system to use when showing result paces
+     */
+    defaultUnitSystem: {
+      type: String,
+      default: 'metric',
     },
   },
 
@@ -122,7 +130,7 @@ export default {
      */
     getPace(result) {
       return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
-        unitUtils.getDefaultDistanceUnit());
+        unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
     },
   },
 };

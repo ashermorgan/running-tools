@@ -13,7 +13,7 @@
 
     <dialog ref="dialog" class="target-set-editor-dialog" aria-label="Edit target set">
       <target-editor @close="$refs.dialog.close()" v-model="targetSets[internalValue]"
-        @revert="revertTargetSet"
+        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem"
         :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
@@ -42,6 +42,14 @@ export default {
     modelValue: {
       type: String,
       default: '_new',
+    },
+
+    /**
+     * The unit system to use when creating distance targets
+     */
+    defaultUnitSystem: {
+      type: String,
+      default: 'metric',
     },
   },
 
@@ -136,5 +144,16 @@ export default {
 <style scoped>
 .target-set-selector .icon {
   margin-left: 0.3em;
+}
+
+.target-set-editor-dialog {
+  width: min(100% - 2em, 400px);
+  max-height: min(100% - 2em, 815px);
+  margin-top: 100px;
+}
+@media only screen and (max-height: 800px) {
+  .target-set-editor-dialog {
+    margin-top: 1em;
+  }
 }
 </style>

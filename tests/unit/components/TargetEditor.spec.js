@@ -15,6 +15,7 @@ test('addDistanceTarget method should correctly add distance target', async () =
           { time: 0, result: 'distance' },
         ],
       },
+      defaultUnitSystem: 'imperial'
     },
   });
 

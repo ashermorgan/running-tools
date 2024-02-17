@@ -24,6 +24,13 @@
       </button>
     </h2>
     <div class="advanced-options" v-show="showAdvancedOptions">
+      <div class="default-units">
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
       <div>
         Prediction Model:
         <select v-model="model" aria-label="Prediction model">
@@ -55,10 +62,11 @@
     <h2>Equivalent Race Results</h2>
     <div class="target-set">
       Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"/>
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+        :default-unit-system="defaultUnitSystem"/>
     </div>
 
-    <simple-target-table class="output" :calculate-result="predictResult"
+    <simple-target-table class="output" :calculate-result="predictResult" :default-unit-system="defaultUnitSystem"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
   </div>
 </template>
@@ -103,6 +111,13 @@ export default {
       inputTime: storage.get('race-calculator-input-time', 20 * 60),
 
       /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
+      /**
       * The race prediction model
       */
       model: storage.get('race-calculator-model', 'AverageModel'),
@@ -134,13 +149,10 @@ export default {
 
       /**
        * The target sets
+       *
+       * Loaded in activate() method
        */
-      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
-
-      /**
-       * Whether the target set is being edited
-       */
-      editingTargetSets: false,
+      targetSets: {},
     };
   },
 
@@ -222,11 +234,12 @@ export default {
         }
 
         // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
+        distance = unitUtils.convertDistance(distance, 'meters',
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
       }
 
       // Return result
@@ -298,6 +311,13 @@ export default {
     },
 
     /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
+    },
+
+    /**
      * Save prediction model
      */
     model(newValue) {
@@ -324,19 +344,14 @@ export default {
     selectedTargetSet(newValue) {
       storage.set('pace-calculator-target-set', newValue);
     },
-
-    /**
-     * Refresh the target sets
-     */
-    editingTargetSets(newValue) {
-      if (!newValue) {
-        this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-      }
-    }
   },
 
+  /**
+   * (Re)load settings used in multiple calculators
+   */
   activated() {
     this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
   },
 };
 </script>

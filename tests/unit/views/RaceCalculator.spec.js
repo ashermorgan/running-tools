@@ -55,8 +55,8 @@ test('should correctly predict race distances', async () => {
   const prediction = raceUtils.AverageModel.predictDistance(1200, 5000, 2460);
   expect(result).to.deep.equal({
     distanceValue: unitUtils.convertDistance(prediction, 'meters',
-      unitUtils.getDefaultDistanceUnit()),
-    distanceUnit: unitUtils.getDefaultDistanceUnit(),
+      unitUtils.getDefaultDistanceUnit(unitUtils.detectDefaultUnitSystem())),
+    distanceUnit: unitUtils.getDefaultDistanceUnit(unitUtils.detectDefaultUnitSystem()),
     time: 2460,
     result: 'distance',
   });

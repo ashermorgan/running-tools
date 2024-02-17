@@ -109,6 +109,14 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    /**
+     * The unit system to use when creating distance targets
+     */
+    defaultUnitSystem: {
+      type: String,
+      default: 'metric',
+    },
   },
 
   data() {
@@ -173,7 +181,7 @@ export default {
       this.internalValue.targets.push({
         result: 'time',
         distanceValue: 1,
-        distanceUnit: unitUtils.getDefaultDistanceUnit(),
+        distanceUnit: unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem),
       });
     },
 

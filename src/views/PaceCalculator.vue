@@ -19,9 +19,17 @@
     </div>
 
     <h2>Equivalent Paces</h2>
+    <div class="default-units">
+      Default units:
+      <select v-model="defaultUnitSystem" aria-label="Default units">
+        <option value="imperial">Miles</option>
+        <option value="metric">Kilometers</option>
+      </select>
+    </div>
     <div class="target-set">
       Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"/>
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+        :default-unit-system="defaultUnitSystem"/>
     </div>
 
     <simple-target-table class="output" :calculate-result="calculatePace"
@@ -68,6 +76,13 @@ export default {
       inputTime: storage.get('pace-calculator-input-time', 20 * 60),
 
       /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
+      /**
        * The names of the distance units
        */
       distanceUnits: unitUtils.DISTANCE_UNITS,
@@ -79,13 +94,10 @@ export default {
 
       /**
        * The target sets
+       *
+       * Loaded in activate() method
        */
-      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
-
-      /**
-       * Whether the target set is being edited
-       */
-      editingTargetSets: false,
+      targetSets: {},
     };
   },
 
@@ -109,6 +121,13 @@ export default {
      */
     inputTime(newValue) {
       storage.set('pace-calculator-input-time', newValue);
+    },
+
+    /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
     },
 
     /**
@@ -166,11 +185,12 @@ export default {
         let distance = paceUtils.getDistance(this.pace, target.time);
 
         // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
+        distance = unitUtils.convertDistance(distance, 'meters',
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
       }
 
       // Return result
@@ -178,8 +198,12 @@ export default {
     },
   },
 
+  /**
+   * (Re)load settings used in multiple calculators
+   */
   activated() {
     this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
   },
 };
 </script>
