@@ -77,9 +77,6 @@ const defaultTargetSets = {
 
       { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
       { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-      { result: 'distance', time: 600 },
-      { result: 'distance', time: 3600 },
     ],
   },
   '_split_targets': {
