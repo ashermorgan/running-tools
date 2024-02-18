@@ -18,20 +18,25 @@
       </div>
     </div>
 
-    <h2>Equivalent Paces</h2>
-    <div class="default-units">
-      Default units:
-      <select v-model="defaultUnitSystem" aria-label="Default units">
-        <option value="imperial">Miles</option>
-        <option value="metric">Kilometers</option>
-      </select>
-    </div>
-    <div class="target-set">
-      Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
-        :default-unit-system="defaultUnitSystem"/>
-    </div>
+    <details>
+      <summary>
+        <h2>Advanced Options</h2>
+      </summary>
+      <div>
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
+      <div>
+        Target Set:
+        <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+          :default-unit-system="defaultUnitSystem"/>
+      </div>
+    </details>
 
+    <h2>Equivalent Paces</h2>
     <simple-target-table class="output" :calculate-result="calculatePace"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>

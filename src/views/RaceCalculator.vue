@@ -17,19 +17,37 @@
       </div>
     </div>
 
-    <h2>
-      Advanced
-      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions">
-        {{ showAdvancedOptions ? '[hide]' : '[show]' }}
-      </button>
-    </h2>
-    <div class="advanced-options" v-show="showAdvancedOptions">
-      <div class="default-units">
+    <details>
+      <summary>
+        <h2>Race Statistics</h2>
+      </summary>
+      <div>
+        Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
+      </div>
+      <div>
+        V&#775;O&#8322;: <b>{{ formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
+      </div>
+      <div>
+        V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <h2>Advanced Options</h2>
+      </summary>
+      <div>
         Default units:
         <select v-model="defaultUnitSystem" aria-label="Default units">
           <option value="imperial">Miles</option>
           <option value="metric">Kilometers</option>
         </select>
+      </div>
+      <div>
+        Target Set:
+        <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+          :default-unit-system="defaultUnitSystem"/>
       </div>
       <div>
         Prediction Model:
@@ -47,25 +65,9 @@
           :digits="2" :step="0.01"/>
         (default: 1.06)
       </div>
-      <div>
-        Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
-      </div>
-      <div>
-        V&#775;O&#8322;: <b>{{ formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
-          (<b>{{ formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
-      </div>
-      <div>
-        V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
-      </div>
-    </div>
+    </details>
 
     <h2>Equivalent Race Results</h2>
-    <div class="target-set">
-      Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
-        :default-unit-system="defaultUnitSystem"/>
-    </div>
-
     <simple-target-table class="output" :calculate-result="predictResult" :default-unit-system="defaultUnitSystem"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
   </div>
@@ -126,11 +128,6 @@ export default {
       * The value of the exponent in Riegel's Model
       */
       riegelExponent: storage.get('race-calculator-riegel-exponent', 1.06),
-
-      /**
-      * Whether to show the advanced options
-      */
-      showAdvancedOptions: storage.get('race-calculator-show-advanced-options', false),
 
       /**
        * The names of the distance units
@@ -332,13 +329,6 @@ export default {
     },
 
     /**
-     * Save advanced options state
-     */
-    showAdvancedOptions(newValue) {
-      storage.set('race-calculator-show-advanced-options', newValue);
-    },
-
-    /**
      * Save the current selected target set
      */
     selectedTargetSet(newValue) {
@@ -358,9 +348,4 @@ export default {
 
 <style scoped>
 @import '@/assets/target-calculator.css';
-
-/* advanced options */
-.advanced-options>* {
-  margin-bottom: 5px;
-}
 </style>

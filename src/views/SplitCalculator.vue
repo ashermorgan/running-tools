@@ -208,6 +208,10 @@ export default {
 <style scoped>
 @import '@/assets/target-calculator.css';
 
+.target-set, .default-units {
+  margin-bottom: 5px;
+}
+
 /* Widen default calculator output */
 @media only screen and (min-width: 501px) {
   .output {

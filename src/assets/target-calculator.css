@@ -10,7 +10,7 @@ h2 {
   font-size: 1.3em;
   margin-bottom: 0.2em;
 }
-* + h2 {
+* + h2, summary h2 {
   margin-top: 0.5em;
 }
 
@@ -22,12 +22,18 @@ h2 {
   margin-left: 5px;
 }
 
-/* extra settings */
-.target-set, .default-units {
-  margin-bottom: 5px;
+/* collapsable sections */
+summary {
+  text-align: center;
 }
-.target-set button {
-  margin-left: 3px;
+summary::marker {
+  font-size: 1.3em;
+}
+summary h2 {
+  display: inline-block;
+}
+details > * {
+  margin-bottom: 5px;
 }
 
 /* calculator output */
