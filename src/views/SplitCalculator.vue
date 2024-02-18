@@ -138,6 +138,16 @@ export default {
     selectedTargetSet(newValue) {
       storage.set('split-calculator-target-set', newValue);
     },
+
+    /**
+     * Save target sets
+     */
+    targetSets: {
+      deep: true,
+      handler(newValue) {
+        storage.set('target-sets', newValue);
+      },
+    },
   },
 
   computed: {

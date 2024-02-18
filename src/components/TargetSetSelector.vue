@@ -7,7 +7,8 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit target set" @click="sortTargetSet(); $refs.dialog.showModal()">
+    <button class="icon" title="Edit target set"
+      @click="reloadTargetSets(); sortTargetSet(); $refs.dialog.showModal()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
@@ -133,10 +134,17 @@ export default {
       this.targetSets[this.internalValue].targets =
         targetUtils.sort(this.targetSets[this.internalValue].targets);
     },
+
+    /**
+     * Reload the target sets
+     */
+    reloadTargetSets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    },
   },
 
   activated() {
-    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.reloadTargetSets();
   },
 };
 </script>
