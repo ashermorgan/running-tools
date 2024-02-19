@@ -23,8 +23,9 @@ Run development server
 npm run dev
 ```
 
-Run unit tests
+Run linter and unit tests
 ```
+npm run lint
 npm run test:unit
 ```
 
