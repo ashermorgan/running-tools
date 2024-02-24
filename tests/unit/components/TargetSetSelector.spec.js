@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { test, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';

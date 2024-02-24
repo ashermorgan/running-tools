@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { test, expect } from 'vitest';
 import { shallowMount, mount } from '@vue/test-utils';
 import TimeInput from '@/components/TimeInput.vue';
