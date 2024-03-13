@@ -1,16 +1,15 @@
 <template>
   <div class="time-input">
     <integer-input class="hours" :aria-label="label + ' hours'" v-if="showHours"
-      :min="0" :max="99" :padding="1" v-model="hours"
-      :arrow-keys="false" @keydown="onkeydown($event, 3600)"/>
+      :min="0" :max="99" :padding="1" v-model="hours" @keydown="onkeydown($event, 3600)"/>
     <span v-if="showHours">:</span>
     <integer-input class="minutes" :aria-label="label + ' minutes'"
       :min="0" :max="59" :padding="2" v-model="minutes"
-      :arrow-keys="false" @keydown="onkeydown($event, 60)"/>
+      @keydown="onkeydown($event, 60)"/>
     <span>:</span>
     <decimal-input class="seconds" :aria-label="label + ' seconds'"
       :min="0" :max="59.99" :padding="2" :digits="2" v-model="seconds"
-      :arrow-keys="false" @keydown="onkeydown($event, 1)"/>
+      @keydown="onkeydown($event, 1)"/>
   </div>
 </template>
 
@@ -136,17 +135,17 @@ export default {
      */
     onkeydown(e, step = 1) {
       if (e.key === 'ArrowUp') {
-        if (this.internalValue + step > this.max) {
+        if (Math.floor(this.internalValue) + step > this.max) {
           this.internalValue = this.max;
         } else {
-          this.internalValue += step;
+          this.internalValue = Math.floor(this.internalValue) + step;
         }
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
-        if (this.internalValue - step < 0) {
+        if (Math.ceil(this.internalValue) - step < 0) {
           this.internalValue = 0;
         } else {
-          this.internalValue -= step;
+          this.internalValue = Math.ceil(this.internalValue) - step;
         }
         e.preventDefault();
       }

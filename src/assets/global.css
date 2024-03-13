@@ -31,6 +31,18 @@ a:focus, .link:focus {
   }
 }
 
+/* remove spinner from numeric inputs */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* styles for tables */
 table {
   border-collapse: collapse;
@@ -110,6 +122,9 @@ dialog {
 a, .link {
   color: var(--link);
 }
+input:invalid:not(:focus) {
+  border: 1px solid var(--error);
+}
 
 /* light/default theme */
 :root {
@@ -136,6 +151,9 @@ a, .link {
 
   /* The color of links */
   --link: hsl(210, 100%, 40%);
+
+  /* The error color */
+  --error: hsl(0, 100%, 40%);
 }
 
 /* dark mode */
