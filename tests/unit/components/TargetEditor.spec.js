@@ -1,32 +1,73 @@
 import { test, expect } from 'vitest';
-import { shallowMount, mount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import TargetEditor from '@/components/TargetEditor.vue';
 
-test('revert method should emit revert event', async () => {
+test('should correctly render target set', async () => {
+  // Initialize component
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'kilometers', distanceValue: 1.61, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 3.11, result: 'time' },
+          { time: 600, result: 'distance' },
+        ],
+      },
+    },
+  });
+
+  // Assert target set correctly rendered
+  expect(wrapper.find('input').element.value).to.equal('My target set');
+  const rows = wrapper.findAll('tbody tr');
+  expect(rows[0].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1.61);
+  expect(rows[0].find('select').element.value).to.equal('kilometers');
+  expect(rows[1].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(3.11);
+  expect(rows[1].find('select').element.value).to.equal('miles');
+  expect(rows[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(600);
+  expect(rows.length).to.equal(3);
+});
+
+test('revert button should emit revert event', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor);
 
-  // Call revert method
-  await wrapper.vm.revert();
+  // Click revert button
+  await wrapper.find('button[title="Revert target set"]').trigger('click');
 
   // Assert revert event was emitted
   expect(wrapper.emitted().revert.length).to.equal(1);
 });
 
-test('close method should emit close event', async () => {
+test('delete button should emit revert event', async () => {
+  // Initialize component
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      isCustomSet: true,
+    }
+  });
+
+  // Click delete button
+  await wrapper.find('button[title="Delete target set"]').trigger('click');
+
+  // Assert revert event was emitted
+  expect(wrapper.emitted().revert.length).to.equal(1);
+});
+
+test('close button should emit close event', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor);
 
   // Call close method
-  await wrapper.vm.close();
+  await wrapper.find('button[title="Close"]').trigger('click');
 
   // Assert close event was emitted
   expect(wrapper.emitted().close.length).to.equal(1);
 });
 
-test('addDistanceTarget method should correctly add imperial distance target', async () => {
+test('add distance target button should correctly add imperial distance target', async () => {
   // Initialize component
-  const wrapper = mount(TargetEditor, {
+  const wrapper = shallowMount(TargetEditor, {
     propsData: {
       modelValue: {
         name: 'My target set',
@@ -40,7 +81,7 @@ test('addDistanceTarget method should correctly add imperial distance target', a
   });
 
   // Add distance target
-  await wrapper.vm.addDistanceTarget();
+  await wrapper.find('button[title="Add distance target"]').trigger('click');
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
@@ -55,9 +96,9 @@ test('addDistanceTarget method should correctly add imperial distance target', a
   ]);
 });
 
-test('addDistanceTarget method should correctly add metric distance target', async () => {
+test('add distance target button should correctly add metric distance target', async () => {
   // Initialize component
-  const wrapper = mount(TargetEditor, {
+  const wrapper = shallowMount(TargetEditor, {
     propsData: {
       modelValue: {
         name: 'My target set',
@@ -71,7 +112,7 @@ test('addDistanceTarget method should correctly add metric distance target', asy
   });
 
   // Add distance target
-  await wrapper.vm.addDistanceTarget();
+  await wrapper.find('button[title="Add distance target"]').trigger('click');
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
@@ -86,9 +127,9 @@ test('addDistanceTarget method should correctly add metric distance target', asy
   ]);
 });
 
-test('addTimeTarget method should correctly add time target', async () => {
+test('add time target button should correctly add time target', async () => {
   // Initialize component
-  const wrapper = mount(TargetEditor, {
+  const wrapper = shallowMount(TargetEditor, {
     propsData: {
       modelValue: {
         name: 'My target set',
@@ -101,7 +142,7 @@ test('addTimeTarget method should correctly add time target', async () => {
   });
 
   // Add time target
-  await wrapper.vm.addTimeTarget();
+  await wrapper.find('button[title="Add time target"]').trigger('click');
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
@@ -117,7 +158,7 @@ test('addTimeTarget method should correctly add time target', async () => {
 
 test('Should emit input event when targets are updated', async () => {
   // Initialize component
-  const wrapper = mount(TargetEditor, {
+  const wrapper = shallowMount(TargetEditor, {
     propsData: {
       modelValue: {
         name: 'My target set',
@@ -129,8 +170,7 @@ test('Should emit input event when targets are updated', async () => {
   });
 
   // Update distance value
-  wrapper.vm.internalValue.targets[0].distanceValue = 3;
-  await wrapper.vm.$nextTick();
+  await wrapper.findComponent({ name: 'decimal-input' }).setValue(3);
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
@@ -147,7 +187,7 @@ test('Should emit input event when targets are updated', async () => {
 
 test('Should emit input event when target set name is updated', async () => {
   // Initialize component
-  const wrapper = mount(TargetEditor, {
+  const wrapper = shallowMount(TargetEditor, {
     propsData: {
       modelValue: {
         name: 'My target set',
@@ -159,8 +199,7 @@ test('Should emit input event when target set name is updated', async () => {
   });
 
   // Update distance value
-  wrapper.vm.internalValue.name = 'My target set #2';
-  await wrapper.vm.$nextTick();
+  await wrapper.find('input').setValue('My target set #2');
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
@@ -175,7 +214,7 @@ test('Should emit input event when target set name is updated', async () => {
   ]);
 });
 
-test('removeTarget method should correctly remove target', async () => {
+test('removeTarget button should correctly remove target', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
     propsData: {
@@ -191,7 +230,7 @@ test('removeTarget method should correctly remove target', async () => {
   });
 
   // Remove 2nd target
-  await wrapper.vm.removeTarget(1);
+  await wrapper.findAll('button[title="Remove target"]')[1].trigger('click');
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([

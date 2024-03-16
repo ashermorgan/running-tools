@@ -56,7 +56,7 @@
           <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button v-if="timeTargets" title="Add time target" @click="addTimeTarget">
+          <button title="Add time target" @click="addTimeTarget">
             Add time target
           </button>
           <br/>
@@ -92,14 +92,6 @@ export default {
     modelValue: {
       type: Object,
       default: JSON.parse(JSON.stringify(targetUtils.defaultTargetSet)),
-    },
-
-    /**
-     * Whether to allow the user to add time based targets
-     */
-    timeTargets: {
-      type: Boolean,
-      default: true,
     },
 
     /**
