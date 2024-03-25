@@ -1,8 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
-import unitUtils from '@/utils/units';
 import UnitCalculator from '@/views/UnitCalculator.vue';
 
 beforeEach(() => {
