@@ -153,16 +153,15 @@ export default {
         case 'time': {
           this.inputValue = storage.get('unit-calculator-time-input-value', 1);
           this.inputUnit = storage.get('unit-calculator-time-input-unit', 'seconds');
-          this.outputUnit = storage.get('unit-calculator-time-ouput-unit', 'hh:mm:ss');
+          this.outputUnit = storage.get('unit-calculator-time-output-unit', 'hh:mm:ss');
           break;
         }
         case 'speed_and_pace': {
-          this.inputValue = storage.get('unit-calculator-speed-input-value',
-            unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300);
+          this.inputValue = storage.get('unit-calculator-speed-input-value', 600);
           this.inputUnit = storage.get('unit-calculator-speed-input-unit',
-            unitUtils.getDefaultPaceUnit());
+            'seconds_per_mile');
           this.outputUnit = storage.get('unit-calculator-speed-output-unit',
-            unitUtils.getDefaultSpeedUnit());
+            'miles_per_hour');
           break;
         }
         default: {
