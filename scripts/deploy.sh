@@ -5,7 +5,7 @@
 # abort on errors
 set -e
 
-npm run build
+BASE_URL=/running-tools/ npm run build
 
 cd dist
 

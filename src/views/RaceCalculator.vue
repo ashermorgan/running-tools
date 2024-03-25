@@ -1,11 +1,11 @@
 <template>
-  <div class="race-calculator">
+  <div class="calculator">
     <h2>Input Race Result</h2>
     <div class="input">
       <div>
         Distance:
-        <decimal-input v-model="inputDistance" aria-label="Distance value" :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="Distance unit">
+        <decimal-input v-model="inputDistance" aria-label="Input distance value" :min="0" :digits="2"/>
+        <select v-model="inputUnit" aria-label="Input distance unit">
           <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
             {{ value.name }}
           </option>
@@ -13,33 +13,14 @@
       </div>
       <div>
         Time:
-        <time-input v-model="inputTime"/>
+        <time-input v-model="inputTime" label="Input race duration"/>
       </div>
     </div>
 
-    <h2>
-      Advanced
-      <button class="link" @click="showAdvancedOptions=!showAdvancedOptions">
-        {{ showAdvancedOptions ? '[hide]' : '[show]' }}
-      </button>
-    </h2>
-    <div class="advanced-options" v-show="showAdvancedOptions">
-      <div>
-        Prediction Model:
-        <select v-model="model" aria-label="Prediction Model">
-          <option value="AverageModel">Average</option>
-          <option value="PurdyPointsModel">Purdy Points Model</option>
-          <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
-          <option value="CameronModel">Cameron's Model</option>
-          <option value="RiegelModel">Riegel's Model</option>
-        </select>
-      </div>
-      <div>
-        Riegel Exponent:
-        <decimal-input v-model="riegelExponent" aria-label="Riegel Exponent" :min="1" :max="1.3"
-          :digits="2" :step="0.01"/>
-        (default: 1.06)
-      </div>
+    <details>
+      <summary>
+        <h2>Race Statistics</h2>
+      </summary>
       <div>
         Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
       </div>
@@ -50,12 +31,45 @@
       <div>
         V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
       </div>
-    </div>
+    </details>
+
+    <details>
+      <summary>
+        <h2>Advanced Options</h2>
+      </summary>
+      <div>
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
+      <div>
+        Target Set:
+        <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+          :default-unit-system="defaultUnitSystem"/>
+      </div>
+      <div>
+        Prediction Model:
+        <select v-model="model" aria-label="Prediction model">
+          <option value="AverageModel">Average</option>
+          <option value="PurdyPointsModel">Purdy Points Model</option>
+          <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
+          <option value="CameronModel">Cameron's Model</option>
+          <option value="RiegelModel">Riegel's Model</option>
+        </select>
+      </div>
+      <div>
+        Riegel Exponent:
+        <decimal-input v-model="riegelExponent" aria-label="Riegel exponent" :min="1" :max="1.3"
+          :digits="2" :step="0.01"/>
+        (default: 1.06)
+      </div>
+    </details>
 
     <h2>Equivalent Race Results</h2>
-
-    <simple-target-table class="output" :calculate-result="predictResult"
-      :default-targets="defaultTargets" storage-key="race-calculator-targets-v2" show-pace/>
+    <simple-target-table class="output" :calculate-result="predictResult" :default-unit-system="defaultUnitSystem"
+     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
   </div>
 </template>
 
@@ -63,19 +77,22 @@
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
+import TimeInput from '@/components/TimeInput.vue';
 
 export default {
   name: 'RaceCalculator',
 
   components: {
     DecimalInput,
-    TimeInput,
     SimpleTargetTable,
+    TargetSetSelector,
+    TimeInput,
   },
 
   data() {
@@ -96,6 +113,13 @@ export default {
       inputTime: storage.get('race-calculator-input-time', 20 * 60),
 
       /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
+      /**
       * The race prediction model
       */
       model: storage.get('race-calculator-model', 'AverageModel'),
@@ -104,11 +128,6 @@ export default {
       * The value of the exponent in Riegel's Model
       */
       riegelExponent: storage.get('race-calculator-riegel-exponent', 1.06),
-
-      /**
-      * Whether to show the advanced options
-      */
-      showAdvancedOptions: storage.get('race-calculator-show-advanced-options', false),
 
       /**
        * The names of the distance units
@@ -121,39 +140,27 @@ export default {
       formatNumber: formatUtils.formatNumber,
 
       /**
-       * The default output targets
+       * The current selected target set
        */
-      defaultTargets: [
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
+      selectedTargetSet: storage.get('race-calculator-target-set', '_race_targets'),
 
-        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 15, distanceUnit: 'kilometers' },
-
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
-
-        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-        { result: 'distance', time: 600 },
-        { result: 'distance', time: 3600 },
-      ],
+      /**
+       * The target sets
+       *
+       * Loaded in activate() method
+       */
+      targetSets: {},
     };
   },
 
   methods: {
+    /**
+     * Reload the target sets
+     */
+    reloadTargets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    },
+
     /**
      * Predict race results from a target
      * @param {Object} target The target
@@ -224,11 +231,12 @@ export default {
         }
 
         // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
+        distance = unitUtils.convertDistance(distance, 'meters',
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
       }
 
       // Return result
@@ -300,6 +308,13 @@ export default {
     },
 
     /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
+    },
+
+    /**
      * Save prediction model
      */
     model(newValue) {
@@ -314,53 +329,23 @@ export default {
     },
 
     /**
-     * Save advanced options state
+     * Save the current selected target set
      */
-    showAdvancedOptions(newValue) {
-      storage.set('race-calculator-show-advanced-options', newValue);
+    selectedTargetSet(newValue) {
+      storage.set('race-calculator-target-set', newValue);
     },
+  },
+
+  /**
+   * (Re)load settings used in multiple calculators
+   */
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
   },
 };
 </script>
 
 <style scoped>
-/* container */
-.race-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* headings */
-h2 {
-  font-size: 1.3em;
-  margin-bottom: 0.2em;
-}
-* + h2 {
-  margin-top: 0.5em;
-}
-
-/* calculator input */
-.input>* {
-  margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
-}
-
-/* advanced options */
-.advanced-options>* {
-  margin-bottom: 5px;
-}
-
-/* calculator output */
-.output {
-  min-width: 300px;
-}
-@media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
-}
+@import '@/assets/target-calculator.css';
 </style>

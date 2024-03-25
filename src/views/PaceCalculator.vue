@@ -1,12 +1,12 @@
 <template>
-  <div class="pace-calculator">
+  <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
       <div>
         Distance:
-        <decimal-input v-model="inputDistance" aria-label="distance value"
+        <decimal-input v-model="inputDistance" aria-label="Input distance value"
           :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="distance unit">
+        <select v-model="inputUnit" aria-label="Input distance unit">
           <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
             {{ value.name }}
           </option>
@@ -14,33 +14,53 @@
       </div>
       <div>
         Time:
-        <time-input v-model="inputTime"/>
+        <time-input v-model="inputTime" label="Input duration"/>
       </div>
     </div>
 
-    <h2>Equivalent Paces</h2>
+    <details>
+      <summary>
+        <h2>Advanced Options</h2>
+      </summary>
+      <div>
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
+      <div>
+        Target Set:
+        <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+          :default-unit-system="defaultUnitSystem"/>
+      </div>
+    </details>
 
+    <h2>Equivalent Paces</h2>
     <simple-target-table class="output" :calculate-result="calculatePace"
-      :default-targets="defaultTargets" storage-key="pace-calculator-targets-v2"/>
+     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script>
 import paceUtils from '@/utils/paces';
 import storage from '@/utils/localStorage';
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
+import TimeInput from '@/components/TimeInput.vue';
 
 export default {
   name: 'PaceCalculator',
 
   components: {
     DecimalInput,
-    TimeInput,
     SimpleTargetTable,
+    TargetSetSelector,
+    TimeInput,
   },
 
   data() {
@@ -61,49 +81,28 @@ export default {
       inputTime: storage.get('pace-calculator-input-time', 20 * 60),
 
       /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
+      /**
        * The names of the distance units
        */
       distanceUnits: unitUtils.DISTANCE_UNITS,
 
       /**
-       * The default output targets
+       * The current selected target set
        */
-      defaultTargets: [
-        { result: 'time', distanceValue: 100, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 300, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1000, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1200, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1500, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 3200, distanceUnit: 'meters' },
+      selectedTargetSet: storage.get('pace-calculator-target-set', '_pace_targets'),
 
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 4, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 6, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 8, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'miles' },
-
-        { result: 'time', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'marathons' },
-
-        { result: 'distance', time: 600 },
-        { result: 'distance', time: 1800 },
-        { result: 'distance', time: 3600 },
-      ],
+      /**
+       * The target sets
+       *
+       * Loaded in activate() method
+       */
+      targetSets: {},
     };
   },
 
@@ -128,6 +127,20 @@ export default {
     inputTime(newValue) {
       storage.set('pace-calculator-input-time', newValue);
     },
+
+    /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
+    },
+
+    /**
+     * Save the current selected target set
+     */
+    selectedTargetSet(newValue) {
+      storage.set('pace-calculator-target-set', newValue);
+    },
   },
 
   computed: {
@@ -141,6 +154,13 @@ export default {
   },
 
   methods: {
+    /**
+     * Reload the target sets
+     */
+    reloadTargets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    },
+
     /**
      * Calculate paces from a target
      * @param {Object} target The target
@@ -170,53 +190,29 @@ export default {
         let distance = paceUtils.getDistance(this.pace, target.time);
 
         // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters', unitUtils.getDefaultDistanceUnit());
+        distance = unitUtils.convertDistance(distance, 'meters',
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Update result
         result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit();
+        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
       }
 
       // Return result
       return result;
     },
   },
+
+  /**
+   * (Re)load settings used in multiple calculators
+   */
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
+  },
 };
 </script>
 
 <style scoped>
-/* container */
-.pace-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* headings */
-h2 {
-  font-size: 1.3em;
-  margin-bottom: 0.2em;
-}
-* + h2 {
-  margin-top: 0.5em;
-}
-
-/* calculator input */
-.input>* {
-  margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
-}
-
-/* calculator output */
-.output {
-  min-width: 300px;
-}
-@media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
-}
+@import '@/assets/target-calculator.css';
 </style>

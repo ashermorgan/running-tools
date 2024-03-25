@@ -1,10 +1,5 @@
 <template>
-  <input
-    ref="input"
-    @blur="onblur"
-    @keydown="onkeydown"
-    @keypress="onkeypress"
-    v-model="stringValue">
+  <input ref="input" type="number" step="1" required @blur="onblur" v-model="stringValue">
 </template>
 
 <script>
@@ -15,41 +10,9 @@ export default {
     /**
      * The input value
      */
-    value: {
+    modelValue: {
       type: Number,
       default: 0,
-    },
-
-    /**
-     * The minimum value
-     */
-    min: {
-      type: Number,
-      default: null,
-    },
-
-    /**
-     * The maximum value
-     */
-    max: {
-      type: Number,
-      default: null,
-    },
-
-    /**
-     * The step value
-     */
-    step: {
-      type: Number,
-      default: 1,
-    },
-
-    /**
-     * Whether to allow the user to increment/decrement the value using the arrow keys
-     */
-    arrowKeys: {
-      type: Boolean,
-      default: true,
     },
 
     /**
@@ -67,141 +30,56 @@ export default {
   data() {
     return {
       /**
-       * The internal value
+       * The internal integer value
        */
-      internalValue: this.format(this.value),
+      internalValue: this.modelValue,
+
+      /**
+       * The raw string value (empty if input is currently invalid)
+       */
+      stringValue: this.format(this.modelValue),
     };
-  },
-
-  computed: {
-    /**
-     * The value of the input element
-     */
-    stringValue: {
-      get() {
-        return this.internalValue;
-      },
-      set(newValue) {
-        // Parse new value
-        const parsedValue = this.parse(newValue);
-
-        if (newValue === '' || newValue === '-') {
-          // Allow input to be '' or '-'
-          this.internalValue = newValue;
-        } else if (this.min !== null && parsedValue < this.min) {
-          // Enforce minimum
-          this.internalValue = this.format(this.min);
-        } else if (this.max !== null && parsedValue > this.max) {
-          // Enforce maximum
-          this.internalValue = this.format(this.max);
-        } else if (!Number.isNaN(parsedValue)) {
-          // Allow valid numbers
-          this.internalValue = newValue;
-        }
-
-        // Make sure input element is updated
-        if (this.$refs.input.value === newValue) {
-          // Setter was called by the input element
-          if (this.internalValue !== newValue) {
-            // The value was corrected, so the input element must be updated
-            this.$refs.input.value = this.internalValue;
-          }
-        }
-      },
-    },
-
-    /**
-     * The value of the component
-     */
-    intValue: {
-      get() {
-        const parsedValue = parseInt(this.stringValue, 10);
-        return Number.isNaN(parsedValue) ? this.defaultValue : parsedValue;
-      },
-      set(newValue) {
-        this.stringValue = this.format(newValue);
-      },
-    },
-
-    /**
-     * The default value of the component
-     */
-    defaultValue() {
-      if (this.min > 0 || this.max < 0) {
-        return this.min;
-      }
-      return 0;
-    },
   },
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value(newValue) {
-      if (newValue !== this.intValue) {
-        this.intValue = newValue;
+    modelValue(newValue) {
+      if (newValue !== this.internalValue) {
+        this.internalValue = newValue;
+        this.stringValue = this.format(this.internalValue);
       }
     },
 
     /**
-     * Emit the input event when the component value changes
-     * @param {Number} newValue The new component value
+     * Emit the input event when the internal value changes
+     * @param {Number} newValue The new internal integer value
      */
-    intValue(newValue) {
-      this.$emit('input', newValue);
+    internalValue(newValue) {
+      this.$emit('update:modelValue', newValue);
+    },
+
+    /**
+     * Update the integer value when the raw string value changes
+     * @param {Number} newValue The new raw string value
+     */
+    stringValue(newValue) {
+      if (this.$refs.input.validity.valid) {
+        this.internalValue = Number(newValue);
+      }
     },
   },
 
   methods: {
     /**
-     * Restrict input to numbers
-     * @param {Object} e The keypress event args
-     */
-    onkeypress(e) {
-      const validKeys = ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      if (!validKeys.includes(e.key)) {
-        /* key was not a number */
-        e.preventDefault();
-      }
-    },
-
-    /**
-     * Process up and down arrow presses
-     * @param {Object} e The keydown event args
-     */
-    onkeydown(e) {
-      if (!this.arrowKeys) {
-        this.$emit('keydown', e);
-      } else if (e.key === 'ArrowUp') {
-        this.intValue += this.step;
-        e.preventDefault();
-      } else if (e.key === 'ArrowDown') {
-        this.intValue -= this.step;
-        e.preventDefault();
-      }
-    },
-
-    /**
-     * Reformat display value
+     * Reformat display value if not invalid
      */
     onblur() {
-      this.stringValue = this.format(this.intValue);
-    },
-
-    /**
-     * Parse an integer from a string
-     * @param {String} value The string
-     * @returns {Number} The parsed integer
-     */
-    parse(value) {
-      if (value.includes('.')) {
-        // value cannot be parsed as an integer
-        return NaN;
+      if (this.$refs.input.validity.valid) {
+        this.stringValue = this.format(this.internalValue);
       }
-
-      return Number(value);
     },
 
     /**

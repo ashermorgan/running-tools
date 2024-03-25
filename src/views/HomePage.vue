@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home-page">
     <p class="description">
       A collection of tools for runners and their coaches
     </p>
@@ -25,17 +25,22 @@
         </button>
       </router-link>
     </div>
+    <p class="about-link">
+      <router-link :to="{ name: 'about' }">
+        About Running Tools
+      </router-link>
+    </p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Home',
+  name: 'HomePage',
 };
 </script>
 
 <style scoped>
-.home {
+.home-page {
   text-align: center;
   max-width: 700px;
   margin: auto;
@@ -53,6 +58,9 @@ export default {
   font-size: 1em;
   padding: 0.5em;
   margin: 0em 0.3em;
+}
+.about-link {
+  margin-top: 1em;
 }
 @media only screen and (max-width: 600px) {
   .calculators {

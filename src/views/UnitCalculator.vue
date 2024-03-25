@@ -1,17 +1,17 @@
 <template>
   <div class="unit-calculator">
-    <select class="category" v-model="category">
+    <select class="category" v-model="category" aria-label="Selected unit category">
       <option value="distance">Distance</option>
       <option value="time">Time</option>
       <option value="speed_and_pace">Speed &amp; Pace</option>
     </select>
 
     <time-input v-if="getUnitType(inputUnit) === 'time'" class="input-value"
-      v-model="inputValue"/>
-    <decimal-input v-else class="input-value" aria-label="input value"
+      label="Input time" v-model="inputValue"/>
+    <decimal-input v-else class="input-value" aria-label="Input value"
       v-model="inputValue" :min="0" :digits="2"/>
 
-    <select v-model="inputUnit" class="input-units" aria-label="input units">
+    <select v-model="inputUnit" class="input-units" aria-label="Input units">
       <option v-for="(value, key) in units" :key="key" :value="key">
         {{ value.name }}
       </option>
@@ -19,14 +19,14 @@
 
     <span class="equals"> = </span>
 
-    <span v-if="getUnitType(outputUnit) === 'time'" class="output-value">
+    <span v-if="getUnitType(outputUnit) === 'time'" class="output-value" aria-label="Output value">
       {{ formatDuration(outputValue, 6, 3, true) }}
     </span>
-    <span v-else class="output-value">
+    <span v-else class="output-value" aria-label="Output value">
       {{ formatNumber(outputValue, 0, 3, true) }}
     </span>
 
-    <select v-model="outputUnit" class="output-units" aria-label="output units">
+    <select v-model="outputUnit" class="output-units" aria-label="Output units">
       <option v-for="(value, key) in units" :key="key" :value="key">
         {{ value.name }}
       </option>
@@ -153,16 +153,15 @@ export default {
         case 'time': {
           this.inputValue = storage.get('unit-calculator-time-input-value', 1);
           this.inputUnit = storage.get('unit-calculator-time-input-unit', 'seconds');
-          this.outputUnit = storage.get('unit-calculator-time-ouput-unit', 'hh:mm:ss');
+          this.outputUnit = storage.get('unit-calculator-time-output-unit', 'hh:mm:ss');
           break;
         }
         case 'speed_and_pace': {
-          this.inputValue = storage.get('unit-calculator-speed-input-value',
-            unitUtils.getDefaultPaceUnit() === 'seconds_per_mile' ? 600 : 300);
+          this.inputValue = storage.get('unit-calculator-speed-input-value', 600);
           this.inputUnit = storage.get('unit-calculator-speed-input-unit',
-            unitUtils.getDefaultPaceUnit());
+            'seconds_per_mile');
           this.outputUnit = storage.get('unit-calculator-speed-output-unit',
-            unitUtils.getDefaultSpeedUnit());
+            'miles_per_hour');
           break;
         }
         default: {

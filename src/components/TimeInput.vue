@@ -1,16 +1,15 @@
 <template>
   <div class="time-input">
-    <integer-input class="hours" aria-label="hours" v-if="showHours"
-      :min="0" :max="99" :padding="1" v-model="hours"
-      :arrow-keys="false" @keydown="onkeydown($event, 3600)"/>
+    <integer-input class="hours" :aria-label="label + ' hours'" v-if="showHours"
+      :min="0" :max="99" :padding="1" v-model="hours" @keydown="onkeydown($event, 3600)"/>
     <span v-if="showHours">:</span>
-    <integer-input class="minutes" aria-label="minutes"
+    <integer-input class="minutes" :aria-label="label + ' minutes'"
       :min="0" :max="59" :padding="2" v-model="minutes"
-      :arrow-keys="false" @keydown="onkeydown($event, 60)"/>
+      @keydown="onkeydown($event, 60)"/>
     <span>:</span>
-    <decimal-input class="seconds" aria-label="seconds"
+    <decimal-input class="seconds" :aria-label="label + ' seconds'"
       :min="0" :max="59.99" :padding="2" :digits="2" v-model="seconds"
-      :arrow-keys="false" @keydown="onkeydown($event, 1)"/>
+      @keydown="onkeydown($event, 1)"/>
   </div>
 </template>
 
@@ -30,7 +29,7 @@ export default {
     /**
      * The input value
      */
-    value: {
+    modelValue: {
       type: Number,
       default: 0,
       validator(value) {
@@ -45,6 +44,14 @@ export default {
       type: Boolean,
       default: true,
     },
+
+    /**
+     * The prefix for each field's aria-label
+     */
+    label: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
@@ -52,7 +59,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value,
+      internalValue: this.modelValue,
     };
   },
 
@@ -69,7 +76,7 @@ export default {
      */
     hours: {
       get() {
-        return Math.floor(this.value / 3600);
+        return Math.floor(this.modelValue / 3600);
       },
       set(newValue) {
         this.internalValue = (newValue * 3600) + (this.minutes * 60) + this.seconds;
@@ -81,7 +88,7 @@ export default {
      */
     minutes: {
       get() {
-        return Math.floor((this.value % 3600) / 60);
+        return Math.floor((this.modelValue % 3600) / 60);
       },
       set(newValue) {
         this.internalValue = (this.hours * 3600) + (newValue * 60) + this.seconds;
@@ -93,7 +100,7 @@ export default {
      */
     seconds: {
       get() {
-        return this.value % 60;
+        return this.modelValue % 60;
       },
       set(newValue) {
         this.internalValue = (this.hours * 3600) + (this.minutes * 60) + newValue;
@@ -103,10 +110,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value(newValue) {
+    modelValue(newValue) {
       if (newValue !== this.internalValue) {
         this.internalValue = newValue;
       }
@@ -117,7 +124,7 @@ export default {
      * @param {Number} newValue The new component value
      */
     internalValue(newValue) {
-      this.$emit('input', newValue);
+      this.$emit('update:modelValue', newValue);
     },
   },
 
@@ -128,17 +135,17 @@ export default {
      */
     onkeydown(e, step = 1) {
       if (e.key === 'ArrowUp') {
-        if (this.internalValue + step > this.max) {
+        if (Math.floor(this.internalValue) + step > this.max) {
           this.internalValue = this.max;
         } else {
-          this.internalValue += step;
+          this.internalValue = Math.floor(this.internalValue) + step;
         }
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
-        if (this.internalValue - step < 0) {
+        if (Math.ceil(this.internalValue) - step < 0) {
           this.internalValue = 0;
         } else {
-          this.internalValue -= step;
+          this.internalValue = Math.ceil(this.internalValue) - step;
         }
         e.preventDefault();
       }

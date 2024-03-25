@@ -1,12 +1,26 @@
 <template>
-  <div class="split-calculator">
+  <div class="calculator">
+    <div class="default-units">
+      Default units:
+      <select v-model="defaultUnitSystem" aria-label="Default units">
+        <option value="imperial">Miles</option>
+        <option value="metric">Kilometers</option>
+      </select>
+    </div>
+
+    <div class="target-set">
+      Target Set:
+      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
+        :default-unit-system="defaultUnitSystem"/>
+    </div>
+
     <div class="output">
-      <table class="results" v-show="!inEditMode">
+      <table class="results">
         <thead>
           <tr>
             <th>
               <span>Distance</span>
-              <span class="mobile-abbreviation">Dist</span>
+              <span class="mobile-abbreviation">Dist.</span>
             </th>
 
             <th>Time</th>
@@ -14,12 +28,6 @@
             <th>Split</th>
 
             <th>Pace</th>
-
-            <th>
-              <button class="icon" title="Edit Targets" @click="inEditMode=true" v-blur>
-                <edit-icon/>
-              </button>
-            </th>
           </tr>
         </thead>
 
@@ -34,71 +42,54 @@
               {{ formatDuration(item.totalTime, 3, 2, true) }}
             </td>
 
-            <td>
-              <time-input v-model="targets[index].split" :showHours="false"/>
+            <td v-if="targetSets[selectedTargetSet]">
+              <time-input v-model="targetSets[selectedTargetSet].targets[index].split"
+                label="Split duration" :showHours="false"/>
             </td>
 
-            <td colspan="2">
+            <td>
               {{ formatDuration(item.pace, 3, 0, true) }}
-              / {{ distanceUnits[getDefaultDistanceUnit()].symbol }}
+              / {{ distanceUnits[getDefaultDistanceUnit(defaultUnitSystem)].symbol }}
             </td>
           </tr>
 
-          <tr v-if="targets.length === 0" class="empty-message">
+          <tr v-if="!targetSets[selectedTargetSet] || targetSets[selectedTargetSet].targets.length === 0" class="empty-message">
             <td colspan="5">
-              There aren't any targets yet,<br>
-              click
-              <edit-icon/>
-              to edit the list of targets
+              There aren't any targets in this set yet.
             </td>
           </tr>
         </tbody>
       </table>
-
-      <target-editor v-model="targets" :time-targets="false" v-show="inEditMode"
-        @close="inEditMode=false" @reset="resetTargets"/>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  EditIcon,
-} from 'vue-feather-icons';
-
 import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
-import TargetEditor from '@/components/TargetEditor.vue';
-
-import blur from '@/directives/blur';
-
-const defaultTargets = [
-  { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-  { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-  { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-];
-const storageKey = 'split-calculator-targets-v2';
 
 export default {
   name: 'SplitCalculator',
 
   components: {
+    TargetSetSelector,
     TimeInput,
-    TargetEditor,
-
-    EditIcon,
-  },
-
-  directives: {
-    blur,
   },
 
   data() {
     return {
+      /**
+       * The default unit system
+       *
+       * Loaded in activate() method
+       */
+      defaultUnitSystem: null,
+
       /**
        * The distance units
        */
@@ -120,15 +111,43 @@ export default {
       getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
 
       /**
-       * Whether the table is in edit mode
+       * The current selected target set
        */
-      inEditMode: false,
+      selectedTargetSet: storage.get('split-calculator-target-set', '_split_targets'),
 
       /**
-       * The target table targets
+       * The default output targets
+       *
+       * Loaded in activate() method
        */
-      targets: storage.get(storageKey, defaultTargets),
+      targetSets: {},
     };
+  },
+
+  watch: {
+    /**
+     * Save default unit system
+     */
+    defaultUnitSystem(newValue) {
+      storage.set('default-unit-system', newValue);
+    },
+
+    /**
+     * Save the current selected target set
+     */
+    selectedTargetSet(newValue) {
+      storage.set('split-calculator-target-set', newValue);
+    },
+
+    /**
+     * Save target sets
+     */
+    targetSets: {
+      deep: true,
+      handler(newValue) {
+        storage.set('target-sets', newValue);
+      },
+    },
   },
 
   computed: {
@@ -139,25 +158,33 @@ export default {
       // Initialize results array
       const results = [];
 
-      for (let i = 0; i < this.targets.length; i += 1) {
+      // Check for missing target set
+      if (!this.targetSets[this.selectedTargetSet]) return [];
+
+      let targets = targetUtils.sort(this.targetSets[this.selectedTargetSet].targets.filter(x =>
+        x.result === 'time'));
+
+      for (let i = 0; i < targets.length; i += 1) {
         // Calculate split and total times
-        const splitTime = this.targets[i].split || 0;
+        const splitTime = targets[i].split || 0;
         const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
 
         // Calculate split and total distances
-        const totalDistance = unitUtils.convertDistance(this.targets[i].distanceValue,
-          this.targets[i].distanceUnit, 'meters');
+        const totalDistance = unitUtils.convertDistance(
+          targets[i].distanceValue,
+          targets[i].distanceUnit, 'meters',
+        );
         const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
         // Calculate pace
         const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
-          unitUtils.getDefaultDistanceUnit());
+          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
 
         // Add row to results array
         results.push({
           distance: totalDistance,
-          distanceValue: this.targets[i].distanceValue,
-          distanceUnit: this.targets[i].distanceUnit,
+          distanceValue: targets[i].distanceValue,
+          distanceUnit: targets[i].distanceUnit,
           totalTime,
           splitTime,
           pace,
@@ -169,74 +196,44 @@ export default {
     },
   },
 
-  watch: {
-    /**
-     * Sort targets
-     */
-    inEditMode() {
-      this.targets = targetUtils.sort(this.targets);
-    },
-
-    /**
-     * Save targets
-     */
-    targets: {
-      handler(newValue) {
-        if (storageKey !== null) {
-          storage.set(storageKey, newValue);
-        }
-      },
-      deep: true,
-    },
-  },
-
   methods: {
     /**
-     * Restore the default targets
+     * Reload the target sets
      */
-    resetTargets() {
-      // Clone default targets array
-      this.targets = JSON.parse(JSON.stringify(defaultTargets));
-
-      // Sort targets
-      this.targets = targetUtils.sort(this.targets);
+    reloadTargets() {
+      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
     },
   },
 
   /**
-   * Close edit targets table
+   * (Re)load settings used in multiple calculators
    */
-  deactivated() {
-    this.inEditMode = false;
+  activated() {
+    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
+    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
   },
 };
 </script>
 
 <style scoped>
-/* container */
-.split-calculator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+@import '@/assets/target-calculator.css';
+
+.target-set, .default-units {
+  margin-bottom: 5px;
 }
 
-/* target table */
-.results th:last-child {
-  text-align: right;
+/* Widen default calculator output */
+@media only screen and (min-width: 501px) {
+  .output {
+    min-width: 400px;
+  }
 }
+
+/* Show/hide mobile abbreviations */
 .results th:first-child span.mobile-abbreviation {
   display: none;
 }
-
-/* calculator output */
-.output {
-  min-width: 400px;
-}
 @media only screen and (max-width: 500px) {
-  .output {
-    width: 100%;
-    min-width: 0px;
-  }
   .results th:first-child span:not(.mobile-abbreviation) {
     display: none;
   }

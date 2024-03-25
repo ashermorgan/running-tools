@@ -2,25 +2,30 @@
   <table class="target-editor">
     <thead>
       <tr>
-        <th>Edit Targets</th>
+        <th>
+          Edit
+          <input v-model="internalValue.name" placeholder="Target set label"
+            aria-label="Target set label"/>
+          <button class="icon" :title="isCustomSet ? 'Delete target set' : 'Revert target set'"
+            @click="revert">
+            <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'" aria-hidden="true"/>
+          </button>
+        </th>
 
         <th>
-          <button class="icon" title="Reset Targets" @click="reset" v-blur>
-            <rotate-ccw-icon/>
-          </button>
-          <button class="icon" title="Close" @click="close" v-blur>
-            <x-icon/>
+          <button class="icon" title="Close" @click="close">
+            <vue-feather type="x" aria-hidden="true"/>
           </button>
         </th>
       </tr>
     </thead>
 
     <tbody>
-      <tr v-for="(item, index) in internalValue" :key="index">
+      <tr v-for="(item, index) in internalValue.targets" :key="index">
         <td v-if="item.result === 'time'">
-          <decimal-input v-model="item.distanceValue" aria-label="Distance Value"
+          <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
             :min="0" :digits="2"/>
-          <select v-model="item.distanceUnit" aria-label="Distance Unit">
+          <select v-model="item.distanceUnit" aria-label="Target distance unit">
             <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
               {{ value.name }}
             </option>
@@ -28,19 +33,19 @@
         </td>
 
         <td v-else>
-          <time-input v-model="item.time" aria-label="Time"/>
+          <time-input v-model="item.time" label="Target duration"/>
         </td>
 
         <td>
-          <button class="icon" title="Remove Target" @click="removeTarget(index)" v-blur>
-            <trash-2-icon/>
+          <button class="icon" title="Remove target" @click="removeTarget(index)">
+            <vue-feather type="trash-2" aria-hidden="true"/>
           </button>
         </td>
       </tr>
 
-      <tr v-if="internalValue.length === 0" class="empty-message">
+      <tr v-if="internalValue.targets.length === 0" class="empty-message">
         <td colspan="2">
-          There aren't any targets yet
+          There aren't any targets in this set yet
         </td>
       </tr>
     </tbody>
@@ -48,12 +53,14 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <button title="Add Distance Target" @click="addDistanceTarget" v-blur>
+          <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button v-if="timeTargets" title="Add Time Target" @click="addTimeTarget" v-blur>
+          <button title="Add time target" @click="addTimeTarget">
             Add time target
           </button>
+          <br/>
+          <p>Note: time targets are ignored by the Split Calculator</p>
         </td>
       </tr>
     </tfoot>
@@ -61,18 +68,13 @@
 </template>
 
 <script>
-import {
-  RotateCcwIcon,
-  Trash2Icon,
-  XIcon,
-} from 'vue-feather-icons';
+import VueFeather from 'vue-feather';
 
+import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-
-import blur from '@/directives/blur';
 
 export default {
   name: 'TargetEditor',
@@ -80,31 +82,32 @@ export default {
   components: {
     DecimalInput,
     TimeInput,
-
-    RotateCcwIcon,
-    Trash2Icon,
-    XIcon,
-  },
-
-  directives: {
-    blur,
+    VueFeather,
   },
 
   props: {
     /**
      * The targets
      */
-    value: {
-      type: Array,
-      default: () => [],
+    modelValue: {
+      type: Object,
+      default: JSON.parse(JSON.stringify(targetUtils.defaultTargetSet)),
     },
 
     /**
-     * Whether to allow the user to add time based targets
+     * Whether the target set is a custom or default set
      */
-    timeTargets: {
+    isCustomSet: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+
+    /**
+     * The unit system to use when creating distance targets
+     */
+    defaultUnitSystem: {
+      type: String,
+      default: 'metric',
     },
   },
 
@@ -113,7 +116,7 @@ export default {
       /**
        * The internal value
        */
-      internalValue: this.value,
+      internalValue: this.modelValue,
 
       /**
        * The distance units
@@ -124,10 +127,10 @@ export default {
 
   watch: {
     /**
-     * Update the component value when the value prop changes
+     * Update the component value when the modelValue prop changes
      * @param {Number} newValue The new prop value
      */
-    value: {
+    modelValue: {
       deep: true,
       handler(newValue) {
         this.internalValue = newValue;
@@ -141,18 +144,18 @@ export default {
     internalValue: {
       deep: true,
       handler(newValue) {
-        this.$emit('input', newValue);
+        this.$emit('update:modelValue', newValue);
       },
     },
   },
 
   methods: {
     /**
-     * Restore the default targets
+     * Revert the target set
      */
-    reset() {
-      // Emit reset event
-      this.$emit('reset');
+    revert() {
+      // Emit revert event
+      this.$emit('revert');
     },
 
     /**
@@ -167,10 +170,10 @@ export default {
      * Add a new distance based target
      */
     addDistanceTarget() {
-      this.internalValue.push({
+      this.internalValue.targets.push({
         result: 'time',
         distanceValue: 1,
-        distanceUnit: unitUtils.getDefaultDistanceUnit(),
+        distanceUnit: unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem),
       });
     },
 
@@ -178,7 +181,7 @@ export default {
      * Add a new time based target
      */
     addTimeTarget() {
-      this.internalValue.push({
+      this.internalValue.targets.push({
         result: 'distance',
         time: 600,
       });
@@ -189,7 +192,7 @@ export default {
      * @param {Number} index The index of the target
      */
     removeTarget(index) {
-      this.internalValue.splice(index, 1);
+      this.internalValue.targets.splice(index, 1);
     },
   },
 };
@@ -197,6 +200,9 @@ export default {
 
 <style scoped>
 /* edit targets table */
+.target-editor th .icon {
+  margin-left: 0.3em;
+}
 .target-editor th:last-child, .target-editor td:last-child {
   text-align: right;
 }
@@ -210,5 +216,14 @@ export default {
 }
 .target-editor tfoot button {
   margin: 0.5em;
+}
+.target-editor tfoot p {
+  margin-top: 0.5em;
+}
+@media only screen and (max-width: 800px) {
+  /* leave space for revert button on mobile devices */
+  .target-editor th input {
+    width: 12em;
+  }
 }
 </style>

@@ -163,7 +163,7 @@ const PurdyPointsModel = {
 
     // Refine estimate
     const method = (x) => this.predictTime(d1, t1, x);
-    const derivative = (x) => this.derivative(d1, t1, x) / 100; // Derivative on its own is too slow
+    const derivative = (x) => this.derivative(d1, t1, x) / 500; // Derivative on its own is too slow
     estimate = NewtonsMethod(estimate, t2, method, derivative, 0.01);
 
     // Return estimate
