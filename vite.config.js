@@ -59,5 +59,6 @@ export default defineConfig({
   base: process.env.BASE_URL ? process.env.BASE_URL : '/',
   test: {
     environment: 'jsdom',
+    include: ['tests/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
   },
 });
