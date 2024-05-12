@@ -1,9 +1,8 @@
 const { test, expect } = require('@playwright/test');
 
-test('Basic Unit Calculator usage', async ({ page }) => {
-  await page.goto('/');
-
+test('Basic usage', async ({ page }) => {
   // Go to unit calculator
+  await page.goto('/');
   await page.getByRole('button', { name: 'Unit Calculator' }).click();
   await expect(page).toHaveTitle('Unit Calculator - Running Tools');
 
@@ -47,8 +46,46 @@ test('Basic Unit Calculator usage', async ({ page }) => {
   // Return to speed and pace category
   await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
   await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+});
 
-  // Reload page, return to distance category
-  await page.reload();
+test('Save state', async ({ page }) => {
+  // Go to unit calculator
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Unit Calculator' }).click();
+
+  // Convert distance units (5000m to mi)
+  await page.getByLabel('Input units').selectOption('Meters');
+  await page.getByLabel('Input value').fill('5000');
+  await page.getByLabel('Output units').selectOption('Miles');
   await expect(page.getByLabel('Output value')).toHaveText('3.107');
+
+  // Convert time units (6:54:32.100 to seconds)
+  await page.getByLabel('Selected unit category').selectOption('Time');
+  await page.getByLabel('Input units').selectOption('hh:mm:ss');
+  await page.getByLabel('Input time hours').fill('6');
+  await page.getByLabel('Input time minutes').fill('54');
+  await page.getByLabel('Input time seconds').fill('32.1');
+  await page.getByLabel('Output units').selectOption('seconds');
+  await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+
+  // Convert speed and pace units (10 kph to time per mile)
+  await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
+  await page.getByLabel('Input units').selectOption('Kilometers per Hour');
+  await page.getByLabel('Input value').fill('10');
+  await page.getByLabel('Output units').selectOption('Time per Mile');
+  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+
+  // Reload page
+  await page.reload();
+
+  // Assert distance result is correct (state not reset)
+  await expect(page.getByLabel('Output value')).toHaveText('3.107');
+
+  // Assert distance result is correct (state not reset)
+  await page.getByLabel('Selected unit category').selectOption('Time');
+  await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+
+  // Assert distance result is correct (state not reset)
+  await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
+  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
 });
