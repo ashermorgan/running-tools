@@ -13,7 +13,7 @@
     </button>
 
     <dialog ref="dialog" class="target-set-editor-dialog" aria-label="Edit target set">
-      <target-editor @close="$refs.dialog.close()" v-model="targetSets[internalValue]"
+      <target-editor @close="sortTargetSet(); $refs.dialog.close()" v-model="targetSets[internalValue]"
         @revert="revertTargetSet" :default-unit-system="defaultUnitSystem"
         :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
@@ -85,6 +85,7 @@ export default {
       immediate: true,
       handler(newValue) {
         if (newValue == '_new') {
+          this.reloadTargetSets();
           let key = Date.now().toString();
           this.targetSets[key] = {
             name: 'New target set',
