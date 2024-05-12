@@ -23,10 +23,11 @@ Run development server
 npm run dev
 ```
 
-Run linter and unit tests
+Run linter and tests
 ```
 npm run lint
 npm run test:unit
+npm run test:e2e
 ```
 
 Build for production
