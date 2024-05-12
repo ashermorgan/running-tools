@@ -48,7 +48,7 @@ test('Basic usage', async ({ page }) => {
   await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
 });
 
-test('Save state', async ({ page }) => {
+test('Save state across page reloads', async ({ page }) => {
   // Go to unit calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Unit Calculator' }).click();
@@ -81,11 +81,11 @@ test('Save state', async ({ page }) => {
   // Assert distance result is correct (state not reset)
   await expect(page.getByLabel('Output value')).toHaveText('3.107');
 
-  // Assert distance result is correct (state not reset)
+  // Assert time result is correct (state not reset)
   await page.getByLabel('Selected unit category').selectOption('Time');
   await expect(page.getByLabel('Output value')).toHaveText('24872.100');
 
-  // Assert distance result is correct (state not reset)
+  // Assert speed & pace result is correct (state not reset)
   await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
   await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
 });

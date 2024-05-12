@@ -142,7 +142,7 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByLabel('Target set label')).toHaveValue('Common Race Targets');
 });
 
-test('Save settings', async ({ page }) => {
+test('Save settings across page reloads', async ({ page }) => {
   // Go to race calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Race Calculator' }).click();

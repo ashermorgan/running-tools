@@ -127,7 +127,7 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByRole('row')).toHaveCount(5);
 });
 
-test('Save settings and state', async ({ page }) => {
+test('Save settings and state across page reloads', async ({ page }) => {
   // Go to split calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Split Calculator' }).click();

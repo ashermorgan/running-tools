@@ -122,7 +122,7 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByLabel('Target set label')).toHaveValue('Common Pace Targets');
 });
 
-test('Save settings', async ({ page }) => {
+test('Save settings across page reloads', async ({ page }) => {
   // Go to pace calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Pace Calculator' }).click();
