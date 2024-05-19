@@ -8,19 +8,21 @@
     </select>
 
     <button class="icon" title="Edit target set"
-      @click="reloadTargetSets(); sortTargetSet(); $refs.dialog.showModal()">
+      @click="reloadTargetSets(); sortTargetSet(); dialogElement.showModal()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
-    <dialog ref="dialog" class="target-set-editor-dialog" aria-label="Edit target set">
-      <target-editor @close="sortTargetSet(); $refs.dialog.close()" v-model="targetSets[internalValue]"
+    <dialog ref="dialogElement" class="target-set-editor-dialog" aria-label="Edit target set">
+      <target-editor @close="sortTargetSet(); dialogElement.close()" v-model="targetSets[internalValue]"
         @revert="revertTargetSet" :default-unit-system="defaultUnitSystem"
         :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
 </template>
 
-<script>
+<script setup>
+import { onActivated, ref, watch } from 'vue';
+
 import VueFeather from 'vue-feather';
 
 import storage from '@/utils/localStorage';
@@ -28,126 +30,111 @@ import targetUtils from '@/utils/targets';
 
 import TargetEditor from '@/components/TargetEditor.vue';
 
-export default {
-  name: 'TargetSetSelector',
+/**
+ * The selected target set
+ */
+const model = defineModel({
+  type: String,
+  default: '_new',
+});
 
-  components: {
-    TargetEditor,
-    VueFeather,
+const props = defineProps({
+  /**
+   * The unit system to use when creating distance targets
+   */
+  defaultUnitSystem: {
+    type: String,
+    default: 'metric',
   },
+});
 
-  props: {
-    /**
-     * The selected target set
-     */
-    modelValue: {
-      type: String,
-      default: '_new',
-    },
+// Declare emitted events
+const emit = defineEmits(['targets-updated']);
 
-    /**
-     * The unit system to use when creating distance targets
-     */
-    defaultUnitSystem: {
-      type: String,
-      default: 'metric',
-    },
-  },
+/**
+ * The internal value
+ */
+const internalValue = ref(model.value);
 
-  data() {
-    return {
-      /**
-       * The internal value
-       */
-      internalValue: this.modelValue,
+/**
+ * The target sets
+ */
+const targetSets = ref(storage.get('target-sets', targetUtils.defaultTargetSets));
 
-      /**
-       * The target sets
-       */
-      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
+/**
+ * The dialog element
+ */
+const dialogElement = ref(null);
+
+/**
+ * Update the internal value when the component value changes
+ */
+watch(model, (newValue) => {
+  if (newValue !== internalValue.value) {
+    internalValue.value = newValue;
+  }
+});
+
+/**
+ * Update the component vvalue when the internal value changes and create a new set if necessary
+ */
+watch(internalValue, (newValue) => {
+  if (newValue == '_new') {
+    reloadTargetSets();
+    let key = Date.now().toString();
+    targetSets.value[key] = {
+      name: 'New target set',
+      targets: [],
     };
-  },
+    internalValue.value = key;
+  } else {
+    model.value = newValue;
+  }
+}, { immediate: true });
 
-  watch: {
-    /**
-     * Update the component value when the modelValue prop changes
-     */
-    modelValue(newValue) {
-      if (newValue !== this.internalValue) {
-        this.internalValue = newValue;
-      }
-    },
+/**
+ * Save target sets
+ */
+watch(targetSets, (newValue) => {
+  storage.set('target-sets', newValue);
+  emit('targets-updated');
+}, { deep: true });
 
-    /**
-     * Emit the input event when the component value changes and create a new set if necessary
-     */
-    internalValue: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue == '_new') {
-          this.reloadTargetSets();
-          let key = Date.now().toString();
-          this.targetSets[key] = {
-            name: 'New target set',
-            targets: [],
-          };
-          this.internalValue = key;
-        } else {
-          this.$emit('update:modelValue', newValue);
-        }
-      },
-    },
-
-    /**
-     * Save target sets
-     */
-    targetSets: {
-      deep: true,
-      handler(newValue) {
-        storage.set('target-sets', newValue);
-        this.$emit('targets-updated');
-      },
-    },
-  },
-
-  methods: {
-    /**
-     * Revert or remove the current target set
-     */
-    revertTargetSet() {
-      if (this.internalValue.startsWith('_')) {
-        // Revert default set
-        this.targetSets[this.internalValue] =
-          JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.internalValue]));
-        this.sortTargetSet();
-      } else {
-        // Remove custom set
-        delete this.targetSets[this.internalValue];
-        this.internalValue = [...Object.keys(this.targetSets), '_new'][0];
-        if (this.$refs.dialog.close) this.$refs.dialog.close();
-      }
-    },
-
-    /**
-     * Sort the current target set
-     */
-    sortTargetSet() {
-      this.targetSets[this.internalValue].targets =
-        targetUtils.sort(this.targetSets[this.internalValue].targets);
-    },
-
-    /**
-     * Reload the target sets
-     */
-    reloadTargetSets() {
-      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    },
-  },
-
-  activated() {
-    this.reloadTargetSets();
-  },
+/**
+ * Revert or remove the current target set
+ */
+function revertTargetSet() {
+  if (internalValue.value.startsWith('_')) {
+    // Revert default set
+    targetSets.value[internalValue.value] =
+      JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[internalValue.value]));
+    sortTargetSet();
+  } else {
+    // Remove custom set
+    delete targetSets.value[internalValue.value];
+    internalValue.value = [...Object.keys(targetSets.value), '_new'][0];
+    if (dialogElement.value.close) dialogElement.value.close();
+  }
 };
+
+/**
+ * Sort the current target set
+ */
+function sortTargetSet() {
+  targetSets.value[internalValue.value].targets =
+    targetUtils.sort(targetSets.value[internalValue.value].targets);
+};
+
+/**
+ * Reload the target sets
+ */
+function reloadTargetSets() {
+  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+};
+
+onActivated(() => {
+  reloadTargetSets();
+});
 </script>
 
 <style scoped>

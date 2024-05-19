@@ -42,13 +42,13 @@ test('should emit input event when value changes', async () => {
   const wrapper = shallowMount(TimeInput);
 
   // Change value to 1:00:00.00
-  await wrapper.setData({ internalValue: 3600 });
+  await wrapper.findAllComponents({ name: 'integer-input' })[0].setValue(1);
 
   // Assert input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([[3600.00]]);
 
   // Change value to 1:00:01.50
-  await wrapper.setData({ internalValue: 3601.5 });
+  await wrapper.findComponent({ name: 'decimal-input' }).setValue(1.5);
 
   // Assert another input event was emitted
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([[3600.00], [3601.50]]);

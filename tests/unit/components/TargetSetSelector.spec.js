@@ -230,7 +230,7 @@ test('edit button should open target editor with the correct props for default s
   });
 
   // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
+  wrapper.vm.dialogElement.showModal = vi.fn();
 
   // Click edit button
   await wrapper.find('button').trigger('click');
@@ -265,7 +265,7 @@ test('edit button should open target editor with the correct props for custom se
   });
 
   // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
+  wrapper.vm.dialogElement.showModal = vi.fn();
 
   // Click edit button
   await wrapper.find('button').trigger('click');
@@ -305,7 +305,7 @@ test('should reload and sort target set before target editor is opened', async (
   localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
 
   // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
+  wrapper.vm.dialogElement.showModal = vi.fn();
 
   // Click edit button
   await wrapper.find('button').trigger('click');
