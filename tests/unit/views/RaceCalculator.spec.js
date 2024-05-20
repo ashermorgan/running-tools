@@ -1,6 +1,7 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import RaceCalculator from '@/views/RaceCalculator.vue';
+import targetUtils from '@/utils/targets';
 
 beforeEach(() => {
   localStorage.clear();
@@ -32,18 +33,15 @@ test('should correctly predict race times', async () => {
 
 test('should correctly calculate distance results according to default units setting', async () => {
   // Initialize component
-  const wrapper = shallowMount(RaceCalculator, {
-    data() {
-      return {
-        defaultUnitSystem: 'metric',
-      };
-    },
-  });
+  const wrapper = shallowMount(RaceCalculator);
 
   // Enter input pace data
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(5);
   await wrapper.find('select[aria-label="Input distance unit"]').setValue('kilometers');
   await wrapper.findComponent({ name: 'time-input' }).setValue(1200);
+
+  // Set default units
+  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
 
   // Get calculate result function
   const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
@@ -76,27 +74,11 @@ test('should show paces in results table', async () => {
 
 test('should correctly handle null target set', async () => {
   // Initialize component
-  const raceTargets = [
-    { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-    { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-    { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-  ];
-  const wrapper = shallowMount(RaceCalculator, {
-    data() {
-      return {
-        targetSets: {
-          '_pace_targets': null,
-          '_race_targets': {
-            name: 'Common race targets',
-            targets: raceTargets,
-          },
-        },
-      };
-    },
-  });
+  const wrapper = shallowMount(RaceCalculator);
+  await wrapper.vm.reloadTargets(); // onActivated method not called in tests
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_pace_targets');
+  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('does_not_exist');
 
   // Assert empty array passed to SimpleTargetTable component
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal([]);
@@ -105,6 +87,7 @@ test('should correctly handle null target set', async () => {
   await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_race_targets');
 
   // Assert valid targets passed to SimpleTargetTable component
+  const raceTargets = targetUtils.defaultTargetSets._race_targets.targets;
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal(raceTargets);
 });
 
@@ -202,34 +185,12 @@ test('should load selected target set from localStorage', async () => {
   localStorage.setItem('running-tools.race-calculator-target-set', '"_pace_targets"');
 
   // Initialize component
-  const paceTargets = [
-    { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-    { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-    { result: 'time', distanceValue: 6, distanceUnit: 'kilometers' },
-  ];
-  const wrapper = shallowMount(RaceCalculator, {
-    data() {
-      return {
-        targetSets: {
-          '_pace_targets': {
-            name: 'Common pace targets',
-            targets: paceTargets,
-          },
-          '_race_targets': {
-            name: 'Common race targets',
-            targets: [
-              { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-              { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-              { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-            ],
-          },
-        },
-      };
-    },
-  });
+  const wrapper = shallowMount(RaceCalculator);
+  await wrapper.vm.reloadTargets();
 
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.modelValue).to.equal('_pace_targets');
+  const paceTargets = targetUtils.defaultTargetSets._pace_targets.targets;
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal(paceTargets);
 });
 
@@ -246,15 +207,10 @@ test('should save selected target set to localStorage when modified', async () =
 
 test('should save default units setting to localStorage when modified', async () => {
   // Initialize component
-  const wrapper = shallowMount(RaceCalculator, {
-    data() {
-      return {
-        defaultUnitSystem: 'metric',
-      };
-    },
-  });
+  const wrapper = shallowMount(RaceCalculator);
 
   // Change default units
+  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
   await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
 
   // New default units should be saved to localStorage

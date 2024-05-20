@@ -5,12 +5,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'NotFoundPage',
-};
-</script>
-
 <style scoped>
 h1 {
   font-size: 1.5em;

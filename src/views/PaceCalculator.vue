@@ -7,7 +7,7 @@
         <decimal-input v-model="inputDistance" aria-label="Input distance value"
           :min="0" :digits="2"/>
         <select v-model="inputUnit" aria-label="Input distance unit">
-          <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
+          <option v-for="(value, key) in unitUtils.DISTANCE_UNITS" :key="key" :value="key">
             {{ value.name }}
           </option>
         </select>
@@ -42,7 +42,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, onActivated, ref, watch } from 'vue';
+
 import paceUtils from '@/utils/paces';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
@@ -53,164 +55,138 @@ import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-export default {
-  name: 'PaceCalculator',
+/**
+ * The input distance value
+ */
+const inputDistance = ref(storage.get('pace-calculator-input-distance', 5));
 
-  components: {
-    DecimalInput,
-    SimpleTargetTable,
-    TargetSetSelector,
-    TimeInput,
-  },
+/**
+ * The input distance unit
+ */
+const inputUnit = ref(storage.get('pace-calculator-input-unit', 'kilometers'));
 
-  data() {
-    return {
-      /**
-       * The input distance value
-       */
-      inputDistance: storage.get('pace-calculator-input-distance', 5),
+/**
+ * The input time value
+ */
+const inputTime = ref(storage.get('pace-calculator-input-time', 20 * 60));
 
-      /**
-       * The input distance unit
-       */
-      inputUnit: storage.get('pace-calculator-input-unit', 'kilometers'),
+/**
+ * The default unit system
+ *
+ * Loaded in onActivated() hook
+ */
+const defaultUnitSystem = ref(null);
 
-      /**
-       * The input time value
-       */
-      inputTime: storage.get('pace-calculator-input-time', 20 * 60),
+/**
+ * The current selected target set
+ */
+const selectedTargetSet = ref(storage.get('pace-calculator-target-set', '_pace_targets'));
 
-      /**
-       * The default unit system
-       *
-       * Loaded in activate() method
-       */
-      defaultUnitSystem: null,
+/**
+ * The target sets
+ *
+ * Loaded in onActivated() hook
+ */
+const targetSets = ref({});
 
-      /**
-       * The names of the distance units
-       */
-      distanceUnits: unitUtils.DISTANCE_UNITS,
+/**
+ * Save input distance value
+ */
+watch(inputDistance, (newValue) => {
+  storage.set('pace-calculator-input-distance', newValue);
+});
 
-      /**
-       * The current selected target set
-       */
-      selectedTargetSet: storage.get('pace-calculator-target-set', '_pace_targets'),
+/**
+ * Save input distance unit
+ */
+watch(inputUnit, (newValue) => {
+  storage.set('pace-calculator-input-unit', newValue);
+});
 
-      /**
-       * The target sets
-       *
-       * Loaded in activate() method
-       */
-      targetSets: {},
-    };
-  },
+/**
+ * Save input time value
+ */
+watch(inputTime, (newValue) => {
+  storage.set('pace-calculator-input-time', newValue);
+});
 
-  watch: {
-    /**
-     * Save input distance value
-     */
-    inputDistance(newValue) {
-      storage.set('pace-calculator-input-distance', newValue);
-    },
+/**
+ * Save default unit system
+ */
+watch(defaultUnitSystem, (newValue) => {
+  storage.set('default-unit-system', newValue);
+});
 
-    /**
-     * Save input distance unit
-     */
-    inputUnit(newValue) {
-      storage.set('pace-calculator-input-unit', newValue);
-    },
+/**
+ * Save the current selected target set
+ */
+watch(selectedTargetSet, (newValue) => {
+  storage.set('pace-calculator-target-set', newValue);
+});
 
-    /**
-     * Save input time value
-     */
-    inputTime(newValue) {
-      storage.set('pace-calculator-input-time', newValue);
-    },
+/**
+ * The input pace (in seconds per meter)
+ */
+const pace = computed(() => {
+  const distance = unitUtils.convertDistance(inputDistance.value, inputUnit.value, 'meters');
+  return paceUtils.getPace(distance, inputTime.value);
+});
 
-    /**
-     * Save default unit system
-     */
-    defaultUnitSystem(newValue) {
-      storage.set('default-unit-system', newValue);
-    },
+/**
+ * Reload the target sets
+ */
+function reloadTargets() {
+  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+}
 
-    /**
-     * Save the current selected target set
-     */
-    selectedTargetSet(newValue) {
-      storage.set('pace-calculator-target-set', newValue);
-    },
-  },
+/**
+ * Calculate paces from a target
+ * @param {Object} target The target
+ * @returns {Object} The result
+ */
+function calculatePace(target) {
+  // Initialize result
+  const result = {
+    distanceValue: target.distanceValue,
+    distanceUnit: target.distanceUnit,
+    time: target.time,
+    result: target.result,
+  };
 
-  computed: {
-    /**
-     * The input pace (in seconds per meter)
-     */
-    pace() {
-      const distance = unitUtils.convertDistance(this.inputDistance, this.inputUnit, 'meters');
-      return paceUtils.getPace(distance, this.inputTime);
-    },
-  },
+  // Add missing value to result
+  if (target.result === 'time') {
+    // Convert target distance into meters
+    const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
-  methods: {
-    /**
-     * Reload the target sets
-     */
-    reloadTargets() {
-      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    },
+    // Calculate time to travel distance at input pace
+    const time = paceUtils.getTime(pace.value, d2);
 
-    /**
-     * Calculate paces from a target
-     * @param {Object} target The target
-     * @returns {Object} The result
-     */
-    calculatePace(target) {
-      // Initialize result
-      const result = {
-        distanceValue: target.distanceValue,
-        distanceUnit: target.distanceUnit,
-        time: target.time,
-        result: target.result,
-      };
+    // Update result
+    result.time = time;
+  } else {
+    // Calculate distance traveled in time at input pace
+    let distance = paceUtils.getDistance(pace.value, target.time);
 
-      // Add missing value to result
-      if (target.result === 'time') {
-        // Convert target distance into meters
-        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
+    // Convert output distance into default distance unit
+    distance = unitUtils.convertDistance(distance, 'meters',
+      unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value));
 
-        // Calculate time to travel distance at input pace
-        const time = paceUtils.getTime(this.pace, d2);
+    // Update result
+    result.distanceValue = distance;
+    result.distanceUnit = unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value);
+  }
 
-        // Update result
-        result.time = time;
-      } else {
-        // Calculate distance traveled in time at input pace
-        let distance = paceUtils.getDistance(this.pace, target.time);
+  // Return result
+  return result;
+}
 
-        // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters',
-          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
-
-        // Update result
-        result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
-      }
-
-      // Return result
-      return result;
-    },
-  },
-
-  /**
-   * (Re)load settings used in multiple calculators
-   */
-  activated() {
-    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
-  },
-};
+/**
+ * (Re)load settings used in multiple calculators
+ */
+onActivated(() => {
+  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+  defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
+});
 </script>
 
 <style scoped>

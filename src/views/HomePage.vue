@@ -33,12 +33,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HomePage',
-};
-</script>
-
 <style scoped>
 .home-page {
   text-align: center;
