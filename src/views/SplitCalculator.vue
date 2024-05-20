@@ -34,12 +34,12 @@
         <tbody>
           <tr v-for="(item, index) in results" :key="index">
             <td>
-              {{ formatNumber(item.distanceValue, 0, 2, false) }}
-              {{ distanceUnits[item.distanceUnit].symbol }}
+              {{ formatUtils.formatNumber(item.distanceValue, 0, 2, false) }}
+              {{ unitUtils.DISTANCE_UNITS[item.distanceUnit].symbol }}
             </td>
 
             <td>
-              {{ formatDuration(item.totalTime, 3, 2, true) }}
+              {{ formatUtils.formatDuration(item.totalTime, 3, 2, true) }}
             </td>
 
             <td v-if="targetSets[selectedTargetSet]">
@@ -48,8 +48,9 @@
             </td>
 
             <td>
-              {{ formatDuration(item.pace, 3, 0, true) }}
-              / {{ distanceUnits[getDefaultDistanceUnit(defaultUnitSystem)].symbol }}
+              {{ formatUtils.formatDuration(item.pace, 3, 0, true) }}
+              / {{ unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)]
+                .symbol }}
             </td>
           </tr>
 
@@ -64,7 +65,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, onActivated, ref, watch } from 'vue';
+
 import formatUtils from '@/utils/format';
 import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
@@ -73,146 +76,104 @@ import unitUtils from '@/utils/units';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-export default {
-  name: 'SplitCalculator',
+/**
+ * The default unit system
+ *
+ * Loaded in onActivated() hook
+ */
+const defaultUnitSystem = ref(null);
 
-  components: {
-    TargetSetSelector,
-    TimeInput,
-  },
+/**
+ * The current selected target set
+ */
+const selectedTargetSet = ref(storage.get('split-calculator-target-set', '_split_targets'));
 
-  data() {
-    return {
-      /**
-       * The default unit system
-       *
-       * Loaded in activate() method
-       */
-      defaultUnitSystem: null,
+/**
+ * The default output targets
+ *
+ * Loaded in onActivated() hook
+ */
+const targetSets = ref({});
 
-      /**
-       * The distance units
-       */
-      distanceUnits: unitUtils.DISTANCE_UNITS,
+/**
+ * Save default unit system
+ */
+watch(defaultUnitSystem, (newValue) => {
+  storage.set('default-unit-system', newValue);
+});
 
-      /**
-       * The formatDuration method
-       */
-      formatDuration: formatUtils.formatDuration,
+/**
+ * Save the current selected target set
+ */
+watch(selectedTargetSet, (newValue) => {
+  storage.set('split-calculator-target-set', newValue);
+});
 
-      /**
-       * The formatNumber method
-       */
-      formatNumber: formatUtils.formatNumber,
+/**
+ * Save target sets
+ */
+watch(targetSets, (newValue) => {
+  storage.set('target-sets', newValue);
+}, { deep: true });
 
-      /**
-       * The getDefaultDistanceUnit method
-       */
-      getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
+/**
+ * The target table results
+ */
+const results = computed(() => {
+  // Initialize results array
+  const results = [];
 
-      /**
-       * The current selected target set
-       */
-      selectedTargetSet: storage.get('split-calculator-target-set', '_split_targets'),
+  // Check for missing target set
+  if (!targetSets.value[selectedTargetSet.value]) return [];
 
-      /**
-       * The default output targets
-       *
-       * Loaded in activate() method
-       */
-      targetSets: {},
-    };
-  },
+  let targets = targetUtils.sort(targetSets.value[selectedTargetSet.value].targets.filter(x =>
+    x.result === 'time'));
 
-  watch: {
-    /**
-     * Save default unit system
-     */
-    defaultUnitSystem(newValue) {
-      storage.set('default-unit-system', newValue);
-    },
+  for (let i = 0; i < targets.length; i += 1) {
+    // Calculate split and total times
+    const splitTime = targets[i].split || 0;
+    const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
 
-    /**
-     * Save the current selected target set
-     */
-    selectedTargetSet(newValue) {
-      storage.set('split-calculator-target-set', newValue);
-    },
+    // Calculate split and total distances
+    const totalDistance = unitUtils.convertDistance(
+      targets[i].distanceValue,
+      targets[i].distanceUnit, 'meters',
+    );
+    const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
-    /**
-     * Save target sets
-     */
-    targetSets: {
-      deep: true,
-      handler(newValue) {
-        storage.set('target-sets', newValue);
-      },
-    },
-  },
+    // Calculate pace
+    const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
+      unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value));
 
-  computed: {
-    /**
-     * The target table results
-     */
-    results() {
-      // Initialize results array
-      const results = [];
+    // Add row to results array
+    results.push({
+      distance: totalDistance,
+      distanceValue: targets[i].distanceValue,
+      distanceUnit: targets[i].distanceUnit,
+      totalTime,
+      splitTime,
+      pace,
+    });
+  }
 
-      // Check for missing target set
-      if (!this.targetSets[this.selectedTargetSet]) return [];
+  // Return results array
+  return results;
+});
 
-      let targets = targetUtils.sort(this.targetSets[this.selectedTargetSet].targets.filter(x =>
-        x.result === 'time'));
+/**
+ * Reload the target sets
+ */
+function reloadTargets() {
+  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+}
 
-      for (let i = 0; i < targets.length; i += 1) {
-        // Calculate split and total times
-        const splitTime = targets[i].split || 0;
-        const totalTime = i === 0 ? splitTime : results[i - 1].totalTime + splitTime;
-
-        // Calculate split and total distances
-        const totalDistance = unitUtils.convertDistance(
-          targets[i].distanceValue,
-          targets[i].distanceUnit, 'meters',
-        );
-        const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
-
-        // Calculate pace
-        const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
-          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
-
-        // Add row to results array
-        results.push({
-          distance: totalDistance,
-          distanceValue: targets[i].distanceValue,
-          distanceUnit: targets[i].distanceUnit,
-          totalTime,
-          splitTime,
-          pace,
-        });
-      }
-
-      // Return results array
-      return results;
-    },
-  },
-
-  methods: {
-    /**
-     * Reload the target sets
-     */
-    reloadTargets() {
-      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    },
-  },
-
-  /**
-   * (Re)load settings used in multiple calculators
-   */
-  activated() {
-    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
-  },
-};
+/**
+ * (Re)load settings used in multiple calculators
+ */
+onActivated(() => {
+  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+  defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
+});
 </script>
 
 <style scoped>

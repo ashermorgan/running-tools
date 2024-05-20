@@ -13,145 +13,126 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref, watch } from 'vue';
+
 import IntegerInput from '@/components/IntegerInput.vue';
 import DecimalInput from '@/components/DecimalInput.vue';
 
-export default {
-  name: 'TimeInput',
+/**
+ * The component value
+ */
+const model = defineModel({
+  type: Number,
+  default: 0,
+  validator(value) {
+    return value >= 0 && value <= 359999.99;
+  },
+});
 
-  components: {
-    IntegerInput,
-    DecimalInput,
+const props = defineProps({
+  /**
+   * Whether to show the hour field
+   */
+  showHours: {
+    type: Boolean,
+    default: true,
   },
 
-  props: {
-    /**
-     * The input value
-     */
-    modelValue: {
-      type: Number,
-      default: 0,
-      validator(value) {
-        return value >= 0 && value <= 359999.99;
-      },
-    },
-
-    /**
-     * Whether to show the hour field
-     */
-    showHours: {
-      type: Boolean,
-      default: true,
-    },
-
-    /**
-     * The prefix for each field's aria-label
-     */
-    label: {
-      type: String,
-      default: '',
-    },
+  /**
+   * The prefix for each field's aria-label
+   */
+  label: {
+    type: String,
+    default: '',
   },
+});
 
-  data() {
-    return {
-      /**
-       * The internal value
-       */
-      internalValue: this.modelValue,
-    };
+/**
+ * The internal value
+ */
+const internalValue = ref(model.value);
+
+/**
+ * The maximum value
+ */
+const max = computed(() => {
+  return props.showHours ? 359999.99 : 3599.99;
+});
+
+/**
+ * The value of the hours field
+ */
+const hours = computed({
+  get() {
+    return Math.floor(model.value / 3600);
   },
-
-  computed: {
-    /**
-     * The maximum value
-     */
-    max() {
-      return this.showHours ? 359999.99 : 3599.99;
-    },
-
-    /**
-     * The value of the hours field
-     */
-    hours: {
-      get() {
-        return Math.floor(this.modelValue / 3600);
-      },
-      set(newValue) {
-        this.internalValue = (newValue * 3600) + (this.minutes * 60) + this.seconds;
-      },
-    },
-
-    /**
-     * The value of the minutes field
-     */
-    minutes: {
-      get() {
-        return Math.floor((this.modelValue % 3600) / 60);
-      },
-      set(newValue) {
-        this.internalValue = (this.hours * 3600) + (newValue * 60) + this.seconds;
-      },
-    },
-
-    /**
-     * The value of the seconds field
-     */
-    seconds: {
-      get() {
-        return this.modelValue % 60;
-      },
-      set(newValue) {
-        this.internalValue = (this.hours * 3600) + (this.minutes * 60) + newValue;
-      },
-    },
+  set(newValue) {
+    internalValue.value = (newValue * 3600) + (minutes.value * 60) + seconds.value;
   },
+});
 
-  watch: {
-    /**
-     * Update the component value when the modelValue prop changes
-     * @param {Number} newValue The new prop value
-     */
-    modelValue(newValue) {
-      if (newValue !== this.internalValue) {
-        this.internalValue = newValue;
-      }
-    },
-
-    /**
-     * Emit the input event when the component value changes
-     * @param {Number} newValue The new component value
-     */
-    internalValue(newValue) {
-      this.$emit('update:modelValue', newValue);
-    },
+/**
+ * The value of the minutes field
+ */
+const minutes = computed({
+  get() {
+    return Math.floor((model.value % 3600) / 60);
   },
-
-  methods: {
-    /**
-     * Process up and down arrow presses
-     * @param {Object} e The keydown event args
-     */
-    onkeydown(e, step = 1) {
-      if (e.key === 'ArrowUp') {
-        if (Math.floor(this.internalValue) + step > this.max) {
-          this.internalValue = this.max;
-        } else {
-          this.internalValue = Math.floor(this.internalValue) + step;
-        }
-        e.preventDefault();
-      } else if (e.key === 'ArrowDown') {
-        if (Math.ceil(this.internalValue) - step < 0) {
-          this.internalValue = 0;
-        } else {
-          this.internalValue = Math.ceil(this.internalValue) - step;
-        }
-        e.preventDefault();
-      }
-    },
+  set(newValue) {
+    internalValue.value = (hours.value * 3600) + (newValue * 60) + seconds.value;
   },
-};
+});
+
+/**
+ * The value of the seconds field
+ */
+const seconds = computed({
+  get() {
+    return model.value % 60;
+  },
+  set(newValue) {
+    internalValue.value = (hours.value * 3600) + (minutes.value * 60) + newValue;
+  },
+});
+
+/**
+ * Update the internal value when the component value changes
+ */
+watch(model, (newValue) => {
+  if (newValue !== internalValue.value) {
+    internalValue.value = newValue;
+  }
+});
+
+/**
+ * Update the component value when the internal value changes
+ */
+watch(internalValue, (newValue) => {
+  model.value = newValue;
+});
+
+/**
+ * Process up and down arrow presses
+ * @param {Object} e The keydown event args
+ */
+function onkeydown(e, step = 1) {
+  if (e.key === 'ArrowUp') {
+    if (Math.floor(internalValue.value) + step > max.value) {
+      internalValue.value = max.value;
+    } else {
+      internalValue.value = Math.floor(internalValue.value) + step;
+    }
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    if (Math.ceil(internalValue.value) - step < 0) {
+      internalValue.value = 0;
+    } else {
+      internalValue.value = Math.ceil(internalValue.value) - step;
+    }
+    e.preventDefault();
+  }
+}
 </script>
 
 <style scoped>

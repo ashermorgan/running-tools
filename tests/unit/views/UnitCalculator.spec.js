@@ -27,7 +27,7 @@ test('should correctly update controls when category changes', async () => {
   expect(wrapper.find('select[aria-label="Output units"]').element.value).to.equal('miles_per_hour');
 
   // Change category
-  await wrapper.setData({ category: 'distance' });
+  await wrapper.find('select[aria-label="Selected unit category"]').setValue('distance');
 
   // Assert controls are correct
   expect(wrapper.findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1);
@@ -121,7 +121,7 @@ test('should correctly load saved inputs', async () => {
   expect(wrapper.find('select[aria-label="Output units"]').element.value).to.equal('seconds_per_mile');
 
   // Change category
-  await wrapper.setData({ category: 'distance' });
+  await wrapper.find('select[aria-label="Selected unit category"]').setValue('distance');
 
   // Assert inputs are correct
   expect(wrapper.findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(5);

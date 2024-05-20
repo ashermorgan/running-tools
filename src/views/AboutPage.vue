@@ -123,25 +123,12 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { version } from '/package.json';
 
 import VueFeather from 'vue-feather';
 
-export default {
-  name: 'AboutPage',
-
-  components: {
-    VueFeather
-  },
-
-  data() {
-    return {
-      version,
-      development: process.env.NODE_ENV === 'development',
-    };
-  },
-};
+const development = process.env.NODE_ENV === 'development';
 </script>
 
 <style scoped>

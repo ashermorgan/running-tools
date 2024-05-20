@@ -14,17 +14,18 @@
       <tbody>
         <tr v-for="(item, index) in results" :key="index">
           <td :class="item.result === 'distance' ? 'result' : ''">
-            {{ formatNumber(item.distanceValue, 0, 2, item.result === 'distance') }}
-            {{ distanceUnits[item.distanceUnit].symbol }}
+            {{ formatUtils.formatNumber(item.distanceValue, 0, 2, item.result === 'distance') }}
+            {{ unitUtils.DISTANCE_UNITS[item.distanceUnit].symbol }}
           </td>
 
           <td :class="item.result === 'time' ? 'result' : ''">
-            {{ formatDuration(item.time, 3, 2, item.result === 'time') }}
+            {{ formatUtils.formatDuration(item.time, 3, 2, item.result === 'time') }}
           </td>
 
           <td v-if="showPace">
-            {{ formatDuration(getPace(item), 3, 0, true) }}
-            / {{ distanceUnits[getDefaultDistanceUnit(defaultUnitSystem)].symbol }}
+            {{ formatUtils.formatDuration(getPace(item), 3, 0, true) }}
+            / {{ unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)]
+              .symbol }}
           </td>
         </tr>
 
@@ -38,102 +39,71 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
 import formatUtils from '@/utils/format';
 import unitUtils from '@/utils/units';
 
-export default {
-  name: 'SimpleTargetTable',
-
-  props: {
-    /**
-     * The method that generates the target table rows
-     */
-    calculateResult: {
-      type: Function,
-      required: true,
-    },
-
-    /**
-     * The target set
-     */
-    targets: {
-      type: Array,
-      default: () => [],
-    },
-
-    /**
-     * Whether to show result paces
-     */
-    showPace: {
-      type: Boolean,
-      default: false,
-    },
-
-    /**
-     * The unit system to use when showing result paces
-     */
-    defaultUnitSystem: {
-      type: String,
-      default: 'metric',
-    },
+const props = defineProps({
+  /**
+   * The method that generates the target table rows
+   */
+  calculateResult: {
+    type: Function,
+    required: true,
   },
 
-  data() {
-    return {
-      /**
-       * The distance units
-       */
-      distanceUnits: unitUtils.DISTANCE_UNITS,
-
-      /**
-       * The formatDuration method
-       */
-      formatDuration: formatUtils.formatDuration,
-
-      /**
-       * The formatNumber method
-       */
-      formatNumber: formatUtils.formatNumber,
-
-      /**
-       * The getDefaultDistanceUnit method
-       */
-      getDefaultDistanceUnit: unitUtils.getDefaultDistanceUnit,
-    };
+  /**
+   * The target set
+   */
+  targets: {
+    type: Array,
+    default: () => [],
   },
 
-  computed: {
-    /**
-     * The target table results
-     */
-    results() {
-      // Calculate results
-      const result = [];
-      this.targets.forEach((row) => {
-        // Add result
-        result.push(this.calculateResult(row));
-      });
-
-      // Sort results by time
-      result.sort((a, b) => a.time - b.time);
-
-      // Return results
-      return result;
-    },
+  /**
+   * Whether to show result paces
+   */
+  showPace: {
+    type: Boolean,
+    default: false,
   },
 
-  methods: {
-    /**
-     * Get the pace of a result
-     * @param {Object} result The result
-     */
-    getPace(result) {
-      return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
-        unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
-    },
+  /**
+   * The unit system to use when showing result paces
+   */
+  defaultUnitSystem: {
+    type: String,
+    default: 'metric',
   },
-};
+});
+
+/**
+ * The target table results
+ */
+const results = computed(() => {
+  // Calculate results
+  const result = [];
+  props.targets.forEach((row) => {
+    // Add result
+    result.push(props.calculateResult(row));
+  });
+
+  // Sort results by time
+  result.sort((a, b) => a.time - b.time);
+
+  // Return results
+  return result;
+});
+
+/**
+ * Get the pace of a result
+ * @param {Object} result The result
+ */
+function getPace(result) {
+  return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
+    unitUtils.getDefaultDistanceUnit(props.defaultUnitSystem));
+}
 </script>
 
 <style scoped>
