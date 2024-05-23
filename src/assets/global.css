@@ -15,18 +15,14 @@ input, select, button {
 button {
   cursor: pointer;
 }
-.link, .link:focus, .link:active, .link:hover {
-  border: none;
-  background: none;
-}
-a, .link {
+a {
   text-decoration: none;
 }
-a:focus, .link:focus {
+a:focus {
   text-decoration: underline;
 }
 @media (hover: hover) {
-  a:hover, .link:hover {
+  a:hover {
     text-decoration: underline;
   }
 }
@@ -119,7 +115,7 @@ button, input, select, tr {
 dialog {
   border: 2px solid var(--background5);
 }
-a, .link {
+a {
   color: var(--link);
 }
 input:invalid:not(:focus) {
