@@ -7,8 +7,8 @@ test('Basic usage', async ({ page }) => {
   await expect(page).toHaveTitle('Race Calculator - Running Tools');
 
   // Enter input race (2 mi in 10:30)
-  await page.getByLabel('Input distance value').fill('2');
-  await page.getByLabel('Input distance unit').selectOption('Miles');
+  await page.getByLabel('Input race distance value').fill('2');
+  await page.getByLabel('Input race distance unit').selectOption('Miles');
   await page.getByLabel('Input race duration hours').fill('0');
   await page.getByLabel('Input race duration minutes').fill('10');
   await page.getByLabel('Input race duration seconds').fill('30');
@@ -56,8 +56,8 @@ test('Customize target sets', async ({ page }) => {
   await page.getByRole('button', { name: 'Race Calculator' }).click();
 
   // Enter input race (2 mi in 10:30)
-  await page.getByLabel('Input distance value').fill('2');
-  await page.getByLabel('Input distance unit').selectOption('Miles');
+  await page.getByLabel('Input race distance value').fill('2');
+  await page.getByLabel('Input race distance unit').selectOption('Miles');
   await page.getByLabel('Input race duration hours').fill('0');
   await page.getByLabel('Input race duration minutes').fill('10');
   await page.getByLabel('Input race duration seconds').fill('30');
@@ -148,8 +148,8 @@ test('Save settings across page reloads', async ({ page }) => {
   await page.getByRole('button', { name: 'Race Calculator' }).click();
 
   // Enter input race (2 mi in 10:30)
-  await page.getByLabel('Input distance value').fill('2');
-  await page.getByLabel('Input distance unit').selectOption('Miles');
+  await page.getByLabel('Input race distance value').fill('2');
+  await page.getByLabel('Input race distance unit').selectOption('Miles');
   await page.getByLabel('Input race duration hours').fill('0');
   await page.getByLabel('Input race duration minutes').fill('10');
   await page.getByLabel('Input race duration seconds').fill('30');

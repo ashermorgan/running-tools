@@ -2,19 +2,7 @@
   <div class="calculator">
     <h2>Input Race Result</h2>
     <div class="input">
-      <div>
-        Distance:
-        <decimal-input v-model="inputDistance" aria-label="Input distance value" :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="Input distance unit">
-          <option v-for="(value, key) in unitUtils.DISTANCE_UNITS" :key="key" :value="key">
-            {{ value.name }}
-          </option>
-        </select>
-      </div>
-      <div>
-        Time:
-        <time-input v-model="inputTime" label="Input race duration"/>
-      </div>
+      <pace-input v-model="input" label="Input race"/>
     </div>
 
     <details>
@@ -82,26 +70,20 @@ import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
+import PaceInput from '@/components/PaceInput.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
-import TimeInput from '@/components/TimeInput.vue';
 
 import useStorage from '@/composables/useStorage';
 
 /**
- * The input distance value
+ * The input race
  */
-const inputDistance = useStorage('race-calculator-input-distance', 5);
-
-/**
- * The input distance unit
- */
-const inputUnit = useStorage('race-calculator-input-unit', 'kilometers');
-
-/**
- * The input time value
- */
-const inputTime = useStorage('race-calculator-input-time', 20 * 60);
+const input = useStorage('race-calculator-input', {
+  distanceValue: 5,
+  distanceUnit: 'kilometers',
+  time: 1200,
+});
 
 /**
  * The default unit system
@@ -152,21 +134,21 @@ function predictResult(target) {
     switch (model.value) {
       default:
       case 'AverageModel':
-        time = raceUtils.AverageModel.predictTime(d1.value, inputTime.value, d2,
+        time = raceUtils.AverageModel.predictTime(d1.value, input.value.time, d2,
           riegelExponent.value);
         break;
       case 'PurdyPointsModel':
-        time = raceUtils.PurdyPointsModel.predictTime(d1.value, inputTime.value, d2);
+        time = raceUtils.PurdyPointsModel.predictTime(d1.value, input.value.time, d2);
         break;
       case 'VO2MaxModel':
-        time = raceUtils.VO2MaxModel.predictTime(d1.value, inputTime.value, d2);
+        time = raceUtils.VO2MaxModel.predictTime(d1.value, input.value.time, d2);
         break;
       case 'RiegelModel':
-        time = raceUtils.RiegelModel.predictTime(d1.value, inputTime.value, d2,
+        time = raceUtils.RiegelModel.predictTime(d1.value, input.value.time, d2,
           riegelExponent.value);
         break;
       case 'CameronModel':
-        time = raceUtils.CameronModel.predictTime(d1.value, inputTime.value, d2);
+        time = raceUtils.CameronModel.predictTime(d1.value, input.value.time, d2);
         break;
     }
 
@@ -178,22 +160,22 @@ function predictResult(target) {
     switch (model.value) {
       default:
       case 'AverageModel':
-        distance = raceUtils.AverageModel.predictDistance(inputTime.value, d1.value, target.time,
+        distance = raceUtils.AverageModel.predictDistance(input.value.time, d1.value, target.time,
           riegelExponent.value);
         break;
       case 'PurdyPointsModel':
-        distance = raceUtils.PurdyPointsModel.predictDistance(inputTime.value, d1.value,
+        distance = raceUtils.PurdyPointsModel.predictDistance(input.value.time, d1.value,
           target.time);
         break;
       case 'VO2MaxModel':
-        distance = raceUtils.VO2MaxModel.predictDistance(inputTime.value, d1.value, target.time);
+        distance = raceUtils.VO2MaxModel.predictDistance(input.value.time, d1.value, target.time);
         break;
       case 'RiegelModel':
-        distance = raceUtils.RiegelModel.predictDistance(inputTime.value, d1.value, target.time,
+        distance = raceUtils.RiegelModel.predictDistance(input.value.time, d1.value, target.time,
           riegelExponent.value);
         break;
       case 'CameronModel':
-        distance = raceUtils.CameronModel.predictDistance(inputTime.value, d1.value, target.time);
+        distance = raceUtils.CameronModel.predictDistance(input.value.time, d1.value, target.time);
         break;
     }
 
@@ -214,14 +196,14 @@ function predictResult(target) {
  * The input distance in meters
  */
 const d1 = computed(() => {
-  return unitUtils.convertDistance(inputDistance.value, inputUnit.value, 'meters');
+  return unitUtils.convertDistance(input.value.distanceValue, input.value.distanceUnit, 'meters');
 });
 
 /**
  * The Purdy Points for the input race
  */
 const purdyPoints = computed(() => {
-  const result = raceUtils.PurdyPointsModel.getPurdyPoints(d1.value, inputTime.value);
+  const result = raceUtils.PurdyPointsModel.getPurdyPoints(d1.value, input.value.time);
   return result;
 });
 
@@ -229,7 +211,7 @@ const purdyPoints = computed(() => {
  * The VO2 Max calculated from the input race
  */
 const vo2Max = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2Max(d1.value, inputTime.value);
+  const result = raceUtils.VO2MaxModel.getVO2Max(d1.value, input.value.time);
   return result;
 });
 
@@ -237,7 +219,7 @@ const vo2Max = computed(() => {
  * The VO2 calculated from the input race
  */
 const vo2 = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2(d1.value, inputTime.value);
+  const result = raceUtils.VO2MaxModel.getVO2(d1.value, input.value.time);
   return result;
 });
 
@@ -245,7 +227,7 @@ const vo2 = computed(() => {
  * The percentage of VO2 Max calculated from the input race
  */
 const vo2Percentage = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2Percentage(inputTime.value) * 100;
+  const result = raceUtils.VO2MaxModel.getVO2Percentage(input.value.time) * 100;
   return result;
 });
 </script>

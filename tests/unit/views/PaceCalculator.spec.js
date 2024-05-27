@@ -12,9 +12,11 @@ test('should correctly calculate time results', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Enter input pace data
-  await wrapper.findComponent({ name: 'decimal-input' }).setValue(1);
-  await wrapper.find('select[aria-label="Input distance unit"]').setValue('kilometers');
-  await wrapper.findComponent({ name: 'time-input' }).setValue(100);
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'kilometers',
+    time: 100,
+  });
 
   // Calculate result
   const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
@@ -38,9 +40,11 @@ test('should correctly calculate distance results according to default units set
   const wrapper = shallowMount(PaceCalculator);
 
   // Enter input pace data
-  await wrapper.findComponent({ name: 'decimal-input' }).setValue(2);
-  await wrapper.find('select[aria-label="Input distance unit"]').setValue('miles');
-  await wrapper.findComponent({ name: 'time-input' }).setValue(1200);
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 1200,
+  });
 
   // Set default units
   await wrapper.find('select[aria-label="Default units"]').setValue('metric');
@@ -95,17 +99,21 @@ test('should correctly handle null target set', async () => {
 
 test('should load input pace from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.pace-calculator-input-distance', '1');
-  localStorage.setItem('running-tools.pace-calculator-input-unit', '"miles"');
-  localStorage.setItem('running-tools.pace-calculator-input-time', '600');
+  localStorage.setItem('running-tools.pace-calculator-input', JSON.stringify({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  }));
 
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
   // Assert data loaded
-  expect(wrapper.findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1);
-  expect(wrapper.find('select[aria-label="Input distance unit"]').element.value).to.equal('miles');
-  expect(wrapper.findComponent({ name: 'time-input' }).vm.modelValue).to.equal(600);
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
 });
 
 test('should save input pace to localStorage', async () => {
@@ -113,14 +121,18 @@ test('should save input pace to localStorage', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Enter input pace data
-  await wrapper.findComponent({ name: 'decimal-input' }).setValue(1);
-  await wrapper.find('select[aria-label="Input distance unit"]').setValue('miles');
-  await wrapper.findComponent({ name: 'time-input' }).setValue(600);
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
 
   // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.pace-calculator-input-distance')).to.equal('1');
-  expect(localStorage.getItem('running-tools.pace-calculator-input-unit')).to.equal('"miles"');
-  expect(localStorage.getItem('running-tools.pace-calculator-input-time')).to.equal('600');
+  expect(localStorage.getItem('running-tools.pace-calculator-input')).to.equal(JSON.stringify({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  }));
 });
 
 test('should load selected target set from localStorage', async () => {

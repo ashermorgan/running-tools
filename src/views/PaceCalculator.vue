@@ -2,20 +2,7 @@
   <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
-      <div>
-        Distance:
-        <decimal-input v-model="inputDistance" aria-label="Input distance value"
-          :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="Input distance unit">
-          <option v-for="(value, key) in unitUtils.DISTANCE_UNITS" :key="key" :value="key">
-            {{ value.name }}
-          </option>
-        </select>
-      </div>
-      <div>
-        Time:
-        <time-input v-model="inputTime" label="Input duration"/>
-      </div>
+      <pace-input v-model="input"/>
     </div>
 
     <details>
@@ -49,27 +36,20 @@ import paceUtils from '@/utils/paces';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import DecimalInput from '@/components/DecimalInput.vue';
+import PaceInput from '@/components/PaceInput.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
-import TimeInput from '@/components/TimeInput.vue';
 
 import useStorage from '@/composables/useStorage';
 
 /**
- * The input distance value
+ * The input pace
  */
-const inputDistance = useStorage('pace-calculator-input-distance', 5);
-
-/**
- * The input distance unit
- */
-const inputUnit = useStorage('pace-calculator-input-unit', 'kilometers');
-
-/**
- * The input time value
- */
-const inputTime = useStorage('pace-calculator-input-time', 20 * 60);
+const input = useStorage('pace-calculator-input', {
+  distanceValue: 5,
+  distanceUnit: 'kilometers',
+  time: 1200,
+});
 
 /**
  * The default unit system
@@ -90,8 +70,9 @@ const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
  * The input pace (in seconds per meter)
  */
 const pace = computed(() => {
-  const distance = unitUtils.convertDistance(inputDistance.value, inputUnit.value, 'meters');
-  return paceUtils.getPace(distance, inputTime.value);
+  const distance = unitUtils.convertDistance(input.value.distanceValue, input.value.distanceUnit,
+    'meters');
+  return paceUtils.getPace(distance, input.value.time);
 });
 
 /**
