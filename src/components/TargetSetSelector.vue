@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { onActivated, ref, watch } from 'vue';
+import { nextTick, onActivated, ref, watch } from 'vue';
 
 import VueFeather from 'vue-feather';
 
@@ -38,7 +38,7 @@ const model = defineModel({
   default: '_new',
 });
 
-const props = defineProps({
+defineProps({
   /**
    * The unit system to use when creating distance targets
    */
@@ -78,7 +78,7 @@ watch(model, (newValue) => {
 /**
  * Update the component vvalue when the internal value changes and create a new set if necessary
  */
-watch(internalValue, (newValue) => {
+watch(internalValue, async (newValue) => {
   if (newValue == '_new') {
     reloadTargetSets();
     let key = Date.now().toString();
@@ -86,7 +86,8 @@ watch(internalValue, (newValue) => {
       name: 'New target set',
       targets: [],
     };
-    internalValue.value = key;
+    await nextTick(); // <select> won't update if value changed immediately
+    model.value = key;
   } else {
     model.value = newValue;
   }
@@ -115,7 +116,7 @@ function revertTargetSet() {
     internalValue.value = [...Object.keys(targetSets.value), '_new'][0];
     if (dialogElement.value.close) dialogElement.value.close();
   }
-};
+}
 
 /**
  * Sort the current target set
@@ -123,14 +124,14 @@ function revertTargetSet() {
 function sortTargetSet() {
   targetSets.value[internalValue.value].targets =
     targetUtils.sort(targetSets.value[internalValue.value].targets);
-};
+}
 
 /**
  * Reload the target sets
  */
 function reloadTargetSets() {
   targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
-};
+}
 
 onActivated(() => {
   reloadTargetSets();

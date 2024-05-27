@@ -81,6 +81,10 @@ test('Create New Target Set option should correctly add target set', async () =>
   // Add target set
   await wrapper.find('select').setValue('_new');
 
+  // Assert new target set selected (key is unix timestamp in milliseconds)
+  const key = wrapper.find('select').element.value
+  expect(parseInt(key)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
+
   // Assert target set options were correctly updated
   const options = wrapper.findAll('option');
   expect(options[0].element.text).to.equal('1st target set');
