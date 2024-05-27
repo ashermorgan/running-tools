@@ -8,7 +8,7 @@
     </select>
 
     <button class="icon" title="Edit target set"
-      @click="reloadTargetSets(); sortTargetSet(); dialogElement.showModal()">
+      @click="sortTargetSet(); dialogElement.showModal()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
@@ -33,9 +33,17 @@ import TargetEditor from '@/components/TargetEditor.vue';
 /**
  * The selected target set
  */
-const model = defineModel({
+const model = defineModel('selectedTargetSet', {
   type: String,
   default: '_new',
+});
+
+/**
+ * The target sets
+ */
+const targetSets = defineModel('targetSets', {
+  type: Object,
+  default: targetUtils.defaultTargetSets,
 });
 
 defineProps({
@@ -48,18 +56,10 @@ defineProps({
   },
 });
 
-// Declare emitted events
-const emit = defineEmits(['targets-updated']);
-
 /**
  * The internal value
  */
 const internalValue = ref(model.value);
-
-/**
- * The target sets
- */
-const targetSets = ref(storage.get('target-sets', targetUtils.defaultTargetSets));
 
 /**
  * The dialog element
@@ -76,11 +76,10 @@ watch(model, (newValue) => {
 });
 
 /**
- * Update the component vvalue when the internal value changes and create a new set if necessary
+ * Update the component value when the internal value changes and create a new set if necessary
  */
 watch(internalValue, async (newValue) => {
   if (newValue == '_new') {
-    reloadTargetSets();
     let key = Date.now().toString();
     targetSets.value[key] = {
       name: 'New target set',
@@ -92,14 +91,6 @@ watch(internalValue, async (newValue) => {
     model.value = newValue;
   }
 }, { immediate: true });
-
-/**
- * Save target sets
- */
-watch(targetSets, (newValue) => {
-  storage.set('target-sets', newValue);
-  emit('targets-updated');
-}, { deep: true });
 
 /**
  * Revert or remove the current target set
@@ -125,17 +116,6 @@ function sortTargetSet() {
   targetSets.value[internalValue.value].targets =
     targetUtils.sort(targetSets.value[internalValue.value].targets);
 }
-
-/**
- * Reload the target sets
- */
-function reloadTargetSets() {
-  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
-}
-
-onActivated(() => {
-  reloadTargetSets();
-});
 </script>
 
 <style scoped>

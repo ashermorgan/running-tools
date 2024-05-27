@@ -52,17 +52,20 @@ test('should correctly load split times from split targets', async () => {
   const rows = wrapper.findAll('tbody tr');
   expect(rows[0].findAll('td')[0].element.textContent).to.equal('1 km');
   expect(rows[0].findAll('td')[1].element.textContent).to.equal('3:00.00');
-  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(180);
+  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue)
+    .to.equal(180);
   expect(rows[0].findAll('td')[3].element.textContent).to.equal('4:50 / mi');
   expect(rows[0].findAll('td').length).to.equal(4);
   expect(rows[1].findAll('td')[0].element.textContent).to.equal('2 km');
   expect(rows[1].findAll('td')[1].element.textContent).to.equal('6:10.00');
-  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(190);
+  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue)
+    .to.equal(190);
   expect(rows[1].findAll('td')[3].element.textContent).to.equal('5:06 / mi');
   expect(rows[1].findAll('td').length).to.equal(4);
   expect(rows[2].findAll('td')[0].element.textContent).to.equal('3000 m');
   expect(rows[2].findAll('td')[1].element.textContent).to.equal('9:30.00');
-  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(200);
+  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue)
+    .to.equal(200);
   expect(rows[2].findAll('td')[3].element.textContent).to.equal('5:22 / mi');
   expect(rows[2].findAll('td').length).to.equal(4);
   expect(rows.length).to.equal(3);
@@ -78,12 +81,14 @@ test('should correctly handle null target set', async () => {
 
   // Assert results are empty
   let rows = wrapper.findAll('tbody tr');
-  expect(rows[0].findAll('td')[0].element.textContent.trim()).to.equal('There aren\'t any targets in this set yet.');
+  expect(rows[0].findAll('td')[0].element.textContent.trim())
+    .to.equal('There aren\'t any targets in this set yet.');
   expect(rows[0].findAll('td').length).to.equal(1);
   expect(rows.length).to.equal(1);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_split_targets');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('_split_targets', 'selectedTargetSet');
 
   // Assert results are correct
   rows = wrapper.findAll('tbody tr');
@@ -108,17 +113,20 @@ test('should correctly calculate paces and cumulative times from entered split t
   const rows = wrapper.findAll('tbody tr');
   expect(rows[0].findAll('td')[0].element.textContent).to.equal('1 mi');
   expect(rows[0].findAll('td')[1].element.textContent).to.equal('7:00.00');
-  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(420);
+  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(420);
   expect(rows[0].findAll('td')[3].element.textContent).to.equal('7:00 / mi');
   expect(rows[0].findAll('td').length).to.equal(4);
   expect(rows[1].findAll('td')[0].element.textContent).to.equal('2 mi');
   expect(rows[1].findAll('td')[1].element.textContent).to.equal('13:30.00');
-  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(390);
+  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(390);
   expect(rows[1].findAll('td')[3].element.textContent).to.equal('6:30 / mi');
   expect(rows[1].findAll('td').length).to.equal(4);
   expect(rows[2].findAll('td')[0].element.textContent).to.equal('5 km');
   expect(rows[2].findAll('td')[1].element.textContent).to.equal('20:00.00');
-  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(390);
+  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(390);
   expect(rows[2].findAll('td')[3].element.textContent).to.equal('5:52 / mi');
   expect(rows[2].findAll('td').length).to.equal(4);
   expect(rows.length).to.equal(3);
@@ -258,27 +266,31 @@ test('should update results when a new target set is selected', async () => {
   await wrapper.vm.reloadTargets();
 
   // Assert default split targets are initially loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.modelValue).to.equal('_split_targets');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
+    .to.equal('_split_targets');
   expect(wrapper.findAll('tbody td')[0].element.textContent).to.equal('1 mi');
 
   // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('B');
+  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('B', 'selectedTargetSet');
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
   expect(rows[0].findAll('td')[0].element.textContent).to.equal('1 km');
   expect(rows[0].findAll('td')[1].element.textContent).to.equal('3:00.00');
-  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(180);
+  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(180);
   expect(rows[0].findAll('td')[3].element.textContent).to.equal('4:50 / mi');
   expect(rows[0].findAll('td').length).to.equal(4);
   expect(rows[1].findAll('td')[0].element.textContent).to.equal('2 km');
   expect(rows[1].findAll('td')[1].element.textContent).to.equal('6:10.00');
-  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(190);
+  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(190);
   expect(rows[1].findAll('td')[3].element.textContent).to.equal('5:06 / mi');
   expect(rows[1].findAll('td').length).to.equal(4);
   expect(rows[2].findAll('td')[0].element.textContent).to.equal('3000 m');
   expect(rows[2].findAll('td')[1].element.textContent).to.equal('9:30.00');
-  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(200);
+  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(200);
   expect(rows[2].findAll('td')[3].element.textContent).to.equal('5:22 / mi');
   expect(rows[2].findAll('td').length).to.equal(4);
   expect(rows.length).to.equal(3);
@@ -312,23 +324,26 @@ test('should load selected target set from localStorage', async () => {
   await wrapper.vm.reloadTargets();
 
   // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.modelValue).to.equal('B');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('B');
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
   expect(rows[0].findAll('td')[0].element.textContent).to.equal('1 km');
   expect(rows[0].findAll('td')[1].element.textContent).to.equal('3:00.00');
-  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(180);
+  expect(rows[0].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(180);
   expect(rows[0].findAll('td')[3].element.textContent).to.equal('4:50 / mi');
   expect(rows[0].findAll('td').length).to.equal(4);
   expect(rows[1].findAll('td')[0].element.textContent).to.equal('2 km');
   expect(rows[1].findAll('td')[1].element.textContent).to.equal('6:10.00');
-  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(190);
+  expect(rows[1].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(190);
   expect(rows[1].findAll('td')[3].element.textContent).to.equal('5:06 / mi');
   expect(rows[1].findAll('td').length).to.equal(4);
   expect(rows[2].findAll('td')[0].element.textContent).to.equal('3000 m');
   expect(rows[2].findAll('td')[1].element.textContent).to.equal('9:30.00');
-  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(200);
+  expect(rows[2].findAll('td')[2].findComponent({ name: 'time-input' })
+    .vm.modelValue).to.equal(200);
   expect(rows[2].findAll('td')[3].element.textContent).to.equal('5:22 / mi');
   expect(rows[2].findAll('td').length).to.equal(4);
   expect(rows.length).to.equal(3);
@@ -340,10 +355,12 @@ test('should save selected target set to localStorage when modified', async () =
   await wrapper.vm.reloadTargets();
 
   // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_race_targets');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('_race_targets', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.split-calculator-target-set')).to.equal('"_race_targets"');
+  expect(localStorage.getItem('running-tools.split-calculator-target-set'))
+    .to.equal('"_race_targets"');
 });
 
 test('should update paces according to default units setting', async () => {

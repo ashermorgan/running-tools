@@ -78,17 +78,20 @@ test('should correctly handle null target set', async () => {
   await wrapper.vm.reloadTargets(); // onActivated method not called in tests
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('does_not_exist');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('does_not_exist', 'selectedTargetSet');
 
   // Assert empty array passed to SimpleTargetTable component
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_race_targets');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('_race_targets', 'selectedTargetSet');
 
   // Assert valid targets passed to SimpleTargetTable component
   const raceTargets = targetUtils.defaultTargetSets._race_targets.targets;
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal(raceTargets);
+  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+    .to.deep.equal(raceTargets);
 });
 
 test('should correctly calculate race statistics', async () => {
@@ -189,9 +192,11 @@ test('should load selected target set from localStorage', async () => {
   await wrapper.vm.reloadTargets();
 
   // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.modelValue).to.equal('_pace_targets');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
+    .to.equal('_pace_targets');
   const paceTargets = targetUtils.defaultTargetSets._pace_targets.targets;
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal(paceTargets);
+  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+    .to.deep.equal(paceTargets);
 });
 
 test('should save selected target set to localStorage when modified', async () => {
@@ -199,10 +204,12 @@ test('should save selected target set to localStorage when modified', async () =
   const wrapper = shallowMount(RaceCalculator);
 
   // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('_pace_targets');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('_pace_targets', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-target-set')).to.equal('"_pace_targets"');
+  expect(localStorage.getItem('running-tools.race-calculator-target-set'))
+    .to.equal('"_pace_targets"');
 });
 
 test('should save default units setting to localStorage when modified', async () => {
@@ -226,7 +233,8 @@ test('should load advanced model options from localStorage', async () => {
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert data loaded
-  expect(wrapper.find('select[aria-label="Prediction model"]').element.value).to.equal('PurdyPointsModel');
+  expect(wrapper.find('select[aria-label="Prediction model"]').element.value)
+    .to.equal('PurdyPointsModel');
   expect(wrapper.findComponent('[aria-label="Riegel exponent"]').vm.modelValue).to.equal(1.20);
 });
 

@@ -10,8 +10,8 @@
 
     <div class="target-set">
       Target Set:
-      <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
-        :default-unit-system="defaultUnitSystem"/>
+      <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
     </div>
 
     <div class="output">
@@ -171,7 +171,7 @@ function reloadTargets() {
  * (Re)load settings used in multiple calculators
  */
 onActivated(() => {
-  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
+  reloadTargets();
   defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
 });
 </script>

@@ -2,36 +2,29 @@ import { beforeEach, test, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
-beforeEach(() => {
-  localStorage.clear();
-})
-
 test('should correctly render target sets options', async () => {
-  // Initialize localStorage
-  const targetSets = {
-    'A': {
-      name: '1st target set',
-      targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-      ],
-    },
-    'B': {
-      name: '2nd target set',
-      targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-      ],
-    },
-  };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
   // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: 'B',
+      selectedTargetSet: 'B',
+      targetSets: {
+        'A': {
+          name: '1st target set',
+          targets: [
+            { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
+            { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
+            { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+          ],
+        },
+        'B': {
+          name: '2nd target set',
+          targets: [
+            { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
+            { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+            { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+          ],
+        },
+      },
     }
   });
 
@@ -50,7 +43,7 @@ test('should correctly render target sets options', async () => {
 });
 
 test('Create New Target Set option should correctly add target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     'A': {
       name: '1st target set',
@@ -69,12 +62,10 @@ test('Create New Target Set option should correctly add target set', async () =>
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: 'A',
+      selectedTargetSet: 'A',
+      targetSets,
     }
   });
 
@@ -102,14 +93,11 @@ test('Create New Target Set option should correctly add target set', async () =>
     name: 'New target set',
     targets: [],
   };
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
-
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('Revert event should correctly reset a default target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '1st target set',
@@ -128,12 +116,10 @@ test('Revert event should correctly reset a default target set', async () => {
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
     }
   });
 
@@ -157,14 +143,11 @@ test('Revert event should correctly reset a default target set', async () => {
     distanceValue: 5,
     distanceUnit: 'kilometers',
   };
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
-
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('Revert event should correctly delete a custom target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '1st target set',
@@ -183,12 +166,10 @@ test('Revert event should correctly delete a custom target set', async () => {
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '1234567890123',
+      selectedTargetSet: '1234567890123',
+      targetSets,
     }
   });
 
@@ -205,14 +186,11 @@ test('Revert event should correctly delete a custom target set', async () => {
 
   // Assert target sets were correctly updated
   delete targetSets['1234567890123'];
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
-
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('edit button should open target editor with the correct props for default set', async () => {
-  // Initialize localStorage
+  // Initialize component
   const targetSets = {
     '_split_targets': {
       name: '5K Mile Splits',
@@ -223,12 +201,10 @@ test('edit button should open target editor with the correct props for default s
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
       defaultUnitSystem: 'fake-unit-system',
     }
   });
@@ -247,7 +223,7 @@ test('edit button should open target editor with the correct props for default s
 });
 
 test('edit button should open target editor with the correct props for custom set', async () => {
-  // Initialize localStorage
+  // Initialize component
   const targetSets = {
     '1234567890123': {
       name: '2nd target set',
@@ -258,12 +234,10 @@ test('edit button should open target editor with the correct props for custom se
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '1234567890123',
+      selectedTargetSet: '1234567890123',
+      targetSets,
       defaultUnitSystem: 'fake-unit-system',
     }
   });
@@ -281,8 +255,8 @@ test('edit button should open target editor with the correct props for custom se
   expect(targetEditor.vm.defaultUnitSystem).to.equal('fake-unit-system');
 });
 
-test('should reload and sort target set before target editor is opened', async () => {
-  // Initialize localStorage
+test('should sort target set before target editor is opened', async () => {
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '5K Mile Splits',
@@ -295,18 +269,12 @@ test('should reload and sort target set before target editor is opened', async (
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
     }
   });
-
-  // Update localStorage
-  targetSets._split_targets.name = '5K Mile Splits #2';
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
 
   // Mock showModal function
   wrapper.vm.dialogElement.showModal = vi.fn();
@@ -316,7 +284,7 @@ test('should reload and sort target set before target editor is opened', async (
 
   // Assert target set was sorted
   expect(wrapper.findComponent({ name: 'target-editor' }).vm.modelValue).to.deep.equal({
-    name: '5K Mile Splits #2',
+    name: '5K Mile Splits',
     targets: [
       { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
       { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
