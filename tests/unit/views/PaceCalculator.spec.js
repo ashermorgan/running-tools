@@ -75,7 +75,6 @@ test('should not show paces in results table', async () => {
 test('should correctly handle null target set', async () => {
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
-  await wrapper.vm.reloadTargets(); // onActivated method not called in tests
 
   // Switch to invalid target set
   await wrapper.findComponent({ name: 'target-set-selector' })
@@ -130,7 +129,6 @@ test('should load selected target set from localStorage', async () => {
 
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)

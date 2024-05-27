@@ -21,11 +21,10 @@
 </template>
 
 <script setup>
-import { nextTick, onActivated, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 
 import TargetEditor from '@/components/TargetEditor.vue';

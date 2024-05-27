@@ -43,10 +43,9 @@
 </template>
 
 <script setup>
-import { computed, onActivated, ref, watch } from 'vue';
+import { computed } from 'vue';
 
 import paceUtils from '@/utils/paces';
-import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
@@ -55,81 +54,37 @@ import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
+import useStorage from '@/composables/useStorage';
+
 /**
  * The input distance value
  */
-const inputDistance = ref(storage.get('pace-calculator-input-distance', 5));
+const inputDistance = useStorage('pace-calculator-input-distance', 5);
 
 /**
  * The input distance unit
  */
-const inputUnit = ref(storage.get('pace-calculator-input-unit', 'kilometers'));
+const inputUnit = useStorage('pace-calculator-input-unit', 'kilometers');
 
 /**
  * The input time value
  */
-const inputTime = ref(storage.get('pace-calculator-input-time', 20 * 60));
+const inputTime = useStorage('pace-calculator-input-time', 20 * 60);
 
 /**
  * The default unit system
- *
- * Loaded in onActivated() hook
  */
-const defaultUnitSystem = ref(null);
+const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
 
 /**
  * The current selected target set
  */
-const selectedTargetSet = ref(storage.get('pace-calculator-target-set', '_pace_targets'));
+const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_targets');
 
 /**
  * The target sets
- *
- * Loaded in onActivated() hook
  */
-const targetSets = ref({});
-
-/**
- * Save input distance value
- */
-watch(inputDistance, (newValue) => {
-  storage.set('pace-calculator-input-distance', newValue);
-});
-
-/**
- * Save input distance unit
- */
-watch(inputUnit, (newValue) => {
-  storage.set('pace-calculator-input-unit', newValue);
-});
-
-/**
- * Save input time value
- */
-watch(inputTime, (newValue) => {
-  storage.set('pace-calculator-input-time', newValue);
-});
-
-/**
- * Save default unit system
- */
-watch(defaultUnitSystem, (newValue) => {
-  storage.set('default-unit-system', newValue);
-});
-
-/**
- * Save the current selected target set
- */
-watch(selectedTargetSet, (newValue) => {
-  storage.set('pace-calculator-target-set', newValue);
-});
-
-/**
- * Save target sets
- */
-watch(targetSets, (newValue) => {
-  storage.set('target-sets', newValue);
-}, { deep: true });
+const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
 
 /**
  * The input pace (in seconds per meter)
@@ -138,13 +93,6 @@ const pace = computed(() => {
   const distance = unitUtils.convertDistance(inputDistance.value, inputUnit.value, 'meters');
   return paceUtils.getPace(distance, inputTime.value);
 });
-
-/**
- * Reload the target sets
- */
-function reloadTargets() {
-  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
-}
 
 /**
  * Calculate paces from a target
@@ -186,14 +134,6 @@ function calculatePace(target) {
   // Return result
   return result;
 }
-
-/**
- * (Re)load settings used in multiple calculators
- */
-onActivated(() => {
-  reloadTargets();
-  defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
-});
 </script>
 
 <style scoped>

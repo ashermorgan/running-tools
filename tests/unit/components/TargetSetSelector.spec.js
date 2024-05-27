@@ -1,4 +1,4 @@
-import { beforeEach, test, expect, vi } from 'vitest';
+import { test, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 

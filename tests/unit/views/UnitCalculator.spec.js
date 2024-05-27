@@ -91,15 +91,23 @@ test('should correctly convert to and from hh:mm:ss', async () => {
 
 test('should correctly load saved inputs', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.unit-calculator-distance-input-value', '5');
-  localStorage.setItem('running-tools.unit-calculator-distance-input-unit', '"kilometers"');
-  localStorage.setItem('running-tools.unit-calculator-distance-output-unit', '"miles"');
-  localStorage.setItem('running-tools.unit-calculator-time-input-value', '90');
-  localStorage.setItem('running-tools.unit-calculator-time-input-unit', '"hh:mm:ss"');
-  localStorage.setItem('running-tools.unit-calculator-time-output-unit', '"minutes"');
-  localStorage.setItem('running-tools.unit-calculator-speed-input-value', '15');
-  localStorage.setItem('running-tools.unit-calculator-speed-input-unit', '"miles_per_hour"');
-  localStorage.setItem('running-tools.unit-calculator-speed-output-unit', '"seconds_per_mile"');
+  localStorage.setItem('running-tools.unit-calculator-inputs', JSON.stringify({
+    distance: {
+      inputValue: 5,
+      inputUnit: 'kilometers',
+      outputUnit: 'miles',
+    },
+    time: {
+      inputValue: 90,
+      inputUnit: 'hh:mm:ss',
+      outputUnit: 'minutes',
+    },
+    speed_and_pace: {
+      inputValue: 15,
+      inputUnit: 'miles_per_hour',
+      outputUnit: 'seconds_per_mile',
+    },
+  }));
 
   // Initialize component
   const wrapper = shallowMount(UnitCalculator);
@@ -152,13 +160,21 @@ test('should correctly save inputs', async () => {
   await wrapper.find('select[aria-label="Output units"]').setValue('seconds_per_mile');
 
   // Initialize localStorage
-  expect(localStorage.getItem('running-tools.unit-calculator-distance-input-value')).to.equal('5');
-  expect(localStorage.getItem('running-tools.unit-calculator-distance-input-unit')).to.equal('"kilometers"');
-  expect(localStorage.getItem('running-tools.unit-calculator-distance-output-unit')).to.equal('"miles"');
-  expect(localStorage.getItem('running-tools.unit-calculator-time-input-value')).to.equal('90');
-  expect(localStorage.getItem('running-tools.unit-calculator-time-input-unit')).to.equal('"hh:mm:ss"');
-  expect(localStorage.getItem('running-tools.unit-calculator-time-output-unit')).to.equal('"minutes"');
-  expect(localStorage.getItem('running-tools.unit-calculator-speed-input-value')).to.equal('15');
-  expect(localStorage.getItem('running-tools.unit-calculator-speed-input-unit')).to.equal('"miles_per_hour"');
-  expect(localStorage.getItem('running-tools.unit-calculator-speed-output-unit')).to.equal('"seconds_per_mile"');
+  expect(localStorage.getItem('running-tools.unit-calculator-inputs')).to.equal(JSON.stringify({
+    distance: {
+      inputValue: 5,
+      inputUnit: 'kilometers',
+      outputUnit: 'miles',
+    },
+    time: {
+      inputValue: 90,
+      inputUnit: 'hh:mm:ss',
+      outputUnit: 'minutes',
+    },
+    speed_and_pace: {
+      inputValue: 15,
+      inputUnit: 'miles_per_hour',
+      outputUnit: 'seconds_per_mile',
+    },
+  }));
 });

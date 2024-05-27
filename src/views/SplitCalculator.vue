@@ -66,55 +66,31 @@
 </template>
 
 <script setup>
-import { computed, onActivated, ref, watch } from 'vue';
+import { computed } from 'vue';
 
 import formatUtils from '@/utils/format';
-import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
+import useStorage from '@/composables/useStorage';
+
 /**
  * The default unit system
- *
- * Loaded in onActivated() hook
  */
-const defaultUnitSystem = ref(null);
+const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
 
 /**
  * The current selected target set
  */
-const selectedTargetSet = ref(storage.get('split-calculator-target-set', '_split_targets'));
+const selectedTargetSet = useStorage('split-calculator-target-set', '_split_targets');
 
 /**
  * The default output targets
- *
- * Loaded in onActivated() hook
  */
-const targetSets = ref({});
-
-/**
- * Save default unit system
- */
-watch(defaultUnitSystem, (newValue) => {
-  storage.set('default-unit-system', newValue);
-});
-
-/**
- * Save the current selected target set
- */
-watch(selectedTargetSet, (newValue) => {
-  storage.set('split-calculator-target-set', newValue);
-});
-
-/**
- * Save target sets
- */
-watch(targetSets, (newValue) => {
-  storage.set('target-sets', newValue);
-}, { deep: true });
+const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
 
 /**
  * The target table results
@@ -158,21 +134,6 @@ const results = computed(() => {
 
   // Return results array
   return results;
-});
-
-/**
- * Reload the target sets
- */
-function reloadTargets() {
-  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
-}
-
-/**
- * (Re)load settings used in multiple calculators
- */
-onActivated(() => {
-  reloadTargets();
-  defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
 });
 </script>
 

@@ -9,7 +9,6 @@ beforeEach(() => {
 test('should initialize undefined splits to 0:00.00', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets(); // onActivated method not called in tests
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
@@ -46,7 +45,6 @@ test('should correctly load split times from split targets', async () => {
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
@@ -77,7 +75,6 @@ test('should correctly handle null target set', async () => {
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert results are empty
   let rows = wrapper.findAll('tbody tr');
@@ -102,7 +99,6 @@ test('should correctly handle null target set', async () => {
 test('should correctly calculate paces and cumulative times from entered split times', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Update split times
   await wrapper.findAllComponents({ name: 'time-input' })[0].setValue(420);
@@ -147,7 +143,6 @@ test('should correctly sort split targets', async () => {
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator)
-  await wrapper.vm.reloadTargets();
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
@@ -184,7 +179,6 @@ test('should ignore time based targets', async () => {
   }));
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert results are correct
   const rows = wrapper.findAll('tbody tr');
@@ -221,7 +215,6 @@ test('should correctly save split times with split targets in localStorage', asy
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Update split times
   await wrapper.findAllComponents({ name: 'time-input' })[1].setValue(190);
@@ -263,7 +256,6 @@ test('should update results when a new target set is selected', async () => {
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert default split targets are initially loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
@@ -321,7 +313,6 @@ test('should load selected target set from localStorage', async () => {
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('B');
@@ -352,7 +343,6 @@ test('should load selected target set from localStorage', async () => {
 test('should save selected target set to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Select a new target set
   await wrapper.findComponent({ name: 'target-set-selector' })
@@ -366,7 +356,6 @@ test('should save selected target set to localStorage when modified', async () =
 test('should update paces according to default units setting', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
-  await wrapper.vm.reloadTargets();
 
   // Enter split times
   await wrapper.findAllComponents({ name: 'time-input' })[0].setValue(300);

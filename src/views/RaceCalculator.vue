@@ -74,11 +74,10 @@
 </template>
 
 <script setup>
-import { computed, onActivated, ref, watch } from 'vue';
+import { computed } from 'vue';
 
 import formatUtils from '@/utils/format';
 import raceUtils from '@/utils/races';
-import storage from '@/utils/localStorage';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
@@ -87,56 +86,47 @@ import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
+import useStorage from '@/composables/useStorage';
+
 /**
  * The input distance value
  */
-const inputDistance = ref(storage.get('race-calculator-input-distance', 5));
+const inputDistance = useStorage('race-calculator-input-distance', 5);
 
 /**
  * The input distance unit
  */
-const inputUnit = ref(storage.get('race-calculator-input-unit', 'kilometers'));
+const inputUnit = useStorage('race-calculator-input-unit', 'kilometers');
 
 /**
  * The input time value
  */
-const inputTime = ref(storage.get('race-calculator-input-time', 20 * 60));
+const inputTime = useStorage('race-calculator-input-time', 20 * 60);
 
 /**
  * The default unit system
- *
- * Loaded in onActivated() hook
  */
-const defaultUnitSystem = ref(null);
+const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
 
 /**
 * The race prediction model
 */
-const model = ref(storage.get('race-calculator-model', 'AverageModel'));
+const model = useStorage('race-calculator-model', 'AverageModel');
 
 /**
 * The value of the exponent in Riegel's Model
 */
-const riegelExponent = ref(storage.get('race-calculator-riegel-exponent', 1.06));
+const riegelExponent = useStorage('race-calculator-riegel-exponent', 1.06);
 
 /**
  * The current selected target set
  */
-const selectedTargetSet = ref(storage.get('race-calculator-target-set', '_race_targets'));
+const selectedTargetSet = useStorage('race-calculator-target-set', '_race_targets');
 
 /**
  * The target sets
- *
- * Loaded in onActivated() hook
  */
-let targetSets = ref({});
-
-/**
- * Reload the target sets
- */
-function reloadTargets() {
-  targetSets.value = storage.get('target-sets', targetUtils.defaultTargetSets);
-}
+let targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
 
 /**
  * Predict race results from a target
@@ -257,70 +247,6 @@ const vo2 = computed(() => {
 const vo2Percentage = computed(() => {
   const result = raceUtils.VO2MaxModel.getVO2Percentage(inputTime.value) * 100;
   return result;
-});
-
-/**
- * Save input distance value
- */
-watch(inputDistance, (newValue) => {
-  storage.set('race-calculator-input-distance', newValue);
-});
-
-/**
- * Save input distance unit
- */
-watch(inputUnit, (newValue) => {
-  storage.set('race-calculator-input-unit', newValue);
-});
-
-/**
- * Save input time value
- */
-watch(inputTime, (newValue) => {
-  storage.set('race-calculator-input-time', newValue);
-});
-
-/**
- * Save default unit system
- */
-watch(defaultUnitSystem, (newValue) => {
-  storage.set('default-unit-system', newValue);
-});
-
-/**
- * Save prediction model
- */
-watch(model, (newValue) => {
-  storage.set('race-calculator-model', newValue);
-});
-
-/**
- * Save Riegel Model exponent
- */
-watch(riegelExponent, (newValue) => {
-  storage.set('race-calculator-riegel-exponent', newValue);
-});
-
-/**
- * Save the current selected target set
- */
-watch(selectedTargetSet, (newValue) => {
-  storage.set('race-calculator-target-set', newValue);
-});
-
-/**
- * Save target sets
- */
-watch(targetSets, (newValue) => {
-  storage.set('target-sets', newValue);
-}, { deep: true });
-
-/**
-* (Re)load settings used in multiple calculators
-*/
-onActivated(() => {
-  reloadTargets();
-  defaultUnitSystem.value = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
 });
 </script>
 
