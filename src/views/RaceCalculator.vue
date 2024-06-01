@@ -37,22 +37,7 @@
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
-      <div>
-        Prediction Model:
-        <select v-model="model" aria-label="Prediction model">
-          <option value="AverageModel">Average</option>
-          <option value="PurdyPointsModel">Purdy Points Model</option>
-          <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
-          <option value="CameronModel">Cameron's Model</option>
-          <option value="RiegelModel">Riegel's Model</option>
-        </select>
-      </div>
-      <div>
-        Riegel Exponent:
-        <decimal-input v-model="riegelExponent" aria-label="Riegel exponent" :min="1" :max="1.3"
-          :digits="2" :step="0.01"/>
-        (default: 1.06)
-      </div>
+      <race-options v-model="options"/>
     </details>
 
     <h2>Equivalent Race Results</h2>
@@ -69,8 +54,8 @@ import raceUtils from '@/utils/races';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
-import DecimalInput from '@/components/DecimalInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
+import RaceOptions from '@/components/RaceOptions.vue';
 import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
@@ -93,12 +78,10 @@ const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefa
 /**
 * The race prediction model
 */
-const model = useStorage('race-calculator-model', 'AverageModel');
-
-/**
-* The value of the exponent in Riegel's Model
-*/
-const riegelExponent = useStorage('race-calculator-riegel-exponent', 1.06);
+const options = useStorage('race-calculator-options', {
+  model: 'AverageModel',
+  riegelExponent: 1.06,
+});
 
 /**
  * The current selected target set
@@ -131,11 +114,11 @@ function predictResult(target) {
 
     // Get prediction
     let time;
-    switch (model.value) {
+    switch (options.value.model) {
       default:
       case 'AverageModel':
         time = raceUtils.AverageModel.predictTime(d1.value, input.value.time, d2,
-          riegelExponent.value);
+          options.value.riegelExponent);
         break;
       case 'PurdyPointsModel':
         time = raceUtils.PurdyPointsModel.predictTime(d1.value, input.value.time, d2);
@@ -145,7 +128,7 @@ function predictResult(target) {
         break;
       case 'RiegelModel':
         time = raceUtils.RiegelModel.predictTime(d1.value, input.value.time, d2,
-          riegelExponent.value);
+          options.value.riegelExponent);
         break;
       case 'CameronModel':
         time = raceUtils.CameronModel.predictTime(d1.value, input.value.time, d2);
@@ -157,11 +140,11 @@ function predictResult(target) {
   } else {
     // Get prediction
     let distance;
-    switch (model.value) {
+    switch (options.value.model) {
       default:
       case 'AverageModel':
         distance = raceUtils.AverageModel.predictDistance(input.value.time, d1.value, target.time,
-          riegelExponent.value);
+          options.value.riegelExponent);
         break;
       case 'PurdyPointsModel':
         distance = raceUtils.PurdyPointsModel.predictDistance(input.value.time, d1.value,
@@ -172,7 +155,7 @@ function predictResult(target) {
         break;
       case 'RiegelModel':
         distance = raceUtils.RiegelModel.predictDistance(input.value.time, d1.value, target.time,
-          riegelExponent.value);
+          options.value.riegelExponent);
         break;
       case 'CameronModel':
         distance = raceUtils.CameronModel.predictDistance(input.value.time, d1.value, target.time);

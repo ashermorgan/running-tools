@@ -132,7 +132,10 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Switch model
-  await wrapper.find('select[aria-label="Prediction model"]').setValue('RiegelModel');
+  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+    model: 'RiegelModel',
+    riegelExponent: 1.06, // default value
+  });
 
   // Calculate result
   const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
@@ -146,8 +149,10 @@ test('should correctly calculate results according to advanced model options', a
   expect(result.time).to.be.closeTo(2502, 1);
 
   // Update Riegel Exponent
-  expect(wrapper.findComponent('[aria-label="Riegel exponent"').vm.modelValue).to.equal(1.06);
-  await wrapper.findComponent('[aria-label="Riegel exponent"').setValue(1);
+  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+    model: 'RiegelModel', // existing value
+    riegelExponent: 1,
+  });
 
   // Calculate result
   result = calculateResult({
@@ -240,16 +245,19 @@ test('should save default units setting to localStorage when modified', async ()
 
 test('should load advanced model options from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.race-calculator-model', '"PurdyPointsModel"');
-  localStorage.setItem('running-tools.race-calculator-riegel-exponent', '1.20');
+  localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    model: 'PurdyPointsModel',
+    riegelExponent: 1.2,
+  }));
 
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert data loaded
-  expect(wrapper.find('select[aria-label="Prediction model"]').element.value)
-    .to.equal('PurdyPointsModel');
-  expect(wrapper.findComponent('[aria-label="Riegel exponent"]').vm.modelValue).to.equal(1.20);
+  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+    model: 'PurdyPointsModel',
+    riegelExponent: 1.2,
+  });
 });
 
 test('should save advanced model options to localStorage when modified', async () => {
@@ -257,11 +265,15 @@ test('should save advanced model options to localStorage when modified', async (
   const wrapper = shallowMount(RaceCalculator);
 
   // Update advanced model options
-  await wrapper.find('select[aria-label="Prediction model"]').setValue('CameronModel');
-  await wrapper.findComponent('[aria-label="Riegel exponent"]').setValue(1.30);
+  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+    model: 'CameronModel',
+    riegelExponent: 1.30,
+  });
 
   // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-model')).to.equal('"CameronModel"');
-  expect(localStorage.getItem('running-tools.race-calculator-riegel-exponent')).to.equal('1.3');
+  expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    model: 'CameronModel',
+    riegelExponent: 1.3,
+  }));
 });
 
