@@ -10,14 +10,15 @@
         <h2>Race Statistics</h2>
       </summary>
       <div>
-        Purdy Points: <b>{{ formatUtils.formatNumber(purdyPoints, 0, 1, true) }}</b>
+        Purdy Points: <b>{{ formatUtils.formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
-        V&#775;O&#8322;: <b>{{ formatUtils.formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
-          (<b>{{ formatUtils.formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
+        V&#775;O&#8322;: <b>{{ formatUtils.formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatUtils.formatNumber(raceStats.vo2MaxPercentage, 0, 1, true) }}%</b> of max)
       </div>
       <div>
-        V&#775;O&#8322; Max: <b>{{ formatUtils.formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
+        V&#775;O&#8322; Max: <b>{{ formatUtils.formatNumber(raceStats.vo2Max, 0, 1, true) }}</b>
+          ml/kg/min
       </div>
     </details>
 
@@ -41,16 +42,17 @@
     </details>
 
     <h2>Equivalent Race Results</h2>
-    <simple-target-table class="output" :calculate-result="predictResult" :default-unit-system="defaultUnitSystem"
-     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
+    <simple-target-table class="output" :default-unit-system="defaultUnitSystem" show-pace
+      :calculate-result="x => calcUtils.calculateRaceResults(input, x, options, defaultUnitSystem)"
+      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 
+import calcUtils from '@/utils/calculators';
 import formatUtils from '@/utils/format';
-import raceUtils from '@/utils/races';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
@@ -76,7 +78,7 @@ const input = useStorage('race-calculator-input', {
 const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
 
 /**
-* The race prediction model
+* The race prediction options
 */
 const options = useStorage('race-calculator-options', {
   model: 'AverageModel',
@@ -94,125 +96,9 @@ const selectedTargetSet = useStorage('race-calculator-target-set', '_race_target
 let targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
 
 /**
- * Predict race results from a target
- * @param {Object} target The target
- * @returns {Object} The result
+ * The statistics for the current input race
  */
-function predictResult(target) {
-  // Initialize result
-  const result = {
-    distanceValue: target.distanceValue,
-    distanceUnit: target.distanceUnit,
-    time: target.time,
-    result: target.result,
-  };
-
-  // Add missing value to result
-  if (target.result === 'time') {
-    // Convert target distance into meters
-    const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
-
-    // Get prediction
-    let time;
-    switch (options.value.model) {
-      default:
-      case 'AverageModel':
-        time = raceUtils.AverageModel.predictTime(d1.value, input.value.time, d2,
-          options.value.riegelExponent);
-        break;
-      case 'PurdyPointsModel':
-        time = raceUtils.PurdyPointsModel.predictTime(d1.value, input.value.time, d2);
-        break;
-      case 'VO2MaxModel':
-        time = raceUtils.VO2MaxModel.predictTime(d1.value, input.value.time, d2);
-        break;
-      case 'RiegelModel':
-        time = raceUtils.RiegelModel.predictTime(d1.value, input.value.time, d2,
-          options.value.riegelExponent);
-        break;
-      case 'CameronModel':
-        time = raceUtils.CameronModel.predictTime(d1.value, input.value.time, d2);
-        break;
-    }
-
-    // Update result
-    result.time = time;
-  } else {
-    // Get prediction
-    let distance;
-    switch (options.value.model) {
-      default:
-      case 'AverageModel':
-        distance = raceUtils.AverageModel.predictDistance(input.value.time, d1.value, target.time,
-          options.value.riegelExponent);
-        break;
-      case 'PurdyPointsModel':
-        distance = raceUtils.PurdyPointsModel.predictDistance(input.value.time, d1.value,
-          target.time);
-        break;
-      case 'VO2MaxModel':
-        distance = raceUtils.VO2MaxModel.predictDistance(input.value.time, d1.value, target.time);
-        break;
-      case 'RiegelModel':
-        distance = raceUtils.RiegelModel.predictDistance(input.value.time, d1.value, target.time,
-          options.value.riegelExponent);
-        break;
-      case 'CameronModel':
-        distance = raceUtils.CameronModel.predictDistance(input.value.time, d1.value, target.time);
-        break;
-    }
-
-    // Convert output distance into default distance unit
-    distance = unitUtils.convertDistance(distance, 'meters',
-      unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value));
-
-    // Update result
-    result.distanceValue = distance;
-    result.distanceUnit = unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value);
-  }
-
-  // Return result
-  return result;
-}
-
-/**
- * The input distance in meters
- */
-const d1 = computed(() => {
-  return unitUtils.convertDistance(input.value.distanceValue, input.value.distanceUnit, 'meters');
-});
-
-/**
- * The Purdy Points for the input race
- */
-const purdyPoints = computed(() => {
-  const result = raceUtils.PurdyPointsModel.getPurdyPoints(d1.value, input.value.time);
-  return result;
-});
-
-/**
- * The VO2 Max calculated from the input race
- */
-const vo2Max = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2Max(d1.value, input.value.time);
-  return result;
-});
-
-/**
- * The VO2 calculated from the input race
- */
-const vo2 = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2(d1.value, input.value.time);
-  return result;
-});
-
-/**
- * The percentage of VO2 Max calculated from the input race
- */
-const vo2Percentage = computed(() => {
-  const result = raceUtils.VO2MaxModel.getVO2Percentage(input.value.time) * 100;
-  return result;
-});
+const raceStats = computed(() => calcUtils.calculateRaceStats(input.value));
 </script>
 
 <style scoped>

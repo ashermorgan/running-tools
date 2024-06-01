@@ -24,15 +24,14 @@
     </details>
 
     <h2>Equivalent Paces</h2>
-    <simple-target-table class="output" :calculate-result="calculatePace"
+    <simple-target-table class="output" :calculate-result="x =>
+      calcUtils.calculatePaceResults(input, x, defaultUnitSystem)"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
-import paceUtils from '@/utils/paces';
+import calcUtils from '@/utils/calculators';
 import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
@@ -65,56 +64,6 @@ const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_target
  * The target sets
  */
 const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
-
-/**
- * The input pace (in seconds per meter)
- */
-const pace = computed(() => {
-  const distance = unitUtils.convertDistance(input.value.distanceValue, input.value.distanceUnit,
-    'meters');
-  return paceUtils.getPace(distance, input.value.time);
-});
-
-/**
- * Calculate paces from a target
- * @param {Object} target The target
- * @returns {Object} The result
- */
-function calculatePace(target) {
-  // Initialize result
-  const result = {
-    distanceValue: target.distanceValue,
-    distanceUnit: target.distanceUnit,
-    time: target.time,
-    result: target.result,
-  };
-
-  // Add missing value to result
-  if (target.result === 'time') {
-    // Convert target distance into meters
-    const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
-
-    // Calculate time to travel distance at input pace
-    const time = paceUtils.getTime(pace.value, d2);
-
-    // Update result
-    result.time = time;
-  } else {
-    // Calculate distance traveled in time at input pace
-    let distance = paceUtils.getDistance(pace.value, target.time);
-
-    // Convert output distance into default distance unit
-    distance = unitUtils.convertDistance(distance, 'meters',
-      unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value));
-
-    // Update result
-    result.distanceValue = distance;
-    result.distanceUnit = unitUtils.getDefaultDistanceUnit(defaultUnitSystem.value);
-  }
-
-  // Return result
-  return result;
-}
 </script>
 
 <style scoped>
