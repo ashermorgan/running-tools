@@ -81,15 +81,6 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByRole('row').nth(12)).toHaveText('3.49 mi' + '19:00' + '5:27 / mi');
   await expect(page.getByRole('row')).toHaveCount(19);
 
-  // Switch target set
-  await page.getByLabel('Selected target set').selectOption('5K Mile Splits');
-
-  // Assert race predictions are correct
-  await expect(page.getByRole('row').nth(1)).toHaveText('1 mi' + '4:55.53' + '4:56 / mi');
-  await expect(page.getByRole('row').nth(2)).toHaveText('2 mi' + '10:30.00' + '5:15 / mi');
-  await expect(page.getByRole('row').nth(3)).toHaveText('5 km' + '16:47.58' + '5:24 / mi');
-  await expect(page.getByRole('row')).toHaveCount(4);
-
   // Create custom target set
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
   await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
@@ -112,7 +103,17 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByRole('row').nth(2)).toHaveText('10 km' + '34:53.84' + '5:37 / mi');
   await expect(page.getByRole('row')).toHaveCount(3);
 
+  // Switch target set
+  await page.getByLabel('Selected target set').selectOption('Less-common Race Targets');
+
+  // Assert race predictions are correct
+  await expect(page.getByRole('row').nth(5)).toHaveText('1.01 mi' + '4:58.81' + '4:56 / mi');
+  await expect(page.getByRole('row').nth(6)).toHaveText('1.5 mi' + '7:41.60' + '5:08 / mi');
+  await expect(page.getByRole('row').nth(12)).toHaveText('3.49 mi' + '19:00' + '5:27 / mi');
+  await expect(page.getByRole('row')).toHaveCount(19);
+
   // Delete custom target set
+  await page.getByLabel('Selected target set').selectOption('XC Race Targets');
   await page.getByRole('button', { name: 'Edit target set' }).click();
   await expect(page.getByLabel('Target set label')).toHaveValue('XC Race Targets');
   await page.getByRole('button', { name: 'Delete target set' }).click();

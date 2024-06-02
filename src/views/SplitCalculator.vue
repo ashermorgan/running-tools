@@ -90,7 +90,9 @@ const selectedTargetSet = useStorage('split-calculator-target-set', '_split_targ
 /**
  * The default output targets
  */
-const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
+const targetSets = useStorage('split-calculator-target-sets', {
+  _split_targets: targetUtils.defaultTargetSets._split_targets
+});
 
 /**
  * The target table results

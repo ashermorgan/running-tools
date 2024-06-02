@@ -137,17 +137,35 @@ test('should save input pace to localStorage', async () => {
 
 test('should load selected target set from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.pace-calculator-target-set', '"_race_targets"');
+  const targetSet2 = {
+    name: 'Pace targets #2',
+    targets: [
+      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
+      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
+      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+    ],
+  };
+  localStorage.setItem('running-tools.pace-calculator-target-sets', JSON.stringify({
+    '_pace_targets': {
+      name: 'Pace targets #1',
+      targets: [
+        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': targetSet2,
+  }));
+  localStorage.setItem('running-tools.pace-calculator-target-set', '"B"');
 
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('_race_targets');
-  const raceTargets = targetUtils.defaultTargetSets._race_targets.targets;
+    .to.equal('B');
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
-    .to.deep.equal(raceTargets);
+    .to.deep.equal(targetSet2.targets);
 });
 
 test('should save selected target set to localStorage when modified', async () => {
@@ -156,11 +174,11 @@ test('should save selected target set to localStorage when modified', async () =
 
   // Select a new target set
   await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('_race_targets', 'selectedTargetSet');
+    .setValue('B', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
   expect(localStorage.getItem('running-tools.pace-calculator-target-set'))
-    .to.equal('"_race_targets"');
+    .to.equal('"B"');
 });
 
 test('should save default units setting to localStorage when modified', async () => {

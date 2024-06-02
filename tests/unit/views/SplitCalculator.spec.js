@@ -32,7 +32,7 @@ test('should initialize undefined splits to 0:00.00', async () => {
 
 test('should correctly load split times from split targets', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -130,7 +130,7 @@ test('should correctly calculate paces and cumulative times from entered split t
 
 test('should correctly sort split targets', async () => {
   // Initialize localStorage (targets are mis-ordered)
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -166,7 +166,7 @@ test('should correctly sort split targets', async () => {
 
 test('should ignore time based targets', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -202,7 +202,7 @@ test('should ignore time based targets', async () => {
 
 test('should correctly save split times with split targets in localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -221,7 +221,7 @@ test('should correctly save split times with split targets in localStorage', asy
   await wrapper.findAllComponents({ name: 'time-input' })[2].setValue(200);
 
   // Assert targets correctly saved in localStorage
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify({
+  expect(localStorage.getItem('running-tools.split-calculator-target-sets')).to.equal(JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -235,7 +235,7 @@ test('should correctly save split times with split targets in localStorage', asy
 
 test('should update results when a new target set is selected', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -291,7 +291,7 @@ test('should update results when a new target set is selected', async () => {
 test('should load selected target set from localStorage', async () => {
   // Initialize localStorage
   localStorage.setItem('running-tools.split-calculator-target-set', '"B"');
-  localStorage.setItem('running-tools.target-sets', JSON.stringify({
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
     '_split_targets': {
       name: 'Split targets',
       targets: [

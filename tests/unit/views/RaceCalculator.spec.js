@@ -11,7 +11,7 @@ test('should correctly predict race times', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Enter input pace data
+  // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
     distanceValue: 5,
     distanceUnit: 'kilometers',
@@ -37,7 +37,7 @@ test('should correctly calculate distance results according to default units set
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Enter input pace data
+  // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
     distanceValue: 5,
     distanceUnit: 'kilometers',
@@ -101,7 +101,7 @@ test('should correctly calculate race statistics', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Enter input pace data
+  // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
     distanceValue: 5,
     distanceUnit: 'kilometers',
@@ -124,7 +124,7 @@ test('should correctly calculate results according to advanced model options', a
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Enter input pace data
+  // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
     distanceValue: 5,
     distanceUnit: 'kilometers',
@@ -165,7 +165,7 @@ test('should correctly calculate results according to advanced model options', a
   expect(result.time).to.equal(2400);
 });
 
-test('should load input pace from localStorage', async () => {
+test('should load input race from localStorage', async () => {
   // Initialize localStorage
   localStorage.setItem('running-tools.race-calculator-input', JSON.stringify({
     distanceValue: 1,
@@ -184,11 +184,11 @@ test('should load input pace from localStorage', async () => {
   });
 });
 
-test('should save input pace to localStorage', async () => {
+test('should save input race to localStorage', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Enter input pace data
+  // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
     distanceValue: 1,
     distanceUnit: 'miles',
@@ -205,17 +205,35 @@ test('should save input pace to localStorage', async () => {
 
 test('should load selected target set from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.race-calculator-target-set', '"_pace_targets"');
+  const targetSet2 = {
+    name: 'Race targets #2',
+    targets: [
+      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
+      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
+      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+    ],
+  };
+  localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify({
+    '_race_targets': {
+      name: 'Race targets #1',
+      targets: [
+        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
+        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': targetSet2,
+  }));
+  localStorage.setItem('running-tools.race-calculator-target-set', '"B"');
 
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('_pace_targets');
-  const paceTargets = targetUtils.defaultTargetSets._pace_targets.targets;
+    .to.equal('B');
   expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
-    .to.deep.equal(paceTargets);
+    .to.deep.equal(targetSet2.targets);
 });
 
 test('should save selected target set to localStorage when modified', async () => {
@@ -224,11 +242,11 @@ test('should save selected target set to localStorage when modified', async () =
 
   // Select a new target set
   await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('_pace_targets', 'selectedTargetSet');
+    .setValue('B', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
   expect(localStorage.getItem('running-tools.race-calculator-target-set'))
-    .to.equal('"_pace_targets"');
+    .to.equal('"B"');
 });
 
 test('should save default units setting to localStorage when modified', async () => {

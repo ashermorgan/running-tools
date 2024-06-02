@@ -93,7 +93,9 @@ const selectedTargetSet = useStorage('race-calculator-target-set', '_race_target
 /**
  * The target sets
  */
-let targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
+let targetSets = useStorage('race-calculator-target-sets', {
+  _race_targets: targetUtils.defaultTargetSets._race_targets
+});
 
 /**
  * The statistics for the current input race

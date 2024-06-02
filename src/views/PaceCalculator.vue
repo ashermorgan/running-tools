@@ -63,7 +63,9 @@ const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_target
 /**
  * The target sets
  */
-const targetSets = useStorage('target-sets', targetUtils.defaultTargetSets);
+const targetSets = useStorage('pace-calculator-target-sets', {
+  _pace_targets: targetUtils.defaultTargetSets._pace_targets
+});
 </script>
 
 <style scoped>

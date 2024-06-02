@@ -42,7 +42,7 @@ const model = defineModel('selectedTargetSet', {
  */
 const targetSets = defineModel('targetSets', {
   type: Object,
-  default: targetUtils.defaultTargetSets,
+  default: {},
 });
 
 defineProps({

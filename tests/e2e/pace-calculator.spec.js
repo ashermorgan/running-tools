@@ -63,15 +63,6 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByRole('row').nth(18)).toHaveText('2.45 mi' + '19:00');
   await expect(page.getByRole('row')).toHaveCount(33);
 
-  // Switch target set
-  await page.getByLabel('Selected target set').selectOption('5K Mile Splits');
-
-  // Assert paces are correct
-  await expect(page.getByRole('row').nth(1)).toHaveText('1 mi' + '7:45.00');
-  await expect(page.getByRole('row').nth(2)).toHaveText('2 mi' + '15:30.00');
-  await expect(page.getByRole('row').nth(3)).toHaveText('5 km' + '24:04.68');
-  await expect(page.getByRole('row')).toHaveCount(4);
-
   // Create custom target set
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
   await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
@@ -94,7 +85,18 @@ test('Customize target sets', async ({ page }) => {
   await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
   await expect(page.getByRole('row')).toHaveCount(3);
 
+  // Switch target set
+  await page.getByLabel('Selected target set').selectOption('Less-common Pace Targets');
+
+  // Assert paces are correct
+  await expect(page.getByRole('row').nth(11)).toHaveText('1.01 mi' + '7:49.65');
+  await expect(page.getByRole('row').nth(13)).toHaveText('1.29 mi' + '10:01');
+  await expect(page.getByRole('row').nth(14)).toHaveText('1.5 mi' + '11:37.50');
+  await expect(page.getByRole('row').nth(18)).toHaveText('2.45 mi' + '19:00');
+  await expect(page.getByRole('row')).toHaveCount(33);
+
   // Delete custom target set
+  await page.getByLabel('Selected target set').selectOption('800m Splits');
   await page.getByRole('button', { name: 'Edit target set' }).click();
   await expect(page.getByLabel('Target set label')).toHaveValue('800m Splits');
   await page.getByRole('button', { name: 'Delete target set' }).click();

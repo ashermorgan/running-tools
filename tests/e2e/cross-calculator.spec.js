@@ -16,8 +16,22 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByText('Advanced Options').click();
   await page.getByLabel('Default units').selectOption('Kilometers');
 
-  // Switch target set
-  await page.getByLabel('Selected target set').selectOption('5K Mile Splits');
+  // Create custom target set
+  await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
+  await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
+  await expect(page.getByRole('row')).toHaveCount(2);
+
+  // Edit new target set
+  await page.getByRole('button', { name: 'Edit target set' }).click();
+  await expect(page.getByLabel('Target set label')).toHaveValue('New target set');
+  await page.getByLabel('Target set label').fill('800m Splits');
+  await page.getByRole('button', { name: 'Add distance target' }).click();
+  await page.getByLabel('Target distance value').nth(0).fill('0.4');
+  await page.getByLabel('Target distance unit').nth(0).selectOption('Kilometers');
+  await page.getByRole('button', { name: 'Add distance target' }).click();
+  await page.getByLabel('Target distance value').nth(1).fill('800');
+  await page.getByLabel('Target distance unit').nth(1).selectOption('Meters');
+  await page.getByRole('button', { name: 'Close' }).click();
 
   // Go to race calculator
   await page.getByRole('link', { name: 'Back' }).click();
@@ -71,11 +85,9 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByRole('button', { name: 'Pace Calculator' }).click();
 
   // Assert paces are correct (input pace not reset)
-  await expect(page.getByRole('row').nth(1)).toHaveText('1.6 km' + '7:42.30');
-  await expect(page.getByRole('row').nth(2)).toHaveText('2.08 km' + '10:00');
-  await expect(page.getByRole('row').nth(3)).toHaveText('3.2 km' + '15:24.60');
-  await expect(page.getByRole('row').nth(4)).toHaveText('5 km' + '24:04.68');
-  await expect(page.getByRole('row')).toHaveCount(5);
+  await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.57');
+  await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
+  await expect(page.getByRole('row')).toHaveCount(3);
 
   // Return to race calculator
   await page.getByRole('link', { name: 'Back' }).click();
