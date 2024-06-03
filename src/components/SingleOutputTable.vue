@@ -13,19 +13,16 @@
 
       <tbody>
         <tr v-for="(item, index) in results" :key="index">
-          <td :class="item.result === 'distance' ? 'result' : ''">
-            {{ formatUtils.formatNumber(item.distanceValue, 0, 2, item.result === 'distance') }}
-            {{ unitUtils.DISTANCE_UNITS[item.distanceUnit].symbol }}
+          <td :class="item.result === 'key' ? 'result' : ''">
+            {{ item.key }}
           </td>
 
-          <td :class="item.result === 'time' ? 'result' : ''">
-            {{ formatUtils.formatDuration(item.time, 3, 2, item.result === 'time') }}
+          <td :class="item.result === 'value' ? 'result' : ''">
+            {{ item.value }}
           </td>
 
           <td v-if="showPace">
-            {{ formatUtils.formatDuration(getPace(item), 3, 0, true) }}
-            / {{ unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)]
-              .symbol }}
+            {{ item.pace }}
           </td>
         </tr>
 
@@ -41,8 +38,6 @@
 
 <script setup>
 import { computed } from 'vue';
-import formatUtils from '@/utils/format';
-import unitUtils from '@/utils/units';
 
 const props = defineProps({
   /**
@@ -89,21 +84,12 @@ const results = computed(() => {
     result.push(props.calculateResult(row));
   });
 
-  // Sort results by time
-  result.sort((a, b) => a.time - b.time);
+  // Sort results
+  result.sort((a, b) => a.sort - b.sort);
 
   // Return results
   return result;
 });
-
-/**
- * Get the pace of a result
- * @param {Object} result The result
- */
-function getPace(result) {
-  return result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
-    unitUtils.getDefaultDistanceUnit(props.defaultUnitSystem));
-}
 </script>
 
 <style scoped>

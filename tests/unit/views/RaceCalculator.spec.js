@@ -19,7 +19,7 @@ test('should correctly predict race times', async () => {
   });
 
   // Calculate result
-  const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
   const result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
@@ -27,10 +27,11 @@ test('should correctly predict race times', async () => {
   });
 
   // Assert result is correct
-  expect(result.time).to.be.closeTo(2495, 1);
-  expect(result.distanceValue).to.equal(10);
-  expect(result.distanceUnit).to.equal('kilometers');
-  expect(result.result).to.equal('time');
+  expect(result.key).to.equal('10 km');
+  expect(result.value).to.equal('41:34.80');
+  expect(result.pace).to.equal('6:42 / mi');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(2494.80, 0.01);
 });
 
 test('should correctly calculate distance results according to default units setting', async () => {
@@ -48,24 +49,26 @@ test('should correctly calculate distance results according to default units set
   await wrapper.find('select[aria-label="Default units"]').setValue('metric');
 
   // Get calculate result function
-  const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
 
   // Assert result is correct
   let result = calculateResult({ result: 'distance', time: 2495 });
-  expect(result.distanceValue).to.be.closeTo(10, 0.01);
-  expect(result.distanceUnit).to.equal('kilometers');
-  expect(result.time).to.equal(2495);
-  expect(result.result).to.equal('distance');
+  expect(result.key).to.equal('10.00 km');
+  expect(result.value).to.equal('41:35');
+  expect(result.pace).to.equal('4:09 / km');
+  expect(result.result).to.equal('key');
+  expect(result.sort).to.equal(2495);
 
   // Change default units
   await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
 
   // Assert result is correct
   result = calculateResult({ result: 'distance', time: 2495 });
-  expect(result.distanceValue).to.be.closeTo(6.214, 0.01);
-  expect(result.distanceUnit).to.equal('miles');
-  expect(result.time).to.equal(2495);
-  expect(result.result).to.equal('distance');
+  expect(result.key).to.equal('6.21 mi');
+  expect(result.value).to.equal('41:35');
+  expect(result.pace).to.equal('6:41 / mi');
+  expect(result.result).to.equal('key');
+  expect(result.sort).to.equal(2495);
 });
 
 test('should show paces in results table', async () => {
@@ -73,7 +76,7 @@ test('should show paces in results table', async () => {
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert paces are shown in results table
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.showPace).to.equal(true);
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.showPace).to.equal(true);
 });
 
 test('should correctly handle null target set', async () => {
@@ -84,16 +87,16 @@ test('should correctly handle null target set', async () => {
   await wrapper.findComponent({ name: 'target-set-selector' })
     .setValue('does_not_exist', 'selectedTargetSet');
 
-  // Assert empty array passed to SimpleTargetTable component
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal([]);
+  // Assert empty array passed to SingleOutputTable component
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
   await wrapper.findComponent({ name: 'target-set-selector' })
     .setValue('_race_targets', 'selectedTargetSet');
 
-  // Assert valid targets passed to SimpleTargetTable component
+  // Assert valid targets passed to SingleOutputTable component
   const raceTargets = targetUtils.defaultTargetSets._race_targets.targets;
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(raceTargets);
 });
 
@@ -138,7 +141,7 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Calculate result
-  const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
   let result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
@@ -146,7 +149,7 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Assert result is correct
-  expect(result.time).to.be.closeTo(2502, 1);
+  expect(result.value).to.equal('41:41.92');
 
   // Update Riegel Exponent
   await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
@@ -162,7 +165,7 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Assert result is correct
-  expect(result.time).to.equal(2400);
+  expect(result.value).to.equal('40:00.00');
 });
 
 test('should load input race from localStorage', async () => {
@@ -232,7 +235,7 @@ test('should load selected target set from localStorage', async () => {
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
     .to.equal('B');
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(targetSet2.targets);
 });
 

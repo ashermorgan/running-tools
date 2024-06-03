@@ -1,6 +1,38 @@
+import formatUtils from '@/utils/format';
 import paceUtils from '@/utils/paces';
 import raceUtils from '@/utils/races';
 import unitUtils from '@/utils/units';
+
+/**
+ * Format a distance/time result as a key/value result
+ * @param {Object} result The distance/time result
+ * @param {String} defaultUnitSystem The default unit system (imperial or metric)
+ * @returns {Object} The key/value result
+ */
+function formatDistTimeResult(result, defaultUnitSystem) {
+  // Calculate numerical pace
+  const pace = result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
+    unitUtils.getDefaultDistanceUnit(defaultUnitSystem));
+
+  return {
+    // Convert distance to key string
+    key: formatUtils.formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' '
+      + unitUtils.DISTANCE_UNITS[result.distanceUnit].symbol,
+
+    // Convert time to time string
+    value: formatUtils.formatDuration(result.time, 3, 2, result.result === 'time'),
+
+    // Convert pace to pace string
+    pace: formatUtils.formatDuration(pace, 3, 0, true) + ' / '
+      + unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)].symbol,
+
+    // Convert dist/time result to key/value
+    result: result.result === 'time' ? 'value' : 'key',
+
+    // Use time (in seconds) as sort key
+    sort: result.time,
+  };
+}
 
 /**
  * Calculate paces from a target
@@ -44,7 +76,7 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
   }
 
   // Return result
-  return result;
+  return formatDistTimeResult(result, defaultUnitSystem);
 }
 
 /**
@@ -130,7 +162,7 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
   }
 
   // Return result
-  return result;
+  return formatDistTimeResult(result, defaultUnitSystem);
 }
 
 /**

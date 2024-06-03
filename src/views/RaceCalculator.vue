@@ -42,7 +42,7 @@
     </details>
 
     <h2>Equivalent Race Results</h2>
-    <simple-target-table class="output" :default-unit-system="defaultUnitSystem" show-pace
+    <single-output-table class="output" :default-unit-system="defaultUnitSystem" show-pace
       :calculate-result="x => calcUtils.calculateRaceResults(input, x, options, defaultUnitSystem)"
       :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
@@ -58,7 +58,7 @@ import unitUtils from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
 import RaceOptions from '@/components/RaceOptions.vue';
-import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import SingleOutputTable from '@/components/SingleOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';

@@ -19,7 +19,7 @@ test('should correctly calculate time results', async () => {
   });
 
   // Calculate result
-  const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
   const result = calculateResult({
     distanceValue: 20,
     distanceUnit: 'meters',
@@ -28,10 +28,11 @@ test('should correctly calculate time results', async () => {
 
   // Assert result is correct
   expect(result).to.deep.equal({
-    distanceValue: 20,
-    distanceUnit: 'meters',
-    time: 2,
-    result: 'time',
+    key: '20 m',
+    value: '0:02.00',
+    pace: '2:41 / mi',
+    result: 'value',
+    sort: 2,
   });
 });
 
@@ -50,22 +51,18 @@ test('should correctly calculate distance results according to default units set
   await wrapper.find('select[aria-label="Default units"]').setValue('metric');
 
   // Get calculate result function
-  const calculateResult = wrapper.findComponent({ name: 'simple-target-table' }).vm.calculateResult;
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
 
   // Assert result is correct
   let result = calculateResult({ result: 'distance', time: 600 });
-  expect(result.distanceValue).to.be.closeTo(1.609, 0.001);
-  expect(result.distanceUnit).to.equal('kilometers');
+  expect(result.key).to.equal('1.61 km');
 
   // Change default units
   await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
 
   // Assert result is correct
   result = calculateResult({ result: 'distance', time: 600 });
-  expect(result.distanceValue).to.equal(1);
-  expect(result.distanceUnit).to.equal('miles');
-  expect(result.time).to.equal(600);
-  expect(result.result).to.equal('distance');
+  expect(result.key).to.equal('1.00 mi');
 });
 
 test('should not show paces in results table', async () => {
@@ -73,7 +70,7 @@ test('should not show paces in results table', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Assert paces are not shown in results table
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.showPace).to.equal(false);
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.showPace).to.equal(false);
 });
 
 test('should correctly handle null target set', async () => {
@@ -84,16 +81,16 @@ test('should correctly handle null target set', async () => {
   await wrapper.findComponent({ name: 'target-set-selector' })
     .setValue('does_not_exist', 'selectedTargetSet');
 
-  // Assert empty array passed to SimpleTargetTable component
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets).to.deep.equal([]);
+  // Assert empty array passed to SingleOutputTable component
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
   await wrapper.findComponent({ name: 'target-set-selector' })
     .setValue('_pace_targets', 'selectedTargetSet');
 
-  // Assert valid targets passed to SimpleTargetTable component
+  // Assert valid targets passed to SingleOutputTable component
   const paceTargets = targetUtils.defaultTargetSets._pace_targets.targets;
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(paceTargets);
 });
 
@@ -164,7 +161,7 @@ test('should load selected target set from localStorage', async () => {
   // Assert selection is loaded
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
     .to.equal('B');
-  expect(wrapper.findComponent({ name: 'simple-target-table' }).vm.targets)
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(targetSet2.targets);
 });
 

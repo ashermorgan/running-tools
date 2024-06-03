@@ -24,7 +24,7 @@
     </details>
 
     <h2>Equivalent Paces</h2>
-    <simple-target-table class="output" :calculate-result="x =>
+    <single-output-table class="output" :calculate-result="x =>
       calcUtils.calculatePaceResults(input, x, defaultUnitSystem)"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
@@ -36,7 +36,7 @@ import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
-import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import SingleOutputTable from '@/components/SingleOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';

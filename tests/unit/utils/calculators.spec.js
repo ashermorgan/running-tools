@@ -13,13 +13,14 @@ test('should correctly calculate pace times', () => {
     result: 'time',
   };
 
-  const result = calculatorUtils.calculatePaceResults(input, target, {});
+  const result = calculatorUtils.calculatePaceResults(input, target, 'metric');
 
   expect(result).to.deep.equal({
-    distanceValue: 20,
-    distanceUnit: 'meters',
-    time: 2,
-    result: 'time',
+    key: '20 m',
+    value: '0:02.00',
+    pace: '1:40 / km',
+    result: 'value',
+    sort: 2,
   });
 });
 
@@ -37,10 +38,17 @@ test('should correctly calculate pace distances according to default units setti
   const result1 = calculatorUtils.calculatePaceResults(input, target, 'metric');
   const result2 = calculatorUtils.calculatePaceResults(input, target, 'imperial');
 
-  expect(result1.distanceValue).to.be.closeTo(1.609, 0.001);
-  expect(result1.distanceUnit).to.equal('kilometers');
-  expect(result2.distanceValue).to.be.closeTo(1.000, 0.001);
-  expect(result2.distanceUnit).to.equal('miles');
+  expect(result1.key).to.equal('1.61 km');
+  expect(result1.value).to.equal('10:00');
+  expect(result1.pace).to.equal('6:13 / km');
+  expect(result1.result).to.equal('key');
+  expect(result1.sort).to.be.closeTo(600, 0.01);
+
+  expect(result2.key).to.equal('1.00 mi');
+  expect(result2.value).to.equal('10:00');
+  expect(result2.pace).to.equal('10:00 / mi');
+  expect(result2.result).to.equal('key');
+  expect(result2.sort).to.be.closeTo(600, 0.01);
 });
 
 test('should correctly predict race times', () => {
@@ -61,10 +69,11 @@ test('should correctly predict race times', () => {
 
   const result = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
 
-  expect(result.time).to.be.closeTo(2495, 1);
-  expect(result.distanceValue).to.equal(10);
-  expect(result.distanceUnit).to.equal('kilometers');
-  expect(result.result).to.equal('time');
+  expect(result.key).to.equal('10 km');
+  expect(result.value).to.equal('41:34.80');
+  expect(result.pace).to.equal('6:42 / mi');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(2494.80, 0.01);
 });
 
 test('should correctly calculate race distances according to default units setting', () => {
@@ -85,14 +94,17 @@ test('should correctly calculate race distances according to default units setti
   const result1 = calculatorUtils.calculateRaceResults(input, target, options, 'metric');
   const result2 = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
 
-  expect(result1.distanceValue).to.be.closeTo(10, 0.01);
-  expect(result1.distanceUnit).to.equal('kilometers');
-  expect(result1.time).to.equal(2495);
-  expect(result1.result).to.equal('distance');
-  expect(result2.distanceValue).to.be.closeTo(6.214, 0.01);
-  expect(result2.distanceUnit).to.equal('miles');
-  expect(result2.time).to.equal(2495);
-  expect(result2.result).to.equal('distance');
+  expect(result1.key).to.equal('10.00 km');
+  expect(result1.value).to.equal('41:35');
+  expect(result1.pace).to.equal('4:09 / km');
+  expect(result1.result).to.equal('key');
+  expect(result1.sort).to.equal(2495);
+
+  expect(result2.key).to.equal('6.21 mi');
+  expect(result2.value).to.equal('41:35');
+  expect(result2.pace).to.equal('6:41 / mi');
+  expect(result2.result).to.equal('key');
+  expect(result2.sort).to.equal(2495);
 });
 
 test('should correctly predict race times according to race options', () => {
@@ -113,10 +125,11 @@ test('should correctly predict race times according to race options', () => {
 
   const result = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
 
-  expect(result.time).to.be.closeTo(1031, 1);
-  expect(result.distanceValue).to.equal(5);
-  expect(result.distanceUnit).to.equal('kilometers');
-  expect(result.result).to.equal('time');
+  expect(result.key).to.equal('5 km');
+  expect(result.value).to.equal('17:11.77');
+  expect(result.pace).to.equal('5:32 / mi');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(1031.77, 0.01);
 });
 
 test('should correctly calculate race statistics', () => {
