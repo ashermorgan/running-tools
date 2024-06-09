@@ -49,8 +49,7 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
     result: target.type === 'distance' ? 'time' : 'distance',
   };
 
-  const pace = paceUtils.getPace(unitUtils.convertDistance(input.distanceValue, input.distanceUnit,
-    'meters'), input.time);
+  const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   // Add missing value to result
   if (target.type === 'distance') {
@@ -58,21 +57,15 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
     const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
     // Calculate time to travel distance at input pace
-    const time = paceUtils.getTime(pace, d2);
-
-    // Update result
-    result.time = time;
+    result.time = paceUtils.calculateTime(d1, input.time, d2);
   } else {
     // Calculate distance traveled in time at input pace
-    let distance = paceUtils.getDistance(pace, target.time);
+    const d2 = paceUtils.calculateDistance(input.time, d1, target.time);
 
     // Convert output distance into default distance unit
-    distance = unitUtils.convertDistance(distance, 'meters',
-      unitUtils.getDefaultDistanceUnit(defaultUnitSystem));
-
-    // Update result
-    result.distanceValue = distance;
-    result.distanceUnit = unitUtils.getDefaultDistanceUnit(defaultUnitSystem);
+    const units = unitUtils.getDefaultDistanceUnit(defaultUnitSystem);
+    result.distanceValue = unitUtils.convertDistance(d2, 'meters', units);
+    result.distanceUnit = units;
   }
 
   // Return result

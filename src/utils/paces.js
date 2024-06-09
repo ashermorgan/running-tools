@@ -1,35 +1,26 @@
 /**
- * Calculate pace from distance and time
- * @param {Number} distance The distance (in meters)
- * @param {Number} time The time (in seconds)
- * @returns {Number} The pace (in seconds per meter)
+ * Calculate time from a distance and input pace
+ * @param {Number} d1 The input pace distance (in any unit)
+ * @param {Number} t1 The input pace time (in seconds)
+ * @param {Number} d2 The output distance (in the same unit as d1)
+ * @returns {Number} The output time (in seconds)
  */
-function getPace(distance, time) {
-  return time / distance;
+function calculateTime(d1, t1, d2) {
+  return (t1 / d1) * d2
 }
 
 /**
- * Calculate time from pace and distance
- * @param {Number} pace The pace (in seconds per meter)
- * @param {Number} distance The distance (in meters)
- * @returns {Number} The time (in seconds)
+ * Calculate distance from a time and input pace
+ * @param {Number} t1 The input pace time (in seconds)
+ * @param {Number} d1 The input pace distance (in any unit)
+ * @param {Number} t2 The output time (in seconds)
+ * @returns {Number} The output distance (in the same unit as d1)
  */
-function getTime(pace, distance) {
-  return pace * distance;
-}
-
-/**
- * Calculate distance from pace and time
- * @param {Number} pace The pace (in seconds per meter)
- * @param {Number} time The time (in seconds)
- * @return {Number} The distance (in meters)
- */
-function getDistance(pace, time) {
-  return time / pace;
+function calculateDistance(t1, d1, t2) {
+  return (d1 / t1) * t2
 }
 
 export default {
-  getPace,
-  getTime,
-  getDistance,
+  calculateTime,
+  calculateDistance,
 };
