@@ -103,54 +103,11 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
     const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
     // Get prediction
-    let time;
-    switch (options.model) {
-      default:
-      case 'AverageModel':
-        time = raceUtils.AverageModel.predictTime(d1, input.time, d2,
-          options.riegelExponent);
-        break;
-      case 'PurdyPointsModel':
-        time = raceUtils.PurdyPointsModel.predictTime(d1, input.time, d2);
-        break;
-      case 'VO2MaxModel':
-        time = raceUtils.VO2MaxModel.predictTime(d1, input.time, d2);
-        break;
-      case 'RiegelModel':
-        time = raceUtils.RiegelModel.predictTime(d1, input.time, d2,
-          options.riegelExponent);
-        break;
-      case 'CameronModel':
-        time = raceUtils.CameronModel.predictTime(d1, input.time, d2);
-        break;
-    }
-
-    // Update result
-    result.time = time;
+    result.time = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
   } else {
     // Get prediction
-    let distance;
-    switch (options.model) {
-      default:
-      case 'AverageModel':
-        distance = raceUtils.AverageModel.predictDistance(input.time, d1, target.time,
-          options.riegelExponent);
-        break;
-      case 'PurdyPointsModel':
-        distance = raceUtils.PurdyPointsModel.predictDistance(input.time, d1,
-          target.time);
-        break;
-      case 'VO2MaxModel':
-        distance = raceUtils.VO2MaxModel.predictDistance(input.time, d1, target.time);
-        break;
-      case 'RiegelModel':
-        distance = raceUtils.RiegelModel.predictDistance(input.time, d1, target.time,
-          options.riegelExponent);
-        break;
-      case 'CameronModel':
-        distance = raceUtils.CameronModel.predictDistance(input.time, d1, target.time);
-        break;
-    }
+    let distance = raceUtils.predictDistance(input.time, d1, target.time, options.model,
+      options.riegelExponent);
 
     // Convert output distance into default distance unit
     distance = unitUtils.convertDistance(distance, 'meters',
@@ -174,10 +131,10 @@ function calculateRaceStats(input) {
   const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   return {
-    purdyPoints: raceUtils.PurdyPointsModel.getPurdyPoints(d1, input.time),
-    vo2Max: raceUtils.VO2MaxModel.getVO2Max(d1, input.time),
-    vo2: raceUtils.VO2MaxModel.getVO2(d1, input.time),
-    vo2MaxPercentage: raceUtils.VO2MaxModel.getVO2Percentage(input.time) * 100,
+    purdyPoints: raceUtils.getPurdyPoints(d1, input.time),
+    vo2Max: raceUtils.getVO2Max(d1, input.time),
+    vo2: raceUtils.getVO2(d1, input.time),
+    vo2MaxPercentage: raceUtils.getVO2Percentage(input.time) * 100,
   }
 }
 

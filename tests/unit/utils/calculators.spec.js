@@ -63,7 +63,7 @@ test('should correctly predict race times', () => {
     result: 'time',
   };
   const options = {
-    model: 'average',
+    model: 'AverageModel',
     riegelExponent: 1.06,
   }
 
@@ -87,7 +87,7 @@ test('should correctly calculate race distances according to default units setti
     result: 'distance',
   };
   const options = {
-    model: 'average',
+    model: 'AverageModel',
     riegelExponent: 1.06,
   }
 
