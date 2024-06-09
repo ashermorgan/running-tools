@@ -23,7 +23,7 @@ test('should correctly predict race times', async () => {
   const result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
-    result: 'time',
+    type: 'distance',
   });
 
   // Assert result is correct
@@ -52,7 +52,7 @@ test('should correctly calculate distance results according to default units set
   const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
 
   // Assert result is correct
-  let result = calculateResult({ result: 'distance', time: 2495 });
+  let result = calculateResult({ type: 'time', time: 2495 });
   expect(result.key).to.equal('10.00 km');
   expect(result.value).to.equal('41:35');
   expect(result.pace).to.equal('4:09 / km');
@@ -63,7 +63,7 @@ test('should correctly calculate distance results according to default units set
   await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
 
   // Assert result is correct
-  result = calculateResult({ result: 'distance', time: 2495 });
+  result = calculateResult({ type: 'time', time: 2495 });
   expect(result.key).to.equal('6.21 mi');
   expect(result.value).to.equal('41:35');
   expect(result.pace).to.equal('6:41 / mi');
@@ -145,7 +145,7 @@ test('should correctly calculate results according to advanced model options', a
   let result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
-    result: 'time',
+    type: 'distance',
   });
 
   // Assert result is correct
@@ -161,7 +161,7 @@ test('should correctly calculate results according to advanced model options', a
   result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
-    result: 'time',
+    type: 'distance',
   });
 
   // Assert result is correct
@@ -211,18 +211,18 @@ test('should load selected target set from localStorage', async () => {
   const targetSet2 = {
     name: 'Race targets #2',
     targets: [
-      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
     ],
   };
   localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify({
     '_race_targets': {
       name: 'Race targets #1',
       targets: [
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
       ],
     },
     'B': targetSet2,

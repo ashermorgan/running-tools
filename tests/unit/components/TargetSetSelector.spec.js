@@ -11,17 +11,17 @@ test('should correctly render target sets options', async () => {
         'A': {
           name: '1st target set',
           targets: [
-            { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-            { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-            { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+            { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+            { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+            { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
           ],
         },
         'B': {
           name: '2nd target set',
           targets: [
-            { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-            { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-            { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+            { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+            { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+            { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
           ],
         },
       },
@@ -48,17 +48,17 @@ test('Create New Target Set option should correctly add target set', async () =>
     'A': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     'B': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
@@ -102,17 +102,17 @@ test('Revert event should correctly reset a default target set', async () => {
     '_split_targets': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
@@ -139,7 +139,7 @@ test('Revert event should correctly reset a default target set', async () => {
   // Assert target sets were correctly updated
   targetSets._split_targets.name = '5K Mile Splits';
   targetSets._split_targets.targets[2] = {
-    result: 'time',
+    type: 'distance',
     distanceValue: 5,
     distanceUnit: 'kilometers',
   };
@@ -152,17 +152,17 @@ test('Revert event should correctly delete a custom target set', async () => {
     '_split_targets': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
@@ -195,9 +195,9 @@ test('edit button should open target editor with the correct props for default s
     '_split_targets': {
       name: '5K Mile Splits',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
       ],
     },
   };
@@ -228,9 +228,9 @@ test('edit button should open target editor with the correct props for custom se
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
@@ -261,11 +261,11 @@ test('should sort target set before target editor is opened', async () => {
     '_split_targets': {
       name: '5K Mile Splits',
       targets: [
-        { result: 'distance', timeValue: 60 },
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'time', timeValue: 60 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
   };
@@ -286,11 +286,11 @@ test('should sort target set before target editor is opened', async () => {
   expect(wrapper.findComponent({ name: 'target-editor' }).vm.modelValue).to.deep.equal({
     name: '5K Mile Splits',
     targets: [
-      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-      { result: 'distance', timeValue: 60 },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'time', timeValue: 60 },
     ],
   });
 });

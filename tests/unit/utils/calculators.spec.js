@@ -10,7 +10,7 @@ test('should correctly calculate pace times', () => {
   const target = {
     distanceValue: 20,
     distanceUnit: 'meters',
-    result: 'time',
+    type: 'distance',
   };
 
   const result = calculatorUtils.calculatePaceResults(input, target, 'metric');
@@ -32,7 +32,7 @@ test('should correctly calculate pace distances according to default units setti
   };
   const target = {
     time: 600,
-    result: 'distance',
+    type: 'time',
   };
 
   const result1 = calculatorUtils.calculatePaceResults(input, target, 'metric');
@@ -60,7 +60,7 @@ test('should correctly predict race times', () => {
   const target = {
     distanceValue: 10,
     distanceUnit: 'kilometers',
-    result: 'time',
+    type: 'distance',
   };
   const options = {
     model: 'AverageModel',
@@ -84,7 +84,7 @@ test('should correctly calculate race distances according to default units setti
   };
   const target = {
     time: 2495,
-    result: 'distance',
+    type: 'time',
   };
   const options = {
     model: 'AverageModel',
@@ -116,7 +116,7 @@ test('should correctly predict race times according to race options', () => {
   const target = {
     distanceValue: 5,
     distanceUnit: 'kilometers',
-    result: 'time',
+    type: 'distance',
   };
   const options = {
     model: 'RiegelModel',

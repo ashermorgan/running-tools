@@ -22,7 +22,7 @@
 
     <tbody>
       <tr v-for="(item, index) in internalValue.targets" :key="index">
-        <td v-if="item.result === 'time'">
+        <td v-if="item.type === 'distance'">
           <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
             :min="0" :digits="2"/>
           <select v-model="item.distanceUnit" aria-label="Target distance unit">
@@ -131,7 +131,7 @@ watch(internalValue, (newValue) => {
  */
 function addDistanceTarget() {
   internalValue.value.targets.push({
-    result: 'time',
+    type: 'distance',
     distanceValue: 1,
     distanceUnit: unitUtils.getDefaultDistanceUnit(props.defaultUnitSystem),
   });
@@ -142,7 +142,7 @@ function addDistanceTarget() {
  */
 function addTimeTarget() {
   internalValue.value.targets.push({
-    result: 'distance',
+    type: 'time',
     time: 600,
   });
 }

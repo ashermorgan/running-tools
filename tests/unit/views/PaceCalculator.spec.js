@@ -23,7 +23,7 @@ test('should correctly calculate time results', async () => {
   const result = calculateResult({
     distanceValue: 20,
     distanceUnit: 'meters',
-    result: 'time',
+    type: 'distance',
   });
 
   // Assert result is correct
@@ -54,14 +54,14 @@ test('should correctly calculate distance results according to default units set
   const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
 
   // Assert result is correct
-  let result = calculateResult({ result: 'distance', time: 600 });
+  let result = calculateResult({ type: 'time', time: 600 });
   expect(result.key).to.equal('1.61 km');
 
   // Change default units
   await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
 
   // Assert result is correct
-  result = calculateResult({ result: 'distance', time: 600 });
+  result = calculateResult({ type: 'time', time: 600 });
   expect(result.key).to.equal('1.00 mi');
 });
 
@@ -137,18 +137,18 @@ test('should load selected target set from localStorage', async () => {
   const targetSet2 = {
     name: 'Pace targets #2',
     targets: [
-      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
     ],
   };
   localStorage.setItem('running-tools.pace-calculator-target-sets', JSON.stringify({
     '_pace_targets': {
       name: 'Pace targets #1',
       targets: [
-        { result: 'time', distanceValue: 400, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 800, distanceUnit: 'meters' },
-        { result: 'time', distanceValue: 1600, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
       ],
     },
     'B': targetSet2,

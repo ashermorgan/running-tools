@@ -46,14 +46,14 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
     time: target.time,
-    result: target.result,
+    result: target.type === 'distance' ? 'time' : 'distance',
   };
 
   const pace = paceUtils.getPace(unitUtils.convertDistance(input.distanceValue, input.distanceUnit,
     'meters'), input.time);
 
   // Add missing value to result
-  if (target.result === 'time') {
+  if (target.type === 'distance') {
     // Convert target distance into meters
     const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
@@ -92,13 +92,13 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
     time: target.time,
-    result: target.result,
+    result: target.type === 'distance' ? 'time' : 'distance',
   };
 
   const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   // Add missing value to result
-  if (target.result === 'time') {
+  if (target.type === 'distance') {
     // Convert target distance into meters
     const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 

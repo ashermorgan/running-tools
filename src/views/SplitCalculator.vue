@@ -105,7 +105,7 @@ const results = computed(() => {
   if (!targetSets.value[selectedTargetSet.value]) return [];
 
   let targets = targetUtils.sort(targetSets.value[selectedTargetSet.value].targets.filter(x =>
-    x.result === 'time'));
+    x.type === 'distance'));
 
   for (let i = 0; i < targets.length; i += 1) {
     // Calculate split and total times

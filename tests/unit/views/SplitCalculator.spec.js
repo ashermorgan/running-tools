@@ -36,9 +36,9 @@ test('should correctly load split times from split targets', async () => {
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
       ],
     },
   }));
@@ -134,9 +134,9 @@ test('should correctly sort split targets', async () => {
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers' },
       ],
     },
   }));
@@ -170,10 +170,10 @@ test('should ignore time based targets', async () => {
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'distance', time: 600 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'time', time: 600 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters' },
       ],
     },
   }));
@@ -206,9 +206,9 @@ test('should correctly save split times with split targets in localStorage', asy
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', split: 180 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 180 },
       ],
     },
   }));
@@ -225,9 +225,9 @@ test('should correctly save split times with split targets in localStorage', asy
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
       ],
     },
   }));
@@ -239,17 +239,17 @@ test('should update results when a new target set is selected', async () => {
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
       ],
     },
     'B': {
       name: 'Split targets #2',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
       ],
     },
   }));
@@ -295,17 +295,17 @@ test('should load selected target set from localStorage', async () => {
     '_split_targets': {
       name: 'Split targets',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
       ],
     },
     'B': {
       name: 'Split targets #2',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
       ],
     },
   }));

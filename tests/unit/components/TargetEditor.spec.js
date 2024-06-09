@@ -9,9 +9,9 @@ test('should correctly render target set', async () => {
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'kilometers', distanceValue: 1.61, result: 'time' },
-          { distanceUnit: 'miles', distanceValue: 3.11, result: 'time' },
-          { time: 600, result: 'distance' },
+          { distanceUnit: 'kilometers', distanceValue: 1.61, type: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 3.11, type: 'distance' },
+          { time: 600, type: 'time' },
         ],
       },
     },
@@ -72,8 +72,8 @@ test('add distance target button should correctly add imperial distance target',
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-          { time: 0, result: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+          { time: 0, type: 'time' },
         ],
       },
       defaultUnitSystem: 'imperial'
@@ -88,9 +88,9 @@ test('add distance target button should correctly add imperial distance target',
     [{
       name: 'My target set',
       targets: [
-        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-        { time: 0, result: 'distance' },
-        { distanceUnit: 'miles', distanceValue: 1, result: 'time'},
+        { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+        { time: 0, type: 'time' },
+        { distanceUnit: 'miles', distanceValue: 1, type: 'distance'},
       ],
     }],
   ]);
@@ -103,8 +103,8 @@ test('add distance target button should correctly add metric distance target', a
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-          { time: 0, result: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+          { time: 0, type: 'time' },
         ],
       },
       defaultUnitSystem: 'metric'
@@ -119,9 +119,9 @@ test('add distance target button should correctly add metric distance target', a
     [{
       name: 'My target set',
       targets: [
-        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-        { time: 0, result: 'distance' },
-        { distanceUnit: 'kilometers', distanceValue: 1, result: 'time'},
+        { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+        { time: 0, type: 'time' },
+        { distanceUnit: 'kilometers', distanceValue: 1, type: 'distance'},
       ],
     }],
   ]);
@@ -134,8 +134,8 @@ test('add time target button should correctly add time target', async () => {
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-          { time: 0, result: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+          { time: 0, type: 'time' },
         ],
       },
     },
@@ -148,9 +148,9 @@ test('add time target button should correctly add time target', async () => {
   expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
     [{ name: 'My target set',
       targets: [
-        { distanceUnit: 'miles', distanceValue: 0, result: 'time' },
-        { time: 0, result: 'distance' },
-        { time: 600, result: 'distance' },
+        { distanceUnit: 'miles', distanceValue: 0, type: 'distance' },
+        { time: 0, type: 'time' },
+        { time: 600, type: 'time' },
       ],
     }],
   ]);
@@ -163,7 +163,7 @@ test('Should emit input event when targets are updated', async () => {
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 2, type: 'distance' },
         ],
       },
     },
@@ -178,7 +178,7 @@ test('Should emit input event when targets are updated', async () => {
       {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 3, type: 'distance' },
         ],
       },
     ],
@@ -192,7 +192,7 @@ test('Should emit input event when target set name is updated', async () => {
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 2, type: 'distance' },
         ],
       },
     },
@@ -207,7 +207,7 @@ test('Should emit input event when target set name is updated', async () => {
       {
         name: 'My target set #2',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 2, type: 'distance' },
         ],
       },
     ],
@@ -221,9 +221,9 @@ test('removeTarget button should correctly remove target', async () => {
       modelValue: {
         name: 'My target set',
         targets: [
-          { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
-          { distanceUnit: 'miles', distanceValue: 2, result: 'time' },
-          { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+          { distanceUnit: 'miles', distanceValue: 1, type: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 2, type: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 3, type: 'distance' },
         ],
       },
     },
@@ -237,8 +237,8 @@ test('removeTarget button should correctly remove target', async () => {
     [{
       name: 'My target set',
       targets: [
-        { distanceUnit: 'miles', distanceValue: 1, result: 'time' },
-        { distanceUnit: 'miles', distanceValue: 3, result: 'time' },
+        { distanceUnit: 'miles', distanceValue: 1, type: 'distance' },
+        { distanceUnit: 'miles', distanceValue: 3, type: 'distance' },
       ],
     }],
   ]);
