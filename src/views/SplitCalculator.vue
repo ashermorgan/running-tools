@@ -1,17 +1,19 @@
 <template>
   <div class="calculator">
-    <div class="default-units">
-      Default units:
-      <select v-model="defaultUnitSystem" aria-label="Default units">
-        <option value="imperial">Miles</option>
-        <option value="metric">Kilometers</option>
-      </select>
-    </div>
+    <div class="input">
+      <div class="default-units">
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
 
-    <div class="target-set">
-      Target Set:
-      <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="split"
-        v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+      <div class="target-set">
+        Target Set:
+        <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="split"
+          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+      </div>
     </div>
 
     <div class="output">
@@ -69,10 +71,6 @@ const targetSet = computed({
 
 <style scoped>
 @import '@/assets/target-calculator.css';
-
-.target-set, .default-units {
-  margin-bottom: 5px;
-}
 
 /* Widen default calculator output */
 @media only screen and (min-width: 501px) {
