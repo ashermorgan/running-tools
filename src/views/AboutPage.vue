@@ -87,10 +87,6 @@
       <li>If I finished a 5K in 20:00 and ran the first 2 miles in 13:00, how fast was the last ~1.1
         miles? (6:19 per mile pace)</li>
     </ul>
-    <p>
-      <strong>Note:</strong> The split calculator only works with distance targets and ignores all
-        time targets.
-    </p>
 
     <h3>Unit Calculator</h3>
     <p>
@@ -108,17 +104,16 @@
 
     <h2>Target Sets</h2>
     <p>
-      A target set is a collection of distances and times that the Pace, Race, and Split Calculators
-        will calculate results for.
+      A target set is a collection of distances and/or times that the Pace, Race, or Split
+        Calculators will calculate results for.
       These calculators will output a duration for each distance target and a distance for each time
         target.
-      Running Tools comes with three default target sets.
-      You can switch between these sets, modify the targets they contain, and add new targets sets
-        from within each supporting calculator.
+      Each of these calculators comes with a default target set and allows you to add new target
+        sets, modify existing target sets, and switch between sets that belong to the same
+        calculator.
     </p>
     <p>
-      <strong>Note:</strong> The split calculator only works with distance targets and ignores all
-        time targets.
+      <strong>Note:</strong> The split calculator only supports distance targets.
     </p>
   </div>
 </template>

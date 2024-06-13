@@ -156,6 +156,25 @@ test('add time target button should correctly add time target', async () => {
   ]);
 });
 
+test('add time target button should be hidden for split target sets', async () => {
+  // Initialize component
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          { distanceUnit: 'miles', distanceValue: 1, type: 'distance' },
+          { distanceUnit: 'miles', distanceValue: 2, type: 'distance' },
+        ],
+      },
+      setType: 'split',
+    },
+  });
+
+  // Add time target
+  expect(wrapper.findAll('button[title="Add time target"]')).toHaveLength(0);
+});
+
 test('Should emit input event when targets are updated', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {

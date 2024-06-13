@@ -7,15 +7,14 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit target set"
-      @click="sortTargetSet(); dialogElement.showModal()">
+    <button class="icon" title="Edit target set" @click="dialogElement.showModal()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
     <dialog ref="dialogElement" class="target-set-editor-dialog" aria-label="Edit target set">
-      <target-editor @close="sortTargetSet(); dialogElement.close()" v-model="targetSets[internalValue]"
-        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem"
-        :isCustomSet="!internalValue.startsWith('_')"/>
+      <target-editor @close="sortTargetSet(); dialogElement.close()"
+        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem" :setType="setType"
+        v-model="targetSets[internalValue]" :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
 </template>
@@ -52,6 +51,14 @@ defineProps({
   defaultUnitSystem: {
     type: String,
     default: 'metric',
+  },
+
+  /**
+   * The target set type ('standard' or 'split')
+   */
+  setType: {
+    type: String,
+    default: 'standard'
   },
 });
 

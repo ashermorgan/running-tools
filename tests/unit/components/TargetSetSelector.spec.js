@@ -255,18 +255,12 @@ test('edit button should open target editor with the correct props for custom se
   expect(targetEditor.vm.defaultUnitSystem).to.equal('fake-unit-system');
 });
 
-test('should sort target set before target editor is opened', async () => {
+test('should sort target set after target editor is closed', async () => {
   // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '5K Mile Splits',
-      targets: [
-        { type: 'time', timeValue: 60 },
-        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
-      ],
+      targets: [],
     },
   };
   const wrapper = shallowMount(TargetSetSelector, {
@@ -276,11 +270,21 @@ test('should sort target set before target editor is opened', async () => {
     }
   });
 
-  // Mock showModal function
-  wrapper.vm.dialogElement.showModal = vi.fn();
+  // Mock modal close function
+  wrapper.vm.dialogElement.close = vi.fn();
 
-  // Click edit button
-  await wrapper.find('button').trigger('click');
+  // Update targets and trigger close event
+  await wrapper.findComponent({ name: 'target-editor' }).setValue({
+    name: '5K Mile Splits',
+    targets: [
+      { type: 'time', timeValue: 60 },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+    ],
+  });
+  await wrapper.findComponent({ name: 'target-editor' }).vm.$emit('close');
 
   // Assert target set was sorted
   expect(wrapper.findComponent({ name: 'target-editor' }).vm.modelValue).to.deep.equal({
@@ -293,4 +297,15 @@ test('should sort target set before target editor is opened', async () => {
       { type: 'time', timeValue: 60 },
     ],
   });
+});
+
+test('should correctly pass setType prop to TargetEditor', async () => {
+  const wrapper = shallowMount(TargetSetSelector, {
+    propsData: {
+      setType: 'foo'
+    }
+  });
+
+  // Assert target editor props are correct
+  expect(wrapper.findComponent({ name: 'target-editor' }).vm.setType).to.equal('foo');
 });

@@ -59,7 +59,6 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByLabel('Target distance unit').nth(0).selectOption('Kilometers');
   await page.getByLabel('Target distance value').nth(1).fill('3.2');
   await page.getByLabel('Target distance unit').nth(1).selectOption('Kilometers');
-  await page.getByRole('button', { name: 'Add time target' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Enter input 5K splits (7:00, 6:30, 6:30)

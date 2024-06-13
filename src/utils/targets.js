@@ -19,7 +19,7 @@ function sort(targets) {
 const defaultTargetSets = {
   '_pace_targets': {
     name: 'Common Pace Targets',
-    targets: [
+    targets: sort([
       { type: 'distance', distanceValue: 100, distanceUnit: 'meters' },
       { type: 'distance', distanceValue: 200, distanceUnit: 'meters' },
       { type: 'distance', distanceValue: 300, distanceUnit: 'meters' },
@@ -54,11 +54,11 @@ const defaultTargetSets = {
       { type: 'time', time: 600 },
       { type: 'time', time: 1800 },
       { type: 'time', time: 3600 },
-    ],
+    ]),
   },
   '_race_targets': {
     name: 'Common Race Targets',
-    targets: [
+    targets: sort([
       { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
       { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
       { type: 'distance', distanceValue: 1500, distanceUnit: 'meters' },
@@ -77,7 +77,7 @@ const defaultTargetSets = {
 
       { type: 'distance', distanceValue: 0.5, distanceUnit: 'marathons' },
       { type: 'distance', distanceValue: 1, distanceUnit: 'marathons' },
-    ],
+    ]),
   },
   '_split_targets': {
     name: '5K Mile Splits',
@@ -89,13 +89,7 @@ const defaultTargetSets = {
   },
 };
 
-const defaultTargetSet = {
-  name: 'New target set',
-  targets: [],
-};
-
 export default {
   sort,
   defaultTargetSets,
-  defaultTargetSet,
 };

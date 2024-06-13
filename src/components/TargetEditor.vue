@@ -56,11 +56,9 @@
           <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button title="Add time target" @click="addTimeTarget">
+          <button title="Add time target" @click="addTimeTarget" v-if="setType !== 'split'">
             Add time target
           </button>
-          <br/>
-          <p>Note: time targets are ignored by the Split Calculator</p>
         </td>
       </tr>
     </tfoot>
@@ -72,7 +70,6 @@ import { watch, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import targetUtils from '@/utils/targets';
 import unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -83,7 +80,10 @@ import TimeInput from '@/components/TimeInput.vue';
  */
 const model = defineModel({
   type: Object,
-  default: JSON.parse(JSON.stringify(targetUtils.defaultTargetSet)),
+  default: {
+    name: 'New target set',
+    targets: [],
+  }
 });
 
 const props = defineProps({
@@ -101,6 +101,14 @@ const props = defineProps({
   defaultUnitSystem: {
     type: String,
     default: 'metric',
+  },
+
+  /**
+   * The target set type ('standard' or 'split')
+   */
+  setType: {
+    type: String,
+    default: 'standard'
   },
 });
 

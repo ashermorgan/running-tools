@@ -10,7 +10,7 @@
 
     <div class="target-set">
       Target Set:
-      <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+      <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="split"
         v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
     </div>
 
@@ -104,8 +104,7 @@ const results = computed(() => {
   // Check for missing target set
   if (!targetSets.value[selectedTargetSet.value]) return [];
 
-  let targets = targetUtils.sort(targetSets.value[selectedTargetSet.value].targets.filter(x =>
-    x.type === 'distance'));
+  let targets = targetSets.value[selectedTargetSet.value].targets;
 
   for (let i = 0; i < targets.length; i += 1) {
     // Calculate split and total times

@@ -55,7 +55,6 @@ test('Customize target sets', async ({ page }) => {
   await page.getByRole('button', { name: 'Add distance target' }).click();
   await page.getByLabel('Target distance value').nth(3).fill('4.8');
   await page.getByLabel('Target distance unit').nth(3).selectOption('Kilometers');
-  await page.getByRole('button', { name: 'Add time target' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert times and paces are correct (new distances are processed)
@@ -102,7 +101,6 @@ test('Customize target sets', async ({ page }) => {
   await page.getByRole('button', { name: 'Add distance target' }).click();
   await page.getByLabel('Target distance value').nth(1).fill('800');
   await page.getByLabel('Target distance unit').nth(1).selectOption('Meters');
-  await page.getByRole('button', { name: 'Add time target' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert times and paces are correct (input splits initialized to zero)
