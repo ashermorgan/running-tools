@@ -25,15 +25,15 @@
 
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
-      calcUtils.calculatePaceResults(input, x, defaultUnitSystem)"
+      calculatePaceResults(input, x, defaultUnitSystem)"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup>
-import calcUtils from '@/utils/calculators';
-import targetUtils from '@/utils/targets';
-import unitUtils from '@/utils/units';
+import { calculatePaceResults } from '@/utils/calculators';
+import { defaultTargetSets } from '@/utils/targets';
+import { detectDefaultUnitSystem } from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
@@ -53,7 +53,7 @@ const input = useStorage('pace-calculator-input', {
 /**
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
 
 /**
  * The current selected target set
@@ -64,7 +64,7 @@ const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_target
  * The target sets
  */
 const targetSets = useStorage('pace-calculator-target-sets', {
-  _pace_targets: targetUtils.defaultTargetSets._pace_targets
+  _pace_targets: defaultTargetSets._pace_targets
 });
 </script>
 

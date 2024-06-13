@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import formatUtils from '@/utils/format';
+import { formatNumber } from '@/utils/format';
 
 /**
  * The component value
@@ -94,7 +94,7 @@ function onblur() {
  * @returns {String} The formated string
  */
 function format(value) {
-  return formatUtils.formatNumber(value, props.padding, props.digits, true);
+  return formatNumber(value, props.padding, props.digits, true);
 }
 </script>
 

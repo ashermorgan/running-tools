@@ -1,7 +1,7 @@
 /**
  * The time units
  */
-const TIME_UNITS = {
+export const TIME_UNITS = {
   seconds: {
     name: 'Seconds',
     symbol: 's',
@@ -22,7 +22,7 @@ const TIME_UNITS = {
 /**
  * The distance units
  */
-const DISTANCE_UNITS = {
+export const DISTANCE_UNITS = {
   meters: {
     name: 'Meters',
     symbol: 'm',
@@ -53,7 +53,7 @@ const DISTANCE_UNITS = {
 /**
  * The speed units
  */
-const SPEED_UNITS = {
+export const SPEED_UNITS = {
   meters_per_second: {
     name: 'Meters per Second',
     symbol: 'm/s',
@@ -74,7 +74,7 @@ const SPEED_UNITS = {
 /**
  * The value of each pace unit in seconds per meter
  */
-const PACE_UNITS = {
+export const PACE_UNITS = {
   seconds_per_meter: {
     name: 'Seconds per Meter',
     symbol: 's/m',
@@ -99,7 +99,7 @@ const PACE_UNITS = {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertTime(inputValue, inputUnit, outputUnit) {
+export function convertTime(inputValue, inputUnit, outputUnit) {
   return (inputValue * TIME_UNITS[inputUnit].value) / TIME_UNITS[outputUnit].value;
 }
 
@@ -110,7 +110,7 @@ function convertTime(inputValue, inputUnit, outputUnit) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertDistance(inputValue, inputUnit, outputUnit) {
+export function convertDistance(inputValue, inputUnit, outputUnit) {
   return (inputValue * DISTANCE_UNITS[inputUnit].value) / DISTANCE_UNITS[outputUnit].value;
 }
 
@@ -121,7 +121,7 @@ function convertDistance(inputValue, inputUnit, outputUnit) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertSpeed(inputValue, inputUnit, outputUnit) {
+export function convertSpeed(inputValue, inputUnit, outputUnit) {
   return (inputValue * SPEED_UNITS[inputUnit].value) / SPEED_UNITS[outputUnit].value;
 }
 
@@ -132,7 +132,7 @@ function convertSpeed(inputValue, inputUnit, outputUnit) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertPace(inputValue, inputUnit, outputUnit) {
+export function convertPace(inputValue, inputUnit, outputUnit) {
   return (inputValue * PACE_UNITS[inputUnit].value) / PACE_UNITS[outputUnit].value;
 }
 
@@ -143,7 +143,7 @@ function convertPace(inputValue, inputUnit, outputUnit) {
  * @param {String} outputUnit The unit of the output
  * @returns {Number} The output
  */
-function convertSpeedPace(inputValue, inputUnit, outputUnit) {
+export function convertSpeedPace(inputValue, inputUnit, outputUnit) {
   // Calculate input speed
   let speed;
   if (inputUnit in PACE_UNITS) {
@@ -163,7 +163,7 @@ function convertSpeedPace(inputValue, inputUnit, outputUnit) {
  * Detect the user's default unit system
  * @returns {String} The default unit system
  */
-function detectDefaultUnitSystem() {
+export function detectDefaultUnitSystem() {
   const language = (navigator.language || navigator.userLanguage).toLowerCase();
   if (language.endsWith('-us') || language.endsWith('-mm')) {
     return 'imperial';
@@ -176,7 +176,7 @@ function detectDefaultUnitSystem() {
  * @param {String} unitSystem The unit system
  * @returns {String} The default distance unit
  */
-function getDefaultDistanceUnit(unitSystem) {
+export function getDefaultDistanceUnit(unitSystem) {
   return unitSystem === 'metric' ? 'kilometers' : 'miles';
 }
 
@@ -185,7 +185,7 @@ function getDefaultDistanceUnit(unitSystem) {
  * @param {String} unitSystem The unit system
  * @returns {String} The default speed unit
  */
-function getDefaultSpeedUnit(unitSystem) {
+export function getDefaultSpeedUnit(unitSystem) {
   return unitSystem === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
 }
 
@@ -194,24 +194,6 @@ function getDefaultSpeedUnit(unitSystem) {
  * @param {String} unitSystem The unit system
  * @returns {String} The default pace unit
  */
-function getDefaultPaceUnit(unitSystem) {
+export function getDefaultPaceUnit(unitSystem) {
   return unitSystem === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
 }
-
-export default {
-  TIME_UNITS,
-  DISTANCE_UNITS,
-  SPEED_UNITS,
-  PACE_UNITS,
-
-  convertTime,
-  convertDistance,
-  convertSpeed,
-  convertPace,
-  convertSpeedPace,
-
-  detectDefaultUnitSystem,
-  getDefaultDistanceUnit,
-  getDefaultSpeedUnit,
-  getDefaultPaceUnit,
-};

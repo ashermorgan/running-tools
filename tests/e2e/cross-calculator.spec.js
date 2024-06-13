@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 test('Save and update state when navigating between calculators', async ({ page }) => {
   // Go to pace calculator

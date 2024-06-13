@@ -23,8 +23,8 @@
 <script setup>
 import { computed } from 'vue';
 
-import targetUtils from '@/utils/targets';
-import unitUtils from '@/utils/units';
+import { defaultTargetSets } from '@/utils/targets';
+import { detectDefaultUnitSystem } from '@/utils/units';
 
 import SplitOutputTable from '@/components/SplitOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
@@ -34,7 +34,7 @@ import useStorage from '@/composables/useStorage';
 /**
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
 
 /**
  * The current selected target set
@@ -45,7 +45,7 @@ const selectedTargetSet = useStorage('split-calculator-target-set', '_split_targ
  * The default output targets
  */
 const targetSets = useStorage('split-calculator-target-sets', {
-  _split_targets: targetUtils.defaultTargetSets._split_targets
+  _split_targets: defaultTargetSets._split_targets
 });
 
 /**

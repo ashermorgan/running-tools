@@ -416,7 +416,7 @@ const AverageModel = {
    * @param {String} model The race prediction model to use
    * @param {Number} c The value of the exponent in Pete Riegel's Model
  */
-function predictTime(d1, t1, d2, model='AverageModel', c=1.06) {
+export function predictTime(d1, t1, d2, model='AverageModel', c=1.06) {
   switch (model) {
     case 'AverageModel':
       return AverageModel.predictTime(d1, t1, d2, c);
@@ -439,7 +439,7 @@ function predictTime(d1, t1, d2, model='AverageModel', c=1.06) {
    * @param {String} model The race prediction model to use
    * @param {Number} c The value of the exponent in Pete Riegel's Model
  */
-function predictDistance(t1, d1, t2, model='AverageModel', c=1.06) {
+export function predictDistance(t1, d1, t2, model='AverageModel', c=1.06) {
   switch (model) {
     default:
     case 'AverageModel':
@@ -455,11 +455,7 @@ function predictDistance(t1, d1, t2, model='AverageModel', c=1.06) {
   }
 }
 
-export default {
-  predictTime,
-  predictDistance,
-  getPurdyPoints: PurdyPointsModel.getPurdyPoints,
-  getVO2: VO2MaxModel.getVO2,
-  getVO2Percentage: VO2MaxModel.getVO2Percentage,
-  getVO2Max: VO2MaxModel.getVO2Max,
-};
+export const getPurdyPoints = PurdyPointsModel.getPurdyPoints;
+export const getVO2 = VO2MaxModel.getVO2;
+export const getVO2Percentage = VO2MaxModel.getVO2Percentage;
+export const getVO2Max = VO2MaxModel.getVO2Max;

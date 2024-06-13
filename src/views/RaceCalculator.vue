@@ -10,14 +10,14 @@
         <h2>Race Statistics</h2>
       </summary>
       <div>
-        Purdy Points: <b>{{ formatUtils.formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
+        Purdy Points: <b>{{ formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
-        V&#775;O&#8322;: <b>{{ formatUtils.formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min
-          (<b>{{ formatUtils.formatNumber(raceStats.vo2MaxPercentage, 0, 1, true) }}%</b> of max)
+        V&#775;O&#8322;: <b>{{ formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatNumber(raceStats.vo2MaxPercentage, 0, 1, true) }}%</b> of max)
       </div>
       <div>
-        V&#775;O&#8322; Max: <b>{{ formatUtils.formatNumber(raceStats.vo2Max, 0, 1, true) }}</b>
+        V&#775;O&#8322; Max: <b>{{ formatNumber(raceStats.vo2Max, 0, 1, true) }}</b>
           ml/kg/min
       </div>
     </details>
@@ -43,7 +43,7 @@
 
     <h2>Equivalent Race Results</h2>
     <single-output-table class="output" :default-unit-system="defaultUnitSystem" show-pace
-      :calculate-result="x => calcUtils.calculateRaceResults(input, x, options, defaultUnitSystem)"
+      :calculate-result="x => calculateRaceResults(input, x, options, defaultUnitSystem)"
       :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
@@ -51,10 +51,10 @@
 <script setup>
 import { computed } from 'vue';
 
-import calcUtils from '@/utils/calculators';
-import formatUtils from '@/utils/format';
-import targetUtils from '@/utils/targets';
-import unitUtils from '@/utils/units';
+import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
+import { formatNumber } from '@/utils/format';
+import { defaultTargetSets } from '@/utils/targets';
+import { detectDefaultUnitSystem } from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
 import RaceOptions from '@/components/RaceOptions.vue';
@@ -75,7 +75,7 @@ const input = useStorage('race-calculator-input', {
 /**
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', unitUtils.detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
 
 /**
 * The race prediction options
@@ -94,13 +94,13 @@ const selectedTargetSet = useStorage('race-calculator-target-set', '_race_target
  * The target sets
  */
 let targetSets = useStorage('race-calculator-target-sets', {
-  _race_targets: targetUtils.defaultTargetSets._race_targets
+  _race_targets: defaultTargetSets._race_targets
 });
 
 /**
  * The statistics for the current input race
  */
-const raceStats = computed(() => calcUtils.calculateRaceStats(input.value));
+const raceStats = computed(() => calculateRaceStats(input.value));
 </script>
 
 <style scoped>

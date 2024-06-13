@@ -18,12 +18,12 @@
     <tbody>
       <tr v-for="(item, index) in results" :key="index">
         <td>
-          {{ formatUtils.formatNumber(item.distanceValue, 0, 2, false) }}
-          {{ unitUtils.DISTANCE_UNITS[item.distanceUnit].symbol }}
+          {{ formatNumber(item.distanceValue, 0, 2, false) }}
+          {{ DISTANCE_UNITS[item.distanceUnit].symbol }}
         </td>
 
         <td>
-          {{ formatUtils.formatDuration(item.time, 3, 2, true) }}
+          {{ formatDuration(item.time, 3, 2, true) }}
         </td>
 
         <td>
@@ -31,8 +31,8 @@
         </td>
 
         <td>
-          {{ formatUtils.formatDuration(item.pace, 3, 0, true) }}
-          / {{ unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)]
+          {{ formatDuration(item.pace, 3, 0, true) }}
+          / {{ DISTANCE_UNITS[getDefaultDistanceUnit(defaultUnitSystem)]
           .symbol }}
         </td>
       </tr>
@@ -49,8 +49,8 @@
 <script setup>
 import { computed } from 'vue';
 
-import formatUtils from '@/utils/format';
-import unitUtils from '@/utils/units';
+import { formatDuration, formatNumber } from '@/utils/format';
+import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
 
@@ -85,15 +85,15 @@ const results = computed(() => {
     const totalTime = i === 0 ? splitTime : results[i - 1].time + splitTime;
 
     // Calculate split and total distances
-    const totalDistance = unitUtils.convertDistance(
+    const totalDistance = convertDistance(
       targets.value[i].distanceValue,
       targets.value[i].distanceUnit, 'meters',
     );
     const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
     // Calculate pace
-    const pace = splitTime / unitUtils.convertDistance(splitDistance, 'meters',
-      unitUtils.getDefaultDistanceUnit(props.defaultUnitSystem));
+    const pace = splitTime / convertDistance(splitDistance, 'meters',
+      getDefaultDistanceUnit(props.defaultUnitSystem));
 
     // Add row to results array
     results.push({

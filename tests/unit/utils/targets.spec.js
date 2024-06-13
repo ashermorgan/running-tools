@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import targets from '@/utils/targets';
+import * as targets from '@/utils/targets';
 
 describe('sort method', () => {
   test('should correctly sort targets', () => {

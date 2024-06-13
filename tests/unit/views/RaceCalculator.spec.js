@@ -1,7 +1,7 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import RaceCalculator from '@/views/RaceCalculator.vue';
-import targetUtils from '@/utils/targets';
+import { defaultTargetSets } from '@/utils/targets';
 
 beforeEach(() => {
   localStorage.clear();
@@ -95,7 +95,7 @@ test('should correctly handle null target set', async () => {
     .setValue('_race_targets', 'selectedTargetSet');
 
   // Assert valid targets passed to SingleOutputTable component
-  const raceTargets = targetUtils.defaultTargetSets._race_targets.targets;
+  const raceTargets = defaultTargetSets._race_targets.targets;
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(raceTargets);
 });

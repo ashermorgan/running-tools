@@ -1,7 +1,7 @@
-import formatUtils from '@/utils/format';
-import paceUtils from '@/utils/paces';
-import raceUtils from '@/utils/races';
-import unitUtils from '@/utils/units';
+import { formatDuration, formatNumber } from '@/utils/format';
+import * as paceUtils from '@/utils/paces';
+import * as raceUtils from '@/utils/races';
+import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
 
 /**
  * Format a distance/time result as a key/value result
@@ -9,22 +9,22 @@ import unitUtils from '@/utils/units';
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
  * @returns {Object} The key/value result
  */
-function formatDistTimeResult(result, defaultUnitSystem) {
+export function formatDistTimeResult(result, defaultUnitSystem) {
   // Calculate numerical pace
-  const pace = result.time / unitUtils.convertDistance(result.distanceValue, result.distanceUnit,
-    unitUtils.getDefaultDistanceUnit(defaultUnitSystem));
+  const pace = result.time / convertDistance(result.distanceValue, result.distanceUnit,
+    getDefaultDistanceUnit(defaultUnitSystem));
 
   return {
     // Convert distance to key string
-    key: formatUtils.formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' '
-      + unitUtils.DISTANCE_UNITS[result.distanceUnit].symbol,
+    key: formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' '
+      + DISTANCE_UNITS[result.distanceUnit].symbol,
 
     // Convert time to time string
-    value: formatUtils.formatDuration(result.time, 3, 2, result.result === 'time'),
+    value: formatDuration(result.time, 3, 2, result.result === 'time'),
 
     // Convert pace to pace string
-    pace: formatUtils.formatDuration(pace, 3, 0, true) + ' / '
-      + unitUtils.DISTANCE_UNITS[unitUtils.getDefaultDistanceUnit(defaultUnitSystem)].symbol,
+    pace: formatDuration(pace, 3, 0, true) + ' / '
+      + DISTANCE_UNITS[getDefaultDistanceUnit(defaultUnitSystem)].symbol,
 
     // Convert dist/time result to key/value
     result: result.result === 'time' ? 'value' : 'key',
@@ -41,7 +41,7 @@ function formatDistTimeResult(result, defaultUnitSystem) {
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
  * @returns {Object} The result
  */
-function calculatePaceResults(input, target, defaultUnitSystem) {
+export function calculatePaceResults(input, target, defaultUnitSystem) {
   const result = {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
@@ -49,12 +49,12 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
     result: target.type === 'distance' ? 'time' : 'distance',
   };
 
-  const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
+  const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   // Add missing value to result
   if (target.type === 'distance') {
     // Convert target distance into meters
-    const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
+    const d2 = convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
     // Calculate time to travel distance at input pace
     result.time = paceUtils.calculateTime(d1, input.time, d2);
@@ -63,8 +63,8 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
     const d2 = paceUtils.calculateDistance(input.time, d1, target.time);
 
     // Convert output distance into default distance unit
-    const units = unitUtils.getDefaultDistanceUnit(defaultUnitSystem);
-    result.distanceValue = unitUtils.convertDistance(d2, 'meters', units);
+    const units = getDefaultDistanceUnit(defaultUnitSystem);
+    result.distanceValue = convertDistance(d2, 'meters', units);
     result.distanceUnit = units;
   }
 
@@ -80,7 +80,7 @@ function calculatePaceResults(input, target, defaultUnitSystem) {
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
  * @returns {Object} The result
  */
-function calculateRaceResults(input, target, options, defaultUnitSystem) {
+export function calculateRaceResults(input, target, options, defaultUnitSystem) {
   const result = {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
@@ -88,12 +88,12 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
     result: target.type === 'distance' ? 'time' : 'distance',
   };
 
-  const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
+  const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   // Add missing value to result
   if (target.type === 'distance') {
     // Convert target distance into meters
-    const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
+    const d2 = convertDistance(target.distanceValue, target.distanceUnit, 'meters');
 
     // Get prediction
     result.time = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
@@ -103,12 +103,12 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
       options.riegelExponent);
 
     // Convert output distance into default distance unit
-    distance = unitUtils.convertDistance(distance, 'meters',
-      unitUtils.getDefaultDistanceUnit(defaultUnitSystem));
+    distance = convertDistance(distance, 'meters',
+      getDefaultDistanceUnit(defaultUnitSystem));
 
     // Update result
     result.distanceValue = distance;
-    result.distanceUnit = unitUtils.getDefaultDistanceUnit(defaultUnitSystem);
+    result.distanceUnit = getDefaultDistanceUnit(defaultUnitSystem);
   }
 
   // Return result
@@ -120,8 +120,8 @@ function calculateRaceResults(input, target, options, defaultUnitSystem) {
  * @param {Object} input The input race
  * @returns {Object} The race statistics
  */
-function calculateRaceStats(input) {
-  const d1 = unitUtils.convertDistance(input.distanceValue, input.distanceUnit, 'meters');
+export function calculateRaceStats(input) {
+  const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
 
   return {
     purdyPoints: raceUtils.getPurdyPoints(d1, input.time),
@@ -130,9 +130,3 @@ function calculateRaceStats(input) {
     vo2MaxPercentage: raceUtils.getVO2Percentage(input.time) * 100,
   }
 }
-
-export default {
-  calculatePaceResults,
-  calculateRaceResults,
-  calculateRaceStats,
-};

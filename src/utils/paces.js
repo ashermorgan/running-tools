@@ -5,7 +5,7 @@
  * @param {Number} d2 The output distance (in the same unit as d1)
  * @returns {Number} The output time (in seconds)
  */
-function calculateTime(d1, t1, d2) {
+export function calculateTime(d1, t1, d2) {
   return (t1 / d1) * d2
 }
 
@@ -16,11 +16,6 @@ function calculateTime(d1, t1, d2) {
  * @param {Number} t2 The output time (in seconds)
  * @returns {Number} The output distance (in the same unit as d1)
  */
-function calculateDistance(t1, d1, t2) {
+export function calculateDistance(t1, d1, t2) {
   return (d1 / t1) * t2
 }
-
-export default {
-  calculateTime,
-  calculateDistance,
-};

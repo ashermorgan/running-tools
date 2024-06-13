@@ -5,7 +5,7 @@
       <decimal-input v-model="model.distanceValue"
         :aria-label="label + ' distance value'" :min="0" :digits="2"/>
       <select v-model="model.distanceUnit" :aria-label="label + ' distance unit'">
-        <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
+        <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
           {{ value.name }}
         </option>
       </select>
@@ -21,8 +21,7 @@
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-import unitUtils from '@/utils/units';
-const distanceUnits = unitUtils.DISTANCE_UNITS;
+import { DISTANCE_UNITS } from '@/utils/units';
 
 /**
  * The component value

@@ -1,7 +1,7 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import PaceCalculator from '@/views/PaceCalculator.vue';
-import targetUtils from '@/utils/targets';
+import { defaultTargetSets } from '@/utils/targets';
 
 beforeEach(() => {
   localStorage.clear();
@@ -89,7 +89,7 @@ test('should correctly handle null target set', async () => {
     .setValue('_pace_targets', 'selectedTargetSet');
 
   // Assert valid targets passed to SingleOutputTable component
-  const paceTargets = targetUtils.defaultTargetSets._pace_targets.targets;
+  const paceTargets = defaultTargetSets._pace_targets.targets;
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(paceTargets);
 });

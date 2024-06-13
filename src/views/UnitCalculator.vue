@@ -20,10 +20,10 @@
     <span class="equals"> = </span>
 
     <span v-if="getUnitType(input.outputUnit) === 'time'" class="output-value" aria-label="Output value">
-      {{ formatUtils.formatDuration(outputValue, 6, 3, true) }}
+      {{ formatDuration(outputValue, 6, 3, true) }}
     </span>
     <span v-else class="output-value" aria-label="Output value">
-      {{ formatUtils.formatNumber(outputValue, 0, 3, true) }}
+      {{ formatNumber(outputValue, 0, 3, true) }}
     </span>
 
     <select v-model="input.outputUnit" class="output-units" aria-label="Output units">
@@ -37,8 +37,9 @@
 <script setup>
 import { computed, ref } from 'vue';
 
-import formatUtils from '@/utils/format';
-import unitUtils from '@/utils/units';
+import { formatDuration, formatNumber } from '@/utils/format';
+import { DISTANCE_UNITS, TIME_UNITS, SPEED_UNITS, PACE_UNITS, convertDistance, convertTime,
+convertSpeedPace } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
@@ -89,11 +90,11 @@ const input = computed({
 const units = computed(() => {
   switch (category.value) {
     case 'distance': {
-      return unitUtils.DISTANCE_UNITS;
+      return DISTANCE_UNITS;
     }
     case 'time': {
       return {
-        ...unitUtils.TIME_UNITS,
+        ...TIME_UNITS,
         'hh:mm:ss': {
           name: 'hh:mm:ss',
           symbol: '',
@@ -102,7 +103,7 @@ const units = computed(() => {
       };
     }
     case 'speed_and_pace': {
-      return { ...unitUtils.PACE_UNITS, ...unitUtils.SPEED_UNITS };
+      return { ...PACE_UNITS, ...SPEED_UNITS };
     }
     default: {
       return {};
@@ -116,7 +117,7 @@ const units = computed(() => {
 const outputValue = computed(() => {
   switch (category.value) {
     case 'distance': {
-      return unitUtils.convertDistance(input.value.inputValue, input.value.inputUnit,
+      return convertDistance(input.value.inputValue, input.value.inputUnit,
       input.value.outputUnit);
     }
     case 'time': {
@@ -125,10 +126,10 @@ const outputValue = computed(() => {
       const realOutput = input.value.outputUnit === 'hh:mm:ss' ? 'seconds' : input.value.outputUnit;
 
       // Calculate conversion
-      return unitUtils.convertTime(input.value.inputValue, realInput, realOutput);
+      return convertTime(input.value.inputValue, realInput, realOutput);
     }
     case 'speed_and_pace': {
-      return unitUtils.convertSpeedPace(input.value.inputValue, input.value.inputUnit,
+      return convertSpeedPace(input.value.inputValue, input.value.inputUnit,
       input.value.outputUnit);
     }
     default: {
@@ -143,10 +144,10 @@ const outputValue = computed(() => {
  * @returns {String} The type ('decimal' or 'time')
  */
 function getUnitType(unit) {
-  if (unit in unitUtils.DISTANCE_UNITS) {
+  if (unit in DISTANCE_UNITS) {
     return 'decimal';
   }
-  if (unit in unitUtils.TIME_UNITS) {
+  if (unit in TIME_UNITS) {
     return 'decimal';
   }
   if (unit === 'hh:mm:ss') {

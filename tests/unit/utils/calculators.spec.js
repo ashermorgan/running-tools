@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import calculatorUtils from '@/utils/calculators';
+import * as calculatorUtils from '@/utils/calculators';
 
 test('should correctly calculate pace times', () => {
   const input = {

@@ -26,7 +26,7 @@
           <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
             :min="0" :digits="2"/>
           <select v-model="item.distanceUnit" aria-label="Target distance unit">
-            <option v-for="(value, key) in unitUtils.DISTANCE_UNITS" :key="key" :value="key">
+            <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
               {{ value.name }}
             </option>
           </select>
@@ -70,7 +70,7 @@ import { watch, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import unitUtils from '@/utils/units';
+import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
@@ -141,7 +141,7 @@ function addDistanceTarget() {
   internalValue.value.targets.push({
     type: 'distance',
     distanceValue: 1,
-    distanceUnit: unitUtils.getDefaultDistanceUnit(props.defaultUnitSystem),
+    distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
   });
 }
 

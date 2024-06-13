@@ -1,22 +1,22 @@
-import unitUtils from '@/utils/units';
+import { convertDistance } from '@/utils/units';
 
 /**
  * Sort an array of targets
  * @param {Array} targets The array of targets
  * @returns {Array} The sorted targets
  */
-function sort(targets) {
+export function sort(targets) {
   return [
     ...targets.filter((item) => item.type === 'distance')
-      .sort((a, b) => unitUtils.convertDistance(a.distanceValue, a.distanceUnit, 'meters')
-        - unitUtils.convertDistance(b.distanceValue, b.distanceUnit, 'meters')),
+      .sort((a, b) => convertDistance(a.distanceValue, a.distanceUnit, 'meters')
+        - convertDistance(b.distanceValue, b.distanceUnit, 'meters')),
 
     ...targets.filter((item) => item.type === 'time')
       .sort((a, b) => a.time - b.time),
   ];
 }
 
-const defaultTargetSets = {
+export const defaultTargetSets = {
   '_pace_targets': {
     name: 'Common Pace Targets',
     targets: sort([
@@ -87,9 +87,4 @@ const defaultTargetSets = {
       { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
     ],
   },
-};
-
-export default {
-  sort,
-  defaultTargetSets,
 };

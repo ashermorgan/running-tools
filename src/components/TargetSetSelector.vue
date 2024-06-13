@@ -24,7 +24,7 @@ import { computed, nextTick, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import targetUtils from '@/utils/targets';
+import { sort, defaultTargetSets } from '@/utils/targets';
 
 import TargetEditor from '@/components/TargetEditor.vue';
 
@@ -106,7 +106,7 @@ function revertTargetSet() {
   if (internalValue.value.startsWith('_')) {
     // Revert default set
     targetSets.value[internalValue.value] =
-      JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[internalValue.value]));
+      JSON.parse(JSON.stringify(defaultTargetSets[internalValue.value]));
     sortTargetSet();
   } else {
     // Remove custom set
@@ -121,7 +121,7 @@ function revertTargetSet() {
  */
 function sortTargetSet() {
   targetSets.value[internalValue.value].targets =
-    targetUtils.sort(targetSets.value[internalValue.value].targets);
+    sort(targetSets.value[internalValue.value].targets);
 }
 </script>
 

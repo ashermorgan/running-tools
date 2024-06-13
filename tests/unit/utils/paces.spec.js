@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import paces from '@/utils/paces';
+import * as paces from '@/utils/paces';
 
 describe('calculateTime method', () => {
   test('1 meters in 3 seconds should equal 2 meters in 6 seconds', () => {

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import raceUtils from '@/utils/races';
+import * as raceUtils from '@/utils/races';
 
 describe('predictTime method', () => {
   describe('PredictTime method', () => {

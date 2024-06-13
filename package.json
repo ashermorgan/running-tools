@@ -3,6 +3,7 @@
   "version": "1.3.0",
   "description": "A collection of tools for runners and their coaches that calculate splits, predict race times, convert units, and more",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
