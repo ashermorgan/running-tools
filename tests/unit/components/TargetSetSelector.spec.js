@@ -64,32 +64,59 @@ test('Create New Target Set option should correctly add target set', async () =>
   };
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      selectedTargetSet: 'A',
+      selectedTargetSet: '_new',
       targetSets,
     }
   });
-
-  // Add target set
-  await wrapper.find('select').setValue('_new');
+  await wrapper.vm.$nextTick();
 
   // Assert new target set selected (key is unix timestamp in milliseconds)
-  const key = wrapper.find('select').element.value
-  expect(parseInt(key)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
+  const key1 = wrapper.find('select').element.value;
+  expect(parseInt(key1)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
 
   // Assert target set options were correctly updated
-  const options = wrapper.findAll('option');
+  let options = wrapper.findAll('option');
   expect(options[0].element.text).to.equal('1st target set');
   expect(options[0].element.value).to.equal('A');
   expect(options[1].element.text).to.equal('2nd target set');
   expect(options[1].element.value).to.equal('B');
   expect(options[2].element.text).to.equal('New target set');
-  expect(options[2].element.value).to.match(/\d{12,14}/);
+  expect(options[2].element.value).to.equal(key1)
   expect(options[3].element.text).to.equal('[ Create New Target Set ]');
   expect(options[3].element.value).to.equal('_new');
   expect(options.length).to.equal(4);
 
   // Assert target sets were correctly updated
-  targetSets[options[2].element.value] = {
+  targetSets[key1] = {
+    name: 'New target set',
+    targets: [],
+  };
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
+
+  // Add another target set
+  await wrapper.find('select').setValue('_new');
+
+  // Assert new target set selected (key is unix timestamp in milliseconds)
+  const key2 = wrapper.find('select').element.value;
+  expect(parseInt(key2)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
+  expect(key2).to.not.equal(key1);
+
+  // Assert target set options were correctly updated
+  options = wrapper.findAll('option');
+  expect(options[0].element.text).to.equal('1st target set');
+  expect(options[0].element.value).to.equal('A');
+  expect(options[1].element.text).to.equal('2nd target set');
+  expect(options[1].element.value).to.equal('B');
+  expect(options[2].element.text).to.equal('New target set');
+  expect(options[2].element.value).to.equal(key1)
+  expect(options[3].element.text).to.equal('New target set');
+  expect(options[3].element.value).to.equal(key2);
+  expect(options[4].element.text).to.equal('[ Create New Target Set ]');
+  expect(options[4].element.value).to.equal('_new');
+  expect(options.length).to.equal(5);
+
+  // Assert target sets were correctly updated
+  targetSets[key2] = {
     name: 'New target set',
     targets: [],
   };

@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
@@ -63,40 +63,41 @@ defineProps({
 });
 
 /**
- * The internal value
- */
-const internalValue = ref(model.value);
-
-/**
  * The dialog element
  */
 const dialogElement = ref(null);
 
 /**
- * Update the internal value when the component value changes
+ * The internal value
  */
-watch(model, (newValue) => {
-  if (newValue !== internalValue.value) {
-    internalValue.value = newValue;
-  }
+const internalValue = computed({
+  get: () => {
+    if (model.value == '_new') {
+      newTargetSet();
+    }
+    return model.value;
+  },
+  set: async (newValue) => {
+    if (newValue == '_new') {
+      await nextTick(); // <select> won't update if value changed immediately
+      newTargetSet();
+    } else {
+      model.value = newValue;
+    }
+  },
 });
 
 /**
- * Update the component value when the internal value changes and create a new set if necessary
+ * Create and select a new target
  */
-watch(internalValue, async (newValue) => {
-  if (newValue == '_new') {
-    let key = Date.now().toString();
-    targetSets.value[key] = {
-      name: 'New target set',
-      targets: [],
-    };
-    await nextTick(); // <select> won't update if value changed immediately
-    model.value = key;
-  } else {
-    model.value = newValue;
-  }
-}, { immediate: true });
+function newTargetSet() {
+  let key = Date.now().toString();
+  targetSets.value[key] = {
+    name: 'New target set',
+    targets: [],
+  };
+  model.value = key;
+}
 
 /**
  * Revert or remove the current target set
