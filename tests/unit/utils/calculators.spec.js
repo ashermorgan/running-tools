@@ -146,3 +146,56 @@ test('should correctly calculate race statistics', () => {
   expect(results.vo2MaxPercentage).to.be.closeTo(95.3, 0.1);
   expect(results.vo2Max).to.be.closeTo(49.8, 0.1);
 });
+
+test('should correctly calculate distance-based workouts according to race options', () => {
+  const input = {
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 630,
+  };
+  const target = {
+    distanceValue: 5,
+    distanceUnit: 'kilometers', // 5k split is ~17:11.77
+    splitValue: 1000,
+    splitUnit: 'meters',
+    type: 'distance',
+  };
+  const options = {
+    model: 'RiegelModel',
+    riegelExponent: 1.12,
+  }
+
+  const result = calculatorUtils.calculateWorkoutResults(input, target, options);
+
+  expect(result.key).to.equal('1000 m @ 5 km');
+  expect(result.value).to.equal('3:26.35');
+  expect(result.pace).to.equal('');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(206.35, 0.01);
+});
+
+test('should correctly calculate time-based workouts', () => {
+  const input = {
+    distanceValue: 5,
+    distanceUnit: 'kilometers',
+    time: 1200,
+  };
+  const target = {
+    time: 2495, // ~10k split is 41:35
+    splitValue: 1,
+    splitUnit: 'miles',
+    type: 'time',
+  };
+  const options = {
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+  }
+
+  const result = calculatorUtils.calculateWorkoutResults(input, target, options);
+
+  expect(result.key).to.equal('1 mi @ 41:35');
+  expect(result.value).to.equal('6:41.50');
+  expect(result.pace).to.equal('');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(401.50, 0.01);
+});

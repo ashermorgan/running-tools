@@ -130,3 +130,51 @@ export function calculateRaceStats(input) {
     vo2MaxPercentage: raceUtils.getVO2Percentage(input.time) * 100,
   }
 }
+
+/**
+ * Predict workout results from a target
+ * @param {Object} input The input race
+ * @param {Object} target The workout target
+ * @param {Object} options The race prediction options
+ * @returns {Object} The result
+ */
+export function calculateWorkoutResults(input, target, options) {
+  const result = {
+    distanceValue: target.distanceValue,
+    distanceUnit: target.distanceUnit,
+    time: target.time,
+    result: target.result,
+  };
+
+  const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
+  const t1 = input.time;
+  const d3 = convertDistance(target.splitValue, target.splitUnit, 'meters');
+  let d2, t2, t3;
+
+  // Calculate pace
+  let key = formatNumber(target.splitValue, 0, 2, false) + ' '
+      + DISTANCE_UNITS[target.splitUnit].symbol + ' @ ';
+  if (target.type === 'distance') {
+    // Convert target distance into meters
+    d2 = convertDistance(target.distanceValue, target.distanceUnit, 'meters');
+    t2 = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
+    key += formatNumber(target.distanceValue, 0, 2, false) + ' '
+      + DISTANCE_UNITS[target.distanceUnit].symbol;
+  } else {
+    t2 = target.time;
+    d2 = raceUtils.predictDistance(t1, d1, t2, options.model,
+      options.riegelExponent);
+    key += formatDuration(target.time, 3, 2, false);
+  }
+
+  t3 = paceUtils.calculateTime(d2, t2, d3);
+
+  // Calculate time
+  return {
+    key: key,
+    value: formatDuration(t3, 3, 2, true),
+    pace: '', // Pace not used in workout calculator
+    result: 'value',
+    sort: t3,
+  }
+}
