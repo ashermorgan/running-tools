@@ -24,6 +24,12 @@
           Unit Calculator
         </button>
       </router-link>
+      <router-link :to="{ name: 'calculate-workouts' }" v-slot="{ navigate }" custom>
+        <button @click="navigate">
+          Workout Calculator
+        </button>
+      </router-link>
+      <div class="card"></div>
     </div>
     <p class="about-link">
       <router-link :to="{ name: 'about' }">
@@ -41,28 +47,30 @@
 }
 .description {
   font-size: 1.5em;
-  margin-bottom: 1em;
 }
 .calculators {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  justify-content: center;
+
+  max-width: 39em;
+  margin: 1em auto;
+}
+.calculators > * {
+  width: 12em;
 }
 .calculators button {
-  flex-grow: 1;
   font-size: 1em;
   padding: 0.5em;
-  margin: 0em 0.3em;
 }
-.about-link {
-  margin-top: 1em;
-}
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 500px) {
   .calculators {
-    flex-direction: column;
+    gap: 0.75em;
   }
   .calculators button {
-    margin: 0.3em 0em;
     padding: 0.75em 0.5em;
+    width: 100%;
   }
 }
 </style>
