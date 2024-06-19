@@ -4,6 +4,7 @@ import AboutPage from '@/views/AboutPage.vue';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 import SplitCalculator from '@/views/SplitCalculator.vue';
+import WorkoutCalculator from '@/views/WorkoutCalculator.vue';
 import UnitCalculator from '@/views/UnitCalculator.vue';
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -69,6 +70,15 @@ const router = createRouter({
       component: UnitCalculator,
       meta: {
         title: 'Unit Calculator',
+        back: 'home',
+      },
+    },
+    {
+      path: '/calculate/workouts',
+      name: 'calculate-workouts',
+      component: WorkoutCalculator,
+      meta: {
+        title: 'Workout Calculator',
         back: 'home',
       },
     },
