@@ -22,18 +22,34 @@
 
     <tbody>
       <tr v-for="(item, index) in internalValue.targets" :key="index">
-        <td v-if="item.type === 'distance'">
-          <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
-            :min="0" :digits="2"/>
-          <select v-model="item.distanceUnit" aria-label="Target distance unit">
-            <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
-              {{ value.name }}
-            </option>
-          </select>
-        </td>
+        <td>
+          <span v-if="setType === 'workout'">
+            <decimal-input v-model="item.splitValue" aria-label="Split distance value"
+              :min="0" :digits="2"/>
+            <select v-model="item.splitUnit" aria-label="Split distance unit">
+              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+                {{ value.name }}
+              </option>
+            </select>
+          </span>
 
-        <td v-else>
-          <time-input v-model="item.time" label="Target duration"/>
+          <span v-if="setType === 'workout'">
+            &nbsp;@&nbsp;
+          </span>
+
+          <span v-if="item.type === 'distance'">
+            <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
+              :min="0" :digits="2"/>
+            <select v-model="item.distanceUnit" aria-label="Target distance unit">
+              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+                {{ value.name }}
+              </option>
+            </select>
+          </span>
+
+          <span v-else>
+            <time-input v-model="item.time" label="Target duration"/>
+          </span>
         </td>
 
         <td>
@@ -104,7 +120,7 @@ const props = defineProps({
   },
 
   /**
-   * The target set type ('standard' or 'split')
+   * The target set type ('standard', 'split', or 'workout')
    */
   setType: {
     type: String,
@@ -138,21 +154,40 @@ watch(internalValue, (newValue) => {
  * Add a new distance based target
  */
 function addDistanceTarget() {
-  internalValue.value.targets.push({
-    type: 'distance',
-    distanceValue: 1,
-    distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
-  });
+  if (props.setType === 'workout') {
+    internalValue.value.targets.push({
+      type: 'distance',
+      distanceValue: 1,
+      distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+      splitValue: 1,
+      splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  } else {
+    internalValue.value.targets.push({
+      type: 'distance',
+      distanceValue: 1,
+      distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  }
 }
 
 /**
  * Add a new time based target
  */
 function addTimeTarget() {
-  internalValue.value.targets.push({
-    type: 'time',
-    time: 600,
-  });
+  if (props.setType === 'workout') {
+    internalValue.value.targets.push({
+      type: 'time',
+      time: 600,
+      splitValue: 1,
+      splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  } else {
+    internalValue.value.targets.push({
+      type: 'time',
+      time: 600,
+    });
+  }
 }
 
 /**
@@ -169,6 +204,12 @@ function removeTarget(index) {
 .target-editor th .icon {
   margin-left: 0.3em;
 }
+.target-editor tbody td:first-child {
+  display: flex;
+  gap: 0.2em;
+  flex-wrap: wrap;
+  align-items: center;
+}
 .target-editor th:last-child, .target-editor td:last-child {
   text-align: right;
 }
@@ -182,9 +223,6 @@ function removeTarget(index) {
 }
 .target-editor tfoot button {
   margin: 0.5em;
-}
-.target-editor tfoot p {
-  margin-top: 0.5em;
 }
 @media only screen and (max-width: 800px) {
   /* leave space for revert button on mobile devices */
