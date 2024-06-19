@@ -11,6 +11,8 @@ Try it out [here](https://ashermorgan.github.io/running-tools/).
   Find splits, paces, and cumulative times for the segments of a race
 - [Unit Calculator](https://ashermorgan.github.io/running-tools/#/calculate/units):
   Convert between different distance, time, speed, and pace units
+- [Workout Calculator](https://ashermorgan.github.io/running-tools/#/calculate/workouts):
+  Estimate target workout splits using previous race results
 
 ## Setup
 Install dependencies
