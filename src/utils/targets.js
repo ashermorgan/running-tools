@@ -87,4 +87,25 @@ export const defaultTargetSets = {
       { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
     ],
   },
+  '_workout_targets': {
+    name: 'Common Workout Targets',
+    targets: [
+      {
+        splitValue: 400, splitUnit: 'meters',
+        type: 'distance', distanceValue: 1, distanceUnit: 'miles',
+      },
+      {
+        splitValue: 800, splitUnit: 'meters',
+        type: 'distance', distanceValue: 5, distanceUnit: 'kilometers',
+      },
+      {
+        splitValue: 1600, splitUnit: 'meters',
+        type: 'time', time: 3600,
+      },
+      {
+        splitValue: 2, splitUnit: 'miles',
+        type: 'time', time: 7200,
+      },
+    ],
+  },
 };

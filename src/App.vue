@@ -55,10 +55,10 @@ h1 {
 #route-content {
   margin: 1em;
 }
-@media only screen and (max-width: 320px) {
+@media only screen and (max-width: 450px) {
   /* adjust title size to fit small devices */
   h1 {
-    font-size: 8vw;
+    font-size: 7vw;
   }
 }
 </style>

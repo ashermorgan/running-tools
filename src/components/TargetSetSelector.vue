@@ -54,7 +54,7 @@ defineProps({
   },
 
   /**
-   * The target set type ('standard' or 'split')
+   * The target set type ('standard', 'split', or 'workout')
    */
   setType: {
     type: String,
@@ -131,7 +131,7 @@ function sortTargetSet() {
 }
 
 .target-set-editor-dialog {
-  width: min(100% - 2em, 400px);
+  width: min(100% - 2em, 450px);
   max-height: min(100% - 2em, 815px);
   margin-top: 100px;
 }

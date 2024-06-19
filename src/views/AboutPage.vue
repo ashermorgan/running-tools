@@ -19,7 +19,7 @@
     </p>
 
     <h2>The Calculators</h2>
-    <p>Running Tools contains four calculators:</p>
+    <p>Running Tools contains five calculators:</p>
 
     <h3>Pace Calculator</h3>
     <p>
@@ -44,10 +44,12 @@
         equivalent race results.
       The selected target set controls which distances and/or times the calculator predicts race
         results for.
+      Extra output statistics for the input race result are also available under the Race Statistics
+        section.
     </p>
     <p>
-      The Advanced section of the Race Calculator includes extra output statistics for the input
-        race result and the option to switch between the five supported race prediction models:
+      The Advanced Options section includes the option to switch between the five supported race
+        prediction models:
     </p>
       <ul>
         <li>The Purdy Points Model</li>
@@ -85,7 +87,7 @@
     <ul class="questions">
       <li>How fast would I finish a 1600m if I ran the 400m laps in 90s, 85s, 80s, and 75s? (5:30)</li>
       <li>If I finished a 5K in 20:00 and ran the first 2 miles in 13:00, how fast was the last ~1.1
-        miles? (6:19 per mile pace)</li>
+        miles? (6:19 / mi pace)</li>
     </ul>
 
     <h3>Unit Calculator</h3>
@@ -98,13 +100,37 @@
     </p>
     <ul class="questions">
       <li>How many miles is a 5K? (3.107 miles)</li>
-      <li>What is 10 mph in time per mile? (6:00 per mile)</li>
+      <li>What is 10 mph in time per mile? (6:00 / mi)</li>
       <li>What is 123.4 minutes in hh:mm:ss? (02:03:24)</li>
     </ul>
 
+    <h3>Workout Calculator</h3>
+    <p>
+      The <router-link :to="{ name: 'calculate-workouts' }">Workout Calculator</router-link> takes a
+        distance and duration as input and shows intermediate splits for other equivalent race
+        results.
+      The selected target set controls which race distances and/or times the calculator calculates
+        outputs for and the distances of the splits that are shown for these races.
+      The Advanced Options section includes the option to switch between the same five prediction
+        models that are available in the Race Calculator.
+    </p>
+    <p>
+      The Workout Calculator is useful for answering questions like:
+    </p>
+    <ul class="questions">
+      <li>If I raced a 5K in 20:00, how fast should I run 400m intervals at mile pace? (about 1:27)</li>
+      <li>If I raced a mile in 5:00, what is my "threshold" (~1 hr race) pace? (about 5:50 / mi)</li>
+    </ul>
+    <p>
+      <strong>Note:</strong> Results are just estimated race splits that are helpful for estimating
+        target workout splits.
+      As with the Race Calculator, splits are most accurate for similar distances and assume equal
+        fitness.
+    </p>
+
     <h2>Target Sets</h2>
     <p>
-      A target set is a collection of distances and/or times that the Pace, Race, or Split
+      A target set is a collection of distances and/or times that the Pace, Race, Split, or Workout
         Calculators will calculate results for.
       These calculators will output a duration for each distance target and a distance for each time
         target.
@@ -113,7 +139,8 @@
         calculator.
     </p>
     <p>
-      <strong>Note:</strong> The split calculator only supports distance targets.
+      <strong>Note:</strong> The split calculator only supports distance targets. The workout
+        calculator also includes a split distance field for each target.
     </p>
   </div>
 </template>
@@ -143,7 +170,7 @@ p, blockquote, ul {
 }
 li {
   margin-bottom: 0.2em;
-  margin-left: 3em;
+  margin-left: 1.5em;
 }
 p {
   line-height: 1.3;
@@ -161,11 +188,6 @@ p {
 @media only screen and (prefers-color-scheme: dark) {
     .chrome-install {
         filter: invert(1);
-    }
-}
-@media only screen and (max-width: 800px) {
-    li {
-        margin-left: 1.5em;
     }
 }
 </style>

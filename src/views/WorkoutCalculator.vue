@@ -7,23 +7,6 @@
 
     <details>
       <summary>
-        <h2>Race Statistics</h2>
-      </summary>
-      <div>
-        Purdy Points: <b>{{ formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
-      </div>
-      <div>
-        V&#775;O&#8322;: <b>{{ formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min
-          (<b>{{ formatNumber(raceStats.vo2MaxPercentage, 0, 1, true) }}%</b> of max)
-      </div>
-      <div>
-        V&#775;O&#8322; Max: <b>{{ formatNumber(raceStats.vo2Max, 0, 1, true) }}</b>
-          ml/kg/min
-      </div>
-    </details>
-
-    <details>
-      <summary>
         <h2>Advanced Options</h2>
       </summary>
       <div>
@@ -35,24 +18,21 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="workout"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
       <race-options v-model="options"/>
     </details>
 
-    <h2>Equivalent Race Results</h2>
-    <single-output-table class="output" show-pace
-      :calculate-result="x => calculateRaceResults(input, x, options, defaultUnitSystem)"
+    <h2>Workout Splits</h2>
+    <single-output-table class="output"
+      :calculate-result="x => calculateWorkoutResults(input, x, options)"
       :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
-import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
-import { formatNumber } from '@/utils/format';
+import { calculateWorkoutResults } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
 import { detectDefaultUnitSystem } from '@/utils/units';
 
@@ -66,7 +46,7 @@ import useStorage from '@/composables/useStorage';
 /**
  * The input race
  */
-const input = useStorage('race-calculator-input', {
+const input = useStorage('workout-calculator-input', {
   distanceValue: 5,
   distanceUnit: 'kilometers',
   time: 1200,
@@ -78,9 +58,9 @@ const input = useStorage('race-calculator-input', {
 const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
 
 /**
-* The race prediction options
-*/
-const options = useStorage('race-calculator-options', {
+ * The race prediction options
+ */
+const options = useStorage('workout-calculator-options', {
   model: 'AverageModel',
   riegelExponent: 1.06,
 });
@@ -88,19 +68,14 @@ const options = useStorage('race-calculator-options', {
 /**
  * The current selected target set
  */
-const selectedTargetSet = useStorage('race-calculator-target-set', '_race_targets');
+const selectedTargetSet = useStorage('workout-calculator-target-set', '_workout_targets');
 
 /**
  * The target sets
  */
-let targetSets = useStorage('race-calculator-target-sets', {
-  _race_targets: defaultTargetSets._race_targets
+let targetSets = useStorage('workout-calculator-target-sets', {
+  _workout_targets: defaultTargetSets._workout_targets
 });
-
-/**
- * The statistics for the current input race
- */
-const raceStats = computed(() => calculateRaceStats(input.value));
 </script>
 
 <style scoped>

@@ -63,14 +63,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-
-  /**
-   * The unit system to use when showing result paces
-   */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
 });
 
 /**
