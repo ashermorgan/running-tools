@@ -139,13 +139,6 @@ export function calculateRaceStats(input) {
  * @returns {Object} The result
  */
 export function calculateWorkoutResults(input, target, options) {
-  const result = {
-    distanceValue: target.distanceValue,
-    distanceUnit: target.distanceUnit,
-    time: target.time,
-    result: target.result,
-  };
-
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
   const t1 = input.time;
   const d3 = convertDistance(target.splitValue, target.splitUnit, 'meters');

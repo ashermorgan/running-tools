@@ -25,7 +25,7 @@
     </details>
 
     <h2>Workout Splits</h2>
-    <single-output-table class="output" :default-unit-system="defaultUnitSystem"
+    <single-output-table class="output"
       :calculate-result="x => calculateWorkoutResults(input, x, options)"
       :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
