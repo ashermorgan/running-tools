@@ -12,11 +12,8 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByLabel('Input duration minutes').fill('15');
   await page.getByLabel('Input duration seconds').fill('30');
 
-  // Change default units (should update on other calculators too)
-  await page.getByText('Advanced Options').click();
-  await page.getByLabel('Default units').selectOption('Kilometers');
-
   // Create custom target set
+  await page.getByText('Advanced Options').click();
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
   await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
   await expect(page.getByRole('row')).toHaveCount(2);
@@ -31,6 +28,7 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByRole('button', { name: 'Add distance target' }).click();
   await page.getByLabel('Target distance value').nth(1).fill('800');
   await page.getByLabel('Target distance unit').nth(1).selectOption('Meters');
+  await page.getByRole('button', { name: 'Add time target' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Go to race calculator
@@ -79,6 +77,24 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByLabel('Input value').fill('10');
   await page.getByLabel('Output units').selectOption('Time per Mile');
 
+  // Go to workout calculator
+  await page.getByRole('link', { name: 'Back' }).click();
+  await page.getByRole('button', { name: 'Workout Calculator' }).click();
+
+  // Enter input race (1 mi in 5:01)
+  await page.getByLabel('Input race distance value').fill('1');
+  await page.getByLabel('Input race distance unit').selectOption('Miles');
+  await page.getByLabel('Input race duration hours').fill('0');
+  await page.getByLabel('Input race duration minutes').fill('5');
+  await page.getByLabel('Input race duration seconds').fill('1');
+
+  // Change prediction model
+  await page.getByText('Advanced Options').click();
+  await page.getByLabel('Prediction model').selectOption('V̇O₂ Max Model');
+
+  // Change default units (should update on other calculators too)
+  await page.getByLabel('Default units').selectOption('Kilometers');
+
   // Return to pace calculator
   await page.getByRole('link', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Pace Calculator' }).click();
@@ -86,7 +102,8 @@ test('Save and update state when navigating between calculators', async ({ page 
   // Assert paces are correct (input pace not reset)
   await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.57');
   await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
-  await expect(page.getByRole('row')).toHaveCount(3);
+  await expect(page.getByRole('row').nth(3)).toHaveText('2.08 km' + '10:00');
+  await expect(page.getByRole('row')).toHaveCount(4);
 
   // Return to race calculator
   await page.getByRole('link', { name: 'Back' }).click();
@@ -116,4 +133,13 @@ test('Save and update state when navigating between calculators', async ({ page 
 
   // Assert result is correct (state not reset)
   await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+
+  // Return to workout calculator
+  await page.getByRole('link', { name: 'Back' }).click();
+  await page.getByRole('button', { name: 'Workout Calculator' }).click();
+
+  // Assert workout splits are correct (input race and prediction model not reset)
+  await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:14.81');
+  await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.58');
+  await expect(page.getByRole('row')).toHaveCount(5);
 });
