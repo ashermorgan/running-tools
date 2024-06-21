@@ -618,6 +618,6 @@ test('should display message when target set is empty', async () => {
 
   // Assert message correctly rendered
   const rows = wrapper.findAll('tbody tr');
-  expect(rows[0].text()).to.equal('There aren\'t any targets in this set yet');
+  expect(rows[0].text()).to.equal('There aren\'t any targets in this set yet.');
   expect(rows.length).to.equal(1);
 });

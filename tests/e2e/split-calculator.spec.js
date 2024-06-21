@@ -88,11 +88,11 @@ test('Customize target sets', async ({ page }) => {
 
   // Create custom target set
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
-  await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
-  await expect(page.getByRole('row')).toHaveCount(2);
+  await expect(page.getByRole('row').nth(4)).toHaveText('There aren\'t any targets in this set yet.');
+  await expect(page.getByRole('row')).toHaveCount(5);
 
-  // Edit custom target set
-  await page.getByRole('button', { name: 'Edit target set' }).click();
+  // Edit new target set
+  await expect(page.getByRole('row').nth(1)).toHaveText('There aren\'t any targets in this set yet.');
   await expect(page.getByLabel('Target set label')).toHaveValue('New target set');
   await page.getByLabel('Target set label').fill('800m Splits');
   await page.getByRole('button', { name: 'Add distance target' }).click();
@@ -134,7 +134,6 @@ test('Save settings and state across page reloads', async ({ page }) => {
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
 
   // Edit new target set
-  await page.getByRole('button', { name: 'Edit target set' }).click();
   await expect(page.getByLabel('Target set label')).toHaveValue('New target set');
   await page.getByLabel('Target set label').fill('800m Splits');
   await page.getByRole('button', { name: 'Add distance target' }).click();

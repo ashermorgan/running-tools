@@ -7,7 +7,7 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit target set" @click="dialogElement.showModal()">
+    <button class="icon" title="Edit target set" @click="editTargetSet()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
@@ -88,6 +88,16 @@ const internalValue = computed({
 });
 
 /**
+ * Open TargetEditor for the current target set
+ */
+function editTargetSet() {
+  if (dialogElement.value && dialogElement.value.showModal) {
+    // Missing in test environments, but is difficult to mock because it may be referenced on mount
+    dialogElement.value.showModal();
+  }
+}
+
+/**
  * Create and select a new target
  */
 function newTargetSet() {
@@ -97,6 +107,7 @@ function newTargetSet() {
     targets: [],
   };
   model.value = key;
+  editTargetSet();
 }
 
 /**

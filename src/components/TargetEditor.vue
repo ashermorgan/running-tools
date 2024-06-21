@@ -61,7 +61,7 @@
 
       <tr v-if="internalValue.targets.length === 0" class="empty-message">
         <td colspan="2">
-          There aren't any targets in this set yet
+          There aren't any targets in this set yet.
         </td>
       </tr>
     </tbody>
@@ -204,7 +204,7 @@ function removeTarget(index) {
 .target-editor th .icon {
   margin-left: 0.3em;
 }
-.target-editor tbody td:first-child {
+.target-editor tbody td:first-child::not(.empty-message) {
   display: flex;
   gap: 0.2em;
   flex-wrap: wrap;
