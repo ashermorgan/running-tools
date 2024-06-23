@@ -95,3 +95,10 @@ const results = computed(() => {
   return results;
 });
 </script>
+
+<style scoped>
+table th, table td {
+  /* Add more space between table cells */
+  padding: 0.2em 0.5em;
+}
+</style>

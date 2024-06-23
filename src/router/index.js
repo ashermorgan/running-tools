@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
 import AboutPage from '@/views/AboutPage.vue';
+import BatchCalculator from '@/views/BatchCalculator.vue';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 import SplitCalculator from '@/views/SplitCalculator.vue';
@@ -36,6 +37,15 @@ const router = createRouter({
     {
       path: '/calculate',
       redirect: '/home',
+    },
+    {
+      path: '/calculate/batch',
+      name: 'calculate-batch',
+      component: BatchCalculator,
+      meta: {
+        title: 'Batch Calculator',
+        back: 'home',
+      },
     },
     {
       path: '/calculate/paces',
