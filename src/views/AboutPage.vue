@@ -19,7 +19,23 @@
     </p>
 
     <h2>The Calculators</h2>
-    <p>Running Tools contains five calculators:</p>
+    <p>Running Tools contains six calculators:</p>
+
+    <h3>Batch Calculator</h3>
+    <p>
+      The <router-link :to="{ name: 'calculate-batch' }">Batch Calculator</router-link> calculates
+        results for a range of input times using the Pace, Race, or Workout Calculators.
+      Options such as the default unit system, selected target set, and race prediction model are
+        automatically loaded from the settings of the active calculator.
+    </p>
+    <p>
+      The Batch Calculator is useful for tasks such as:
+    </p>
+    <ul class="questions">
+      <li>Generating a table of mile splits and the corresponding marathon finish times.</li>
+      <li>Generating a table of equivalent race results for many distances and speeds.</li>
+      <li>Generating a table of workout split times for an entire team.</li>
+    </ul>
 
     <h3>Pace Calculator</h3>
     <p>
@@ -35,7 +51,6 @@
       <li>How far would I go in 30 minutes if I run 8 minutes per mile? (3.75 miles)</li>
       <li>What do I have to run per mile to finish a marathon in three hours? (6:52 per mile)</li>
     </ul>
-
 
     <h3>Race Calculator</h3>
     <p>
