@@ -36,6 +36,8 @@ details > * {
 /* calculator output */
 .output {
   min-width: 300px;
+  max-width: 100%;
+  overflow: auto;
 }
 @media only screen and (max-width: 500px) {
   .output {

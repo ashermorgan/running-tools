@@ -4,6 +4,11 @@
       A collection of tools for runners and their coaches
     </p>
     <div class="calculators">
+      <router-link :to="{ name: 'calculate-batch' }" v-slot="{ navigate }" custom>
+        <button @click="navigate">
+          Batch Calculator
+        </button>
+      </router-link>
       <router-link :to="{ name: 'calculate-paces' }" v-slot="{ navigate }" custom>
         <button @click="navigate">
           Pace Calculator
@@ -29,7 +34,6 @@
           Workout Calculator
         </button>
       </router-link>
-      <div class="card"></div>
     </div>
     <p class="about-link">
       <router-link :to="{ name: 'about' }">
@@ -57,10 +61,8 @@
   max-width: 39em;
   margin: 1em auto;
 }
-.calculators > * {
-  width: 12em;
-}
 .calculators button {
+  width: 12em;
   font-size: 1em;
   padding: 0.5em;
 }

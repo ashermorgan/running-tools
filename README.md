@@ -3,6 +3,8 @@ A collection of tools for runners and their coaches.
 Try it out [here](https://ashermorgan.github.io/running-tools/).
 
 ## Features
+- [Batch Calculator](https://ashermorgan.github.io/running-tools/#/calculate/batch):
+  Create tables of the results of the other calculators over a range of inputs
 - [Pace Calculator](https://ashermorgan.github.io/running-tools/#/calculate/paces):
   Calculate distances and times that are at the same pace
 - [Race Calculator](https://ashermorgan.github.io/running-tools/#/calculate/races):
