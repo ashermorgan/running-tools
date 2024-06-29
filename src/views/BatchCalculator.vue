@@ -9,7 +9,7 @@
     <div class="input">
       <div>
         Increment:
-        <time-input v-model="options.increment" label="Duration increment"/>
+        <time-input v-model="options.increment" label="Duration increment" :show-hours="false"/>
         &times;
         <integer-input v-model="options.rows" min="1" aria-label="Number of rows"/>
       </div>

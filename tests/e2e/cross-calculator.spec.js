@@ -1,6 +1,25 @@
 import { test, expect } from '@playwright/test';
 
 test('Save and update state when navigating between calculators', async ({ page }) => {
+  // Go to batch calculator
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Batch Calculator' }).click();
+
+  // Enter input pace (2 mi in 10:30)
+  await page.getByLabel('Input distance value').fill('2');
+  await page.getByLabel('Input distance unit').selectOption('Miles');
+  await page.getByLabel('Input duration hours').fill('0');
+  await page.getByLabel('Input duration minutes').fill('10');
+  await page.getByLabel('Input duration seconds').fill('30');
+
+  // Enter batch options (15 x 10s increments)
+  await page.getByLabel('Duration increment minutes').fill('0');
+  await page.getByLabel('Duration increment seconds').fill('10');
+  await page.getByLabel('Number of rows').fill('15');
+
+  // Change calculator
+  await page.getByLabel('Calculator').selectOption('Pace Calculator');
+
   // Go to pace calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Pace Calculator' }).click();
@@ -94,6 +113,48 @@ test('Save and update state when navigating between calculators', async ({ page 
 
   // Change default units (should update on other calculators too)
   await page.getByLabel('Default units').selectOption('Kilometers');
+
+  // Return to batch calculator
+  await page.getByRole('link', { name: 'Back' }).click();
+  await page.getByRole('button', { name: 'Batch Calculator' }).click();
+
+  // Assert pace results are correct (inputs and options not reset, new pace targets loaded)
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
+  await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(4);
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:36.58');
+  await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(4);
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:11.38');
+  await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(4);
+  await expect(page.getByRole('row')).toHaveCount(16);
+
+  // Assert race results are correct (new race options loaded)
+  await page.getByLabel('Calculator').selectOption('Race Calculator');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
+  await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24.04');
+  await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56.05');
+  await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
+  await expect(page.getByRole('row')).toHaveCount(16);
+
+  // Assert workout results are correct (new workout options loaded)
+  await page.getByLabel('Calculator').selectOption('Workout Calculator');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
+  await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41.93');
+  await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.98');
+  await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
+  await expect(page.getByRole('row')).toHaveCount(16);
 
   // Return to pace calculator
   await page.getByRole('link', { name: 'Back' }).click();
