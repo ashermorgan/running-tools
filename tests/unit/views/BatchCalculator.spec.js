@@ -96,6 +96,33 @@ test('should save batch options to localStorage when modified', async () => {
   }));
 });
 
+test('should load default units setting from localStorage', async () => {
+  // Initialize localStorage
+  localStorage.setItem('running-tools.default-unit-system', '"metric"');
+
+  // Initialize component
+  const wrapper = shallowMount(BatchCalculator);
+
+  // Assert default units setting loaded
+  expect(wrapper.find('select[aria-label="Default units"]').element.value).to.equal('metric');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.defaultUnitSystem)
+    .to.equal('metric');
+});
+
+test('should save default units setting from localStorage when modified', async () => {
+  // Initialize localStorage
+  localStorage.setItem('running-tools.default-unit-system', '"metric"');
+
+  // Initialize component
+  const wrapper = shallowMount(BatchCalculator);
+
+  // Change default units setting
+  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
+});
+
 test('should load selected target set from localStorage', async () => {
   // Initialize localStorage
   const selectedTargetSets = [
@@ -157,18 +184,131 @@ test('should load selected target set from localStorage', async () => {
 
   // Assert selected pace target set is loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('A');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[0].targets);
 
   // Assert selected race target set is loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('C');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[1].targets);
 
   // Assert selected workout target set is loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('E');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[2].targets);
+});
+
+test('should save selected target set to localStorage when modified', async () => {
+  // Initialize localStorage
+  const selectedTargetSets = [
+    {
+      name: 'Pace targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      ],
+    },
+    {
+      name: 'Race targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+      ],
+    },
+    {
+      name: 'Workout targets #1',
+      targets: [
+        {
+          type: 'distance', distanceValue: 5, distanceUnit: 'miles',
+          splitValue: 1, splitUnit: 'miles'
+        },
+      ],
+    },
+  ];
+  localStorage.setItem('running-tools.pace-calculator-target-sets', JSON.stringify({
+    'A': selectedTargetSets[0],
+    'B': {
+      name: 'Pace targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      ],
+    }
+  }));
+  localStorage.setItem('running-tools.pace-calculator-target-set', '"B"');
+  localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify({
+    'C': selectedTargetSets[1],
+    'D': {
+      name: 'Race targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 4, distanceUnit: 'miles' },
+      ],
+    }
+  }));
+  localStorage.setItem('running-tools.race-calculator-target-set', '"D"');
+  localStorage.setItem('running-tools.workout-calculator-target-sets', JSON.stringify({
+    'E': selectedTargetSets[2],
+    'F': {
+      name: 'Workout targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 6, distanceUnit: 'miles' },
+      ],
+    }
+  }));
+  localStorage.setItem('running-tools.workout-calculator-target-set', '"F"');
+
+  // Initialize component
+  const wrapper = shallowMount(BatchCalculator);
+
+  // Update selected pace target set
+  await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
+  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('A', 'selectedTargetSet');
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
+    .to.deep.equal(selectedTargetSets[0].targets);
+  expect(localStorage.getItem('running-tools.pace-calculator-target-set')).to.equal('"A"');
+
+  // Assert selected race target set is loaded
+  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('C', 'selectedTargetSet');
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
+    .to.deep.equal(selectedTargetSets[1].targets);
+  expect(localStorage.getItem('running-tools.race-calculator-target-set')).to.equal('"C"');
+
+  // Assert selected workout target set is loaded
+  await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
+  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('E', 'selectedTargetSet');
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
+    .to.deep.equal(selectedTargetSets[2].targets);
+  expect(localStorage.getItem('running-tools.workout-calculator-target-set')).to.equal('"E"');
+});
+
+test('should load advanced model options from localStorage', async () => {
+  // Initialize localStorage
+  localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    model: 'PurdyPointsModel',
+    riegelExponent: 1.2,
+  }));
+  localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
+    model: 'RiegelModel',
+    riegelExponent: 1.1,
+  }));
+
+  // Initialize component
+  const wrapper = shallowMount(BatchCalculator);
+
+  // Assert race prediction options are loaded
+  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+    model: 'PurdyPointsModel',
+    riegelExponent: 1.2,
+  });
+
+  // Assert workout prediction options are loaded
+  await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
+  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+    model: 'RiegelModel',
+    riegelExponent: 1.1,
+  });
 });
 
 test('should pass correct input props to DoubleOutputTable', async () => {

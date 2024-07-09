@@ -23,6 +23,25 @@
       </div>
     </div>
 
+    <details>
+      <summary>
+        <h2>Advanced Options</h2>
+      </summary>
+      <div>
+        Default units:
+        <select v-model="defaultUnitSystem" aria-label="Default units">
+          <option value="imperial">Miles</option>
+          <option value="metric">Kilometers</option>
+        </select>
+      </div>
+      <div>
+        Target Set:
+        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+      </div>
+      <race-options v-if="options.calculator !== 'pace'" v-model="advancedOptions"/>
+    </details>
+
     <h2>Batch Results</h2>
     <double-output-table class="output" :input-times="inputTimes" :input-distance="inputDistance"
       :calculate-result="calculateResult"
@@ -40,6 +59,8 @@ import { detectDefaultUnitSystem } from '@/utils/units';
 import DoubleOutputTable from '@/components/DoubleOutputTable.vue';
 import IntegerInput from '@/components/IntegerInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
+import RaceOptions from '@/components/RaceOptions.vue';
+import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import useStorage from '@/composables/useStorage';
@@ -121,14 +142,25 @@ const inputTimes = computed(() => {
 /**
  * The selected target set for the current calculator
  */
-const selectedTargetSet = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return selectedPaceTargetSet.value;
-  } else if (options.value.calculator === 'race') {
-    return selectedRaceTargetSet.value;
-  } else {
-    return selectedWorkoutTargetSet.value;
-  }
+const selectedTargetSet = computed({
+  get: () => {
+    if (options.value.calculator === 'pace') {
+      return selectedPaceTargetSet.value;
+    } else if (options.value.calculator === 'race') {
+      return selectedRaceTargetSet.value;
+    } else {
+      return selectedWorkoutTargetSet.value;
+    }
+  },
+  set: (newValue) => {
+    if (options.value.calculator === 'pace') {
+      selectedPaceTargetSet.value = newValue;
+    } else if (options.value.calculator === 'race') {
+      selectedRaceTargetSet.value = newValue;
+    } else {
+      selectedWorkoutTargetSet.value = newValue;
+    }
+  },
 });
 
 /**
@@ -141,6 +173,19 @@ const targetSets = computed(() => {
     return raceTargetSets.value;
   } else {
     return workoutTargetSets.value;
+  }
+});
+
+/**
+ * The advanced options for the current calculator
+ */
+const advancedOptions = computed(() => {
+  if (options.value.calculator === 'pace') {
+    return {};
+  } else if (options.value.calculator === 'race') {
+    return raceOptions.value;
+  } else {
+    return workoutOptions.value;
   }
 });
 

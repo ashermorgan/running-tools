@@ -18,7 +18,11 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByLabel('Number of rows').fill('15');
 
   // Change calculator
-  await page.getByLabel('Calculator').selectOption('Pace Calculator');
+  await page.getByLabel('Calculator').selectOption('Race Calculator');
+
+  // Change prediction model
+  await page.getByText('Advanced Options').click();
+  await page.getByLabel('Prediction model').selectOption('Riegel\'s Model');
 
   // Go to pace calculator
   await page.goto('/');
@@ -60,10 +64,6 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByLabel('Input race duration hours').fill('0');
   await page.getByLabel('Input race duration minutes').fill('10');
   await page.getByLabel('Input race duration seconds').fill('30');
-
-  // Change prediction model
-  await page.getByText('Advanced Options').click();
-  await page.getByLabel('Prediction model').selectOption('Riegel\'s Model');
 
   // Go to split calculator
   await page.getByRole('link', { name: 'Back' }).click();
@@ -118,20 +118,7 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByRole('link', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Batch Calculator' }).click();
 
-  // Assert pace results are correct (inputs and options not reset, new pace targets loaded)
-  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
-  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
-  await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(4);
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:36.58');
-  await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(4);
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:11.38');
-  await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(4);
-  await expect(page.getByRole('row')).toHaveCount(16);
-
-  // Assert race results are correct (new race options loaded)
-  await page.getByLabel('Calculator').selectOption('Race Calculator');
+  // Assert pace results are correct (inputs and options not reset)
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
@@ -141,6 +128,19 @@ test('Save and update state when navigating between calculators', async ({ page 
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56.05');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
+  await expect(page.getByRole('row')).toHaveCount(16);
+
+  // Assert pace results are correct (inputs and options not reset, new pace targets loaded)
+  await page.getByLabel('Calculator').selectOption('Pace Calculator');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+  await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
+  await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(4);
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:36.58');
+  await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(4);
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:11.38');
+  await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(4);
   await expect(page.getByRole('row')).toHaveCount(16);
 
   // Assert workout results are correct (new workout options loaded)
@@ -170,7 +170,7 @@ test('Save and update state when navigating between calculators', async ({ page 
   await page.getByRole('link', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Race Calculator' }).click();
 
-  // Assert race predictions are correct (input race and prediction model not reset)
+  // Assert race predictions are correct (input race not resset and new prediction model loaded)
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '5:02.17' + '3:08 / km');
   await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.86' + '3:21 / km');
   await expect(page.getByRole('row')).toHaveCount(17);
