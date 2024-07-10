@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('Save and update state when navigating between calculators', async ({ page }) => {
+test('Cross-calculator', async ({ page }) => {
   // Go to batch calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Batch Calculator' }).click();
