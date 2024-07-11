@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.0 - 2024-07-11
+
+### Added
+- Batch Calculator
+- Workout Calculator
+
+### Changed
+- The edit target set dialog is opened automatically after a new target set is
+  created
+- Target sets can only be used by the calculator they were created in (and by
+  the Batch Calculator for pace, race, and workout target sets)
+
+### Fixed
+- Bug that prevented Split Calculator splits from being saved after a new target
+  set was created
+
 ## 1.3.0 - 2024-03-25
 
 ### Added
