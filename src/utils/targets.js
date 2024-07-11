@@ -103,7 +103,7 @@ export const defaultTargetSets = {
         type: 'time', time: 3600,
       },
       {
-        splitValue: 2, splitUnit: 'miles',
+        splitValue: 1, splitUnit: 'miles',
         type: 'time', time: 7200,
       },
     ],
