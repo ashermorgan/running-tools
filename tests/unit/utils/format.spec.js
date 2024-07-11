@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import formatUtils from '@/utils/format';
+import * as formatUtils from '@/utils/format';
 
 describe('formatNumber method', () => {
   test('should correctly format number when padding is not 0', () => {

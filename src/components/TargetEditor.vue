@@ -7,13 +7,13 @@
           <input v-model="internalValue.name" placeholder="Target set label"
             aria-label="Target set label"/>
           <button class="icon" :title="isCustomSet ? 'Delete target set' : 'Revert target set'"
-            @click="revert">
+            @click="emit('revert')">
             <vue-feather :type="isCustomSet ? 'trash-2' : 'rotate-ccw'" aria-hidden="true"/>
           </button>
         </th>
 
         <th>
-          <button class="icon" title="Close" @click="close">
+          <button class="icon" title="Close" @click="emit('close')">
             <vue-feather type="x" aria-hidden="true"/>
           </button>
         </th>
@@ -22,18 +22,34 @@
 
     <tbody>
       <tr v-for="(item, index) in internalValue.targets" :key="index">
-        <td v-if="item.result === 'time'">
-          <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
-            :min="0" :digits="2"/>
-          <select v-model="item.distanceUnit" aria-label="Target distance unit">
-            <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-              {{ value.name }}
-            </option>
-          </select>
-        </td>
+        <td>
+          <span v-if="setType === 'workout'">
+            <decimal-input v-model="item.splitValue" aria-label="Split distance value"
+              :min="0" :digits="2"/>
+            <select v-model="item.splitUnit" aria-label="Split distance unit">
+              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+                {{ value.name }}
+              </option>
+            </select>
+          </span>
 
-        <td v-else>
-          <time-input v-model="item.time" label="Target duration"/>
+          <span v-if="setType === 'workout'">
+            &nbsp;@&nbsp;
+          </span>
+
+          <span v-if="item.type === 'distance'">
+            <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
+              :min="0" :digits="2"/>
+            <select v-model="item.distanceUnit" aria-label="Target distance unit">
+              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+                {{ value.name }}
+              </option>
+            </select>
+          </span>
+
+          <span v-else>
+            <time-input v-model="item.time" label="Target duration"/>
+          </span>
         </td>
 
         <td>
@@ -45,7 +61,7 @@
 
       <tr v-if="internalValue.targets.length === 0" class="empty-message">
         <td colspan="2">
-          There aren't any targets in this set yet
+          There aren't any targets in this set yet.
         </td>
       </tr>
     </tbody>
@@ -56,152 +72,143 @@
           <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button title="Add time target" @click="addTimeTarget">
+          <button title="Add time target" @click="addTimeTarget" v-if="setType !== 'split'">
             Add time target
           </button>
-          <br/>
-          <p>Note: time targets are ignored by the Split Calculator</p>
         </td>
       </tr>
     </tfoot>
   </table>
 </template>
 
-<script>
+<script setup>
+import { watch, ref } from 'vue';
+
 import VueFeather from 'vue-feather';
 
-import targetUtils from '@/utils/targets';
-import unitUtils from '@/utils/units';
+import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
-export default {
-  name: 'TargetEditor',
+/**
+ * The component value
+ */
+const model = defineModel({
+  type: Object,
+  default: {
+    name: 'New target set',
+    targets: [],
+  }
+});
 
-  components: {
-    DecimalInput,
-    TimeInput,
-    VueFeather,
+const props = defineProps({
+  /**
+   * Whether the target set is a custom or default set
+   */
+  isCustomSet: {
+    type: Boolean,
+    default: false,
   },
 
-  props: {
-    /**
-     * The targets
-     */
-    modelValue: {
-      type: Object,
-      default: JSON.parse(JSON.stringify(targetUtils.defaultTargetSet)),
-    },
-
-    /**
-     * Whether the target set is a custom or default set
-     */
-    isCustomSet: {
-      type: Boolean,
-      default: false,
-    },
-
-    /**
-     * The unit system to use when creating distance targets
-     */
-    defaultUnitSystem: {
-      type: String,
-      default: 'metric',
-    },
+  /**
+   * The unit system to use when creating distance targets
+   */
+  defaultUnitSystem: {
+    type: String,
+    default: 'metric',
   },
 
-  data() {
-    return {
-      /**
-       * The internal value
-       */
-      internalValue: this.modelValue,
-
-      /**
-       * The distance units
-       */
-      distanceUnits: unitUtils.DISTANCE_UNITS,
-    };
+  /**
+   * The target set type ('standard', 'split', or 'workout')
+   */
+  setType: {
+    type: String,
+    default: 'standard'
   },
+});
 
-  watch: {
-    /**
-     * Update the component value when the modelValue prop changes
-     * @param {Number} newValue The new prop value
-     */
-    modelValue: {
-      deep: true,
-      handler(newValue) {
-        this.internalValue = newValue;
-      },
-    },
+// Declare emitted events
+const emit = defineEmits(['revert', 'close']);
 
-    /**
-     * Emit the input event when the component value changes
-     * @param {Number} newValue The new component value
-     */
-    internalValue: {
-      deep: true,
-      handler(newValue) {
-        this.$emit('update:modelValue', newValue);
-      },
-    },
-  },
+/**
+ * The internal value
+ */
+const internalValue = ref(model.value);
 
-  methods: {
-    /**
-     * Revert the target set
-     */
-    revert() {
-      // Emit revert event
-      this.$emit('revert');
-    },
+/**
+ * Update the internal value when the component value changes
+ */
+watch(model, (newValue) => {
+    internalValue.value = newValue;
+}, { deep: true });
 
-    /**
-     * Close the target editor
-     */
-    close() {
-      // Emit close event
-      this.$emit('close');
-    },
+/**
+ * Update the component value when the internal value changes
+ */
+watch(internalValue, (newValue) => {
+  model.value = newValue;
+}, { deep: true });
 
-    /**
-     * Add a new distance based target
-     */
-    addDistanceTarget() {
-      this.internalValue.targets.push({
-        result: 'time',
-        distanceValue: 1,
-        distanceUnit: unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem),
-      });
-    },
+/**
+ * Add a new distance based target
+ */
+function addDistanceTarget() {
+  if (props.setType === 'workout') {
+    internalValue.value.targets.push({
+      type: 'distance',
+      distanceValue: 1,
+      distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+      splitValue: 1,
+      splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  } else {
+    internalValue.value.targets.push({
+      type: 'distance',
+      distanceValue: 1,
+      distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  }
+}
 
-    /**
-     * Add a new time based target
-     */
-    addTimeTarget() {
-      this.internalValue.targets.push({
-        result: 'distance',
-        time: 600,
-      });
-    },
+/**
+ * Add a new time based target
+ */
+function addTimeTarget() {
+  if (props.setType === 'workout') {
+    internalValue.value.targets.push({
+      type: 'time',
+      time: 600,
+      splitValue: 1,
+      splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
+    });
+  } else {
+    internalValue.value.targets.push({
+      type: 'time',
+      time: 600,
+    });
+  }
+}
 
-    /**
-     * Remove a target
-     * @param {Number} index The index of the target
-     */
-    removeTarget(index) {
-      this.internalValue.targets.splice(index, 1);
-    },
-  },
-};
+/**
+ * Remove a target
+ * @param {Number} index The index of the target
+ */
+function removeTarget(index) {
+  internalValue.value.targets.splice(index, 1);
+}
 </script>
 
 <style scoped>
 /* edit targets table */
 .target-editor th .icon {
   margin-left: 0.3em;
+}
+.target-editor tbody td:first-child::not(.empty-message) {
+  display: flex;
+  gap: 0.2em;
+  flex-wrap: wrap;
+  align-items: center;
 }
 .target-editor th:last-child, .target-editor td:last-child {
   text-align: right;
@@ -216,9 +223,6 @@ export default {
 }
 .target-editor tfoot button {
   margin: 0.5em;
-}
-.target-editor tfoot p {
-  margin-top: 0.5em;
 }
 @media only screen and (max-width: 800px) {
   /* leave space for revert button on mobile devices */

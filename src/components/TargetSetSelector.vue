@@ -7,146 +7,133 @@
       <option value="_new">[ Create New Target Set ]</option>
     </select>
 
-    <button class="icon" title="Edit target set"
-      @click="reloadTargetSets(); sortTargetSet(); $refs.dialog.showModal()">
+    <button class="icon" title="Edit target set" @click="editTargetSet()">
       <vue-feather type="edit" aria-hidden="true"/>
     </button>
 
-    <dialog ref="dialog" class="target-set-editor-dialog" aria-label="Edit target set">
-      <target-editor @close="$refs.dialog.close()" v-model="targetSets[internalValue]"
-        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem"
-        :isCustomSet="!internalValue.startsWith('_')"/>
+    <dialog ref="dialogElement" class="target-set-editor-dialog" aria-label="Edit target set">
+      <target-editor @close="sortTargetSet(); dialogElement.close()"
+        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem" :setType="setType"
+        v-model="targetSets[internalValue]" :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
 </template>
 
-<script>
+<script setup>
+import { computed, nextTick, ref } from 'vue';
+
 import VueFeather from 'vue-feather';
 
-import storage from '@/utils/localStorage';
-import targetUtils from '@/utils/targets';
+import { sort, defaultTargetSets } from '@/utils/targets';
 
 import TargetEditor from '@/components/TargetEditor.vue';
 
-export default {
-  name: 'TargetSetSelector',
+/**
+ * The selected target set
+ */
+const model = defineModel('selectedTargetSet', {
+  type: String,
+  default: '_new',
+});
 
-  components: {
-    TargetEditor,
-    VueFeather,
+/**
+ * The target sets
+ */
+const targetSets = defineModel('targetSets', {
+  type: Object,
+  default: {},
+});
+
+defineProps({
+  /**
+   * The unit system to use when creating distance targets
+   */
+  defaultUnitSystem: {
+    type: String,
+    default: 'metric',
   },
 
-  props: {
-    /**
-     * The selected target set
-     */
-    modelValue: {
-      type: String,
-      default: '_new',
-    },
-
-    /**
-     * The unit system to use when creating distance targets
-     */
-    defaultUnitSystem: {
-      type: String,
-      default: 'metric',
-    },
+  /**
+   * The target set type ('standard', 'split', or 'workout')
+   */
+  setType: {
+    type: String,
+    default: 'standard'
   },
+});
 
-  data() {
-    return {
-      /**
-       * The internal value
-       */
-      internalValue: this.modelValue,
+/**
+ * The dialog element
+ */
+const dialogElement = ref(null);
 
-      /**
-       * The target sets
-       */
-      targetSets: storage.get('target-sets', targetUtils.defaultTargetSets),
-    };
+/**
+ * The internal value
+ */
+const internalValue = computed({
+  get: () => {
+    if (model.value == '_new') {
+      newTargetSet();
+    }
+    return model.value;
   },
-
-  watch: {
-    /**
-     * Update the component value when the modelValue prop changes
-     */
-    modelValue(newValue) {
-      if (newValue !== this.internalValue) {
-        this.internalValue = newValue;
-      }
-    },
-
-    /**
-     * Emit the input event when the component value changes and create a new set if necessary
-     */
-    internalValue: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue == '_new') {
-          let key = Date.now().toString();
-          this.targetSets[key] = {
-            name: 'New target set',
-            targets: [],
-          };
-          this.internalValue = key;
-        } else {
-          this.$emit('update:modelValue', newValue);
-        }
-      },
-    },
-
-    /**
-     * Save target sets
-     */
-    targetSets: {
-      deep: true,
-      handler(newValue) {
-        storage.set('target-sets', newValue);
-        this.$emit('targets-updated');
-      },
-    },
+  set: async (newValue) => {
+    if (newValue == '_new') {
+      await nextTick(); // <select> won't update if value changed immediately
+      newTargetSet();
+    } else {
+      model.value = newValue;
+    }
   },
+});
 
-  methods: {
-    /**
-     * Revert or remove the current target set
-     */
-    revertTargetSet() {
-      if (this.internalValue.startsWith('_')) {
-        // Revert default set
-        this.targetSets[this.internalValue] =
-          JSON.parse(JSON.stringify(targetUtils.defaultTargetSets[this.internalValue]));
-        this.sortTargetSet();
-      } else {
-        // Remove custom set
-        delete this.targetSets[this.internalValue];
-        this.internalValue = [...Object.keys(this.targetSets), '_new'][0];
-        if (this.$refs.dialog.close) this.$refs.dialog.close();
-      }
-    },
+/**
+ * Open TargetEditor for the current target set
+ */
+function editTargetSet() {
+  if (dialogElement.value && dialogElement.value.showModal) {
+    // Missing in test environments, but is difficult to mock because it may be referenced on mount
+    dialogElement.value.showModal();
+  }
+}
 
-    /**
-     * Sort the current target set
-     */
-    sortTargetSet() {
-      this.targetSets[this.internalValue].targets =
-        targetUtils.sort(this.targetSets[this.internalValue].targets);
-    },
+/**
+ * Create and select a new target
+ */
+function newTargetSet() {
+  let key = Date.now().toString();
+  targetSets.value[key] = {
+    name: 'New target set',
+    targets: [],
+  };
+  model.value = key;
+  editTargetSet();
+}
 
-    /**
-     * Reload the target sets
-     */
-    reloadTargetSets() {
-      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    },
-  },
+/**
+ * Revert or remove the current target set
+ */
+function revertTargetSet() {
+  if (internalValue.value.startsWith('_')) {
+    // Revert default set
+    targetSets.value[internalValue.value] =
+      JSON.parse(JSON.stringify(defaultTargetSets[internalValue.value]));
+    sortTargetSet();
+  } else {
+    // Remove custom set
+    delete targetSets.value[internalValue.value];
+    internalValue.value = [...Object.keys(targetSets.value), '_new'][0];
+    if (dialogElement.value.close) dialogElement.value.close();
+  }
+}
 
-  activated() {
-    this.reloadTargetSets();
-  },
-};
+/**
+ * Sort the current target set
+ */
+function sortTargetSet() {
+  targetSets.value[internalValue.value].targets =
+    sort(targetSets.value[internalValue.value].targets);
+}
 </script>
 
 <style scoped>
@@ -155,7 +142,7 @@ export default {
 }
 
 .target-set-editor-dialog {
-  width: min(100% - 2em, 400px);
+  width: min(100% - 2em, 450px);
   max-height: min(100% - 2em, 815px);
   margin-top: 100px;
 }

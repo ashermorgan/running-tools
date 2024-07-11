@@ -84,7 +84,7 @@ const PurdyPointsModel = {
    */
   getPurdyPoints(d, t) {
     // Get variables
-    const variables = this.getVariables(d);
+    const variables = PurdyPointsModel.getVariables(d);
 
     // Calculate Purdy Points
     const points = variables.a * ((variables.twsec / t) - variables.b);
@@ -102,10 +102,10 @@ const PurdyPointsModel = {
    */
   predictTime(d1, t1, d2) {
     // Calculate Purdy Points for distance 1
-    const points = this.getPurdyPoints(d1, t1);
+    const points = PurdyPointsModel.getPurdyPoints(d1, t1);
 
     // Calculate time for distance 2
-    const variables = this.getVariables(d2);
+    const variables = PurdyPointsModel.getVariables(d2);
     const seconds = (variables.a * variables.twsec) / (points + (variables.a * variables.b));
 
     // Return predicted time
@@ -161,9 +161,9 @@ const PurdyPointsModel = {
     // Initialize estimate
     let estimate = (d1 * t2) / t1;
 
-    // Refine estimate
-    const method = (x) => this.predictTime(d1, t1, x);
-    const derivative = (x) => this.derivative(d1, t1, x) / 500; // Derivative on its own is too slow
+    // Refine estimate (derivative on its own is too slow)
+    const method = (x) => PurdyPointsModel.predictTime(d1, t1, x);
+    const derivative = (x) => PurdyPointsModel.derivative(d1, t1, x) / 500;
     estimate = NewtonsMethod(estimate, t2, method, derivative, 0.01);
 
     // Return estimate
@@ -208,7 +208,7 @@ const VO2MaxModel = {
    * @returns {Number} The runner's VO2 max
    */
   getVO2Max(d, t) {
-    const result = this.getVO2(d, t) / this.getVO2Percentage(t);
+    const result = VO2MaxModel.getVO2(d, t) / VO2MaxModel.getVO2Percentage(t);
     return result;
   },
 
@@ -237,14 +237,14 @@ const VO2MaxModel = {
    */
   predictTime(d1, t1, d2) {
     // Calculate input VO2 max
-    const inputVO2 = this.getVO2Max(d1, t1);
+    const inputVO2 = VO2MaxModel.getVO2Max(d1, t1);
 
     // Initialize estimate
     let estimate = (t1 * d2) / d1;
 
     // Refine estimate
-    const method = (x) => this.getVO2Max(d2, x);
-    const derivative = (x) => this.VO2MaxTimeDerivative(d2, x);
+    const method = (x) => VO2MaxModel.getVO2Max(d2, x);
+    const derivative = (x) => VO2MaxModel.VO2MaxTimeDerivative(d2, x);
     estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
 
     // Return estimate
@@ -272,14 +272,14 @@ const VO2MaxModel = {
    */
   predictDistance(t1, d1, t2) {
     // Calculate input VO2 max
-    const inputVO2 = this.getVO2Max(d1, t1);
+    const inputVO2 = VO2MaxModel.getVO2Max(d1, t1);
 
     // Initialize estimate
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate
-    const method = (x) => this.getVO2Max(x, t2);
-    const derivative = (x) => this.VO2MaxDistanceDerivative(x, t2);
+    const method = (x) => VO2MaxModel.getVO2Max(x, t2);
+    const derivative = (x) => VO2MaxModel.VO2MaxDistanceDerivative(x, t2);
     estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
 
     // Return estimate
@@ -332,8 +332,8 @@ const CameronModel = {
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate
-    const method = (x) => this.predictTime(d1, t1, x);
-    const derivative = (x) => this.derivative(d1, t1, x);
+    const method = (x) => CameronModel.predictTime(d1, t1, x);
+    const derivative = (x) => CameronModel.derivative(d1, t1, x);
     estimate = NewtonsMethod(estimate, t2, method, derivative, 0.01);
 
     // Return estimate
@@ -408,10 +408,54 @@ const AverageModel = {
   },
 };
 
-export default {
-  PurdyPointsModel,
-  VO2MaxModel,
-  CameronModel,
-  RiegelModel,
-  AverageModel,
-};
+/**
+ * Predict a race time
+   * @param {Number} d1 The distance of the input race in meters
+   * @param {Number} t1 The finish time of the input race in seconds
+   * @param {Number} d2 The distance of the output race in meters
+   * @param {String} model The race prediction model to use
+   * @param {Number} c The value of the exponent in Pete Riegel's Model
+ */
+export function predictTime(d1, t1, d2, model='AverageModel', c=1.06) {
+  switch (model) {
+    case 'AverageModel':
+      return AverageModel.predictTime(d1, t1, d2, c);
+    case 'PurdyPointsModel':
+      return PurdyPointsModel.predictTime(d1, t1, d2);
+    case 'VO2MaxModel':
+      return VO2MaxModel.predictTime(d1, t1, d2);
+    case 'RiegelModel':
+      return RiegelModel.predictTime(d1, t1, d2, c);
+    case 'CameronModel':
+      return CameronModel.predictTime(d1, t1, d2);
+  }
+}
+
+/**
+ * Predict a race distance
+   * @param {Number} t1 The finish time of the input race in seconds
+   * @param {Number} d1 The distance of the input race in meters
+   * @param {Number} t2 The finish time of the output race in seconds
+   * @param {String} model The race prediction model to use
+   * @param {Number} c The value of the exponent in Pete Riegel's Model
+ */
+export function predictDistance(t1, d1, t2, model='AverageModel', c=1.06) {
+  switch (model) {
+    default:
+    case 'AverageModel':
+      return AverageModel.predictDistance(t1, d1, t2, c);
+    case 'PurdyPointsModel':
+      return PurdyPointsModel.predictDistance(t1, d1, t2);
+    case 'VO2MaxModel':
+      return VO2MaxModel.predictDistance(t1, d1, t2);
+    case 'RiegelModel':
+      return RiegelModel.predictDistance(t1, d1, t2, c);
+    case 'CameronModel':
+      return CameronModel.predictDistance(t1, d1, t2);
+  }
+}
+
+export const getPurdyPoints = PurdyPointsModel.getPurdyPoints;
+export const getVO2 = VO2MaxModel.getVO2;
+export const getVO2Percentage = VO2MaxModel.getVO2Percentage;
+export const getVO2Max = VO2MaxModel.getVO2Max;

@@ -10,16 +10,13 @@ h2 {
   font-size: 1.3em;
   margin-bottom: 0.2em;
 }
-* + h2, summary h2 {
+h2:not(:first-child), summary h2 {
   margin-top: 0.5em;
 }
 
 /* calculator input */
 .input>* {
   margin-bottom: 5px;  /* adds space between wrapped lines */
-}
-.input select {
-  margin-left: 5px;
 }
 
 /* collapsable sections */
@@ -39,6 +36,8 @@ details > * {
 /* calculator output */
 .output {
   min-width: 300px;
+  max-width: 100%;
+  overflow: auto;
 }
 @media only screen and (max-width: 500px) {
   .output {

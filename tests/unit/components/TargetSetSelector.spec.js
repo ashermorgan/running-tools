@@ -1,37 +1,30 @@
-import { beforeEach, test, expect, vi } from 'vitest';
+import { test, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
-beforeEach(() => {
-  localStorage.clear();
-})
-
 test('should correctly render target sets options', async () => {
-  // Initialize localStorage
-  const targetSets = {
-    'A': {
-      name: '1st target set',
-      targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-      ],
-    },
-    'B': {
-      name: '2nd target set',
-      targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
-      ],
-    },
-  };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
   // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: 'B',
+      selectedTargetSet: 'B',
+      targetSets: {
+        'A': {
+          name: '1st target set',
+          targets: [
+            { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+            { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+            { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+          ],
+        },
+        'B': {
+          name: '2nd target set',
+          targets: [
+            { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+            { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+            { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
+          ],
+        },
+      },
     }
   });
 
@@ -50,86 +43,110 @@ test('should correctly render target sets options', async () => {
 });
 
 test('Create New Target Set option should correctly add target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     'A': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     'B': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: 'A',
+      selectedTargetSet: '_new',
+      targetSets,
     }
   });
+  await wrapper.vm.$nextTick();
 
-  // Add target set
-  await wrapper.find('select').setValue('_new');
+  // Assert new target set selected (key is unix timestamp in milliseconds)
+  const key1 = wrapper.find('select').element.value;
+  expect(parseInt(key1)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
 
   // Assert target set options were correctly updated
-  const options = wrapper.findAll('option');
+  let options = wrapper.findAll('option');
   expect(options[0].element.text).to.equal('1st target set');
   expect(options[0].element.value).to.equal('A');
   expect(options[1].element.text).to.equal('2nd target set');
   expect(options[1].element.value).to.equal('B');
   expect(options[2].element.text).to.equal('New target set');
-  expect(options[2].element.value).to.match(/\d{12,14}/);
+  expect(options[2].element.value).to.equal(key1)
   expect(options[3].element.text).to.equal('[ Create New Target Set ]');
   expect(options[3].element.value).to.equal('_new');
   expect(options.length).to.equal(4);
 
   // Assert target sets were correctly updated
-  targetSets[options[2].element.value] = {
+  targetSets[key1] = {
     name: 'New target set',
     targets: [],
   };
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  // Add another target set
+  await wrapper.find('select').setValue('_new');
+
+  // Assert new target set selected (key is unix timestamp in milliseconds)
+  const key2 = wrapper.find('select').element.value;
+  expect(parseInt(key2)).to.be.closeTo(parseInt(Date.now().toString()), 1000);
+  expect(key2).to.not.equal(key1);
+
+  // Assert target set options were correctly updated
+  options = wrapper.findAll('option');
+  expect(options[0].element.text).to.equal('1st target set');
+  expect(options[0].element.value).to.equal('A');
+  expect(options[1].element.text).to.equal('2nd target set');
+  expect(options[1].element.value).to.equal('B');
+  expect(options[2].element.text).to.equal('New target set');
+  expect(options[2].element.value).to.equal(key1)
+  expect(options[3].element.text).to.equal('New target set');
+  expect(options[3].element.value).to.equal(key2);
+  expect(options[4].element.text).to.equal('[ Create New Target Set ]');
+  expect(options[4].element.value).to.equal('_new');
+  expect(options.length).to.equal(5);
+
+  // Assert target sets were correctly updated
+  targetSets[key2] = {
+    name: 'New target set',
+    targets: [],
+  };
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('Revert event should correctly reset a default target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
     }
   });
 
@@ -149,42 +166,37 @@ test('Revert event should correctly reset a default target set', async () => {
   // Assert target sets were correctly updated
   targetSets._split_targets.name = '5K Mile Splits';
   targetSets._split_targets.targets[2] = {
-    result: 'time',
+    type: 'distance',
     distanceValue: 5,
     distanceUnit: 'kilometers',
   };
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
-
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('Revert event should correctly delete a custom target set', async () => {
-  // Initialize localStorage
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '1st target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
       ],
     },
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '1234567890123',
+      selectedTargetSet: '1234567890123',
+      targetSets,
     }
   });
 
@@ -201,36 +213,31 @@ test('Revert event should correctly delete a custom target set', async () => {
 
   // Assert target sets were correctly updated
   delete targetSets['1234567890123'];
-  expect(localStorage.getItem('running-tools.target-sets')).to.equal(JSON.stringify(targetSets));
-
-  // Assert targets-updated event was emitted
-  expect(wrapper.emitted()['targets-updated'].length).to.equal(1);
+  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
 });
 
 test('edit button should open target editor with the correct props for default set', async () => {
-  // Initialize localStorage
+  // Initialize component
   const targetSets = {
     '_split_targets': {
       name: '5K Mile Splits',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
       defaultUnitSystem: 'fake-unit-system',
     }
   });
 
   // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
+  wrapper.vm.dialogElement.showModal = vi.fn();
 
   // Click edit button
   await wrapper.find('button').trigger('click');
@@ -243,29 +250,27 @@ test('edit button should open target editor with the correct props for default s
 });
 
 test('edit button should open target editor with the correct props for custom set', async () => {
-  // Initialize localStorage
+  // Initialize component
   const targetSets = {
     '1234567890123': {
       name: '2nd target set',
       targets: [
-        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 10, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
       ],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '1234567890123',
+      selectedTargetSet: '1234567890123',
+      targetSets,
       defaultUnitSystem: 'fake-unit-system',
     }
   });
 
   // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
+  wrapper.vm.dialogElement.showModal = vi.fn();
 
   // Click edit button
   await wrapper.find('button').trigger('click');
@@ -277,48 +282,57 @@ test('edit button should open target editor with the correct props for custom se
   expect(targetEditor.vm.defaultUnitSystem).to.equal('fake-unit-system');
 });
 
-test('should reload and sort target set before target editor is opened', async () => {
-  // Initialize localStorage
+test('should sort target set after target editor is closed', async () => {
+  // Initialize component
   let targetSets = {
     '_split_targets': {
       name: '5K Mile Splits',
-      targets: [
-        { result: 'distance', timeValue: 60 },
-        { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-        { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-        { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-      ],
+      targets: [],
     },
   };
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
-
-  // Initialize component
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
-      modelValue: '_split_targets',
+      selectedTargetSet: '_split_targets',
+      targetSets,
     }
   });
 
-  // Update localStorage
-  targetSets._split_targets.name = '5K Mile Splits #2';
-  localStorage.setItem('running-tools.target-sets', JSON.stringify(targetSets));
+  // Mock modal close function
+  wrapper.vm.dialogElement.close = vi.fn();
 
-  // Mock showModal function
-  wrapper.vm.$refs.dialog.showModal = vi.fn();
-
-  // Click edit button
-  await wrapper.find('button').trigger('click');
+  // Update targets and trigger close event
+  await wrapper.findComponent({ name: 'target-editor' }).setValue({
+    name: '5K Mile Splits',
+    targets: [
+      { type: 'time', timeValue: 60 },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+    ],
+  });
+  await wrapper.findComponent({ name: 'target-editor' }).vm.$emit('close');
 
   // Assert target set was sorted
   expect(wrapper.findComponent({ name: 'target-editor' }).vm.modelValue).to.deep.equal({
-    name: '5K Mile Splits #2',
+    name: '5K Mile Splits',
     targets: [
-      { result: 'time', distanceValue: 1, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 2, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 3, distanceUnit: 'miles' },
-      { result: 'time', distanceValue: 5, distanceUnit: 'kilometers' },
-      { result: 'distance', timeValue: 60 },
+      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      { type: 'time', timeValue: 60 },
     ],
   });
+});
+
+test('should correctly pass setType prop to TargetEditor', async () => {
+  const wrapper = shallowMount(TargetSetSelector, {
+    propsData: {
+      setType: 'foo'
+    }
+  });
+
+  // Assert target editor props are correct
+  expect(wrapper.findComponent({ name: 'target-editor' }).vm.setType).to.equal('foo');
 });

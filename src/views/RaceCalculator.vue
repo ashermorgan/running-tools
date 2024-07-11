@@ -2,19 +2,7 @@
   <div class="calculator">
     <h2>Input Race Result</h2>
     <div class="input">
-      <div>
-        Distance:
-        <decimal-input v-model="inputDistance" aria-label="Input distance value" :min="0" :digits="2"/>
-        <select v-model="inputUnit" aria-label="Input distance unit">
-          <option v-for="(value, key) in distanceUnits" :key="key" :value="key">
-            {{ value.name }}
-          </option>
-        </select>
-      </div>
-      <div>
-        Time:
-        <time-input v-model="inputTime" label="Input race duration"/>
-      </div>
+      <pace-input v-model="input" label="Input race"/>
     </div>
 
     <details>
@@ -22,14 +10,15 @@
         <h2>Race Statistics</h2>
       </summary>
       <div>
-        Purdy Points: <b>{{ formatNumber(purdyPoints, 0, 1, true) }}</b>
+        Purdy Points: <b>{{ formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
-        V&#775;O&#8322;: <b>{{ formatNumber(vo2, 0, 1, true) }}</b> ml/kg/min
-          (<b>{{ formatNumber(vo2Percentage, 0, 1, true) }}%</b> of max)
+        V&#775;O&#8322;: <b>{{ formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min
+          (<b>{{ formatNumber(raceStats.vo2MaxPercentage, 0, 1, true) }}%</b> of max)
       </div>
       <div>
-        V&#775;O&#8322; Max: <b>{{ formatNumber(vo2Max, 0, 1, true) }}</b> ml/kg/min
+        V&#775;O&#8322; Max: <b>{{ formatNumber(raceStats.vo2Max, 0, 1, true) }}</b>
+          ml/kg/min
       </div>
     </details>
 
@@ -46,304 +35,72 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model="selectedTargetSet" @targets-updated="reloadTargets"
-          :default-unit-system="defaultUnitSystem"/>
+        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
-      <div>
-        Prediction Model:
-        <select v-model="model" aria-label="Prediction model">
-          <option value="AverageModel">Average</option>
-          <option value="PurdyPointsModel">Purdy Points Model</option>
-          <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
-          <option value="CameronModel">Cameron's Model</option>
-          <option value="RiegelModel">Riegel's Model</option>
-        </select>
-      </div>
-      <div>
-        Riegel Exponent:
-        <decimal-input v-model="riegelExponent" aria-label="Riegel exponent" :min="1" :max="1.3"
-          :digits="2" :step="0.01"/>
-        (default: 1.06)
-      </div>
+      <race-options v-model="options"/>
     </details>
 
     <h2>Equivalent Race Results</h2>
-    <simple-target-table class="output" :calculate-result="predictResult" :default-unit-system="defaultUnitSystem"
-     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []" show-pace/>
+    <single-output-table class="output" show-pace
+      :calculate-result="x => calculateRaceResults(input, x, options, defaultUnitSystem)"
+      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>
 
-<script>
-import formatUtils from '@/utils/format';
-import raceUtils from '@/utils/races';
-import storage from '@/utils/localStorage';
-import targetUtils from '@/utils/targets';
-import unitUtils from '@/utils/units';
+<script setup>
+import { computed } from 'vue';
 
-import DecimalInput from '@/components/DecimalInput.vue';
-import SimpleTargetTable from '@/components/SimpleTargetTable.vue';
+import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
+import { formatNumber } from '@/utils/format';
+import { defaultTargetSets } from '@/utils/targets';
+import { detectDefaultUnitSystem } from '@/utils/units';
+
+import PaceInput from '@/components/PaceInput.vue';
+import RaceOptions from '@/components/RaceOptions.vue';
+import SingleOutputTable from '@/components/SingleOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
-import TimeInput from '@/components/TimeInput.vue';
 
-export default {
-  name: 'RaceCalculator',
+import useStorage from '@/composables/useStorage';
 
-  components: {
-    DecimalInput,
-    SimpleTargetTable,
-    TargetSetSelector,
-    TimeInput,
-  },
+/**
+ * The input race
+ */
+const input = useStorage('race-calculator-input', {
+  distanceValue: 5,
+  distanceUnit: 'kilometers',
+  time: 1200,
+});
 
-  data() {
-    return {
-      /**
-       * The input distance value
-       */
-      inputDistance: storage.get('race-calculator-input-distance', 5),
+/**
+ * The default unit system
+ */
+const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
 
-      /**
-       * The input distance unit
-       */
-      inputUnit: storage.get('race-calculator-input-unit', 'kilometers'),
+/**
+* The race prediction options
+*/
+const options = useStorage('race-calculator-options', {
+  model: 'AverageModel',
+  riegelExponent: 1.06,
+});
 
-      /**
-       * The input time value
-       */
-      inputTime: storage.get('race-calculator-input-time', 20 * 60),
+/**
+ * The current selected target set
+ */
+const selectedTargetSet = useStorage('race-calculator-target-set', '_race_targets');
 
-      /**
-       * The default unit system
-       *
-       * Loaded in activate() method
-       */
-      defaultUnitSystem: null,
+/**
+ * The target sets
+ */
+let targetSets = useStorage('race-calculator-target-sets', {
+  _race_targets: defaultTargetSets._race_targets
+});
 
-      /**
-      * The race prediction model
-      */
-      model: storage.get('race-calculator-model', 'AverageModel'),
-
-      /**
-      * The value of the exponent in Riegel's Model
-      */
-      riegelExponent: storage.get('race-calculator-riegel-exponent', 1.06),
-
-      /**
-       * The names of the distance units
-       */
-      distanceUnits: unitUtils.DISTANCE_UNITS,
-
-      /**
-       * The formatNumber method
-       */
-      formatNumber: formatUtils.formatNumber,
-
-      /**
-       * The current selected target set
-       */
-      selectedTargetSet: storage.get('race-calculator-target-set', '_race_targets'),
-
-      /**
-       * The target sets
-       *
-       * Loaded in activate() method
-       */
-      targetSets: {},
-    };
-  },
-
-  methods: {
-    /**
-     * Reload the target sets
-     */
-    reloadTargets() {
-      this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    },
-
-    /**
-     * Predict race results from a target
-     * @param {Object} target The target
-     * @returns {Object} The result
-     */
-    predictResult(target) {
-      // Initialize result
-      const result = {
-        distanceValue: target.distanceValue,
-        distanceUnit: target.distanceUnit,
-        time: target.time,
-        result: target.result,
-      };
-
-      // Add missing value to result
-      if (target.result === 'time') {
-        // Convert target distance into meters
-        const d2 = unitUtils.convertDistance(target.distanceValue, target.distanceUnit, 'meters');
-
-        // Get prediction
-        let time;
-        switch (this.model) {
-          default:
-          case 'AverageModel':
-            time = raceUtils.AverageModel.predictTime(this.d1, this.inputTime, d2,
-              this.riegelExponent);
-            break;
-          case 'PurdyPointsModel':
-            time = raceUtils.PurdyPointsModel.predictTime(this.d1, this.inputTime, d2);
-            break;
-          case 'VO2MaxModel':
-            time = raceUtils.VO2MaxModel.predictTime(this.d1, this.inputTime, d2);
-            break;
-          case 'RiegelModel':
-            time = raceUtils.RiegelModel.predictTime(this.d1, this.inputTime, d2,
-              this.riegelExponent);
-            break;
-          case 'CameronModel':
-            time = raceUtils.CameronModel.predictTime(this.d1, this.inputTime, d2);
-            break;
-        }
-
-        // Update result
-        result.time = time;
-      } else {
-        // Get prediction
-        let distance;
-        switch (this.model) {
-          default:
-          case 'AverageModel':
-            distance = raceUtils.AverageModel.predictDistance(this.inputTime, this.d1, target.time,
-              this.riegelExponent);
-            break;
-          case 'PurdyPointsModel':
-            distance = raceUtils.PurdyPointsModel.predictDistance(this.inputTime, this.d1,
-              target.time);
-            break;
-          case 'VO2MaxModel':
-            distance = raceUtils.VO2MaxModel.predictDistance(this.inputTime, this.d1, target.time);
-            break;
-          case 'RiegelModel':
-            distance = raceUtils.RiegelModel.predictDistance(this.inputTime, this.d1, target.time,
-              this.riegelExponent);
-            break;
-          case 'CameronModel':
-            distance = raceUtils.CameronModel.predictDistance(this.inputTime, this.d1, target.time);
-            break;
-        }
-
-        // Convert output distance into default distance unit
-        distance = unitUtils.convertDistance(distance, 'meters',
-          unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem));
-
-        // Update result
-        result.distanceValue = distance;
-        result.distanceUnit = unitUtils.getDefaultDistanceUnit(this.defaultUnitSystem);
-      }
-
-      // Return result
-      return result;
-    },
-  },
-
-  computed: {
-    /**
-     * The input distance in meters
-     */
-    d1() {
-      return unitUtils.convertDistance(this.inputDistance, this.inputUnit, 'meters');
-    },
-
-    /**
-     * The Purdy Points for the input race
-     */
-    purdyPoints() {
-      const result = raceUtils.PurdyPointsModel.getPurdyPoints(this.d1, this.inputTime);
-      return result;
-    },
-
-    /**
-     * The VO2 Max calculated from the input race
-     */
-    vo2Max() {
-      const result = raceUtils.VO2MaxModel.getVO2Max(this.d1, this.inputTime);
-      return result;
-    },
-
-    /**
-     * The VO2 calculated from the input race
-     */
-    vo2() {
-      const result = raceUtils.VO2MaxModel.getVO2(this.d1, this.inputTime);
-      return result;
-    },
-
-    /**
-     * The percentage of VO2 Max calculated from the input race
-     */
-    vo2Percentage() {
-      const result = raceUtils.VO2MaxModel.getVO2Percentage(this.inputTime) * 100;
-      return result;
-    },
-  },
-
-  watch: {
-    /**
-     * Save input distance value
-     */
-    inputDistance(newValue) {
-      storage.set('race-calculator-input-distance', newValue);
-    },
-
-    /**
-     * Save input distance unit
-     */
-    inputUnit(newValue) {
-      storage.set('race-calculator-input-unit', newValue);
-    },
-
-    /**
-     * Save input time value
-     */
-    inputTime(newValue) {
-      storage.set('race-calculator-input-time', newValue);
-    },
-
-    /**
-     * Save default unit system
-     */
-    defaultUnitSystem(newValue) {
-      storage.set('default-unit-system', newValue);
-    },
-
-    /**
-     * Save prediction model
-     */
-    model(newValue) {
-      storage.set('race-calculator-model', newValue);
-    },
-
-    /**
-     * Save Riegel Model exponent
-     */
-    riegelExponent(newValue) {
-      storage.set('race-calculator-riegel-exponent', newValue);
-    },
-
-    /**
-     * Save the current selected target set
-     */
-    selectedTargetSet(newValue) {
-      storage.set('race-calculator-target-set', newValue);
-    },
-  },
-
-  /**
-   * (Re)load settings used in multiple calculators
-   */
-  activated() {
-    this.targetSets = storage.get('target-sets', targetUtils.defaultTargetSets);
-    this.defaultUnitSystem = storage.get('default-unit-system', unitUtils.detectDefaultUnitSystem());
-  },
-};
+/**
+ * The statistics for the current input race
+ */
+const raceStats = computed(() => calculateRaceStats(input.value));
 </script>
 
 <style scoped>

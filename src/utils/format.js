@@ -6,7 +6,7 @@
  * @param {Boolean} extraDigits Whether to show extra zeros after the decimal point
  * @returns {String} The formatted value
  */
-function formatNumber(value, minPadding = 0, maxDigits = 2, extraDigits = true) {
+export function formatNumber(value, minPadding = 0, maxDigits = 2, extraDigits = true) {
   // Initialize result
   let result = '';
 
@@ -51,7 +51,7 @@ function formatNumber(value, minPadding = 0, maxDigits = 2, extraDigits = true) 
  * @param {Boolean} extraDigits Whether to show extra zeros after the decimal point
  * @returns {String} The formatted value
  */
-function formatDuration(value, minPadding = 6, maxDigits = 2, extraDigits = true) {
+export function formatDuration(value, minPadding = 6, maxDigits = 2, extraDigits = true) {
   // Check if value is NaN
   if (Number.isNaN(value)) {
     return 'NaN';
@@ -97,8 +97,3 @@ function formatDuration(value, minPadding = 6, maxDigits = 2, extraDigits = true
   // Return result
   return result;
 }
-
-export default {
-  formatNumber,
-  formatDuration,
-};
