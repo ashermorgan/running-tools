@@ -26,7 +26,7 @@
       The <router-link :to="{ name: 'calculate-batch' }">Batch Calculator</router-link> calculates
         results for a range of input times using the Pace, Race, or Workout Calculators.
       Options such as the default unit system, selected target set, and race prediction model are
-        automatically loaded from the settings of the active calculator.
+        synced from the active calculator.
     </p>
     <p>
       The Batch Calculator is useful for tasks such as:
