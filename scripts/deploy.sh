@@ -5,7 +5,7 @@
 # abort on errors
 set -e
 
-BASE_URL=/running-tools/ npm run build
+VITE_API_DOMAIN=https://ashermorgan.github.io BASE_URL=/running-tools/ npm run build
 
 cd dist
 
