@@ -18,16 +18,19 @@ Try it out [here](https://ashermorgan.github.io/running-tools/).
 
 ## Setup
 Install dependencies
+
 ```
 npm install
 ```
 
 Run development server
+
 ```
 npm run dev
 ```
 
 Run linter and tests
+
 ```
 npm run lint
 npm run test:unit
@@ -35,6 +38,7 @@ npm run test:e2e
 ```
 
 Build for production
+
 ```
-npm run build
+VITE_API_DOMAIN=https://example.com BASE_URL=/running-tools/ npm run build
 ```
