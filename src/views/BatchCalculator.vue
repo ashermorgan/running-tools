@@ -37,6 +37,7 @@
       <div>
         Target Set:
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+          :setType="options.calculator === 'workout' ? 'workout' : 'standard'"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
       <race-options v-if="options.calculator !== 'pace'" v-model="advancedOptions"/>
