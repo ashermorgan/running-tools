@@ -27,7 +27,7 @@ import VueFeather from 'vue-feather';
   </div>
 </template>
 
-<style scoped>
+<style>
 header {
   background-color: var(--theme);
   padding: 0.5em;
@@ -45,7 +45,7 @@ header a {
   padding: 0em;
   color: #000000;
 }
-h1 {
+header h1 {
   grid-column: 3;
   font-size: 2em;
   font-weight: bold;
@@ -57,7 +57,7 @@ h1 {
 }
 @media only screen and (max-width: 450px) {
   /* adjust title size to fit small devices */
-  h1 {
+  header h1 {
     font-size: 7vw;
   }
 }
