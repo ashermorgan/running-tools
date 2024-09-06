@@ -149,10 +149,10 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41.93');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41.92');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.98');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.97');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -201,6 +201,6 @@ test('Cross-calculator', async ({ page }) => {
 
   // Assert workout splits are correct (input race and prediction model not reset)
   await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:14.81');
-  await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.58');
+  await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.56');
   await expect(page.getByRole('row')).toHaveCount(5);
 });

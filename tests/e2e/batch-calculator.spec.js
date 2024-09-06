@@ -36,7 +36,7 @@ test('Batch calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41.21');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.91');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.90');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -107,7 +107,7 @@ test('Batch calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:14.60');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:43.61');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:43.62');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
   await expect(page.getByRole('row')).toHaveCount(16);
 

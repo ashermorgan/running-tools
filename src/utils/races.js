@@ -5,19 +5,18 @@
  * @param {Function} method The function
  * @param {Function} derivative The function derivative
  * @param {Number} precision The acceptable precision
- * @param {Number} iterations The maximum number of iterations
  * @returns {Number} The refined estimate
  */
-function NewtonsMethod(initialEstimate, target, method, derivative, precision, iterations = 500) {
+function NewtonsMethod(initialEstimate, target, method, derivative, precision) {
   // Initialize estimate
   let estimate = initialEstimate;
   let estimateValue;
 
-  for (let i = 0; i < iterations; i += 1) {
+  for (let i = 0; i < 500; i += 1) {
     // Evaluate function at estimate
     estimateValue = method(estimate);
 
-    // Check if estimate is close enough
+    // Check if estimate is close enough (usually occurs way before i = 500)
     if (Math.abs(target - estimateValue) < precision) {
       break;
     }
@@ -174,6 +173,7 @@ const PurdyPointsModel = {
 /*
  * Methods that implement the VO2 Max race prediction model
  * http://run-down.com/statistics/calcs_explained.php
+ * https://vdoto2.com/Calculator
  */
 const VO2MaxModel = {
   /**
@@ -185,7 +185,7 @@ const VO2MaxModel = {
   getVO2(d, t) {
     const minutes = t / 60;
     const v = d / minutes;
-    const result = -4.6 + (0.182 * v) + (0.000104 * (v ** 2));
+    const result = -4.6 + (0.182258 * v) + (0.000104 * (v ** 2));
     return result;
   },
 
@@ -196,7 +196,7 @@ const VO2MaxModel = {
    */
   getVO2Percentage(t) {
     const minutes = t / 60;
-    const result = 0.8 + (0.189 * Math.exp(-0.0128 * minutes)) + (0.299 * Math.exp(-0.193
+    const result = 0.8 + (0.189439 * Math.exp(-0.012778 * minutes)) + (0.298956 * Math.exp(-0.193261
       * minutes));
     return result;
   },
@@ -237,7 +237,7 @@ const VO2MaxModel = {
    */
   predictTime(d1, t1, d2) {
     // Calculate input VO2 max
-    const inputVO2 = VO2MaxModel.getVO2Max(d1, t1);
+    const inputVO2Max = VO2MaxModel.getVO2Max(d1, t1);
 
     // Initialize estimate
     let estimate = (t1 * d2) / d1;
@@ -245,7 +245,7 @@ const VO2MaxModel = {
     // Refine estimate
     const method = (x) => VO2MaxModel.getVO2Max(d2, x);
     const derivative = (x) => VO2MaxModel.VO2MaxTimeDerivative(d2, x);
-    estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
+    estimate = NewtonsMethod(estimate, inputVO2Max, method, derivative, 0.0001);
 
     // Return estimate
     return estimate;

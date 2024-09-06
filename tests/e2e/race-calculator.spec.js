@@ -25,7 +25,7 @@ test('Race Calculator', async ({ page }) => {
 
   // Assert race predictions are correct
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:55.53' + '4:56 / mi');
-  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:47.58' + '5:24 / mi');
+  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:47.57' + '5:24 / mi');
   await expect(page.getByRole('row')).toHaveCount(17);
 
   // Assert race statistics are correct
@@ -40,7 +40,7 @@ test('Race Calculator', async ({ page }) => {
 
   // Assert race predictions are correct
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:55.53' + '3:04 / km');
-  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:47.58' + '3:22 / km');
+  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:47.57' + '3:22 / km');
   await expect(page.getByRole('row')).toHaveCount(17);
 
   // Change prediction model
