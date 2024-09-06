@@ -9,40 +9,20 @@
 
     <title>404 Not Found - Running Tools</title>
     <meta name="description" content="A collection of tools for runners and their coaches that calculate splits, predict race times, convert units, and more">
-
-    <style>
-      * {
-        margin: 0px;
-        padding: 0px;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: Segoe UI, sans-serif;
-        text-align: center;
-      }
-      header {
-        background-color: hsl(30, 100%, 50%);
-        padding: 0.25em;
-        font-size: 2em;
-        font-weight: bold;
-      }
-      main {
-        margin: 1em;
-      }
-      h1 {
-        font-size: 1.5em;
-      }
-      p {
-        margin-top: 0.5em;
-      }
-    </style>
   </head>
 
   <body>
-    <header>Running Tools</header>
-    <main>
-      <h1>404 Not Found</h1>
-      <p><a href="%BASE_URL%">Return home</a></p>
+    <header>
+      <h1>Running Tools</h1>
+    </header>
+    <main style="margin: 1em; text-align: center">
+      <h2 style="font-size: 1.5em">404 Not Found</h2>
+      <p style="margin-top: 0.5em">
+        <a href="%BASE_URL%">Return home</a>
+      </p>
     </main>
+
+    <!-- no #app div, so styles will be loaded but app will not be mounted -->
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
