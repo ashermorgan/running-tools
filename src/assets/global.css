@@ -122,6 +122,28 @@ input:invalid:not(:focus) {
   border: 1px solid var(--error);
 }
 
+/* basic page header style */
+header {
+  background-color: var(--theme);
+  padding: 0.5em;
+  display: grid;
+  grid-template-columns: 2em 1fr auto 1fr 2em;
+  grid-template-rows: auto;
+}
+header h1 {
+  grid-column: 3;
+  font-size: 2em;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+}
+@media only screen and (max-width: 450px) {
+  /* adjust title size to fit small devices */
+  header h1 {
+    font-size: 7vw;
+  }
+}
+
 /* light/default theme */
 :root {
   /* The theme color of the app */

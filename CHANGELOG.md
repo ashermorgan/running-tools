@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1 - 2024-09-07
+
+### Fixed
+- Bug that prevented workout split distances from being edited through the Batch
+  Calculator
+- Improved accuracy of the VO2 Max model
+- Miscellaneous dark mode issues
+
 ## 1.4.0 - 2024-07-11
 
 ### Added

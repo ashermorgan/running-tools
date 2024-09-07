@@ -28,37 +28,17 @@ import VueFeather from 'vue-feather';
 </template>
 
 <style scoped>
-header {
-  background-color: var(--theme);
-  padding: 0.5em;
-  display: grid;
-  grid-template-columns: 2em 1fr auto 1fr 2em;
-  grid-template-rows: auto;
-}
 header a {
   grid-column: 1;
   margin: auto;
   height: 2em;
   width: 2em;
 }
-::v-deep(.feather-chevron-left) {
+header ::v-deep(.feather-chevron-left) {
   padding: 0em;
-  color: #000000;
-}
-h1 {
-  grid-column: 3;
-  font-size: 2em;
-  font-weight: bold;
-  text-decoration: none;
   color: #000000;
 }
 #route-content {
   margin: 1em;
-}
-@media only screen and (max-width: 450px) {
-  /* adjust title size to fit small devices */
-  h1 {
-    font-size: 7vw;
-  }
 }
 </style>

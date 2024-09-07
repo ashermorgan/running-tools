@@ -24,7 +24,7 @@ test('Workout Calculator', async ({ page }) => {
 
   // Assert workout splits are correct
   await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:13.45');
-  await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:45.44');
+  await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:45.43');
   await expect(page.getByRole('row')).toHaveCount(5);
 
   // Change prediction model

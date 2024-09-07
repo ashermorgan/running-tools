@@ -133,8 +133,8 @@
       The Workout Calculator is useful for answering questions like:
     </p>
     <ul class="questions">
-      <li>If I raced a 5K in 20:00, how fast should I run 400m intervals at mile pace? (about 1:27)</li>
-      <li>If I raced a mile in 5:00, what is my "threshold" (~1 hr race) pace? (about 5:50 / mi)</li>
+      <li>If I raced a 5K in 20:00, how fast should I run 400m reps at mile pace? (about 1:27)</li>
+      <li>If I raced a mile in 5:00, what is my "threshold" (~1 hr race) pace? (about 5:52 / mi)</li>
     </ul>
     <p>
       <strong>Note:</strong> Results are just estimated race splits that are helpful for estimating

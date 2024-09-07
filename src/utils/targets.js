@@ -104,7 +104,7 @@ export const defaultTargetSets = {
       },
       {
         splitValue: 1, splitUnit: 'miles',
-        type: 'time', time: 7200,
+        type: 'distance', distanceValue: 1, distanceUnit: 'marathons',
       },
     ],
   },

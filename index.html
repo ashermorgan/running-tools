@@ -12,8 +12,8 @@
     <meta property="og:title" content="Running Tools"/>
     <meta property="og:description" content="A collection of tools for runners and their coaches that calculate splits, predict race times, convert units, and more"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://ashermorgan.github.io/running-tools/"/>
-    <meta property="og:image" content="https://ashermorgan.github.io/running-tools/img/icons/open-graph-1280x640.png"/>
+    <meta property="og:url" content="%VITE_API_DOMAIN%%BASE_URL%"/>
+    <meta property="og:image" content="%VITE_API_DOMAIN%%BASE_URL%img/icons/open-graph-1280x640.png"/>
 
     <!-- Microsoft tags -->
     <meta name="msapplication-square70x70logo" content="%BASE_URL%img/icons/mstile-icon-128x128.png">
@@ -32,6 +32,10 @@
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-2388x1668.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-1536x2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-2048x1536.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+    <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-1488x2266.png" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-2266x1488.png" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+    <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-1640x2360.png" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-2360x1640.png" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-1668x2224.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-2224x1668.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
     <link rel="apple-touch-startup-image" href="/img/icons/apple-splash-1620x2160.png" media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
@@ -59,29 +63,12 @@
   </head>
   <body>
     <noscript>
-      <style>
-        * {
-          margin: 0px;
-          padding: 0px;
-          box-sizing: border-box;
-        }
-        body {
-          font-family: Segoe UI, sans-serif;
-          text-align: center;
-        }
-        header {
-          background-color: hsl(30, 100%, 50%);
-          padding: 0.25em;
-          font-size: 2em;
-          font-weight: bold;
-        }
-        p {
-          margin: 1em;
-          font-weight: bold;
-        }
-      </style>
-      <header>Running Tools</header>
-      <p>Running Tools requires JavaScript. Please enable it to continue.</p>
+      <header>
+        <h1>Running Tools</h1>
+      </header>
+      <p style="margin: 1em; font-weight: bold; text-align: center">
+        Running Tools requires JavaScript. Please enable it to continue.
+      </p>
     </noscript>
 
     <!-- built files will be auto injected -->
