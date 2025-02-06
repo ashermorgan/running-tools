@@ -3,6 +3,8 @@ A collection of tools for runners and their coaches.
 Try it out [here](https://apps.ashermorgan.net/running-tools/).
 
 ## Features
+Running Tools contains six calculators:
+
 - [Batch Calculator](https://apps.ashermorgan.net/running-tools/#/calculate/batch):
   Create tables of the results of the other calculators over a range of inputs
 - [Pace Calculator](https://apps.ashermorgan.net/running-tools/#/calculate/paces):
@@ -15,6 +17,9 @@ Try it out [here](https://apps.ashermorgan.net/running-tools/).
   Convert between different distance, time, speed, and pace units
 - [Workout Calculator](https://apps.ashermorgan.net/running-tools/#/calculate/workouts):
   Estimate target workout splits using previous race results
+
+More information about each calculator can be found
+[here](https://apps.ashermorgan.net/running-tools/#/about).
 
 ## Setup
 Install dependencies
