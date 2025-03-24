@@ -26,7 +26,7 @@
 
     <h2>Workout Splits</h2>
     <single-output-table class="output"
-      :calculate-result="x => calculateWorkoutResults(input, x, options)"
+      :calculate-result="x => calculateWorkoutResults(input, x, options, true)"
       :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>

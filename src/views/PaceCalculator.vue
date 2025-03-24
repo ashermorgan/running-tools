@@ -25,7 +25,7 @@
 
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
-      calculatePaceResults(input, x, defaultUnitSystem)"
+      calculatePaceResults(input, x, defaultUnitSystem, true)"
      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
   </div>
 </template>

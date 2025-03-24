@@ -412,7 +412,7 @@ test('should correctly calculate outputs', async () => {
   const workoutTarget = { type: 'time', time: 3600, splitValue: 1, splitUnit: 'miles' };
   const result = calculate(input, workoutTarget);
   expect(result.key).to.equal('1 mi @ 1:00:00');
-  expect(result.value).to.equal('5:53.07');
+  expect(result.value).to.equal('5:53');
   expect(result.pace).to.equal('');
   expect(result.sort).to.be.closeTo(353.07, 0.01);
   expect(result.result).to.equal('value');

@@ -7,20 +7,21 @@ import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils
  * Format a distance/time result as a key/value result
  * @param {Object} result The distance/time result
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
+ * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The key/value result
  */
-export function formatDistTimeResult(result, defaultUnitSystem) {
+export function formatDistTimeResult(result, defaultUnitSystem, preciseDurations = true) {
   // Calculate numerical pace
   const pace = result.time / convertDistance(result.distanceValue, result.distanceUnit,
     getDefaultDistanceUnit(defaultUnitSystem));
 
   return {
     // Convert distance to key string
-    key: formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' '
-      + DISTANCE_UNITS[result.distanceUnit].symbol,
+    key: formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' ' +
+      DISTANCE_UNITS[result.distanceUnit].symbol,
 
     // Convert time to time string
-    value: formatDuration(result.time, 3, 2, result.result === 'time'),
+    value: formatDuration(result.time, 3, preciseDurations ? 2 : 0, result.result === 'time'),
 
     // Convert pace to pace string
     pace: formatDuration(pace, 3, 0, true) + ' / '
@@ -39,9 +40,10 @@ export function formatDistTimeResult(result, defaultUnitSystem) {
  * @param {Object} input The input pace
  * @param {Object} target The pace target
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
+ * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The result
  */
-export function calculatePaceResults(input, target, defaultUnitSystem) {
+export function calculatePaceResults(input, target, defaultUnitSystem, preciseDurations = true) {
   const result = {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
@@ -69,7 +71,7 @@ export function calculatePaceResults(input, target, defaultUnitSystem) {
   }
 
   // Return result
-  return formatDistTimeResult(result, defaultUnitSystem);
+  return formatDistTimeResult(result, defaultUnitSystem, preciseDurations);
 }
 
 /**
@@ -78,9 +80,12 @@ export function calculatePaceResults(input, target, defaultUnitSystem) {
  * @param {Object} target The race target
  * @param {Object} options The race prediction options
  * @param {String} defaultUnitSystem The default unit system (imperial or metric)
+ * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The result
  */
-export function calculateRaceResults(input, target, options, defaultUnitSystem) {
+export function calculateRaceResults(input, target, options, defaultUnitSystem,
+  preciseDurations = true) {
+
   const result = {
     distanceValue: target.distanceValue,
     distanceUnit: target.distanceUnit,
@@ -112,7 +117,7 @@ export function calculateRaceResults(input, target, options, defaultUnitSystem) 
   }
 
   // Return result
-  return formatDistTimeResult(result, defaultUnitSystem);
+  return formatDistTimeResult(result, defaultUnitSystem, preciseDurations);
 }
 
 /**
@@ -136,9 +141,10 @@ export function calculateRaceStats(input) {
  * @param {Object} input The input race
  * @param {Object} target The workout target
  * @param {Object} options The race prediction options
+ * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The result
  */
-export function calculateWorkoutResults(input, target, options) {
+export function calculateWorkoutResults(input, target, options, preciseDurations = true) {
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
   const t1 = input.time;
   const d3 = convertDistance(target.splitValue, target.splitUnit, 'meters');
@@ -165,7 +171,7 @@ export function calculateWorkoutResults(input, target, options) {
   // Calculate time
   return {
     key: key,
-    value: formatDuration(t3, 3, 2, true),
+    value: formatDuration(t3, 3, preciseDurations ? 2 : 0, true),
     pace: '', // Pace not used in workout calculator
     result: 'value',
     sort: t3,

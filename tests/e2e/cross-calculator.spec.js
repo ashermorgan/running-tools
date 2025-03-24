@@ -123,10 +123,10 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24.04');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56.05');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
   await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -136,10 +136,10 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(4);
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:36.58');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:37');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(4);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:11.38');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:11');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(4);
   await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -149,10 +149,10 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41.92');
+  await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:42');
   await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:16.97');
+  await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:17');
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row')).toHaveCount(16);
 

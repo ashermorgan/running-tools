@@ -195,11 +195,12 @@ const advancedOptions = computed(() => {
  */
 const calculateResult = computed(() => {
   if (options.value.calculator === 'pace') {
-    return (x,y) => calcUtils.calculatePaceResults(x, y, defaultUnitSystem.value);
+    return (x,y) => calcUtils.calculatePaceResults(x, y, defaultUnitSystem.value, false);
   } else if (options.value.calculator === 'race') {
-    return (x,y) => calcUtils.calculateRaceResults(x, y, raceOptions.value, defaultUnitSystem.value);
+    return (x,y) => calcUtils.calculateRaceResults(x, y, raceOptions.value, defaultUnitSystem.value,
+      false);
   } else {
-    return (x,y) => calcUtils.calculateWorkoutResults(x, y, workoutOptions.value);
+    return (x,y) => calcUtils.calculateWorkoutResults(x, y, workoutOptions.value, false);
   }
 });
 </script>
