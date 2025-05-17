@@ -59,13 +59,19 @@ test('Workout Calculator', async ({ page }) => {
   await page.getByLabel('Split distance unit').last().selectOption('Meters');
   await page.getByLabel('Target duration minutes').last().fill('19');
   await page.getByLabel('Target duration seconds').last().fill('0');
+  await page.getByRole('button', { name: 'Add distance target' }).click();
+  await page.getByLabel('Split distance value').last().fill('2');
+  await page.getByLabel('Split distance unit').last().selectOption('Miles');
+  await page.getByLabel('Target distance value').last().fill('2');
+  await page.getByLabel('Target distance unit').last().selectOption('Miles');
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert workout splits are correct
   await expect(page.getByRole('row').nth(1)).toHaveText('401 m @ 2 mi' + '1:18.49');
   await expect(page.getByRole('row').nth(2)).toHaveText('600 m @ 19:00' + '2:05.14');
   await expect(page.getByRole('row').nth(4)).toHaveText('1 mi @ 10 km' + '6:00.90');
-  await expect(page.getByRole('row')).toHaveCount(7);
+  await expect(page.getByRole('row').nth(7)).toHaveText('2 mi' + '10:30.00');
+  await expect(page.getByRole('row')).toHaveCount(8);
 
   // Create custom target set
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
@@ -109,7 +115,8 @@ test('Workout Calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(1)).toHaveText('401 m @ 2 mi' + '1:18.49');
   await expect(page.getByRole('row').nth(2)).toHaveText('600 m @ 19:00' + '2:05.14');
   await expect(page.getByRole('row').nth(4)).toHaveText('1 mi @ 10 km' + '6:00.90');
-  await expect(page.getByRole('row')).toHaveCount(7);
+  await expect(page.getByRole('row').nth(7)).toHaveText('2 mi' + '10:30.00');
+  await expect(page.getByRole('row')).toHaveCount(8);
 
   // Delete custom target set
   await page.getByLabel('Selected target set').selectOption('Workout Target Set #2');
@@ -124,7 +131,8 @@ test('Workout Calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(1)).toHaveText('401 m @ 2 mi' + '1:18.49');
   await expect(page.getByRole('row').nth(2)).toHaveText('600 m @ 19:00' + '2:05.14');
   await expect(page.getByRole('row').nth(4)).toHaveText('1 mi @ 10 km' + '6:00.90');
-  await expect(page.getByRole('row')).toHaveCount(7);
+  await expect(page.getByRole('row').nth(7)).toHaveText('2 mi' + '10:30.00');
+  await expect(page.getByRole('row')).toHaveCount(8);
 
   // Revert target set
   await page.getByRole('button', { name: 'Edit target set' }).click();

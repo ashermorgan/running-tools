@@ -151,19 +151,21 @@ export function calculateWorkoutResults(input, target, options, preciseDurations
   let d2, t2, t3;
 
   // Calculate pace
-  let key = formatNumber(target.splitValue, 0, 2, false) + ' '
-      + DISTANCE_UNITS[target.splitUnit].symbol + ' @ ';
+  let key = formatNumber(target.splitValue, 0, 2, false) + ' ' +
+    DISTANCE_UNITS[target.splitUnit].symbol;
   if (target.type === 'distance') {
     // Convert target distance into meters
     d2 = convertDistance(target.distanceValue, target.distanceUnit, 'meters');
     t2 = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
-    key += formatNumber(target.distanceValue, 0, 2, false) + ' '
-      + DISTANCE_UNITS[target.distanceUnit].symbol;
+    if (target.distanceValue != target.splitValue || target.distanceUnit != target.splitUnit) {
+      key += ' @ ' + formatNumber(target.distanceValue, 0, 2, false) + ' ' +
+        DISTANCE_UNITS[target.distanceUnit].symbol;
+    }
   } else {
     t2 = target.time;
     d2 = raceUtils.predictDistance(t1, d1, t2, options.model,
       options.riegelExponent);
-    key += formatDuration(target.time, 3, 2, false);
+    key += ' @ ' + formatDuration(target.time, 3, 2, false);
   }
 
   t3 = paceUtils.calculateTime(d2, t2, d3);
