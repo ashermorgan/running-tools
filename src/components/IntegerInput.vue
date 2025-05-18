@@ -45,17 +45,10 @@ const inputElement = ref(null);
  * Update the internal value when the component value changes
  */
 watch(model, (newValue) => {
-  if (newValue !== internalValue.value) {
+  if (Math.abs(newValue - internalValue.value) > 0.00001) {
     internalValue.value = newValue;
     stringValue.value = format(internalValue.value);
   }
-});
-
-/**
- * Update the component value when the internal value changes
- */
-watch(internalValue, (newValue) => {
-  model.value = newValue;
 });
 
 /**
@@ -64,6 +57,7 @@ watch(internalValue, (newValue) => {
 watch(stringValue, (newValue) => {
   if (inputElement.value.validity.valid) {
     internalValue.value = Number(newValue);
+    model.value = internalValue.value;
   }
 });
 
