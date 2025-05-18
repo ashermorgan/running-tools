@@ -45,7 +45,7 @@ export const DISTANCE_UNITS = {
   },
   marathons: {
     name: 'Marathons',
-    symbol: 'marathons',
+    symbol: 'Mar',
     value: 42195,
   },
 };
