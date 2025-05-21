@@ -34,7 +34,7 @@ header a {
   height: 2em;
   width: 2em;
 }
-header ::v-deep(.feather-chevron-left) {
+header :deep(.feather-chevron-left) {
   padding: 0em;
   color: #000000;
 }
