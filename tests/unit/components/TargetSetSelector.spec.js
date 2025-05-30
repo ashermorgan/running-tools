@@ -336,3 +336,20 @@ test('should correctly pass setType prop to TargetEditor', async () => {
   // Assert target editor props are correct
   expect(wrapper.findComponent({ name: 'target-editor' }).vm.setType).to.equal('foo');
 });
+
+test('should correctly pass customWorkoutNames prop to TargetEditor', async () => {
+  const wrapper = shallowMount(TargetSetSelector, {
+    propsData: {
+      customWorkoutNames: false,
+    }
+  });
+
+  // Assert target editor props are correct
+  expect(wrapper.findComponent({ name: 'target-editor' }).vm.customWorkoutNames).to.equal(false);
+
+  // Update customWorkoutNames prop
+  await wrapper.setProps({ customWorkoutNames: true });
+
+  // Assert target editor props are correct
+  expect(wrapper.findComponent({ name: 'target-editor' }).vm.customWorkoutNames).to.equal(true);
+});

@@ -13,7 +13,8 @@
 
     <dialog ref="dialogElement" class="target-set-editor-dialog" aria-label="Edit target set">
       <target-editor @close="sortTargetSet(); dialogElement.close()"
-        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem" :setType="setType"
+        @revert="revertTargetSet" :customWorkoutNames="customWorkoutNames"
+        :default-unit-system="defaultUnitSystem" :setType="setType"
         v-model="targetSets[internalValue]" :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
@@ -45,6 +46,14 @@ const targetSets = defineModel('targetSets', {
 });
 
 defineProps({
+  /**
+   * Whether to allow custom names for workout targets
+   */
+  customWorkoutNames: {
+    type: Boolean,
+    default: false,
+  },
+
   /**
    * The unit system to use when creating distance targets
    */

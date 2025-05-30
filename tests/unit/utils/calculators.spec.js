@@ -174,6 +174,34 @@ test('should correctly calculate distance-based workouts according to race optio
   expect(result.sort).to.be.closeTo(206.35, 0.01);
 });
 
+test('should correctly calculate distance-based workouts with custom names', () => {
+  const input = {
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 630,
+  };
+  const target = {
+    distanceValue: 5,
+    distanceUnit: 'kilometers', // 5k split is ~17:11.77
+    splitValue: 1000,
+    splitUnit: 'meters',
+    type: 'distance',
+    customName: 'my custom name',
+  };
+  const options = {
+    model: 'RiegelModel',
+    riegelExponent: 1.12,
+  }
+
+  const result = calculatorUtils.calculateWorkoutResults(input, target, options);
+
+  expect(result.key).to.equal('my custom name');
+  expect(result.value).to.equal('3:26.35');
+  expect(result.pace).to.equal('');
+  expect(result.result).to.equal('value');
+  expect(result.sort).to.be.closeTo(206.35, 0.01);
+});
+
 test('should correctly calculate time-based workouts', () => {
   const input = {
     distanceValue: 5,

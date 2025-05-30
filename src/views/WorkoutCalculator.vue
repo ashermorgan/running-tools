@@ -19,7 +19,8 @@
       <div>
         Target Set:
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="workout"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+          :customWorkoutNames="true" v-model:targetSets="targetSets"
+          :default-unit-system="defaultUnitSystem"/>
       </div>
       <race-options v-model="options"/>
     </details>

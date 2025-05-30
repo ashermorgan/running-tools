@@ -169,7 +169,7 @@ export function calculateWorkoutResults(input, target, options, preciseDurations
 
   // Return result
   return {
-    key: workoutTargetToString(target),
+    key: target.customName || workoutTargetToString(target),
     value: formatDuration(t3, 3, preciseDurations ? 2 : 0, true),
     pace: '', // Pace not used in workout calculator
     result: 'value',
