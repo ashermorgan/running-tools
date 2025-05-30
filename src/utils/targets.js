@@ -1,4 +1,5 @@
-import { convertDistance } from '@/utils/units';
+import { formatDuration, formatNumber } from '@/utils/format';
+import { DISTANCE_UNITS, convertDistance } from '@/utils/units';
 
 /**
  * Sort an array of targets
@@ -14,6 +15,23 @@ export function sort(targets) {
     ...targets.filter((item) => item.type === 'time')
       .sort((a, b) => a.time - b.time),
   ];
+}
+
+/**
+ * Generate a string description of a workout target
+ * @param {Object} target The workout target
+ * @return {String} The string description
+ */
+export function workoutTargetToString(target) {
+  let result = formatNumber(target.splitValue, 0, 2, false) + ' ' +
+    DISTANCE_UNITS[target.splitUnit].symbol;
+  if (target.type === 'time') {
+    result += ' @ ' + formatDuration(target.time, 3, 2, false);
+  } else if (target.distanceValue != target.splitValue || target.distanceUnit != target.splitUnit) {
+    result += ' @ ' + formatNumber(target.distanceValue, 0, 2, false) + ' ' +
+      DISTANCE_UNITS[target.distanceUnit].symbol;
+  }
+  return result;
 }
 
 export const defaultTargetSets = {
