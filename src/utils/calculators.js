@@ -141,7 +141,7 @@ export function calculateRaceStats(input) {
  * Predict workout results from a target
  * @param {Object} input The input race
  * @param {Object} target The workout target
- * @param {Object} options The race prediction options
+ * @param {Object} options The workout options
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The result
  */
@@ -169,7 +169,7 @@ export function calculateWorkoutResults(input, target, options, preciseDurations
 
   // Return result
   return {
-    key: target.customName || workoutTargetToString(target),
+    key: (options.customTargetNames && target.customName) || workoutTargetToString(target),
     value: formatDuration(t3, 3, preciseDurations ? 2 : 0, true),
     pace: '', // Pace not used in workout calculator
     result: 'value',

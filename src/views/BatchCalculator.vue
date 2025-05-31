@@ -38,8 +38,15 @@
         Target Set:
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
           :setType="options.calculator === 'workout' ? 'workout' : 'standard'"
-          :customWorkoutNames="true" v-model:targetSets="targetSets"
+          :customWorkoutNames="advancedOptions.customTargetNames" v-model:targetSets="targetSets"
           :default-unit-system="defaultUnitSystem"/>
+      </div>
+      <div v-if="options.calculator === 'workout'">
+        Target Name Customization:
+        <select v-model="advancedOptions.customTargetNames" aria-label="Target name customization">
+          <option :value="false">Disabled</option>
+          <option :value="true">Enabled</option>
+        </select>
       </div>
       <race-options v-if="options.calculator !== 'pace'" v-model="advancedOptions"/>
     </details>
@@ -118,6 +125,7 @@ const raceOptions = useStorage('race-calculator-options', {
   riegelExponent: 1.06,
 });
 const workoutOptions = useStorage('workout-calculator-options', {
+  customTargetNames: false,
   model: 'AverageModel',
   riegelExponent: 1.06,
 });
