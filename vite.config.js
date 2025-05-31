@@ -4,6 +4,8 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import vue from '@vitejs/plugin-vue';
 
+import { description } from './package.json';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
@@ -19,12 +21,12 @@ export default defineConfig({
     VitePWA({
       injectRegister: 'inline',
       manifest: {
-				name: 'Running Tools',
-				short_name: 'Running Tools',
-				description: 'A collection of tools for runners and their coaches that calculate splits, predict race times, convert units, and more',
-				theme_color: '#ff8000',
-				background_color: '#ff8000',
-				icons: [
+        name: 'Running Tools',
+        short_name: 'Running Tools',
+        description: description,
+        theme_color: '#ff8000',
+        background_color: '#ff8000',
+        icons: [
           {
             "src": "./img/icons/android-chrome-192x192.png",
             "sizes": "192x192",
@@ -56,7 +58,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: process.env.BASE_URL ? process.env.BASE_URL : '/',
+  base: process.env.BASE_URL || '/',
+  define: {
+    'import.meta.env.VITE_DESCRIPTION': `"${description}"`,
+    'import.meta.env.VITE_DOMAIN': process.env.DOMAIN ? `"https://${process.env.DOMAIN}"` : '""',
+  },
   test: {
     environment: 'jsdom',
     include: ['tests/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)'],

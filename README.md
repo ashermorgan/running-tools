@@ -45,5 +45,5 @@ npm run test:e2e
 Build for production
 
 ```
-VITE_API_DOMAIN=https://example.com BASE_URL=/running-tools/ npm run build
+DOMAIN=example.com BASE_URL=/running-tools/ npm run build
 ```
