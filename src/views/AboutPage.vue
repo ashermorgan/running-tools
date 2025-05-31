@@ -1,7 +1,8 @@
 <template>
   <div class="about-page">
     <p>
-      Running Tools is an open source collection of tools for runners and their coaches.
+      Running Tools is an <a :href="git_url">open source</a> collection of tools for runners
+        and their coaches.
       All calculations are performed locally on your device.
       This is Running Tools version {{ version }}{{ development ? ' (dev)' : '' }}.
     </p>
@@ -161,11 +162,12 @@
 </template>
 
 <script setup>
-import { version } from '/package.json';
+import { repository, version } from '/package.json';
 
 import VueFeather from 'vue-feather';
 
 const development = process.env.NODE_ENV === 'development';
+const git_url = repository.url.slice(4);
 </script>
 
 <style scoped>
