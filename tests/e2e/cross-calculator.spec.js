@@ -107,9 +107,10 @@ test('Cross-calculator', async ({ page }) => {
   await page.getByLabel('Input race duration minutes').fill('5');
   await page.getByLabel('Input race duration seconds').fill('1');
 
-  // Change prediction model
+  // Change prediction model and enable target name customization
   await page.getByText('Advanced Options').click();
   await page.getByLabel('Prediction model').selectOption('V̇O₂ Max Model');
+  await page.getByLabel('Target name customization').selectOption('Enabled');
 
   // Change default units (should update on other calculators too)
   await page.getByLabel('Default units').selectOption('Kilometers');
@@ -145,6 +146,7 @@ test('Cross-calculator', async ({ page }) => {
 
   // Assert workout results are correct (new workout options loaded)
   await page.getByLabel('Calculator').selectOption('Workout Calculator');
+  await expect(page.getByLabel('Target name customization')).toHaveValue("true");
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
