@@ -1,7 +1,6 @@
 import { ref, onActivated, watchEffect } from 'vue';
 
-// The global localStorage prefix
-const prefix = 'running-tools';
+import * as storage from '@/utils/storage';
 
 /*
  * Create a reactive value that is synced with a localStorage item
@@ -14,12 +13,7 @@ export default function useStorage(key, defaultValue) {
 
   // (Re)load value from localStorage
   function updateValue() {
-    let parsedValue;
-    try {
-      parsedValue = JSON.parse(localStorage.getItem(`${prefix}.${key}`));
-    } catch {
-      parsedValue = null;
-    }
+    let parsedValue = storage.get(key);
     if (parsedValue !== null) value.value = parsedValue;
   }
   updateValue();
@@ -28,7 +22,7 @@ export default function useStorage(key, defaultValue) {
   // Save value to localStorage when modified
   watchEffect(() => {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(`${prefix}.${key}`, JSON.stringify(value.value));
+      storage.set(key, value.value);
     }
   })
 

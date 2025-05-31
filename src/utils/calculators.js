@@ -1,6 +1,7 @@
 import { formatDuration, formatNumber } from '@/utils/format';
 import * as paceUtils from '@/utils/paces';
 import * as raceUtils from '@/utils/races';
+import { workoutTargetToString } from '@/utils/targets';
 import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
 
 /**
@@ -140,39 +141,35 @@ export function calculateRaceStats(input) {
  * Predict workout results from a target
  * @param {Object} input The input race
  * @param {Object} target The workout target
- * @param {Object} options The race prediction options
+ * @param {Object} options The workout options
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {Object} The result
  */
 export function calculateWorkoutResults(input, target, options, preciseDurations = true) {
+  // Initialize distance and time variables
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, 'meters');
   const t1 = input.time;
   const d3 = convertDistance(target.splitValue, target.splitUnit, 'meters');
   let d2, t2, t3;
 
-  // Calculate pace
-  let key = formatNumber(target.splitValue, 0, 2, false) + ' ' +
-    DISTANCE_UNITS[target.splitUnit].symbol;
+  // Calculate result
   if (target.type === 'distance') {
     // Convert target distance into meters
     d2 = convertDistance(target.distanceValue, target.distanceUnit, 'meters');
+
+    // Get workout split prediction
     t2 = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
-    if (target.distanceValue != target.splitValue || target.distanceUnit != target.splitUnit) {
-      key += ' @ ' + formatNumber(target.distanceValue, 0, 2, false) + ' ' +
-        DISTANCE_UNITS[target.distanceUnit].symbol;
-    }
   } else {
     t2 = target.time;
-    d2 = raceUtils.predictDistance(t1, d1, t2, options.model,
-      options.riegelExponent);
-    key += ' @ ' + formatDuration(target.time, 3, 2, false);
-  }
 
+    // Get workout split prediction
+    d2 = raceUtils.predictDistance(t1, d1, t2, options.model, options.riegelExponent);
+  }
   t3 = paceUtils.calculateTime(d2, t2, d3);
 
-  // Calculate time
+  // Return result
   return {
-    key: key,
+    key: (options.customTargetNames && target.customName) || workoutTargetToString(target),
     value: formatDuration(t3, 3, preciseDurations ? 2 : 0, true),
     pace: '', // Pace not used in workout calculator
     result: 'value',

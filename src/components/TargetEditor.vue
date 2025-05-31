@@ -23,6 +23,11 @@
     <tbody>
       <tr v-for="(item, index) in internalValue.targets" :key="index">
         <td>
+          <span v-if="setType === 'workout' && customWorkoutNames">
+            <input v-model="item.customName" :placeholder="workoutTargetToString(item)"
+              aria-label="Custom target name"/>:
+          </span>
+
           <span v-if="setType === 'workout'">
             <decimal-input v-model="item.splitValue" aria-label="Split distance value"
               :min="0" :digits="2"/>
@@ -86,6 +91,7 @@ import { watch, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
+import { workoutTargetToString } from '@/utils/targets';
 import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -104,9 +110,9 @@ const model = defineModel({
 
 const props = defineProps({
   /**
-   * Whether the target set is a custom or default set
+   * Whether to allow custom names for workout targets
    */
-  isCustomSet: {
+  customWorkoutNames: {
     type: Boolean,
     default: false,
   },
@@ -117,6 +123,14 @@ const props = defineProps({
   defaultUnitSystem: {
     type: String,
     default: 'metric',
+  },
+
+  /**
+   * Whether the target set is a custom or default set
+   */
+  isCustomSet: {
+    type: Boolean,
+    default: false,
   },
 
   /**

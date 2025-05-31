@@ -47,6 +47,7 @@ test('Workout Calculator', async ({ page }) => {
   // Edit default target set
   await page.getByRole('button', { name: 'Edit target set' }).click();
   await page.getByLabel('Target set label').fill('Less-common Workout Targets');
+  await expect(page.getByLabel('Custom target name')).toHaveCount(0);
   await page.getByLabel('Split distance value').nth(0).fill('401');
   await page.getByLabel('Target distance value').nth(0).fill('2');
   await page.getByRole('button', { name: 'Add distance target' }).click();
@@ -73,6 +74,9 @@ test('Workout Calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(7)).toHaveText('2 mi' + '10:30.00');
   await expect(page.getByRole('row')).toHaveCount(8);
 
+  // Enable target name customization
+  await page.getByLabel('Target name customization').selectOption('Enabled');
+
   // Create custom target set
   await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');
   await expect(page.getByRole('row').nth(4)).toHaveText('There aren\'t any targets in this set yet.');
@@ -83,6 +87,7 @@ test('Workout Calculator', async ({ page }) => {
   await expect(page.getByLabel('Target set label')).toHaveValue('New target set');
   await page.getByLabel('Target set label').fill('Workout Target Set #2');
   await page.getByRole('button', { name: 'Add distance target' }).click();
+  await page.getByLabel('Custom target name').last().fill('800m Interval');
   await page.getByLabel('Split distance value').last().fill('800');
   await page.getByLabel('Split distance unit').last().selectOption('Meters');
   await page.getByLabel('Target distance value').last().fill('5');
@@ -95,7 +100,7 @@ test('Workout Calculator', async ({ page }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert workout splits are correct
-  await expect(page.getByRole('row').nth(1)).toHaveText('800 m @ 5 km' + '2:45.08');
+  await expect(page.getByRole('row').nth(1)).toHaveText('800m Interval' + '2:45.08');
   await expect(page.getByRole('row').nth(2)).toHaveText('1600 m @ 10 km' + '5:58.80');
   await expect(page.getByRole('row')).toHaveCount(3);
 
@@ -103,7 +108,7 @@ test('Workout Calculator', async ({ page }) => {
   await page.reload();
 
   // Assert workout splits are correct (custom targets and model settings not reset)
-  await expect(page.getByRole('row').nth(1)).toHaveText('800 m @ 5 km' + '2:45.08');
+  await expect(page.getByRole('row').nth(1)).toHaveText('800m Interval' + '2:45.08');
   await expect(page.getByRole('row').nth(2)).toHaveText('1600 m @ 10 km' + '5:58.80');
   await expect(page.getByRole('row')).toHaveCount(3);
 

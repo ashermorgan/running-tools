@@ -19,7 +19,15 @@
       <div>
         Target Set:
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="workout"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+          :customWorkoutNames="options.customTargetNames" v-model:targetSets="targetSets"
+          :default-unit-system="defaultUnitSystem"/>
+      </div>
+      <div>
+        Target Name Customization:
+        <select v-model="options.customTargetNames" aria-label="Target name customization">
+          <option :value="false">Disabled</option>
+          <option :value="true">Enabled</option>
+        </select>
       </div>
       <race-options v-model="options"/>
     </details>
@@ -61,6 +69,7 @@ const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSys
  * The race prediction options
  */
 const options = useStorage('workout-calculator-options', {
+  customTargetNames: false,
   model: 'AverageModel',
   riegelExponent: 1.06,
 });

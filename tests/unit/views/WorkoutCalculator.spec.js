@@ -73,6 +73,7 @@ test('should correctly calculate results according to advanced model options', a
   // Calculate result
   const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
   let result = calculateResult({
+    customName: 'foo',
     splitValue: 1, splitUnit: 'kilometers',
     type: 'distance', distanceValue: 10, distanceUnit: 'kilometers',
   });

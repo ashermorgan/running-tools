@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('Batch calculator', async ({ page }) => {
   // Structure:
-  // - Test workout batch results, including modified prediction model
+  // - Test workout batch results, including modified prediction model and custom target names
   // - Test pace batch results, including modified default units
   // - Test race batch results, including modified Riegel exponent
   // - Reload page
@@ -40,9 +40,10 @@ test('Batch calculator', async ({ page }) => {
   await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
   await expect(page.getByRole('row')).toHaveCount(16);
 
-  // Change prediction model
+  // Change prediction model and enable customized target names
   await page.getByText('Advanced Options').click();
   await page.getByLabel('Prediction model').selectOption('Riegel\'s Model');
+  await page.getByLabel('Target name customization').selectOption('Enabled');
 
   // Assert workout results are correct
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
@@ -160,6 +161,7 @@ test('Batch calculator', async ({ page }) => {
 
   // Assert workout results are correct (inputs and options not reset)
   await page.getByLabel('Calculator').selectOption('Workout Calculator');
+  await expect(page.getByLabel('Target name customization')).toHaveValue("true");
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
   await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
   await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
