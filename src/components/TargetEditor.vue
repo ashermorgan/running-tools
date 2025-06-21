@@ -4,7 +4,7 @@
       <tr>
         <th>
           Edit
-          <input v-model="internalValue.name" placeholder="Target set label"
+          <input v-model="model.name" placeholder="Target set label"
             aria-label="Target set label"/>
           <button class="icon" :title="isCustomSet ? 'Delete target set' : 'Revert target set'"
             @click="emit('revert')">
@@ -21,7 +21,7 @@
     </thead>
 
     <tbody>
-      <tr v-for="(item, index) in internalValue.targets" :key="index">
+      <tr v-for="(item, index) in model.targets" :key="index">
         <td>
           <span v-if="setType === 'workout' && customWorkoutNames">
             <input v-model="item.customName" :placeholder="workoutTargetToString(item)"
@@ -64,7 +64,7 @@
         </td>
       </tr>
 
-      <tr v-if="internalValue.targets.length === 0" class="empty-message">
+      <tr v-if="model.targets.length === 0" class="empty-message">
         <td colspan="2">
           There aren't any targets in this set yet.
         </td>
@@ -87,8 +87,6 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue';
-
 import VueFeather from 'vue-feather';
 
 import { workoutTargetToString } from '@/utils/targets';
@@ -96,17 +94,7 @@ import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
-
-/**
- * The component value
- */
-const model = defineModel({
-  type: Object,
-  default: {
-    name: 'New target set',
-    targets: [],
-  }
-});
+import useObjectModel from '@/composables/useObjectModel';
 
 const props = defineProps({
   /**
@@ -134,6 +122,17 @@ const props = defineProps({
   },
 
   /**
+   * The component value
+   */
+  modelValue: {
+    type: Object,
+    default: () => ({
+      name: 'New target set',
+      targets: [],
+    }),
+  },
+
+  /**
    * The target set type ('standard', 'split', or 'workout')
    */
   setType: {
@@ -143,33 +142,17 @@ const props = defineProps({
 });
 
 // Declare emitted events
-const emit = defineEmits(['revert', 'close']);
+const emit = defineEmits(['close', 'revert', 'update:modelValue']);
 
-/**
- * The internal value
- */
-const internalValue = ref(model.value);
-
-/**
- * Update the internal value when the component value changes
- */
-watch(model, (newValue) => {
-    internalValue.value = newValue;
-}, { deep: true });
-
-/**
- * Update the component value when the internal value changes
- */
-watch(internalValue, (newValue) => {
-  model.value = newValue;
-}, { deep: true });
+// Generate internal ref tied to modelValue prop
+const model = useObjectModel(props, emit, 'modelValue');
 
 /**
  * Add a new distance based target
  */
 function addDistanceTarget() {
   if (props.setType === 'workout') {
-    internalValue.value.targets.push({
+    model.value.targets.push({
       type: 'distance',
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
@@ -177,7 +160,7 @@ function addDistanceTarget() {
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    internalValue.value.targets.push({
+    model.value.targets.push({
       type: 'distance',
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
@@ -190,14 +173,14 @@ function addDistanceTarget() {
  */
 function addTimeTarget() {
   if (props.setType === 'workout') {
-    internalValue.value.targets.push({
+    model.value.targets.push({
       type: 'time',
       time: 600,
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    internalValue.value.targets.push({
+    model.value.targets.push({
       type: 'time',
       time: 600,
     });
@@ -209,7 +192,7 @@ function addTimeTarget() {
  * @param {Number} index The index of the target
  */
 function removeTarget(index) {
-  internalValue.value.targets.splice(index, 1);
+  model.value.targets.splice(index, 1);
 }
 </script>
 
