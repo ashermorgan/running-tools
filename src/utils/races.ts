@@ -1,13 +1,22 @@
+export enum RacePredictionModel {
+  AverageModel = 'AverageModel',
+  PurdyPointsModel = 'PurdyPointsModel',
+  VO2MaxModel = 'VO2MaxModel',
+  RiegelModel = 'RiegelModel',
+  CameronModel = 'CameronModel',
+}
+
 /**
  * Estimate the point at which a function returns a target value using Newton's Method
- * @param {Number} initialEstimate The initial estimate
- * @param {Number} target The target function output
+ * @param {number} initialEstimate The initial estimate
+ * @param {number} target The target function output
  * @param {Function} method The function
  * @param {Function} derivative The function derivative
- * @param {Number} precision The acceptable precision
- * @returns {Number} The refined estimate
+ * @param {number} precision The acceptable precision
+ * @returns {number} The refined estimate
  */
-function NewtonsMethod(initialEstimate, target, method, derivative, precision) {
+function NewtonsMethod(initialEstimate: number, target: number, method: (x: number) => number,
+                       derivative: (x: number) => number, precision: number): number {
   // Initialize estimate
   let estimate = initialEstimate;
   let estimateValue;
@@ -30,16 +39,25 @@ function NewtonsMethod(initialEstimate, target, method, derivative, precision) {
 }
 
 /*
+ * The internal variables used by the Purdy Points race prediction model
+ */
+interface PurdyPointsVariables {
+  twsec: number,
+  a: number,
+  b: number,
+}
+
+/*
  * Methods that implement the Purdy Points race prediction model
  * https://www.cs.uml.edu/~phoffman/xcinfo3.html
  */
 const PurdyPointsModel = {
   /**
    * Calculate the Purdy Point variables for a distance
-   * @param {Number} d The distance in meters
-   * @returns {Object} The Purdy Point variables
+   * @param {number} d The distance in meters
+   * @returns {PurdyPointsVariables} The Purdy Point variables
    */
-  getVariables(d) {
+  getVariables(d: number): PurdyPointsVariables {
     // Declare constants
     const c1 = 11.15895;
     const c2 = 4.304605;
@@ -77,11 +95,11 @@ const PurdyPointsModel = {
 
   /**
    * Get the Purdy Points for a race
-   * @param {Number} d The distance of the race in meters
-   * @param {Number} t The finish time of the race in seconds
-   * @returns {Number} The Purdy Points for the race
+   * @param {number} d The distance of the race in meters
+   * @param {number} t The finish time of the race in seconds
+   * @returns {number} The Purdy Points for the race
    */
-  getPurdyPoints(d, t) {
+  getPurdyPoints(d: number, t: number): number {
     // Get variables
     const variables = PurdyPointsModel.getVariables(d);
 
@@ -94,12 +112,12 @@ const PurdyPointsModel = {
 
   /**
    * Predict a race time using the Purdy Points Model
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @returns {Number} The predicted time for the output race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @returns {number} The predicted time for the output race in seconds
    */
-  predictTime(d1, t1, d2) {
+  predictTime(d1: number, t1: number, d2: number): number {
     // Calculate Purdy Points for distance 1
     const points = PurdyPointsModel.getPurdyPoints(d1, t1);
 
@@ -113,12 +131,12 @@ const PurdyPointsModel = {
 
   /**
    * Calculate the derivative with respect to distance of the Purdy Points curve at a specific point
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @return {Number} The derivative with respect to distance
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @return {number} The derivative with respect to distance
    */
-  derivative(d1, t1, d2) {
+  derivative(d1: number, t1: number, d2: number): number {
     const result = (85 * d2) / (((2316157 * Math.exp(-(522099 * d2) / 100000000000000)) / 1000000
       + (100789 * Math.exp(-(7068099 * d2) / 1000000000000)) / 25000 + (5234627 * Math.exp(-(410767
       * d2) / 1000000000)) / 10000000 + (860921 * Math.exp(-(411693 * d2) / 250000000)) / 200000
@@ -151,18 +169,18 @@ const PurdyPointsModel = {
 
   /**
    * Predict a race distance using the Purdy Points Model
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @returns {Number} The predicted distance for the output race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @returns {number} The predicted distance for the output race in meters
    */
-  predictDistance(t1, d1, t2) {
+  predictDistance(t1: number, d1: number, t2: number): number {
     // Initialize estimate
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate (derivative on its own is too slow)
-    const method = (x) => PurdyPointsModel.predictTime(d1, t1, x);
-    const derivative = (x) => PurdyPointsModel.derivative(d1, t1, x) / 500;
+    const method = (x: number) => PurdyPointsModel.predictTime(d1, t1, x);
+    const derivative = (x: number) => PurdyPointsModel.derivative(d1, t1, x) / 500;
     estimate = NewtonsMethod(estimate, t2, method, derivative, 0.01);
 
     // Return estimate
@@ -178,11 +196,11 @@ const PurdyPointsModel = {
 const VO2MaxModel = {
   /**
    * Calculate the VO2 of a runner during a race
-   * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in seconds
-   * @returns {Number} The VO2
+   * @param {number} d The race distance in meters
+   * @param {number} t The finish time in seconds
+   * @returns {number} The VO2
    */
-  getVO2(d, t) {
+  getVO2(d: number, t: number): number {
     const minutes = t / 60;
     const v = d / minutes;
     const result = -4.6 + (0.182258 * v) + (0.000104 * (v ** 2));
@@ -191,10 +209,10 @@ const VO2MaxModel = {
 
   /**
    * Calculate the percentage of VO2 max a runner is at during a race
-   * @param {Number} t The race time in seconds
-   * @returns {Number} The percentage of VO2 max
+   * @param {number} t The race time in seconds
+   * @returns {number} The percentage of VO2 max
    */
-  getVO2Percentage(t) {
+  getVO2Percentage(t: number): number {
     const minutes = t / 60;
     const result = 0.8 + (0.189439 * Math.exp(-0.012778 * minutes)) + (0.298956 * Math.exp(-0.193261
       * minutes));
@@ -203,22 +221,22 @@ const VO2MaxModel = {
 
   /**
    * Calculate a runner's VO2 max from a race result
-   * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in seconds
-   * @returns {Number} The runner's VO2 max
+   * @param {number} d The race distance in meters
+   * @param {number} t The finish time in seconds
+   * @returns {number} The runner's VO2 max
    */
-  getVO2Max(d, t) {
+  getVO2Max(d: number, t: number): number {
     const result = VO2MaxModel.getVO2(d, t) / VO2MaxModel.getVO2Percentage(t);
     return result;
   },
 
   /**
    * Calculate the derivative with respect to time of the VO2 max curve at a specific point
-   * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in seconds
-   * @return {Number} The derivative with respect to time
+   * @param {number} d The race distance in meters
+   * @param {number} t The finish time in seconds
+   * @return {number} The derivative with respect to time
    */
-  VO2MaxTimeDerivative(d, t) {
+  VO2MaxTimeDerivative(d: number, t: number): number {
     const result = (-(273 * d) / (25 * (t ** 2)) - (468 * (d ** 2)) / (625 * (t ** 3))) / ((189
       * Math.exp(-(2 * t) / 9375)) / 1000 + (299 * Math.exp(-(193 * t) / 60000)) / 1000 + 4 / 5)
       - (((273 * d) / (25 * t) + (234 * (d ** 2)) / (625 * (t ** 2)) - 23 / 5) * (-(63
@@ -230,12 +248,12 @@ const VO2MaxModel = {
 
   /**
    * Predict a race time using the VO2 Max Model
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @returns {Number} The predicted time for the output race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @returns {number} The predicted time for the output race in seconds
    */
-  predictTime(d1, t1, d2) {
+  predictTime(d1: number, t1: number, d2: number): number {
     // Calculate input VO2 max
     const inputVO2Max = VO2MaxModel.getVO2Max(d1, t1);
 
@@ -243,8 +261,8 @@ const VO2MaxModel = {
     let estimate = (t1 * d2) / d1;
 
     // Refine estimate
-    const method = (x) => VO2MaxModel.getVO2Max(d2, x);
-    const derivative = (x) => VO2MaxModel.VO2MaxTimeDerivative(d2, x);
+    const method = (x: number) => VO2MaxModel.getVO2Max(d2, x);
+    const derivative = (x: number) => VO2MaxModel.VO2MaxTimeDerivative(d2, x);
     estimate = NewtonsMethod(estimate, inputVO2Max, method, derivative, 0.0001);
 
     // Return estimate
@@ -253,11 +271,11 @@ const VO2MaxModel = {
 
   /**
    * Calculate the derivative with respect to distance of the VO2 max curve at a specific point
-   * @param {Number} d The race distance in meters
-   * @param {Number} t The finish time in seconds
-   * @return {Number} The derivative with respect to distance
+   * @param {number} d The race distance in meters
+   * @param {number} t The finish time in seconds
+   * @return {number} The derivative with respect to distance
    */
-  VO2MaxDistanceDerivative(d, t) {
+  VO2MaxDistanceDerivative(d: number, t: number): number {
     const result = ((468 * d) / (625 * (t ** 2)) + 273 / (25 * t)) / ((189 * Math.exp(-(2 * t)
       / 9375)) / 1000 + (299 * Math.exp(-(193 * t) / 60000)) / 1000 + 4 / 5);
     return result;
@@ -265,12 +283,12 @@ const VO2MaxModel = {
 
   /**
    * Predict a race distance using the VO2 Max Model
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @returns {Number} The predicted distance for the output race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @returns {number} The predicted distance for the output race in meters
    */
-  predictDistance(t1, d1, t2) {
+  predictDistance(t1: number, d1: number, t2: number): number {
     // Calculate input VO2 max
     const inputVO2 = VO2MaxModel.getVO2Max(d1, t1);
 
@@ -278,8 +296,8 @@ const VO2MaxModel = {
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate
-    const method = (x) => VO2MaxModel.getVO2Max(x, t2);
-    const derivative = (x) => VO2MaxModel.VO2MaxDistanceDerivative(x, t2);
+    const method = (x: number) => VO2MaxModel.getVO2Max(x, t2);
+    const derivative = (x: number) => VO2MaxModel.VO2MaxDistanceDerivative(x, t2);
     estimate = NewtonsMethod(estimate, inputVO2, method, derivative, 0.0001);
 
     // Return estimate
@@ -294,12 +312,12 @@ const VO2MaxModel = {
 const CameronModel = {
   /**
    * Predict a race time using Dave Cameron's Model
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @returns {Number} The predicted time for the output race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @returns {number} The predicted time for the output race in seconds
    */
-  predictTime(d1, t1, d2) {
+  predictTime(d1: number, t1: number, d2: number): number {
     const a = 13.49681 - (0.000030363 * d1) + (835.7114 / (d1 ** 0.7905));
     const b = 13.49681 - (0.000030363 * d2) + (835.7114 / (d2 ** 0.7905));
     return (t1 / d1) * (a / b) * d2;
@@ -307,12 +325,12 @@ const CameronModel = {
 
   /**
    * Calculate the derivative with respect to distance of the Cameron curve at a specific point
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @return {Number} The derivative with respect to distance
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @return {number} The derivative with respect to distance
    */
-  derivative(d1, t1, d2) {
+  derivative(d1: number, t1: number, d2: number): number {
     const result = -(100 * (30363 * (d1 ** (3581 / 2000)) - 13496810000 * (d1 ** (1581 / 2000))
       - 835711400000) * t1 * (134968100 * (d2 ** (3581 / 2000)) + 14963412617 * d2)) / ((d1 ** (3581
       / 2000)) * (d2 ** (419 / 2000)) * ((30363 * (d2 ** (3581 / 2000)) - 13496810000 * (d2 ** (1581
@@ -322,18 +340,18 @@ const CameronModel = {
 
   /**
    * Predict a race distance using Dave Cameron's Model
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @returns {Number} The predicted distance for the output race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @returns {number} The predicted distance for the output race in meters
    */
-  predictDistance(t1, d1, t2) {
+  predictDistance(t1: number, d1: number, t2: number): number {
     // Initialize estimate
     let estimate = (d1 * t2) / t1;
 
     // Refine estimate
-    const method = (x) => CameronModel.predictTime(d1, t1, x);
-    const derivative = (x) => CameronModel.derivative(d1, t1, x);
+    const method = (x: number) => CameronModel.predictTime(d1, t1, x);
+    const derivative = (x: number) => CameronModel.derivative(d1, t1, x);
     estimate = NewtonsMethod(estimate, t2, method, derivative, 0.01);
 
     // Return estimate
@@ -348,25 +366,25 @@ const CameronModel = {
 const RiegelModel = {
   /**
    * Predict a race time using Pete Riegel's Model
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @param {Number} c The value of the exponent in the equation
-   * @returns {Number} The predicted time for the output race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @param {number} c The value of the exponent in the equation
+   * @returns {number} The predicted time for the output race in seconds
    */
-  predictTime(d1, t1, d2, c = 1.06) {
+  predictTime(d1: number, t1: number, d2: number, c: number = 1.06): number {
     return t1 * ((d2 / d1) ** c);
   },
 
   /**
    * Predict a race distance using Pete Riegel's Model
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @param {Number} c The value of the exponent in the equation
-   * @returns {Number} The predicted distance for the output race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @param {number} c The value of the exponent in the equation
+   * @returns {number} The predicted distance for the output race in meters
    */
-  predictDistance(t1, d1, t2, c = 1.06) {
+  predictDistance(t1: number, d1: number, t2: number, c: number = 1.06) {
     return d1 * ((t2 / t1) ** (1 / c));
   },
 };
@@ -377,13 +395,13 @@ const RiegelModel = {
 const AverageModel = {
   /**
    * Predict a race time by averaging the results of different models
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @param {Number} c The value of the exponent in Pete Riegel's Model
-   * @returns {Number} The predicted time for the output race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @param {number} c The value of the exponent in Pete Riegel's Model
+   * @returns {number} The predicted time for the output race in seconds
    */
-  predictTime(d1, t1, d2, c = 1.06) {
+  predictTime(d1: number, t1: number, d2: number, c: number = 1.06): number {
     const purdy = PurdyPointsModel.predictTime(d1, t1, d2);
     const vo2max = VO2MaxModel.predictTime(d1, t1, d2);
     const cameron = CameronModel.predictTime(d1, t1, d2);
@@ -393,13 +411,13 @@ const AverageModel = {
 
   /**
    * Predict a race distance by averaging the results of different models
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @param {Number} c The value of the exponent in Pete Riegel's Model
-   * @returns {Number} The predicted distance for the output race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @param {number} c The value of the exponent in Pete Riegel's Model
+   * @returns {number} The predicted distance for the output race in meters
    */
-  predictDistance(t1, d1, t2, c = 1.06) {
+  predictDistance(t1: number, d1: number, t2: number, c: number = 1.06) {
     const purdy = PurdyPointsModel.predictDistance(t1, d1, t2);
     const vo2max = VO2MaxModel.predictDistance(t1, d1, t2);
     const cameron = CameronModel.predictDistance(t1, d1, t2);
@@ -410,47 +428,52 @@ const AverageModel = {
 
 /**
  * Predict a race time
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d2 The distance of the output race in meters
-   * @param {String} model The race prediction model to use
-   * @param {Number} c The value of the exponent in Pete Riegel's Model
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d2 The distance of the output race in meters
+   * @param {string} model The race prediction model to use
+   * @param {number} c The value of the exponent in Pete Riegel's Model
  */
-export function predictTime(d1, t1, d2, model='AverageModel', c=1.06) {
+export function predictTime(d1: number, t1: number, d2: number,
+                            model: RacePredictionModel = RacePredictionModel.AverageModel,
+                            c: number = 1.06): number {
   switch (model) {
-    case 'AverageModel':
+    default:
+    case RacePredictionModel.AverageModel:
       return AverageModel.predictTime(d1, t1, d2, c);
-    case 'PurdyPointsModel':
+    case RacePredictionModel.PurdyPointsModel:
       return PurdyPointsModel.predictTime(d1, t1, d2);
-    case 'VO2MaxModel':
+    case RacePredictionModel.VO2MaxModel:
       return VO2MaxModel.predictTime(d1, t1, d2);
-    case 'RiegelModel':
+    case RacePredictionModel.RiegelModel:
       return RiegelModel.predictTime(d1, t1, d2, c);
-    case 'CameronModel':
+    case RacePredictionModel.CameronModel:
       return CameronModel.predictTime(d1, t1, d2);
   }
 }
 
 /**
  * Predict a race distance
-   * @param {Number} t1 The finish time of the input race in seconds
-   * @param {Number} d1 The distance of the input race in meters
-   * @param {Number} t2 The finish time of the output race in seconds
-   * @param {String} model The race prediction model to use
-   * @param {Number} c The value of the exponent in Pete Riegel's Model
+   * @param {number} t1 The finish time of the input race in seconds
+   * @param {number} d1 The distance of the input race in meters
+   * @param {number} t2 The finish time of the output race in seconds
+   * @param {string} model The race prediction model to use
+   * @param {number} c The value of the exponent in Pete Riegel's Model
  */
-export function predictDistance(t1, d1, t2, model='AverageModel', c=1.06) {
+export function predictDistance(t1: number, d1: number, t2: number,
+                                model: RacePredictionModel = RacePredictionModel.AverageModel,
+                                c: number = 1.06) {
   switch (model) {
     default:
-    case 'AverageModel':
+    case RacePredictionModel.AverageModel:
       return AverageModel.predictDistance(t1, d1, t2, c);
-    case 'PurdyPointsModel':
+    case RacePredictionModel.PurdyPointsModel:
       return PurdyPointsModel.predictDistance(t1, d1, t2);
-    case 'VO2MaxModel':
+    case RacePredictionModel.VO2MaxModel:
       return VO2MaxModel.predictDistance(t1, d1, t2);
-    case 'RiegelModel':
+    case RacePredictionModel.RiegelModel:
       return RiegelModel.predictDistance(t1, d1, t2, c);
-    case 'CameronModel':
+    case RacePredictionModel.CameronModel:
       return CameronModel.predictDistance(t1, d1, t2);
   }
 }

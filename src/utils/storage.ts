@@ -3,12 +3,12 @@ const prefix = 'running-tools';
 
 /**
  * Read an object from a localStorage item
- * @param {String} key The localStorage item's key
- * @returns {Object} The object
+ * @param {string} key The localStorage item's key
+ * @returns {object} The object
  */
-export function get(key) {
+export function get(key: string): object | null {
   try {
-    return JSON.parse(localStorage.getItem(`${prefix}.${key}`));
+    return JSON.parse(localStorage.getItem(`${prefix}.${key}`) || '');
   } catch {
     return null;
   }
@@ -16,10 +16,10 @@ export function get(key) {
 
 /**
  * Write an object to a localStorage item
- * @param {String} key The localStorage item's key
- * @param {Object} value The object to write
+ * @param {string} key The localStorage item's key
+ * @param {object} value The object to write
  */
-export function set(key, value) {
+export function set(key: string, value: object) {
   localStorage.setItem(`${prefix}.${key}`, JSON.stringify(value));
 }
 
@@ -28,7 +28,8 @@ export function set(key, value) {
  */
 export function migrate() {
   // Add customTargetNames property to workout options (>1.4.1)
-  let workoutOptions = get('workout-calculator-options');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const workoutOptions = get('workout-calculator-options') as any; // TODO: update types
   if (workoutOptions !== null && workoutOptions.customTargetNames === undefined) {
     workoutOptions.customTargetNames = false;
     set('workout-calculator-options', workoutOptions);
