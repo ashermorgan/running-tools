@@ -18,24 +18,13 @@
 </template>
 
 <script setup>
-import DecimalInput from '@/components/DecimalInput.vue';
-import TimeInput from '@/components/TimeInput.vue';
-
 import { DISTANCE_UNITS } from '@/utils/units';
 
-/**
- * The component value
- */
-const model = defineModel({
-  type: Object,
-  default: {
-    distanceValue: 5,
-    distanceUnit: 'kilometers',
-    time: 1200,
-  },
-});
+import DecimalInput from '@/components/DecimalInput.vue';
+import TimeInput from '@/components/TimeInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
-defineProps({
+const props = defineProps({
   /**
    * The prefix for each field's aria-label
    */
@@ -43,8 +32,23 @@ defineProps({
     type: String,
     default: 'Input',
   },
+
+  /**
+   * The component value
+   */
+  modelValue: {
+    type: Object,
+    default: () => ({
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    }),
+  },
 });
 
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel(props, emit, 'modelValue');
 </script>
 
 <style scoped>

@@ -20,31 +20,52 @@ test('should be initialized to modelValue', () => {
   expect(wrapper.findComponent({ name: 'time-input' }).vm.modelValue).to.equal(1000);
 });
 
-test('should update modelValue when inputs are modified', async () => {
+test('should emit event when inputs are modified', async () => {
   // Initialize component
   const wrapper = shallowMount(PaceInput);
 
   // Update distance value
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(3);
-  expect(wrapper.vm.modelValue).to.deep.equal({
-    distanceValue: 3,
-    distanceUnit: 'kilometers',
-    time: 1200,
-  });
+  expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
+    [{
+      distanceValue: 3,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    }],
+  ]);
 
   // Update distance unit
   await wrapper.find('select').setValue('miles');
-  expect(wrapper.vm.modelValue).to.deep.equal({
-    distanceValue: 3,
-    distanceUnit: 'miles',
-    time: 1200,
-  });
+  expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
+    [{
+      distanceValue: 3,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    }],
+    [{
+      distanceValue: 3,
+      distanceUnit: 'miles',
+      time: 1200,
+    }],
+  ]);
 
   // Update time
   await wrapper.findComponent({ name: 'time-input' }).setValue(1000);
-  expect(wrapper.vm.modelValue).to.deep.equal({
-    distanceValue: 3,
-    distanceUnit: 'miles',
-    time: 1000,
-  });
+  expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
+    [{
+      distanceValue: 3,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    }],
+    [{
+      distanceValue: 3,
+      distanceUnit: 'miles',
+      time: 1200,
+    }],
+    [{
+      distanceValue: 3,
+      distanceUnit: 'miles',
+      time: 1000,
+    }],
+  ]);
 });

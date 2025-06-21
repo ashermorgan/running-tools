@@ -27,7 +27,7 @@
         </td>
 
         <td>
-          <time-input v-model="targets[index].splitTime" label="Split duration" :showHours="false"/>
+          <time-input v-model="model[index].splitTime" label="Split duration" :showHours="false"/>
         </td>
 
         <td>
@@ -53,14 +53,7 @@ import { formatDuration, formatNumber } from '@/utils/format';
 import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
-
-/**
- * The split targets
- */
-const targets = defineModel({
-  type: Array,
-  default: () => [],
-})
+import useObjectModel from '@/composables/useObjectModel';
 
 const props = defineProps({
   /**
@@ -70,7 +63,19 @@ const props = defineProps({
     type: String,
     default: 'metric',
   },
+
+  /**
+   * The split targets
+   */
+  modelValue: {
+    type: Array,
+    default: () => [],
+  },
 });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel(props, emit, 'modelValue');
 
 /**
  * The target table results
@@ -79,15 +84,15 @@ const results = computed(() => {
   // Initialize results array
   const results = [];
 
-  for (let i = 0; i < targets.value.length; i += 1) {
+  for (let i = 0; i < model.value.length; i += 1) {
     // Calculate split and total times
-    const splitTime = targets.value[i].splitTime || 0;
+    const splitTime = model.value[i].splitTime || 0;
     const totalTime = i === 0 ? splitTime : results[i - 1].time + splitTime;
 
     // Calculate split and total distances
     const totalDistance = convertDistance(
-      targets.value[i].distanceValue,
-      targets.value[i].distanceUnit, 'meters',
+      model.value[i].distanceValue,
+      model.value[i].distanceUnit, 'meters',
     );
     const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
@@ -98,8 +103,8 @@ const results = computed(() => {
     // Add row to results array
     results.push({
       distance: totalDistance,
-      distanceValue: targets.value[i].distanceValue,
-      distanceUnit: targets.value[i].distanceUnit,
+      distanceValue: model.value[i].distanceValue,
+      distanceUnit: model.value[i].distanceUnit,
       time: totalTime,
       splitTime,
       pace,

@@ -28,6 +28,7 @@ import VueFeather from 'vue-feather';
 import { sort, defaultTargetSets } from '@/utils/targets';
 
 import TargetEditor from '@/components/TargetEditor.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
 /**
  * The selected target set
@@ -37,15 +38,7 @@ const model = defineModel('selectedTargetSet', {
   default: '_new',
 });
 
-/**
- * The target sets
- */
-const targetSets = defineModel('targetSets', {
-  type: Object,
-  default: {},
-});
-
-defineProps({
+const props = defineProps({
   /**
    * Whether to allow custom names for workout targets
    */
@@ -69,7 +62,19 @@ defineProps({
     type: String,
     default: 'standard'
   },
+
+  /**
+   * The target sets
+   */
+  targetSets: {
+    type: Object,
+    default: () => ({}),
+  },
 });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:targetSets']);
+const targetSets = useObjectModel(props, emit, 'targetSets');
 
 /**
  * The dialog element

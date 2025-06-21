@@ -19,12 +19,22 @@
 
 <script setup>
 import DecimalInput from '@/components/DecimalInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
-const model = defineModel({
-  type: Object,
-  default: {
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+const props = defineProps({
+  /**
+   * The component value
+   */
+  modelValue: {
+    type: Object,
+    default: () => ({
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    }),
   },
 });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel(props, emit, 'modelValue');
 </script>

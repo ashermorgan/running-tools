@@ -176,27 +176,49 @@ const selectedTargetSet = computed({
 /**
  * The target sets for the current calculator
  */
-const targetSets = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return paceTargetSets.value;
-  } else if (options.value.calculator === 'race') {
-    return raceTargetSets.value;
-  } else {
-    return workoutTargetSets.value;
-  }
+const targetSets = computed({
+  get: () => {
+    if (options.value.calculator === 'pace') {
+      return paceTargetSets.value;
+    } else if (options.value.calculator === 'race') {
+      return raceTargetSets.value;
+    } else {
+      return workoutTargetSets.value;
+    }
+  },
+  set: (newValue) => {
+    if (options.value.calculator === 'pace') {
+      paceTargetSets.value = newValue;
+    } else if (options.value.calculator === 'race') {
+      raceTargetSets.value = newValue;
+    } else {
+      workoutTargetSets.value = newValue;
+    }
+  },
 });
 
 /**
  * The advanced options for the current calculator
  */
-const advancedOptions = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return {};
-  } else if (options.value.calculator === 'race') {
-    return raceOptions.value;
-  } else {
-    return workoutOptions.value;
-  }
+const advancedOptions = computed({
+  get: () => {
+    if (options.value.calculator === 'pace') {
+      return {};
+    } else if (options.value.calculator === 'race') {
+      return raceOptions.value;
+    } else {
+      return workoutOptions.value;
+    }
+  },
+  set: (newValue) => {
+    if (options.value.calculator === 'pace') {
+      // do nothing
+    } else if (options.value.calculator === 'race') {
+      raceOptions.value = newValue;
+    } else {
+      workoutOptions.value = newValue;
+    }
+  },
 });
 
 /**
