@@ -10,11 +10,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "test:unit": "vitest",
-    "test:e2e": "npx playwright test"
+    "test:e2e": "playwright test",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build"
   },
   "dependencies": {
     "feather-icons": "^4.29.2",
@@ -25,16 +27,22 @@
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@playwright/test": "^1.53.1",
+    "@tsconfig/node22": "^22.0.2",
     "@types/node": "^24.0.3",
     "@vitejs/plugin-vue": "^5.2.4",
     "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.22.0",
     "eslint-plugin-playwright": "^2.2.0",
     "eslint-plugin-vue": "^10.2.0",
     "jsdom": "^26.1.0",
+    "npm-run-all2": "^8.0.4",
     "pwa-asset-generator": "^8.0.5",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1",
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vue-tsc": "^2.2.10"
   }
 }

@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
 import js from '@eslint/js'
+import ts from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import pluginPlaywright from 'eslint-plugin-playwright'
 
@@ -22,6 +23,7 @@ export default defineConfig([
   },
 
   js.configs.recommended,
+  ts.configs.recommended,
   ...pluginVue.configs['flat/essential'],
 
   {
