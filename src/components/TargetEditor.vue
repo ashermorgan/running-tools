@@ -32,7 +32,7 @@
             <decimal-input v-model="item.splitValue" aria-label="Split distance value"
               :min="0" :digits="2"/>
             <select v-model="item.splitUnit" aria-label="Split distance unit">
-              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+              <option v-for="(value, key) in DistanceUnitData" :key="key" :value="key">
                 {{ value.name }}
               </option>
             </select>
@@ -46,7 +46,7 @@
             <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
               :min="0" :digits="2"/>
             <select v-model="item.distanceUnit" aria-label="Target distance unit">
-              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+              <option v-for="(value, key) in DistanceUnitData" :key="key" :value="key">
                 {{ value.name }}
               </option>
             </select>
@@ -90,7 +90,7 @@
 import VueFeather from 'vue-feather';
 
 import { workoutTargetToString } from '@/utils/targets';
-import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
+import { DistanceUnitData, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';

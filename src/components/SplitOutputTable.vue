@@ -19,7 +19,7 @@
       <tr v-for="(item, index) in results" :key="index">
         <td>
           {{ formatNumber(item.distanceValue, 0, 2, false) }}
-          {{ DISTANCE_UNITS[item.distanceUnit].symbol }}
+          {{ DistanceUnitData[item.distanceUnit].symbol }}
         </td>
 
         <td>
@@ -32,7 +32,7 @@
 
         <td>
           {{ formatDuration(item.pace, 3, 0, true) }}
-          / {{ DISTANCE_UNITS[getDefaultDistanceUnit(defaultUnitSystem)]
+          / {{ DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)]
           .symbol }}
         </td>
       </tr>
@@ -50,7 +50,7 @@
 import { computed } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
+import { DistanceUnitData, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';

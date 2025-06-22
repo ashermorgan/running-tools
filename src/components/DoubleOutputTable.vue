@@ -30,15 +30,19 @@
 import { computed } from 'vue';
 import type { PropType } from 'vue';
 
+import { ResultType } from '@/utils/calculators';
+import type { TargetResult } from '@/utils/calculators';
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, DISTANCE_UNIT_KEYS } from '@/utils/units';
+import type { Target } from '@/utils/targets';
+import { DistanceUnitData } from '@/utils/units';
+import type { Distance, DistanceTime } from '@/utils/units';
 
 const props = defineProps({
   /**
    * The method that generates the target table rows
    */
   calculateResult: {
-    type: Function,
+    type: Function as PropType<(x: DistanceTime, y: Target) => TargetResult>,
     required: true,
   },
 
@@ -46,7 +50,7 @@ const props = defineProps({
    * The target set
    */
   targets: {
-    type: Array,
+    type: Array<Target>,
     default: () => [],
   },
 
@@ -62,7 +66,7 @@ const props = defineProps({
    * The input distance
    */
   inputDistance: {
-    type: Object as PropType<{ distanceValue: number, distanceUnit: DISTANCE_UNIT_KEYS }>,
+    type: Object as PropType<Distance>,
     default: () => ({
       distanceValue: 5,
       distanceUnit: 'kilometers',
@@ -75,9 +79,9 @@ const props = defineProps({
  */
 const results = computed(() => {
   // Calculate results
-  const results = [[
+  const results: Array<Array<string>> = [[
     formatNumber(props.inputDistance.distanceValue, 0, 2, false) + ' '
-      + DISTANCE_UNITS[props.inputDistance.distanceUnit].symbol
+      + DistanceUnitData[props.inputDistance.distanceUnit].symbol
   ]];
 
   props.inputTimes.forEach((input, y) => {
@@ -87,7 +91,7 @@ const results = computed(() => {
       const result = props.calculateResult({ ...props.inputDistance, time: input }, target);
 
       if (y === 0) {
-        results[0].push(result[result.result === 'key' ? 'value' : 'key']);
+        results[0].push(result[result.result === ResultType.Key ? 'value' : 'key']);
       }
 
       row.push(result[result.result]);

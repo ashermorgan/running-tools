@@ -20,15 +20,10 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 
-import { RacePredictionModel } from '@/utils/races';
+import type { RaceOptions } from '@/utils/calculators';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
-
-interface RaceOptions {
-  model: RacePredictionModel,
-  riegelExponent: number,
-}
 
 const props = defineProps({
   /**

@@ -38,7 +38,7 @@
 import { computed, ref } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, TIME_UNITS, SPEED_UNITS, PACE_UNITS, convertDistance, convertTime,
+import { DistanceUnitData, TimeUnitData, SpeedUnitData, PaceUnitData, convertDistance, convertTime,
 convertSpeedPace } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
@@ -90,11 +90,11 @@ const input = computed({
 const units = computed(() => {
   switch (category.value) {
     case 'distance': {
-      return DISTANCE_UNITS;
+      return DistanceUnitData;
     }
     case 'time': {
       return {
-        ...TIME_UNITS,
+        ...TimeUnitData,
         'hh:mm:ss': {
           name: 'hh:mm:ss',
           symbol: '',
@@ -103,7 +103,7 @@ const units = computed(() => {
       };
     }
     case 'speed_and_pace': {
-      return { ...PACE_UNITS, ...SPEED_UNITS };
+      return { ...PaceUnitData, ...SpeedUnitData };
     }
     default: {
       return {};
@@ -144,10 +144,10 @@ const outputValue = computed(() => {
  * @returns {String} The type ('decimal' or 'time')
  */
 function getUnitType(unit) {
-  if (unit in DISTANCE_UNITS) {
+  if (unit in DistanceUnitData) {
     return 'decimal';
   }
-  if (unit in TIME_UNITS) {
+  if (unit in TimeUnitData) {
     return 'decimal';
   }
   if (unit === 'hh:mm:ss') {

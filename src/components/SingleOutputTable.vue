@@ -36,15 +36,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
+import type { PropType } from 'vue';
+
+import type { TargetResult } from '@/utils/calculators';
+import type { Target } from '@/utils/targets';
 
 const props = defineProps({
   /**
    * The method that generates the target table rows
    */
   calculateResult: {
-    type: Function,
+    type: Function as PropType<(x: Target) => TargetResult>,
     required: true,
   },
 
@@ -52,7 +56,7 @@ const props = defineProps({
    * The target set
    */
   targets: {
-    type: Array,
+    type: Array<Target>,
     default: () => [],
   },
 
@@ -70,7 +74,7 @@ const props = defineProps({
  */
 const results = computed(() => {
   // Calculate results
-  const result = [];
+  const result: Array<TargetResult> = [];
   props.targets.forEach((row) => {
     // Add result
     result.push(props.calculateResult(row));

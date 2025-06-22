@@ -1,41 +1,23 @@
-export enum TIME_UNIT_KEYS {
-  seconds = 'seconds',
-  minutes = 'minutes',
-  hours = 'hours',
-}
-export enum DISTANCE_UNIT_KEYS {
-  meters = 'meters',
-  yards = 'yards',
-  kilometers = 'kilometers',
-  miles = 'miles',
-  marathons = 'marathons',
-}
-export enum SPEED_UNIT_KEYS {
-  meters_per_second = 'meters_per_second',
-  kilometers_per_hour = 'kilometers_per_hour',
-  miles_per_hour = 'miles_per_hour',
-}
-export enum PACE_UNIT_KEYS {
-  seconds_per_meter = 'seconds_per_meter',
-  time_per_kilometer = 'seconds_per_kilometer',
-  time_per_mile = 'seconds_per_mile',
-}
-
 /**
- * The time units
+ * The supported time units
  */
-export const TIME_UNITS = {
-  seconds: {
+export enum TimeUnits {
+  Seconds = 'seconds',
+  Minutes = 'minutes',
+  Hours = 'hours',
+}
+export const TimeUnitData = {
+  [TimeUnits.Seconds]: {
     name: 'Seconds',
     symbol: 's',
     value: 1,
   },
-  minutes: {
+  [TimeUnits.Minutes]: {
     name: 'Minutes',
     symbol: 'min',
     value: 60,
   },
-  hours: {
+  [TimeUnits.Hours]: {
     name: 'Hours',
     symbol: 'hr',
     value: 3600,
@@ -43,30 +25,37 @@ export const TIME_UNITS = {
 };
 
 /**
- * The distance units
+ * The supported distance units
  */
-export const DISTANCE_UNITS = {
-  meters: {
+export enum DistanceUnits {
+  Meters = 'meters',
+  Yards = 'yards',
+  Kilometers = 'kilometers',
+  Miles = 'miles',
+  Marathons = 'marathons',
+}
+export const DistanceUnitData = {
+  [DistanceUnits.Meters]: {
     name: 'Meters',
     symbol: 'm',
     value: 1,
   },
-  yards: {
+  [DistanceUnits.Yards]: {
     name: 'Yards',
     symbol: 'yd',
     value: 0.9144,
   },
-  kilometers: {
+  [DistanceUnits.Kilometers]: {
     name: 'Kilometers',
     symbol: 'km',
     value: 1000,
   },
-  miles: {
+  [DistanceUnits.Miles]: {
     name: 'Miles',
     symbol: 'mi',
     value: 1609.3499,
   },
-  marathons: {
+  [DistanceUnits.Marathons]: {
     name: 'Marathons',
     symbol: 'Mar',
     value: 42195,
@@ -74,9 +63,14 @@ export const DISTANCE_UNITS = {
 };
 
 /**
- * The speed units
+ * The supported speed units
  */
-export const SPEED_UNITS = {
+export enum SpeedUnits {
+  MetersPerSecond = 'meters_per_second',
+  KilometersPerHour = 'kilometers_per_hour',
+  MilesPerHour = 'miles_per_hour',
+}
+export const SpeedUnitData = {
   meters_per_second: {
     name: 'Meters per Second',
     symbol: 'm/s',
@@ -85,35 +79,54 @@ export const SPEED_UNITS = {
   kilometers_per_hour: {
     name: 'Kilometers per Hour',
     symbol: 'kph',
-    value: DISTANCE_UNITS.kilometers.value / TIME_UNITS.hours.value,
+    value: DistanceUnitData[DistanceUnits.Kilometers].value / TimeUnitData[TimeUnits.Hours].value,
   },
   miles_per_hour: {
     name: 'Miles per Hour',
     symbol: 'mph',
-    value: DISTANCE_UNITS.miles.value / TIME_UNITS.hours.value,
+    value: DistanceUnitData[DistanceUnits.Miles].value / TimeUnitData[TimeUnits.Hours].value,
   },
 };
 
 /**
- * The value of each pace unit in seconds per meter
+ * The supported pace units
  */
-export const PACE_UNITS = {
-  seconds_per_meter: {
+export enum PaceUnits {
+  SecondsPerMeter = 'seconds_per_meter',
+  TimePerKilometer = 'seconds_per_kilometer',
+  TimePerMile = 'seconds_per_mile',
+}
+export const PaceUnitData = {
+  [PaceUnits.SecondsPerMeter]: {
     name: 'Seconds per Meter',
     symbol: 's/m',
     value: 1,
   },
-  seconds_per_kilometer: {
+  [PaceUnits.TimePerKilometer]: {
     name: 'Time per Kilometer',
     symbol: '/ km',
-    value: TIME_UNITS.seconds.value / DISTANCE_UNITS.kilometers.value,
+    value: TimeUnitData[TimeUnits.Seconds].value / DistanceUnitData[DistanceUnits.Kilometers].value,
   },
-  seconds_per_mile: {
+  [PaceUnits.TimePerMile]: {
     name: 'Time per Mile',
     symbol: '/ mi',
-    value: TIME_UNITS.seconds.value / DISTANCE_UNITS.miles.value,
+    value: TimeUnitData[TimeUnits.Seconds].value / DistanceUnitData[DistanceUnits.Miles].value,
   },
 };
+
+export enum UnitSystems {
+  Metric = 'metric',
+  Imperial = 'imperial',
+};
+
+export interface Distance {
+  distanceValue: number,
+  distanceUnit: DistanceUnits,
+}
+
+export interface DistanceTime extends Distance {
+  time: number,
+}
 
 /**
  * Convert between time units
@@ -122,9 +135,9 @@ export const PACE_UNITS = {
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertTime(inputValue: number, inputUnit: TIME_UNIT_KEYS,
-                            outputUnit: TIME_UNIT_KEYS): number {
-  return (inputValue * TIME_UNITS[inputUnit].value) / TIME_UNITS[outputUnit].value;
+export function convertTime(inputValue: number, inputUnit: TimeUnits,
+                            outputUnit: TimeUnits): number {
+  return (inputValue * TimeUnitData[inputUnit].value) / TimeUnitData[outputUnit].value;
 }
 
 /**
@@ -134,9 +147,9 @@ export function convertTime(inputValue: number, inputUnit: TIME_UNIT_KEYS,
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertDistance(inputValue: number, inputUnit: DISTANCE_UNIT_KEYS,
-                                outputUnit: DISTANCE_UNIT_KEYS): number {
-  return (inputValue * DISTANCE_UNITS[inputUnit].value) / DISTANCE_UNITS[outputUnit].value;
+export function convertDistance(inputValue: number, inputUnit: DistanceUnits,
+                                outputUnit: DistanceUnits): number {
+  return (inputValue * DistanceUnitData[inputUnit].value) / DistanceUnitData[outputUnit].value;
 }
 
 /**
@@ -146,9 +159,9 @@ export function convertDistance(inputValue: number, inputUnit: DISTANCE_UNIT_KEY
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertSpeed(inputValue: number, inputUnit: SPEED_UNIT_KEYS,
-                             outputUnit: SPEED_UNIT_KEYS): number {
-  return (inputValue * SPEED_UNITS[inputUnit].value) / SPEED_UNITS[outputUnit].value;
+export function convertSpeed(inputValue: number, inputUnit: SpeedUnits,
+                             outputUnit: SpeedUnits): number {
+  return (inputValue * SpeedUnitData[inputUnit].value) / SpeedUnitData[outputUnit].value;
 }
 
 /**
@@ -158,9 +171,9 @@ export function convertSpeed(inputValue: number, inputUnit: SPEED_UNIT_KEYS,
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertPace(inputValue: number, inputUnit: PACE_UNIT_KEYS,
-                            outputUnit: PACE_UNIT_KEYS): number {
-  return (inputValue * PACE_UNITS[inputUnit].value) / PACE_UNITS[outputUnit].value;
+export function convertPace(inputValue: number, inputUnit: PaceUnits,
+                            outputUnit: PaceUnits): number {
+  return (inputValue * PaceUnitData[inputUnit].value) / PaceUnitData[outputUnit].value;
 }
 
 /**
@@ -170,59 +183,60 @@ export function convertPace(inputValue: number, inputUnit: PACE_UNIT_KEYS,
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertSpeedPace(inputValue: number, inputUnit: SPEED_UNIT_KEYS | PACE_UNIT_KEYS,
-                                 outputUnit: SPEED_UNIT_KEYS | PACE_UNIT_KEYS): number {
+export function convertSpeedPace(inputValue: number, inputUnit: SpeedUnits | PaceUnits,
+                                 outputUnit: SpeedUnits | PaceUnits): number {
   // Calculate input speed
   let speed;
-  if (inputUnit in PACE_UNITS) {
-    speed = 1 / (inputValue * PACE_UNITS[inputUnit as PACE_UNIT_KEYS].value);
+  if (inputUnit in PaceUnitData) {
+    speed = 1 / (inputValue * PaceUnitData[inputUnit as PaceUnits].value);
   } else {
-    speed = inputValue * SPEED_UNITS[inputUnit as SPEED_UNIT_KEYS].value;
+    speed = inputValue * SpeedUnitData[inputUnit as SpeedUnits].value;
   }
 
   // Calculate output
-  if (outputUnit in PACE_UNITS) {
-    return (1 / speed) / PACE_UNITS[outputUnit as PACE_UNIT_KEYS].value;
+  if (outputUnit in PaceUnitData) {
+    return (1 / speed) / PaceUnitData[outputUnit as PaceUnits].value;
   }
-  return speed / SPEED_UNITS[outputUnit as SPEED_UNIT_KEYS].value;
+  return speed / SpeedUnitData[outputUnit as SpeedUnits].value;
 }
 
 /**
  * Detect the user's default unit system
- * @returns {string} The default unit system
+ * @returns {UnitSystems} The default unit system
  */
-export function detectDefaultUnitSystem(): string {
+export function detectDefaultUnitSystem(): UnitSystems {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const language = (navigator.language || (navigator as any).userLanguage).toLowerCase();
   if (language.endsWith('-us') || language.endsWith('-mm')) {
-    return 'imperial';
+    return UnitSystems.Imperial;
   }
-  return 'metric';
+  return UnitSystems.Metric;
 }
 
 /**
  * Get the default distance unit in a unit system
- * @param {string} unitSystem The unit system
- * @returns {string} The default distance unit
+ * @param {UnitSystems} unitSystem The unit system
+ * @returns {DistanceUnits} The default distance unit
  */
-export function getDefaultDistanceUnit(unitSystem: string): string {
-  return unitSystem === 'metric' ? 'kilometers' : 'miles';
+export function getDefaultDistanceUnit(unitSystem: UnitSystems): DistanceUnits {
+  return unitSystem === UnitSystems.Metric ? DistanceUnits.Kilometers : DistanceUnits.Miles;
 }
 
 /**
  * Get the default speed unit in a unit system
- * @param {string} unitSystem The unit system
- * @returns {string} The default speed unit
+ * @param {UnitSystems} unitSystem The unit system
+ * @returns {SpeedUnits} The default speed unit
  */
-export function getDefaultSpeedUnit(unitSystem: string): string {
-  return unitSystem === 'metric' ? 'kilometers_per_hour' : 'miles_per_hour';
+export function getDefaultSpeedUnit(unitSystem: UnitSystems): SpeedUnits {
+  return unitSystem === UnitSystems.Metric ? SpeedUnits.KilometersPerHour
+    : SpeedUnits.MilesPerHour;
 }
 
 /**
  * Get the default pace unit in a unit system
- * @param {string} unitSystem The unit system
- * @returns {string} The default pace unit
+ * @param {UnitSystems} unitSystem The unit system
+ * @returns {PaceUnits} The default pace unit
  */
-export function getDefaultPaceUnit(unitSystem: string): string {
-  return unitSystem === 'metric' ? 'seconds_per_kilometer' : 'seconds_per_mile';
+export function getDefaultPaceUnit(unitSystem: UnitSystems): PaceUnits {
+  return unitSystem === UnitSystems.Metric ? PaceUnits.TimePerKilometer : PaceUnits.TimePerMile;
 }

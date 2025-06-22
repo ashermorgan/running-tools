@@ -1,5 +1,5 @@
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, DISTANCE_UNIT_KEYS, convertDistance } from '@/utils/units';
+import { DistanceUnits, DistanceUnitData, convertDistance } from '@/utils/units';
 
 /*
  * Enumeration for the two basic types of targets: those defined by distance vs time
@@ -15,7 +15,7 @@ export enum TargetType {
 interface DistanceTarget {
   type: TargetType.Distance,
   distanceValue: number,
-  distanceUnit: DISTANCE_UNIT_KEYS,
+  distanceUnit: DistanceUnits,
 };
 
 /**
@@ -59,7 +59,8 @@ export interface SplitTargetSet {
  */
 export type WorkoutTarget = StandardTarget & {
   splitValue: number,
-  splitUnit: DISTANCE_UNIT_KEYS,
+  splitUnit: DistanceUnits,
+  customName?: string,
 };
 
 /*
@@ -83,8 +84,8 @@ export type Target = StandardTarget | SplitTarget | WorkoutTarget;
 export function sort(targets: Array<Target>): Array<Target> {
   return [
     ...targets.filter((item) => item.type === TargetType.Distance)
-      .sort((a, b) => convertDistance(a.distanceValue, a.distanceUnit, DISTANCE_UNIT_KEYS.meters)
-        - convertDistance(b.distanceValue, b.distanceUnit, DISTANCE_UNIT_KEYS.meters)),
+      .sort((a, b) => convertDistance(a.distanceValue, a.distanceUnit, DistanceUnits.Meters)
+        - convertDistance(b.distanceValue, b.distanceUnit, DistanceUnits.Meters)),
 
     ...targets.filter((item) => item.type === TargetType.Time)
       .sort((a, b) => a.time - b.time),
@@ -98,12 +99,12 @@ export function sort(targets: Array<Target>): Array<Target> {
  */
 export function workoutTargetToString(target: WorkoutTarget): string {
   let result = formatNumber(target.splitValue, 0, 2, false) + ' ' +
-    DISTANCE_UNITS[target.splitUnit].symbol;
+    DistanceUnitData[target.splitUnit].symbol;
   if (target.type === TargetType.Time) {
     result += ' @ ' + formatDuration(target.time, 3, 2, false);
   } else if (target.distanceValue != target.splitValue || target.distanceUnit != target.splitUnit) {
     result += ' @ ' + formatNumber(target.distanceValue, 0, 2, false) + ' ' +
-      DISTANCE_UNITS[target.distanceUnit].symbol;
+      DistanceUnitData[target.distanceUnit].symbol;
   }
   return result;
 }
@@ -114,36 +115,36 @@ export function workoutTargetToString(target: WorkoutTarget): string {
 const common_pace_targets: StandardTargetSet = {
   name: 'Common Pace Targets',
   targets: sort([
-    { type: TargetType.Distance, distanceValue: 100, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 200, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 300, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 400, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 600, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 800, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1000, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1200, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1500, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1600, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 3200, distanceUnit: DISTANCE_UNIT_KEYS.meters },
+    { type: TargetType.Distance, distanceValue: 100, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 200, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 300, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 600, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1000, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1200, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
 
-    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 4, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
+    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 4, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
 
-    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DISTANCE_UNIT_KEYS.miles },
+    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Miles },
 
-    { type: TargetType.Distance, distanceValue: 0.5, distanceUnit: DISTANCE_UNIT_KEYS.marathons },
-    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.marathons },
+    { type: TargetType.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
+    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
 
     { type: TargetType.Time, time: 600 },
     { type: TargetType.Time, time: 1800 },
@@ -157,24 +158,24 @@ const common_pace_targets: StandardTargetSet = {
 const common_race_targets: StandardTargetSet = {
   name: 'Common Race Targets',
   targets: sort([
-    { type: TargetType.Distance, distanceValue: 400, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 800, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1500, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1600, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 3000, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 3200, distanceUnit: DISTANCE_UNIT_KEYS.meters },
-    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DISTANCE_UNIT_KEYS.miles },
+    { type: TargetType.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 3000, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
+    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
 
-    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
-    { type: TargetType.Distance, distanceValue: 15, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
+    { type: TargetType.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
+    { type: TargetType.Distance, distanceValue: 15, distanceUnit: DistanceUnits.Kilometers },
 
-    { type: TargetType.Distance, distanceValue: 0.5, distanceUnit: DISTANCE_UNIT_KEYS.marathons },
-    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.marathons },
+    { type: TargetType.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
+    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
   ]),
 };
 
@@ -185,9 +186,9 @@ const common_race_targets: StandardTargetSet = {
 const five_k_mile_splits: SplitTargetSet = {
   name: '5K Mile Splits',
   targets: [
-    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DISTANCE_UNIT_KEYS.miles },
-    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DISTANCE_UNIT_KEYS.kilometers },
+    { type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
+    { type: TargetType.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
   ],
 };
 
@@ -198,20 +199,20 @@ const common_workout_targets: WorkoutTargetSet = {
   name: 'Common Workout Targets',
   targets: [
     {
-      splitValue: 400, splitUnit: DISTANCE_UNIT_KEYS.meters,
-      type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.miles,
+      splitValue: 400, splitUnit: DistanceUnits.Meters,
+      type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles,
     },
     {
-      splitValue: 800, splitUnit: DISTANCE_UNIT_KEYS.meters,
-      type: TargetType.Distance, distanceValue: 5, distanceUnit: DISTANCE_UNIT_KEYS.kilometers,
+      splitValue: 800, splitUnit: DistanceUnits.Meters,
+      type: TargetType.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers,
     },
     {
-      splitValue: 1600, splitUnit: DISTANCE_UNIT_KEYS.meters,
+      splitValue: 1600, splitUnit: DistanceUnits.Meters,
       type: TargetType.Time, time: 3600,
     },
     {
-      splitValue: 1, splitUnit: DISTANCE_UNIT_KEYS.miles,
-      type: TargetType.Distance, distanceValue: 1, distanceUnit: DISTANCE_UNIT_KEYS.marathons,
+      splitValue: 1, splitUnit: DistanceUnits.Miles,
+      type: TargetType.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons,
     },
   ],
 };
