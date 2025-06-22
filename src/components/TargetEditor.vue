@@ -145,7 +145,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'revert', 'update:modelValue']);
 
 // Generate internal ref tied to modelValue prop
-const model = useObjectModel(props, emit, 'modelValue');
+const model = useObjectModel(() => props.modelValue, emit, 'modelValue');
 
 /**
  * Add a new distance based target

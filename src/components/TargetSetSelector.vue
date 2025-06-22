@@ -74,7 +74,7 @@ const props = defineProps({
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:targetSets']);
-const targetSets = useObjectModel(props, emit, 'targetSets');
+const targetSets = useObjectModel(() => props.targetSets, emit, 'targetSets');
 
 /**
  * The dialog element
