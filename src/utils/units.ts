@@ -1,21 +1,21 @@
-export const enum TIME_UNIT_KEYS {
+export enum TIME_UNIT_KEYS {
   seconds = 'seconds',
   minutes = 'minutes',
   hours = 'hours',
 }
-export const enum DISTANCE_UNIT_KEYS {
+export enum DISTANCE_UNIT_KEYS {
   meters = 'meters',
   yards = 'yards',
   kilometers = 'kilometers',
   miles = 'miles',
   marathons = 'marathons',
 }
-export const enum SPEED_UNIT_KEYS {
+export enum SPEED_UNIT_KEYS {
   meters_per_second = 'meters_per_second',
   kilometers_per_hour = 'kilometers_per_hour',
   miles_per_hour = 'miles_per_hour',
 }
-export const enum PACE_UNIT_KEYS {
+export enum PACE_UNIT_KEYS {
   seconds_per_meter = 'seconds_per_meter',
   time_per_kilometer = 'seconds_per_kilometer',
   time_per_mile = 'seconds_per_mile',

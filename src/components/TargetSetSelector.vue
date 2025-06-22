@@ -74,7 +74,7 @@ const props = defineProps({
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:targetSets']);
-const targetSets = useObjectModel(() => props.targetSets, emit, 'targetSets');
+const targetSets = useObjectModel(() => props.targetSets, (x) => emit('update:targetSets', x));
 
 /**
  * The dialog element
@@ -115,10 +115,13 @@ function editTargetSet() {
  * Create and select a new target
  */
 function newTargetSet() {
-  let key = Date.now().toString();
-  targetSets.value[key] = {
-    name: 'New target set',
-    targets: [],
+  const key = Date.now().toString();
+  targetSets.value = {
+    ...targetSets.value,
+    [key]: {
+      name: 'New target set',
+      targets: [],
+    },
   };
   model.value = key;
   editTargetSet();

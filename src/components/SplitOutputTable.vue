@@ -75,7 +75,7 @@ const props = defineProps({
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);
-const model = useObjectModel(() => props.modelValue, emit, 'modelValue');
+const model = useObjectModel(() => props.modelValue, (x) => emit('update:modelValue', x));
 
 /**
  * The target table results

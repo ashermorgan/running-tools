@@ -5,8 +5,8 @@
       <decimal-input v-model="model.distanceValue"
         :aria-label="label + ' distance value'" :min="0" :digits="2"/>
       <select v-model="model.distanceUnit" :aria-label="label + ' distance unit'">
-        <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
-          {{ value.name }}
+        <option v-for="key in DISTANCE_UNIT_KEYS" :key="key" :value="key">
+        {{ DISTANCE_UNITS[key].name }}
         </option>
       </select>
     </div>
@@ -17,12 +17,20 @@
   </div>
 </template>
 
-<script setup>
-import { DISTANCE_UNITS } from '@/utils/units';
+<script setup lang="ts">
+import type { PropType } from 'vue';
+
+import { DISTANCE_UNITS, DISTANCE_UNIT_KEYS } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
+
+interface Pace {
+  distanceValue: number,
+  distanceUnit: DISTANCE_UNIT_KEYS,
+  time: number,
+};
 
 const props = defineProps({
   /**
@@ -37,7 +45,7 @@ const props = defineProps({
    * The component value
    */
   modelValue: {
-    type: Object,
+    type: Object as PropType<Pace>,
     default: () => ({
       distanceValue: 5,
       distanceUnit: 'kilometers',
@@ -48,7 +56,7 @@ const props = defineProps({
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);
-const model = useObjectModel(() => props.modelValue, emit, 'modelValue');
+const model = useObjectModel<Pace>(() => props.modelValue, (x) => emit('update:modelValue', x));
 </script>
 
 <style scoped>

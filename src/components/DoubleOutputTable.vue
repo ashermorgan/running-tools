@@ -26,10 +26,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
+import type { PropType } from 'vue';
+
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS } from '@/utils/units';
+import { DISTANCE_UNITS, DISTANCE_UNIT_KEYS } from '@/utils/units';
 
 const props = defineProps({
   /**
@@ -52,7 +54,7 @@ const props = defineProps({
    * The set of input times
    */
   inputTimes: {
-    type: Array,
+    type: Array<number>,
     default: () => [],
   },
 
@@ -60,7 +62,7 @@ const props = defineProps({
    * The input distance
    */
   inputDistance: {
-    type: Object,
+    type: Object as PropType<{ distanceValue: number, distanceUnit: DISTANCE_UNIT_KEYS }>,
     default: () => ({
       distanceValue: 5,
       distanceUnit: 'kilometers',
@@ -79,10 +81,10 @@ const results = computed(() => {
   ]];
 
   props.inputTimes.forEach((input, y) => {
-    let row = [formatDuration(input, 3, 2, false)];
+    const row = [formatDuration(input, 3, 2, false)];
 
     props.targets.forEach(target => {
-      let result = props.calculateResult({ ...props.inputDistance, time: input }, target);
+      const result = props.calculateResult({ ...props.inputDistance, time: input }, target);
 
       if (y === 0) {
         results[0].push(result[result.result === 'key' ? 'value' : 'key']);

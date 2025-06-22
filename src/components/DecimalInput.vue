@@ -2,7 +2,7 @@
   <input ref="inputElement" type="number" step="any" required @blur="onblur" v-model="stringValue">
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 import { formatNumber } from '@/utils/format';
 
@@ -21,7 +21,7 @@ const props = defineProps({
   padding: {
     type: Number,
     default: 0,
-    validator(value) {
+    validator(value: number) {
       return value >= 0;
     },
   },
@@ -32,7 +32,7 @@ const props = defineProps({
   digits: {
     type: Number,
     default: 1,
-    validator(value) {
+    validator(value: number) {
       return value > 0;
     },
   },
@@ -51,7 +51,7 @@ const stringValue = ref(format(model.value));
 /**
  * The input element
  */
-const inputElement = ref(null);
+const inputElement = ref();
 
 /*
  * Update the internal value when the component value changes
@@ -84,10 +84,10 @@ function onblur() {
 
 /**
  * Format a decimal as a string
- * @param {Number} value The decimal
- * @returns {String} The formated string
+ * @param {number} value The decimal
+ * @returns {string} The formated string
  */
-function format(value) {
+function format(value: number): string {
   return formatNumber(value, props.padding, props.digits, true);
 }
 </script>

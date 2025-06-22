@@ -17,16 +17,25 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { PropType } from 'vue';
+
+import { RacePredictionModel } from '@/utils/races';
+
 import DecimalInput from '@/components/DecimalInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
+
+interface RaceOptions {
+  model: RacePredictionModel,
+  riegelExponent: number,
+}
 
 const props = defineProps({
   /**
    * The component value
    */
   modelValue: {
-    type: Object,
+    type: Object as PropType<RaceOptions>,
     default: () => ({
       model: 'AverageModel',
       riegelExponent: 1.06,
@@ -36,5 +45,6 @@ const props = defineProps({
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);
-const model = useObjectModel(() => props.modelValue, emit, 'modelValue');
+const model = useObjectModel<RaceOptions>(() => props.modelValue,
+                                          (x) => emit('update:modelValue', x));
 </script>
