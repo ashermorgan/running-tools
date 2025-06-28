@@ -46,43 +46,55 @@
   </table>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
+import type { PropType } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DistanceUnitData, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
+import type { SplitTarget } from '@/utils/targets';
+import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
+  getDefaultDistanceUnit } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
 
-const props = defineProps({
+interface SplitTargetResult {
+  distance: number,
+  distanceValue: number,
+  distanceUnit: DistanceUnits,
+  time: number,
+  splitTime: number,
+  pace: number,
+};
+
+interface Props {
   /**
    * The unit system to use when showing result paces
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
+  defaultUnitSystem?: UnitSystems,
 
   /**
    * The split targets
    */
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
+  modelValue?: Array<SplitTarget>,
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  defaultUnitSystem: UnitSystems.Metric,
+  modelValue: [],
 });
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);
-const model = useObjectModel(() => props.modelValue, (x) => emit('update:modelValue', x));
+const model = useObjectModel<Array<SplitTarget>>(() => props.modelValue,
+  (x) => emit('update:modelValue', x));
 
 /**
  * The target table results
  */
 const results = computed(() => {
   // Initialize results array
-  const results = [];
+  const results: Array<SplitTargetResult> = [];
 
   for (let i = 0; i < model.value.length; i += 1) {
     // Calculate split and total times
@@ -92,12 +104,12 @@ const results = computed(() => {
     // Calculate split and total distances
     const totalDistance = convertDistance(
       model.value[i].distanceValue,
-      model.value[i].distanceUnit, 'meters',
+      model.value[i].distanceUnit, DistanceUnits.Meters,
     );
     const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
     // Calculate pace
-    const pace = splitTime / convertDistance(splitDistance, 'meters',
+    const pace = splitTime / convertDistance(splitDistance, DistanceUnits.Meters,
       getDefaultDistanceUnit(props.defaultUnitSystem));
 
     // Add row to results array

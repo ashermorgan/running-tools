@@ -24,14 +24,14 @@
       <tr v-for="(item, index) in model.targets" :key="index">
         <td>
           <span v-if="setType === 'workout' && customWorkoutNames">
-            <input v-model="item.customName" :placeholder="workoutTargetToString(item)"
-              aria-label="Custom target name"/>:
+            <input v-model="(item as WorkoutTarget).customName" aria-label="Custom target name"
+              :placeholder="workoutTargetToString(item as WorkoutTarget)"/>:
           </span>
 
           <span v-if="setType === 'workout'">
-            <decimal-input v-model="item.splitValue" aria-label="Split distance value"
-              :min="0" :digits="2"/>
-            <select v-model="item.splitUnit" aria-label="Split distance unit">
+            <decimal-input v-model="(item as WorkoutTarget).splitValue"
+              aria-label="Split distance value" :min="0" :digits="2"/>
+            <select v-model="(item as WorkoutTarget).splitUnit" aria-label="Split distance unit">
               <option v-for="(value, key) in DistanceUnitData" :key="key" :value="key">
                 {{ value.name }}
               </option>
@@ -86,82 +86,76 @@
   </table>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import VueFeather from 'vue-feather';
+import type { PropType } from 'vue';
 
-import { workoutTargetToString } from '@/utils/targets';
-import { DistanceUnitData, getDefaultDistanceUnit } from '@/utils/units';
+import { TargetType, TargetSetType, workoutTargetToString } from '@/utils/targets';
+import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/utils/targets';
+import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
 
-const props = defineProps({
+interface Props {
   /**
    * Whether to allow custom names for workout targets
    */
-  customWorkoutNames: {
-    type: Boolean,
-    default: false,
-  },
-
+  customWorkoutNames?: boolean,
   /**
    * The unit system to use when creating distance targets
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
+  defaultUnitSystem?: UnitSystems,
 
   /**
    * Whether the target set is a custom or default set
    */
-  isCustomSet: {
-    type: Boolean,
-    default: false,
-  },
+  isCustomSet?: boolean,
 
   /**
    * The component value
    */
-  modelValue: {
-    type: Object,
-    default: () => ({
-      name: 'New target set',
-      targets: [],
-    }),
-  },
+  modelValue?: TargetSet,
 
   /**
    * The target set type ('standard', 'split', or 'workout')
    */
-  setType: {
-    type: String,
-    default: 'standard'
+  setType?: TargetSetType,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  customWorkoutNames: false,
+  defaultUnitSystem: UnitSystems.Metric,
+  isCustomSet: false,
+  modelValue: {
+    name: 'New target set',
+    targets: [],
   },
+  setType: TargetSetType.Standard,
 });
 
 // Declare emitted events
 const emit = defineEmits(['close', 'revert', 'update:modelValue']);
 
 // Generate internal ref tied to modelValue prop
-const model = useObjectModel(() => props.modelValue, (x) => emit('update:modelValue', x));
+const model = useObjectModel<TargetSet>(() => props.modelValue, (x) => emit('update:modelValue', x));
 
 /**
  * Add a new distance based target
  */
 function addDistanceTarget() {
-  if (props.setType === 'workout') {
-    model.value.targets.push({
-      type: 'distance',
+  if (props.setType === TargetSetType.Workout) {
+    (model.value as WorkoutTargetSet).targets.push({
+      type: TargetType.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    model.value.targets.push({
-      type: 'distance',
+    (model.value as StandardTargetSet).targets.push({
+      type: TargetType.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
@@ -172,16 +166,16 @@ function addDistanceTarget() {
  * Add a new time based target
  */
 function addTimeTarget() {
-  if (props.setType === 'workout') {
-    model.value.targets.push({
-      type: 'time',
+  if (props.setType === TargetSetType.Workout) {
+    (model.value as WorkoutTargetSet).targets.push({
+      type: TargetType.Time,
       time: 600,
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    model.value.targets.push({
-      type: 'time',
+    (model.value as StandardTargetSet).targets.push({
+      type: TargetType.Time,
       time: 600,
     });
   }
@@ -189,9 +183,9 @@ function addTimeTarget() {
 
 /**
  * Remove a target
- * @param {Number} index The index of the target
+ * @param {number} index The index of the target
  */
-function removeTarget(index) {
+function removeTarget(index: number) {
   model.value.targets.splice(index, 1);
 }
 </script>

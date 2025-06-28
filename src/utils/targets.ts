@@ -40,6 +40,13 @@ export interface StandardTargetSet {
 }
 
 /*
+ * Type for a collection of pace and race calculator target sets
+ */
+export interface StandardTargetSets {
+  [key: string]: StandardTargetSet,
+}
+
+/*
  * Type for split calculator targets
  */
 export type SplitTarget = DistanceTarget & {
@@ -52,6 +59,13 @@ export type SplitTarget = DistanceTarget & {
 export interface SplitTargetSet {
   name: string,
   targets: Array<SplitTarget>,
+}
+
+/*
+ * Type for a collection of split calculator target sets
+ */
+export interface SplitTargetSets {
+  [key: string]: SplitTargetSet,
 }
 
 /*
@@ -72,9 +86,35 @@ export interface WorkoutTargetSet {
 }
 
 /*
+ * Type for a collection of workout calculator target sets
+ */
+export interface WorkoutTargetSets {
+  [key: string]: WorkoutTargetSet,
+}
+
+/*
+ * Enumeration for the three types of targets sets: standard (pace & race), split, and workout
+ */
+export enum TargetSetType {
+  Standard = 'standard',
+  Split = 'split',
+  Workout = 'workout',
+};
+
+/*
  * Type for generic targets
  */
 export type Target = StandardTarget | SplitTarget | WorkoutTarget;
+
+/*
+ * Type for generic target sets
+ */
+export type TargetSet = StandardTargetSet | SplitTargetSet | WorkoutTargetSet;
+
+/*
+ * Type for generic collection of target sets
+ */
+export type TargetSets = StandardTargetSets | SplitTargetSets | WorkoutTargetSets;
 
 /**
  * Sort an array of targets
@@ -217,9 +257,9 @@ const common_workout_targets: WorkoutTargetSet = {
   ],
 };
 
-export const defaultTargetSets = {
-  _pace_targets: common_pace_targets,
-  _race_targets: common_race_targets,
-  _split_targets: five_k_mile_splits,
-  _workout_targets: common_workout_targets,
+export const defaultTargetSets: TargetSets = {
+  '_pace_targets': common_pace_targets,
+  '_race_targets': common_race_targets,
+  '_split_targets': five_k_mile_splits,
+  '_workout_targets': common_workout_targets,
 };
