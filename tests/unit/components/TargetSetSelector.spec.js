@@ -387,8 +387,10 @@ test('should sort target set after target editor is closed', async () => {
 test('should correctly pass setType prop to TargetEditor', async () => {
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
+      selectedTargetSet: '_new',
+      targetSets: {},
       setType: 'foo'
-    }
+    },
   });
 
   // Assert target editor props are correct
@@ -398,6 +400,8 @@ test('should correctly pass setType prop to TargetEditor', async () => {
 test('should correctly pass customWorkoutNames prop to TargetEditor', async () => {
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
+      selectedTargetSet: '_new',
+      targetSets: {},
       customWorkoutNames: false,
     }
   });

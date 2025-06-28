@@ -22,7 +22,15 @@ test('should be initialized to modelValue', () => {
 
 test('should emit event when inputs are modified', async () => {
   // Initialize component
-  const wrapper = shallowMount(PaceInput);
+  const wrapper = shallowMount(PaceInput, {
+    propsData: {
+      modelValue: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
+      },
+    },
+  });
 
   // Update distance value
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(3);

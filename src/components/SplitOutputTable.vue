@@ -48,7 +48,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { PropType } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
 import type { SplitTarget } from '@/utils/targets';
@@ -69,20 +68,17 @@ interface SplitTargetResult {
 
 interface Props {
   /**
-   * The unit system to use when showing result paces
+   * The unit system to use when showing result paces (defaults to metric)
    */
   defaultUnitSystem?: UnitSystems,
 
   /**
    * The split targets
    */
-  modelValue?: Array<SplitTarget>,
+  modelValue: Array<SplitTarget>,
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  defaultUnitSystem: UnitSystems.Metric,
-  modelValue: [],
-});
+const props = withDefaults(defineProps<Props>(), { defaultUnitSystem: UnitSystems.Metric });
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);

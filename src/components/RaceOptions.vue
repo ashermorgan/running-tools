@@ -18,25 +18,19 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-
 import type { RaceOptions } from '@/utils/calculators';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
 
-const props = defineProps({
+interface Props {
   /**
    * The component value
    */
-  modelValue: {
-    type: Object as PropType<RaceOptions>,
-    default: () => ({
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    }),
-  },
-});
+  modelValue: RaceOptions,
+}
+
+const props = defineProps<Props>();
 
 // Generate internal ref tied to modelValue prop
 const emit = defineEmits(['update:modelValue']);

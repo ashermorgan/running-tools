@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { PropType } from 'vue';
 
 import { ResultType } from '@/utils/calculators';
 import type { TargetResult } from '@/utils/calculators';
@@ -37,42 +36,29 @@ import type { Target } from '@/utils/targets';
 import { DistanceUnitData } from '@/utils/units';
 import type { Distance, DistanceTime } from '@/utils/units';
 
-const props = defineProps({
+interface Props {
   /**
    * The method that generates the target table rows
    */
-  calculateResult: {
-    type: Function as PropType<(x: DistanceTime, y: Target) => TargetResult>,
-    required: true,
-  },
+  calculateResult: (x: DistanceTime, y: Target) => TargetResult,
 
   /**
    * The target set
    */
-  targets: {
-    type: Array<Target>,
-    default: () => [],
-  },
+  targets: Array<Target>,
 
   /**
    * The set of input times
    */
-  inputTimes: {
-    type: Array<number>,
-    default: () => [],
-  },
+  inputTimes: Array<number>,
 
   /**
    * The input distance
    */
-  inputDistance: {
-    type: Object as PropType<Distance>,
-    default: () => ({
-      distanceValue: 5,
-      distanceUnit: 'kilometers',
-    }),
-  }
-});
+  inputDistance: Distance,
+}
+
+const props = defineProps<Props>();
 
 /**
  * The target table results

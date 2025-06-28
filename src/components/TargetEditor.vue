@@ -88,7 +88,6 @@
 
 <script setup lang="ts">
 import VueFeather from 'vue-feather';
-import type { PropType } from 'vue';
 
 import { TargetType, TargetSetType, workoutTargetToString } from '@/utils/targets';
 import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/utils/targets';
@@ -100,26 +99,26 @@ import useObjectModel from '@/composables/useObjectModel';
 
 interface Props {
   /**
-   * Whether to allow custom names for workout targets
+   * Whether to allow custom names for workout targets (defaults to false)
    */
   customWorkoutNames?: boolean,
   /**
-   * The unit system to use when creating distance targets
+   * The unit system to use when creating distance targets (defaults to metric)
    */
   defaultUnitSystem?: UnitSystems,
 
   /**
-   * Whether the target set is a custom or default set
+   * Whether the target set is a custom or default set (defaults to false)
    */
   isCustomSet?: boolean,
 
   /**
    * The component value
    */
-  modelValue?: TargetSet,
+  modelValue: TargetSet,
 
   /**
-   * The target set type ('standard', 'split', or 'workout')
+   * The target set type (Standard, Split, or Workout, defaults to Standard)
    */
   setType?: TargetSetType,
 }
@@ -128,10 +127,6 @@ const props = withDefaults(defineProps<Props>(), {
   customWorkoutNames: false,
   defaultUnitSystem: UnitSystems.Metric,
   isCustomSet: false,
-  modelValue: {
-    name: 'New target set',
-    targets: [],
-  },
   setType: TargetSetType.Standard,
 });
 

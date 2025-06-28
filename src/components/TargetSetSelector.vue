@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue';
-import type { PropType } from 'vue';
 
 import VueFeather from 'vue-feather';
 
@@ -39,29 +38,29 @@ import useObjectModel from '@/composables/useObjectModel';
  */
 const model = defineModel('selectedTargetSet', {
   type: String,
-  default: '_new',
+  required: true,
 });
 
 interface Props {
   /**
-   * Whether to allow custom names for workout targets
+   * Whether to allow custom names for workout targets (defaults to false)
    */
-  customWorkoutNames?: Boolean,
+  customWorkoutNames?: boolean,
 
   /**
-   * The unit system to use when creating distance targets
+   * The unit system to use when creating distance targets (defaults to metric)
    */
   defaultUnitSystem?: UnitSystems,
 
   /**
-   * The target set type ('standard', 'split', or 'workout')
+   * The target set type (Standard, Split, or Workout, defaults to Standard)
    */
   setType?: TargetSetType,
 
   /**
    * The target sets
    */
-  targetSets?: TargetSets,
+  targetSets: TargetSets,
 };
 
 
@@ -69,7 +68,6 @@ const props = withDefaults(defineProps<Props>(), {
   customWorkoutNames: false,
   defaultUnitSystem: UnitSystems.Metric,
   setType: TargetSetType.Standard,
-  targetSets: {}
 });
 
 // Generate internal ref tied to modelValue prop

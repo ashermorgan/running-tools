@@ -38,36 +38,28 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { PropType } from 'vue';
 
 import type { TargetResult } from '@/utils/calculators';
 import type { Target } from '@/utils/targets';
 
-const props = defineProps({
+interface Props {
   /**
    * The method that generates the target table rows
    */
-  calculateResult: {
-    type: Function as PropType<(x: Target) => TargetResult>,
-    required: true,
-  },
+  calculateResult: (x: Target) => TargetResult,
 
   /**
    * The target set
    */
-  targets: {
-    type: Array<Target>,
-    default: () => [],
-  },
+  targets: Array<Target>,
 
   /**
-   * Whether to show result paces
+   * Whether to show result paces (defaults to false)
    */
-  showPace: {
-    type: Boolean,
-    default: false,
-  },
-});
+  showPace?: boolean,
+};
+
+const props = withDefaults(defineProps<Props>(), { showPace: false });
 
 /**
  * The target table results

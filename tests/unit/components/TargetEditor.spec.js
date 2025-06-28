@@ -165,7 +165,14 @@ test('should correctly render workout target set with custom names', async () =>
 
 test('revert button should emit revert event', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
+    },
+  });
 
   // Click revert button
   await wrapper.find('button[title="Revert target set"]').trigger('click');
@@ -178,8 +185,12 @@ test('delete button should emit revert event', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
     propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
       isCustomSet: true,
-    }
+    },
   });
 
   // Click delete button
@@ -191,7 +202,14 @@ test('delete button should emit revert event', async () => {
 
 test('close button should emit close event', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
+    },
+  });
 
   // Call close method
   await wrapper.find('button[title="Close"]').trigger('click');
@@ -212,7 +230,7 @@ test('add distance target button should correctly add standard imperial distance
         ],
       },
       setType: 'standard',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -244,7 +262,7 @@ test('add distance target button should correctly add standard metric distance t
         ],
       },
       setType: 'standard',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -275,7 +293,7 @@ test('add distance target button should correctly add split imperial distance ta
         ],
       },
       setType: 'split',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -305,7 +323,7 @@ test('add distance target button should correctly add split metric distance targ
         ],
       },
       setType: 'split',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -344,7 +362,7 @@ test('add distance target button should correctly add workout imperial distance 
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -396,7 +414,7 @@ test('add distance target button should correctly add workout metric distance ta
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -497,7 +515,7 @@ test('add time target button should correctly add workout imperial time target',
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -549,7 +567,7 @@ test('add time target button should correctly add workout metric time target', a
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 

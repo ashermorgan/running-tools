@@ -20,7 +20,14 @@ test('should be initialized to modelValue', () => {
 
 test('should emit event when inputs are modified', async () => {
   // Initialize component
-  const wrapper = shallowMount(RaceOptions);
+  const wrapper = shallowMount(RaceOptions, {
+    propsData: {
+      modelValue: {
+        model: 'AverageModel',
+        riegelExponent: 1.06,
+      },
+    },
+  });
 
   // Update model
   await wrapper.find('select').setValue('CameronModel');
