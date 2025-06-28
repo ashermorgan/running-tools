@@ -161,13 +161,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { repository, version } from '/package.json';
 
 import VueFeather from 'vue-feather';
 
-const development = process.env.NODE_ENV === 'development';
-const git_url = repository.url.slice(4);
+const development: boolean = process.env.NODE_ENV === 'development';
+const git_url: string = repository.url.slice(4);
 </script>
 
 <style scoped>

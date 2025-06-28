@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
-import RaceOptions from '@/components/RaceOptions.vue';
+import RaceOptionsInput from '@/components/RaceOptionsInput.vue';
 
 test('should be initialized to modelValue', () => {
   // Initialize component
-  const wrapper = shallowMount(RaceOptions, {
+  const wrapper = shallowMount(RaceOptionsInput, {
     propsData: {
       modelValue: {
         model: 'PurdyPointsModel',
@@ -20,7 +20,7 @@ test('should be initialized to modelValue', () => {
 
 test('should emit event when inputs are modified', async () => {
   // Initialize component
-  const wrapper = shallowMount(RaceOptions, {
+  const wrapper = shallowMount(RaceOptionsInput, {
     propsData: {
       modelValue: {
         model: 'AverageModel',

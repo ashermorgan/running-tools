@@ -1,4 +1,13 @@
 /**
+ * The data included for each unit
+ */
+export interface UnitData {
+  name: string,
+  symbol: string,
+  value: number,
+};
+
+/**
  * The supported time units
  */
 export enum TimeUnits {
@@ -6,7 +15,7 @@ export enum TimeUnits {
   Minutes = 'minutes',
   Hours = 'hours',
 }
-export const TimeUnitData = {
+export const TimeUnitData: { [key in TimeUnits]: UnitData } = {
   [TimeUnits.Seconds]: {
     name: 'Seconds',
     symbol: 's',
@@ -34,7 +43,7 @@ export enum DistanceUnits {
   Miles = 'miles',
   Marathons = 'marathons',
 }
-export const DistanceUnitData = {
+export const DistanceUnitData: { [key in DistanceUnits]: UnitData } = {
   [DistanceUnits.Meters]: {
     name: 'Meters',
     symbol: 'm',
@@ -70,18 +79,18 @@ export enum SpeedUnits {
   KilometersPerHour = 'kilometers_per_hour',
   MilesPerHour = 'miles_per_hour',
 }
-export const SpeedUnitData = {
-  meters_per_second: {
+export const SpeedUnitData: { [key in SpeedUnits]: UnitData } = {
+  [SpeedUnits.MetersPerSecond]: {
     name: 'Meters per Second',
     symbol: 'm/s',
     value: 1,
   },
-  kilometers_per_hour: {
+  [SpeedUnits.KilometersPerHour]: {
     name: 'Kilometers per Hour',
     symbol: 'kph',
     value: DistanceUnitData[DistanceUnits.Kilometers].value / TimeUnitData[TimeUnits.Hours].value,
   },
-  miles_per_hour: {
+  [SpeedUnits.MilesPerHour]: {
     name: 'Miles per Hour',
     symbol: 'mph',
     value: DistanceUnitData[DistanceUnits.Miles].value / TimeUnitData[TimeUnits.Hours].value,
@@ -96,7 +105,7 @@ export enum PaceUnits {
   TimePerKilometer = 'seconds_per_kilometer',
   TimePerMile = 'seconds_per_mile',
 }
-export const PaceUnitData = {
+export const PaceUnitData: { [key in PaceUnits]: UnitData } = {
   [PaceUnits.SecondsPerMeter]: {
     name: 'Seconds per Meter',
     symbol: 's/m',
@@ -113,6 +122,11 @@ export const PaceUnitData = {
     value: TimeUnitData[TimeUnits.Seconds].value / DistanceUnitData[DistanceUnits.Miles].value,
   },
 };
+
+/**
+ * The supported speed and pace units
+ */
+export type SpeedPaceUnits = SpeedUnits | PaceUnits;
 
 export enum UnitSystems {
   Metric = 'metric',
@@ -183,8 +197,8 @@ export function convertPace(inputValue: number, inputUnit: PaceUnits,
  * @param {string} outputUnit The unit of the output
  * @returns {number} The output
  */
-export function convertSpeedPace(inputValue: number, inputUnit: SpeedUnits | PaceUnits,
-                                 outputUnit: SpeedUnits | PaceUnits): number {
+export function convertSpeedPace(inputValue: number, inputUnit: SpeedPaceUnits,
+                                 outputUnit: SpeedPaceUnits): number {
   // Calculate input speed
   let speed;
   if (inputUnit in PaceUnitData) {

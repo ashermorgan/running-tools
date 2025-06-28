@@ -1,7 +1,7 @@
 import { formatDuration, formatNumber } from '@/utils/format';
 import * as paceUtils from '@/utils/paces';
 import * as raceUtils from '@/utils/races';
-import { TargetType, workoutTargetToString } from '@/utils/targets';
+import { TargetTypes, workoutTargetToString } from '@/utils/targets';
 import type { StandardTarget, WorkoutTarget } from '@/utils/targets';
 import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
   getDefaultDistanceUnit } from '@/utils/units';
@@ -15,7 +15,7 @@ export enum ResultType {
 interface PreResult {
   distanceValue: number,
   distanceUnit: DistanceUnits,
-  result: TargetType,
+  result: TargetTypes,
   time: number,
 };
 
@@ -69,7 +69,7 @@ export function formatTargetResult(result: PreResult, defaultUnitSystem: UnitSys
       + DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)].symbol,
 
     // Convert dist/time result to key/value
-    result: result.result === TargetType.Time ? ResultType.Value : ResultType.Key,
+    result: result.result === TargetTypes.Time ? ResultType.Value : ResultType.Key,
 
     // Use time (in seconds) as sort key
     sort: result.time,
@@ -91,7 +91,7 @@ export function calculatePaceResults(input: DistanceTime, target: StandardTarget
     distanceValue: 0,
     distanceUnit: DistanceUnits.Meters,
     time: 0,
-    result: target.type === TargetType.Distance ? TargetType.Time : TargetType.Distance,
+    result: target.type === TargetTypes.Distance ? TargetTypes.Time : TargetTypes.Distance,
   };
 
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
@@ -141,7 +141,7 @@ export function calculateRaceResults(input: DistanceTime, target: StandardTarget
     distanceValue: 0,
     distanceUnit: DistanceUnits.Meters,
     time: 0,
-    result: target.type === TargetType.Distance ? TargetType.Time : TargetType.Distance,
+    result: target.type === TargetTypes.Distance ? TargetTypes.Time : TargetTypes.Distance,
   };
 
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);

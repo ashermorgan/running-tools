@@ -30,10 +30,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { calculatePaceResults } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+import type { StandardTargetSets } from '@/utils/targets';
+import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import type { DistanceTime } from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
@@ -44,26 +46,26 @@ import useStorage from '@/composables/useStorage';
 /**
  * The input pace
  */
-const input = useStorage('pace-calculator-input', {
+const input = useStorage<DistanceTime>('pace-calculator-input', {
   distanceValue: 5,
-  distanceUnit: 'kilometers',
+  distanceUnit: DistanceUnits.Kilometers,
   time: 1200,
 });
 
 /**
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
 /**
  * The current selected target set
  */
-const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_targets');
+const selectedTargetSet = useStorage<string>('pace-calculator-target-set', '_pace_targets');
 
 /**
  * The target sets
  */
-const targetSets = useStorage('pace-calculator-target-sets', {
+const targetSets = useStorage<StandardTargetSets>('pace-calculator-target-sets', {
   _pace_targets: defaultTargetSets._pace_targets
 });
 </script>

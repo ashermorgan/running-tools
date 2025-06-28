@@ -135,7 +135,7 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Switch model
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'RiegelModel',
     riegelExponent: 1.06, // default value
   });
@@ -152,7 +152,7 @@ test('should correctly calculate results according to advanced model options', a
   expect(result.value).to.equal('41:41.92');
 
   // Update Riegel Exponent
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'RiegelModel', // existing value
     riegelExponent: 1,
   });
@@ -275,7 +275,7 @@ test('should load advanced model options from localStorage', async () => {
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert data loaded
-  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
   });
@@ -286,7 +286,7 @@ test('should save advanced model options to localStorage when modified', async (
   const wrapper = shallowMount(RaceCalculator);
 
   // Update advanced model options
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
+  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'CameronModel',
     riegelExponent: 1.30,
   });

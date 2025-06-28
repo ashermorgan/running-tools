@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import VueFeather from 'vue-feather';
 
-import { TargetType, TargetSetType, workoutTargetToString } from '@/utils/targets';
+import { TargetTypes, TargetSetTypes, workoutTargetToString } from '@/utils/targets';
 import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/utils/targets';
 import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/utils/units';
 
@@ -120,14 +120,14 @@ interface Props {
   /**
    * The target set type (Standard, Split, or Workout, defaults to Standard)
    */
-  setType?: TargetSetType,
+  setType?: TargetSetTypes,
 }
 
 const props = withDefaults(defineProps<Props>(), {
   customWorkoutNames: false,
   defaultUnitSystem: UnitSystems.Metric,
   isCustomSet: false,
-  setType: TargetSetType.Standard,
+  setType: TargetSetTypes.Standard,
 });
 
 // Declare emitted events
@@ -140,9 +140,9 @@ const model = useObjectModel<TargetSet>(() => props.modelValue, (x) => emit('upd
  * Add a new distance based target
  */
 function addDistanceTarget() {
-  if (props.setType === TargetSetType.Workout) {
+  if (props.setType === TargetSetTypes.Workout) {
     (model.value as WorkoutTargetSet).targets.push({
-      type: TargetType.Distance,
+      type: TargetTypes.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
       splitValue: 1,
@@ -150,7 +150,7 @@ function addDistanceTarget() {
     });
   } else {
     (model.value as StandardTargetSet).targets.push({
-      type: TargetType.Distance,
+      type: TargetTypes.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
@@ -161,16 +161,16 @@ function addDistanceTarget() {
  * Add a new time based target
  */
 function addTimeTarget() {
-  if (props.setType === TargetSetType.Workout) {
+  if (props.setType === TargetSetTypes.Workout) {
     (model.value as WorkoutTargetSet).targets.push({
-      type: TargetType.Time,
+      type: TargetTypes.Time,
       time: 600,
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
     (model.value as StandardTargetSet).targets.push({
-      type: TargetType.Time,
+      type: TargetTypes.Time,
       time: 600,
     });
   }

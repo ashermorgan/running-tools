@@ -38,7 +38,7 @@
         <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
-      <race-options v-model="options"/>
+      <race-options-input v-model="options"/>
     </details>
 
     <h2>Equivalent Race Results</h2>
@@ -48,16 +48,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
 import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
+import type { RaceOptions } from '@/utils/calculators';
 import { formatNumber } from '@/utils/format';
+import { RacePredictionModel } from '@/utils/races';
 import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+import type { StandardTargetSets } from '@/utils/targets';
+import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import type { DistanceTime } from '@/utils/units';
 
 import PaceInput from '@/components/PaceInput.vue';
-import RaceOptions from '@/components/RaceOptions.vue';
+import RaceOptionsInput from '@/components/RaceOptionsInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
@@ -66,34 +70,34 @@ import useStorage from '@/composables/useStorage';
 /**
  * The input race
  */
-const input = useStorage('race-calculator-input', {
+const input = useStorage<DistanceTime>('race-calculator-input', {
   distanceValue: 5,
-  distanceUnit: 'kilometers',
+  distanceUnit: DistanceUnits.Kilometers,
   time: 1200,
 });
 
 /**
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
 /**
 * The race prediction options
 */
-const options = useStorage('race-calculator-options', {
-  model: 'AverageModel',
+const options = useStorage<RaceOptions>('race-calculator-options', {
+  model: RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
 });
 
 /**
  * The current selected target set
  */
-const selectedTargetSet = useStorage('race-calculator-target-set', '_race_targets');
+const selectedTargetSet = useStorage<string>('race-calculator-target-set', '_race_targets');
 
 /**
  * The target sets
  */
-let targetSets = useStorage('race-calculator-target-sets', {
+const targetSets = useStorage<StandardTargetSets>('race-calculator-target-sets', {
   _race_targets: defaultTargetSets._race_targets
 });
 

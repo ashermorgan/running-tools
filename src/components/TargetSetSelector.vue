@@ -26,7 +26,7 @@ import { computed, nextTick, ref } from 'vue';
 import VueFeather from 'vue-feather';
 
 import { deepCopy } from '@/utils/misc';
-import { TargetSetType, sort, defaultTargetSets } from '@/utils/targets';
+import { TargetSetTypes, sort, defaultTargetSets } from '@/utils/targets';
 import type { TargetSet, TargetSets } from '@/utils/targets';
 import { UnitSystems } from '@/utils/units';
 
@@ -55,7 +55,7 @@ interface Props {
   /**
    * The target set type (Standard, Split, or Workout, defaults to Standard)
    */
-  setType?: TargetSetType,
+  setType?: TargetSetTypes,
 
   /**
    * The target sets
@@ -67,7 +67,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   customWorkoutNames: false,
   defaultUnitSystem: UnitSystems.Metric,
-  setType: TargetSetType.Standard,
+  setType: TargetSetTypes.Standard,
 });
 
 // Generate internal ref tied to modelValue prop
