@@ -216,7 +216,7 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row')).toHaveCount(5);
 
   // Assert general localStorage entries are correct
-  await expect(await page.evaluate(() => localStorage.length)).toEqual(17);
+  await expect(await page.evaluate(() => localStorage.length)).toEqual(18);
   await expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
     .toEqual(JSON.stringify('metric'));
 
@@ -348,6 +348,9 @@ test('Cross-calculator', async ({ page }) => {
     }));
 
   // Assert localStorage entries for the unit calculator are correct
+  await expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.unit-calculator-category')))
+    .toEqual(JSON.stringify('speed_and_pace'));
   await expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.unit-calculator-inputs'))).toEqual(JSON.stringify({
       distance: {
@@ -491,8 +494,7 @@ test('Cross-calculator', async ({ page }) => {
   await page.getByRole('button', { name: 'Unit Calculator' }).click();
 
   // Assert result is correct (state not reset)
-  // TODO: add unit-calculator-category setting?
-  // await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
 
   // Return to workout calculator
   await page.getByRole('link', { name: 'Back' }).click();

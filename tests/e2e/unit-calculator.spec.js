@@ -55,12 +55,12 @@ test('Unit Calculator', async ({ page }) => {
   // Reload page
   await page.reload();
 
-  // Assert distance result is correct (state not reset)
-  await expect(page.getByLabel('Output value')).toHaveText('3.107');
-
   // Assert time result is correct (state not reset)
-  await page.getByLabel('Selected unit category').selectOption('Time');
   await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+
+  // Assert distance result is correct (state not reset)
+  await page.getByLabel('Selected unit category').selectOption('Distance');
+  await expect(page.getByLabel('Output value')).toHaveText('3.107');
 
   // Assert speed & pace result is correct (state not reset)
   await page.getByLabel('Selected unit category').selectOption('Speed & Pace');

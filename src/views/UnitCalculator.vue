@@ -70,7 +70,7 @@ const inputs = useStorage('unit-calculator-inputs', {
 /**
  * The unit category
  */
-const category = ref('distance');
+const category = useStorage('unit-calculator-category', 'distance');
 
 /**
  * The inputs for the current category
