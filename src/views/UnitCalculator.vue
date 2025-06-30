@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
 import * as unitUtils from '@/utils/units';
@@ -109,7 +109,7 @@ const inputs = useStorage<UnitCalculatorInputs>('unit-calculator-inputs', {
 /*
  * The unit category
  */
-const category = ref<UnitTypes>(UnitTypes.Distance);
+const category = useStorage<UnitTypes>('unit-calculator-category', UnitTypes.Distance);
 
 /*
  * The inputs for the current category
