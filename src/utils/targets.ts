@@ -2,98 +2,66 @@ import { formatDuration, formatNumber } from '@/utils/format';
 import { DistanceUnits, DistanceUnitData, convertDistance } from '@/utils/units';
 
 /*
- * Enumeration for the two basic types of targets: those defined by distance vs time
+ * The two basic types of targets: those defined by distance and those defined by time
  */
 export enum TargetTypes {
   Distance = 'distance',
   Time = 'time',
 };
 
-/**
- * Type for basic distance-defined targets
+/*
+ * The types for basic standard targets and target sets
  */
 interface DistanceTarget {
   type: TargetTypes.Distance,
   distanceValue: number,
   distanceUnit: DistanceUnits,
 };
-
-/**
- * Type for basic time-defined targets
- */
 interface TimeTarget {
   type: TargetTypes.Time,
   time: number,
 };
-
-/**
- * Type for pace and race calculator targets
- */
 export type StandardTarget = DistanceTarget | TimeTarget;
-
-/*
- * Type for pace and race calculator target sets
- */
 export interface StandardTargetSet {
   name: string,
   targets: Array<StandardTarget>,
-}
-
-/*
- * Type for a collection of pace and race calculator target sets
- */
+};
 export interface StandardTargetSets {
   [key: string]: StandardTargetSet,
-}
+};
 
 /*
- * Type for split calculator targets
+ * The types for split calculator targets and target sets
  */
 export type SplitTarget = DistanceTarget & {
   splitTime?: number
 };
-
-/*
- * Type for split calculator target sets
- */
 export interface SplitTargetSet {
   name: string,
   targets: Array<SplitTarget>,
-}
-
-/*
- * Type for a collection of split calculator target sets
- */
+};
 export interface SplitTargetSets {
   [key: string]: SplitTargetSet,
-}
+};
 
 /*
- * Type for workout calculator targets
+ * The types for workout calculator targets and target sets
  */
 export type WorkoutTarget = StandardTarget & {
   splitValue: number,
   splitUnit: DistanceUnits,
   customName?: string,
 };
-
-/*
- * Type for workout calculator target sets
- */
 export interface WorkoutTargetSet {
   name: string,
   targets: Array<WorkoutTarget>,
-}
-
-/*
- * Type for a collection of workout calculator target sets
- */
+};
 export interface WorkoutTargetSets {
   [key: string]: WorkoutTargetSet,
-}
+};
 
 /*
- * Enumeration for the three types of targets sets: standard (pace & race), split, and workout
+ * The three types of targets sets: standard (pace & race), split, and workout
  */
 export enum TargetSetTypes {
   Standard = 'standard',
@@ -102,18 +70,10 @@ export enum TargetSetTypes {
 };
 
 /*
- * Type for generic targets
+ * The types for generic targets and target sets
  */
 export type Target = StandardTarget | SplitTarget | WorkoutTarget;
-
-/*
- * Type for generic target sets
- */
 export type TargetSet = StandardTargetSet | SplitTargetSet | WorkoutTargetSet;
-
-/*
- * Type for generic collection of target sets
- */
 export type TargetSets = StandardTargetSets | SplitTargetSets | WorkoutTargetSets;
 
 /**
@@ -135,7 +95,7 @@ export function sort(targets: Array<Target>): Array<Target> {
 /**
  * Generate a string description of a workout target
  * @param {WorkoutTarget} target The workout target
- * @return {String} The string description
+ * @return {string} The string description
  */
 export function workoutTargetToString(target: WorkoutTarget): string {
   let result = formatNumber(target.splitValue, 0, 2, false) + ' ' +
@@ -149,7 +109,7 @@ export function workoutTargetToString(target: WorkoutTarget): string {
   return result;
 }
 
-/**
+/*
  * A set of common pace calculator targets
  */
 const common_pace_targets: StandardTargetSet = {
@@ -192,7 +152,7 @@ const common_pace_targets: StandardTargetSet = {
   ]),
 };
 
-/**
+/*
  * A set of common race calculator targets
  */
 const common_race_targets: StandardTargetSet = {
@@ -220,7 +180,7 @@ const common_race_targets: StandardTargetSet = {
 };
 
 
-/**
+/*
  * A set of targets for 5K mile splits
  */
 const five_k_mile_splits: SplitTargetSet = {
@@ -232,7 +192,7 @@ const five_k_mile_splits: SplitTargetSet = {
   ],
 };
 
-/**
+/*
  * A set of common workout calculator targets
  */
 const common_workout_targets: WorkoutTargetSet = {
@@ -257,7 +217,7 @@ const common_workout_targets: WorkoutTargetSet = {
   ],
 };
 
-export const defaultTargetSets: TargetSets = {
+export const defaultTargetSets: { [key: string]: TargetSet } = {
   '_pace_targets': common_pace_targets,
   '_race_targets': common_race_targets,
   '_split_targets': five_k_mile_splits,

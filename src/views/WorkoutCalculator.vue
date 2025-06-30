@@ -55,7 +55,7 @@ import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
+/*
  * The input race
  */
 const input = useStorage<DistanceTime>('workout-calculator-input', {
@@ -64,12 +64,12 @@ const input = useStorage<DistanceTime>('workout-calculator-input', {
   time: 1200,
 });
 
-/**
+/*
  * The default unit system
  */
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
-/**
+/*
  * The race prediction options
  */
 const options = useStorage<WorkoutOptions>('workout-calculator-options', {
@@ -78,12 +78,12 @@ const options = useStorage<WorkoutOptions>('workout-calculator-options', {
   riegelExponent: 1.06,
 });
 
-/**
+/*
  * The current selected target set
  */
 const selectedTargetSet = useStorage<string>('workout-calculator-target-set', '_workout_targets');
 
-/**
+/*
  * The target sets
  */
 const targetSets = useStorage<WorkoutTargetSets>('workout-calculator-target-sets', {

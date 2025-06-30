@@ -52,7 +52,7 @@
 import { computed } from 'vue';
 
 import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
-import type { RaceOptions } from '@/utils/calculators';
+import type { RaceOptions, RaceStats } from '@/utils/calculators';
 import { formatNumber } from '@/utils/format';
 import { RacePredictionModel } from '@/utils/races';
 import { defaultTargetSets } from '@/utils/targets';
@@ -67,7 +67,7 @@ import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
+/*
  * The input race
  */
 const input = useStorage<DistanceTime>('race-calculator-input', {
@@ -76,12 +76,12 @@ const input = useStorage<DistanceTime>('race-calculator-input', {
   time: 1200,
 });
 
-/**
+/*
  * The default unit system
  */
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
-/**
+/*
 * The race prediction options
 */
 const options = useStorage<RaceOptions>('race-calculator-options', {
@@ -89,22 +89,22 @@ const options = useStorage<RaceOptions>('race-calculator-options', {
   riegelExponent: 1.06,
 });
 
-/**
+/*
  * The current selected target set
  */
 const selectedTargetSet = useStorage<string>('race-calculator-target-set', '_race_targets');
 
-/**
+/*
  * The target sets
  */
 const targetSets = useStorage<StandardTargetSets>('race-calculator-target-sets', {
   _race_targets: defaultTargetSets._race_targets
 });
 
-/**
+/*
  * The statistics for the current input race
  */
-const raceStats = computed(() => calculateRaceStats(input.value));
+const raceStats = computed<RaceStats>(() => calculateRaceStats(input.value));
 </script>
 
 <style scoped>

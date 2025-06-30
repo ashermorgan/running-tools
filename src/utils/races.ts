@@ -1,10 +1,22 @@
+/*
+ * The available race prediction models
+ */
 export enum RacePredictionModel {
   AverageModel = 'AverageModel',
   PurdyPointsModel = 'PurdyPointsModel',
   VO2MaxModel = 'VO2MaxModel',
   RiegelModel = 'RiegelModel',
   CameronModel = 'CameronModel',
-}
+};
+
+/*
+ * The type for internal variables used by the Purdy Points race prediction model
+ */
+interface PurdyPointsVariables {
+  twsec: number,
+  a: number,
+  b: number,
+};
 
 /**
  * Estimate the point at which a function returns a target value using Newton's Method
@@ -36,15 +48,6 @@ function NewtonsMethod(initialEstimate: number, target: number, method: (x: numb
 
   // Return refined estimate
   return estimate;
-}
-
-/*
- * The internal variables used by the Purdy Points race prediction model
- */
-interface PurdyPointsVariables {
-  twsec: number,
-  a: number,
-  b: number,
 }
 
 /*

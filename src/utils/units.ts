@@ -1,5 +1,5 @@
-/**
- * The data included for each unit
+/*
+ * The type for the data available for each unit
  */
 export interface UnitData {
   name: string,
@@ -7,14 +7,14 @@ export interface UnitData {
   value: number,
 };
 
-/**
- * The supported time units
+/*
+ * The available time units
  */
 export enum TimeUnits {
   Seconds = 'seconds',
   Minutes = 'minutes',
   Hours = 'hours',
-}
+};
 export const TimeUnitData: { [key in TimeUnits]: UnitData } = {
   [TimeUnits.Seconds]: {
     name: 'Seconds',
@@ -33,8 +33,8 @@ export const TimeUnitData: { [key in TimeUnits]: UnitData } = {
   },
 };
 
-/**
- * The supported distance units
+/*
+ * The available distance units
  */
 export enum DistanceUnits {
   Meters = 'meters',
@@ -42,7 +42,7 @@ export enum DistanceUnits {
   Kilometers = 'kilometers',
   Miles = 'miles',
   Marathons = 'marathons',
-}
+};
 export const DistanceUnitData: { [key in DistanceUnits]: UnitData } = {
   [DistanceUnits.Meters]: {
     name: 'Meters',
@@ -71,14 +71,14 @@ export const DistanceUnitData: { [key in DistanceUnits]: UnitData } = {
   },
 };
 
-/**
- * The supported speed units
+/*
+ * The available speed units
  */
 export enum SpeedUnits {
   MetersPerSecond = 'meters_per_second',
   KilometersPerHour = 'kilometers_per_hour',
   MilesPerHour = 'miles_per_hour',
-}
+};
 export const SpeedUnitData: { [key in SpeedUnits]: UnitData } = {
   [SpeedUnits.MetersPerSecond]: {
     name: 'Meters per Second',
@@ -97,14 +97,14 @@ export const SpeedUnitData: { [key in SpeedUnits]: UnitData } = {
   },
 };
 
-/**
- * The supported pace units
+/*
+ * The available pace units
  */
 export enum PaceUnits {
   SecondsPerMeter = 'seconds_per_meter',
   TimePerKilometer = 'seconds_per_kilometer',
   TimePerMile = 'seconds_per_mile',
-}
+};
 export const PaceUnitData: { [key in PaceUnits]: UnitData } = {
   [PaceUnits.SecondsPerMeter]: {
     name: 'Seconds per Meter',
@@ -123,24 +123,33 @@ export const PaceUnitData: { [key in PaceUnits]: UnitData } = {
   },
 };
 
-/**
- * The supported speed and pace units
+/*
+ * The available speed and pace units
  */
 export type SpeedPaceUnits = SpeedUnits | PaceUnits;
 
+/*
+ * The type for a distance input
+ */
+export interface Distance {
+  distanceValue: number,
+  distanceUnit: DistanceUnits,
+};
+
+/*
+ * The type for a distance/time input pair
+ */
+export interface DistanceTime extends Distance {
+  time: number,
+};
+
+/*
+ * The available unit systems
+ */
 export enum UnitSystems {
   Metric = 'metric',
   Imperial = 'imperial',
 };
-
-export interface Distance {
-  distanceValue: number,
-  distanceUnit: DistanceUnits,
-}
-
-export interface DistanceTime extends Distance {
-  time: number,
-}
 
 /**
  * Convert between time units

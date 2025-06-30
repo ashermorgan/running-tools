@@ -36,24 +36,24 @@ import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
+/*
  * The default unit system
  */
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
-/**
+/*
  * The current selected target set
  */
 const selectedTargetSet = useStorage<string>('split-calculator-target-set', '_split_targets');
 
-/**
+/*
  * The default output targets
  */
 const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets', {
   _split_targets: defaultTargetSets._split_targets as SplitTargetSet
 });
 
-/**
+/*
  * The active target set
  */
 const targetSet = computed({

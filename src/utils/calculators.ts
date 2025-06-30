@@ -7,18 +7,17 @@ import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
   getDefaultDistanceUnit } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+/*
+ * The two possible result fields of a target result: "key" and "value"
+ */
 export enum ResultType {
   Key = 'key',
   Value = 'value',
 };
 
-interface PreResult {
-  distanceValue: number,
-  distanceUnit: DistanceUnits,
-  result: TargetTypes,
-  time: number,
-};
-
+/*
+ * The type for target results
+ */
 export interface TargetResult {
   key: string,
   value: string,
@@ -27,58 +26,94 @@ export interface TargetResult {
   sort: number,
 };
 
+/*
+ * The type for the options specific to the race calculator
+ */
 export interface RaceOptions {
   model: raceUtils.RacePredictionModel,
   riegelExponent: number,
-}
+};
 
+/*
+ * The type for the available race statistics
+ */
 export interface RaceStats {
   purdyPoints: number,
   vo2Max: number,
   vo2: number,
   vo2MaxPercentage: number,
-}
+};
 
+/*
+ * The type for the options specific to the workout calculator
+ */
 export interface WorkoutOptions extends RaceOptions {
   customTargetNames: boolean,
-}
+};
 
 /**
- * Format a distance/time result as a key/value result
- * @param {PreResult} result The distance/time result
+ * Calculate results for a standard target
+ * @param {DistanceTime} input The input pace
+ * @param {StandardTarget} target The standard target
+ * @param {Function} calculateTime The function for calculating time results
+ * @param {Function} calculateDistance The function for calculating distance results
  * @param {UnitSystems} defaultUnitSystem The default unit system (imperial or metric)
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
- * @returns {TargetResult} The key/value result
+ * @returns {TargetResult} The result
  */
-export function formatTargetResult(result: PreResult, defaultUnitSystem: UnitSystems,
-                                     preciseDurations: boolean = true): TargetResult {
+function calculateStandardResult(input: DistanceTime, target: StandardTarget,
+  calculateTime: (d1: number, t1: number, d2: number) => number,
+  calculateDistance: (t1: number, d1: number, t2: number) => number, defaultUnitSystem: UnitSystems,
+  preciseDurations: boolean = true): TargetResult {
+
+  let distanceValue, distanceUnit, time;
+  const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
+  if (target.type === TargetTypes.Distance) {
+    // Add target distance to result
+    distanceValue = target.distanceValue;
+    distanceUnit = target.distanceUnit;
+
+    // Calculate time result
+    const d2 = convertDistance(target.distanceValue, target.distanceUnit, DistanceUnits.Meters);
+    time = calculateTime(d1, input.time, d2);
+  } else {
+    // Add target time to result
+    time = target.time;
+
+    // Calculate distance result
+    const d2 = calculateDistance(input.time, d1, target.time);
+    const units = getDefaultDistanceUnit(defaultUnitSystem);
+    distanceValue = convertDistance(d2, DistanceUnits.Meters, units);
+    distanceUnit = units;
+  }
+
   // Calculate numerical pace
-  const pace = result.time / convertDistance(result.distanceValue, result.distanceUnit,
+  const pace = time / convertDistance(distanceValue, distanceUnit,
     getDefaultDistanceUnit(defaultUnitSystem));
 
   return {
     // Convert distance to key string
-    key: formatNumber(result.distanceValue, 0, 2, result.result === 'distance') + ' ' +
-      DistanceUnitData[result.distanceUnit].symbol,
+    key: formatNumber(distanceValue, 0, 2, target.type === TargetTypes.Time) + ' ' +
+      DistanceUnitData[distanceUnit].symbol,
 
     // Convert time to time string
-    value: formatDuration(result.time, 3, preciseDurations ? 2 : 0, result.result === 'time'),
+    value: formatDuration(time, 3, preciseDurations ? 2 : 0, target.type === TargetTypes.Distance),
 
     // Convert pace to pace string
     pace: formatDuration(pace, 3, 0, true) + ' / '
       + DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)].symbol,
 
     // Convert dist/time result to key/value
-    result: result.result === TargetTypes.Time ? ResultType.Value : ResultType.Key,
+    result: target.type === TargetTypes.Distance ? ResultType.Value : ResultType.Key,
 
     // Use time (in seconds) as sort key
-    sort: result.time,
+    sort: time,
   };
 }
 
 /**
  * Calculate paces from a target
- * @param {DistanceTime } input The input pace
+ * @param {DistanceTime} input The input pace
  * @param {StandardTarget} target The pace target
  * @param {UnitSystems} defaultUnitSystem The default unit system (imperial or metric)
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
@@ -87,41 +122,9 @@ export function formatTargetResult(result: PreResult, defaultUnitSystem: UnitSys
 export function calculatePaceResults(input: DistanceTime, target: StandardTarget,
                                      defaultUnitSystem: UnitSystems,
                                      preciseDurations: boolean = true): TargetResult {
-  const result: PreResult = {
-    distanceValue: 0,
-    distanceUnit: DistanceUnits.Meters,
-    time: 0,
-    result: target.type === TargetTypes.Distance ? TargetTypes.Time : TargetTypes.Distance,
-  };
 
-  const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
-
-  // Add missing value to result
-  if (target.type === 'distance') {
-    // Add target distance to result
-    result.distanceValue = target.distanceValue;
-    result.distanceUnit = target.distanceUnit;
-
-    // Convert target distance into meters
-    const d2 = convertDistance(target.distanceValue, target.distanceUnit, DistanceUnits.Meters);
-
-    // Calculate time to travel distance at input pace
-    result.time = paceUtils.calculateTime(d1, input.time, d2);
-  } else {
-    // Add target time to result
-    result.time = target.time;
-
-    // Calculate distance traveled in time at input pace
-    const d2 = paceUtils.calculateDistance(input.time, d1, target.time);
-
-    // Convert output distance into default distance unit
-    const units = getDefaultDistanceUnit(defaultUnitSystem);
-    result.distanceValue = convertDistance(d2, DistanceUnits.Meters, units);
-    result.distanceUnit = units;
-  }
-
-  // Return result
-  return formatTargetResult(result, defaultUnitSystem, preciseDurations);
+  return calculateStandardResult(input, target, (d1, t1, d2) => paceUtils.calculateTime(d1, t1, d2),
+    (t1, d1, t2) => paceUtils.calculateDistance(t1, d1, t2), defaultUnitSystem, preciseDurations);
 }
 
 /**
@@ -137,42 +140,10 @@ export function calculateRaceResults(input: DistanceTime, target: StandardTarget
                                      options: RaceOptions, defaultUnitSystem: UnitSystems,
                                      preciseDurations: boolean = true): TargetResult {
 
-  const result: PreResult = {
-    distanceValue: 0,
-    distanceUnit: DistanceUnits.Meters,
-    time: 0,
-    result: target.type === TargetTypes.Distance ? TargetTypes.Time : TargetTypes.Distance,
-  };
-
-  const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
-
-  // Add missing value to result
-  if (target.type === 'distance') {
-    // Add target distance to result
-    result.distanceValue = target.distanceValue;
-    result.distanceUnit = target.distanceUnit;
-
-    // Convert target distance into meters
-    const d2 = convertDistance(target.distanceValue, target.distanceUnit, DistanceUnits.Meters);
-
-    // Get prediction
-    result.time = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
-  } else {
-    // Add target time to result
-    result.time = target.time;
-
-    // Get prediction
-    const distance = raceUtils.predictDistance(input.time, d1, target.time, options.model,
-      options.riegelExponent);
-
-    // Convert output distance into default distance unit
-    const units = getDefaultDistanceUnit(defaultUnitSystem);
-    result.distanceValue = convertDistance(distance, DistanceUnits.Meters, units);
-    result.distanceUnit = getDefaultDistanceUnit(defaultUnitSystem);
-  }
-
-  // Return result
-  return formatTargetResult(result, defaultUnitSystem, preciseDurations);
+  return calculateStandardResult(input, target,
+    (d1, t1, d2) => raceUtils.predictTime(d1, t1, d2, options.model, options.riegelExponent),
+    (t1, d1, t2) => raceUtils.predictDistance(t1, d1, t2, options.model, options.riegelExponent),
+    defaultUnitSystem, preciseDurations);
 }
 
 /**

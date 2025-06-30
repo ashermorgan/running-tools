@@ -34,9 +34,10 @@ Run development server
 npm run dev
 ```
 
-Run linter and tests
+Run type checker, linter, unit tests, and end-to-end tests
 
 ```
+npm run type-check
 npm run lint
 npm run test:unit
 npm run test:e2e

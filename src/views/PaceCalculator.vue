@@ -43,7 +43,7 @@ import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
+/*
  * The input pace
  */
 const input = useStorage<DistanceTime>('pace-calculator-input', {
@@ -52,17 +52,17 @@ const input = useStorage<DistanceTime>('pace-calculator-input', {
   time: 1200,
 });
 
-/**
+/*
  * The default unit system
  */
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
-/**
+/*
  * The current selected target set
  */
 const selectedTargetSet = useStorage<string>('pace-calculator-target-set', '_pace_targets');
 
-/**
+/*
  * The target sets
  */
 const targetSets = useStorage<StandardTargetSets>('pace-calculator-target-sets', {
