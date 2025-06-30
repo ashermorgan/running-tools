@@ -1,6 +1,25 @@
 import { test, expect } from 'vitest';
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import PaceInput from '@/components/PaceInput.vue';
+
+test('should correctly render input label', () => {
+  // Initialize component
+  const wrapper = mount(PaceInput, {
+    propsData: {
+      modelValue: {
+        distanceValue: 3,
+        distanceUnit: 'miles',
+        time: 1000,
+      },
+      label: 'My input',
+    },
+  });
+
+  // Assert input fields are correct
+  expect(wrapper.findAll('input')[0].element.ariaLabel).to.equal('My input distance value');
+  expect(wrapper.find('select').element.ariaLabel).to.equal('My input distance unit');
+  expect(wrapper.findComponent({ name: 'time-input' }).vm.label).to.equal('My input duration');
+});
 
 test('should be initialized to modelValue', () => {
   // Initialize component

@@ -30,22 +30,21 @@ const model = defineModel({
   },
 });
 
-const props = defineProps({
+interface Props {
   /**
-   * Whether to show the hour field
+   * Whether to show the hour field (defaults to true)
    */
-  showHours: {
-    type: Boolean,
-    default: true,
-  },
+  showHours?: boolean,
 
   /**
-   * The prefix for each field's aria-label
+   * The prefix for each field's aria-label (defaults to 'Input')
    */
-  label: {
-    type: String,
-    default: '',
-  },
+  label?: string,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showHours: true,
+  label: 'Input',
 });
 
 /**
