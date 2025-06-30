@@ -20,61 +20,64 @@
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import { sort, defaultTargetSets } from '@/utils/targets';
+import { deepCopy } from '@/utils/misc';
+import { TargetSetTypes, sort, defaultTargetSets } from '@/utils/targets';
+import type { TargetSet, TargetSets } from '@/utils/targets';
+import { UnitSystems } from '@/utils/units';
 
 import TargetEditor from '@/components/TargetEditor.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
 /**
  * The selected target set
  */
 const model = defineModel('selectedTargetSet', {
   type: String,
-  default: '_new',
+  required: true,
 });
 
-/**
- * The target sets
- */
-const targetSets = defineModel('targetSets', {
-  type: Object,
-  default: {},
+interface Props {
+  /**
+   * Whether to allow custom names for workout targets (defaults to false)
+   */
+  customWorkoutNames?: boolean,
+
+  /**
+   * The unit system to use when creating distance targets (defaults to metric)
+   */
+  defaultUnitSystem?: UnitSystems,
+
+  /**
+   * The target set type (Standard, Split, or Workout, defaults to Standard)
+   */
+  setType?: TargetSetTypes,
+
+  /**
+   * The target sets
+   */
+  targetSets: TargetSets,
+};
+
+
+const props = withDefaults(defineProps<Props>(), {
+  customWorkoutNames: false,
+  defaultUnitSystem: UnitSystems.Metric,
+  setType: TargetSetTypes.Standard,
 });
 
-defineProps({
-  /**
-   * Whether to allow custom names for workout targets
-   */
-  customWorkoutNames: {
-    type: Boolean,
-    default: false,
-  },
-
-  /**
-   * The unit system to use when creating distance targets
-   */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
-
-  /**
-   * The target set type ('standard', 'split', or 'workout')
-   */
-  setType: {
-    type: String,
-    default: 'standard'
-  },
-});
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:targetSets']);
+const targetSets = useObjectModel<TargetSets>(() => props.targetSets, (x) => emit('update:targetSets', x));
 
 /**
  * The dialog element
  */
-const dialogElement = ref(null);
+const dialogElement = ref();
 
 /**
  * The internal value
@@ -86,7 +89,7 @@ const internalValue = computed({
     }
     return model.value;
   },
-  set: async (newValue) => {
+  set: async (newValue: string) => {
     if (newValue == '_new') {
       await nextTick(); // <select> won't update if value changed immediately
       newTargetSet();
@@ -110,10 +113,13 @@ function editTargetSet() {
  * Create and select a new target
  */
 function newTargetSet() {
-  let key = Date.now().toString();
-  targetSets.value[key] = {
-    name: 'New target set',
-    targets: [],
+  const key = Date.now().toString();
+  targetSets.value = {
+    ...targetSets.value,
+    [key]: {
+      name: 'New target set',
+      targets: [],
+    },
   };
   model.value = key;
   editTargetSet();
@@ -126,7 +132,7 @@ function revertTargetSet() {
   if (internalValue.value.startsWith('_')) {
     // Revert default set
     targetSets.value[internalValue.value] =
-      JSON.parse(JSON.stringify(defaultTargetSets[internalValue.value]));
+      deepCopy<TargetSet>(defaultTargetSets[internalValue.value]);
     sortTargetSet();
   } else {
     // Remove custom set

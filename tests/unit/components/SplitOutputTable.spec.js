@@ -103,7 +103,7 @@ test('should correctly calculate paces and cumulative times from entered split t
   expect(rows.length).to.equal(3);
 });
 
-test('should correctly update modelValue with split times', async () => {
+test('should emit update event when split times are changed', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitOutputTable, {
     propsData: {
@@ -119,11 +119,18 @@ test('should correctly update modelValue with split times', async () => {
   await wrapper.findAllComponents({ name: 'time-input' })[1].setValue(190);
   await wrapper.findAllComponents({ name: 'time-input' })[2].setValue(200);
 
-  // Assert modelValue correctly updated
-  expect(wrapper.vm.modelValue).to.deep.equal([
+  // Assert update events correctly emitted
+  expect(wrapper.emitted()['update:modelValue']).to.deep.equal([
+    [[
+        { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', splitTime: 180 },
+        { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', splitTime: 190 },
+        { result: 'time', distanceValue: 3000, distanceUnit: 'meters', splitTime: 180 },
+    ]],
+    [[
         { result: 'time', distanceValue: 1, distanceUnit: 'kilometers', splitTime: 180 },
         { result: 'time', distanceValue: 2, distanceUnit: 'kilometers', splitTime: 190 },
         { result: 'time', distanceValue: 3000, distanceUnit: 'meters', splitTime: 200 },
+    ]],
   ]);
 });
 

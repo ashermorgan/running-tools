@@ -86,12 +86,16 @@ test('Create New Target Set option should correctly add target set', async () =>
   expect(options[3].element.value).to.equal('_new');
   expect(options.length).to.equal(4);
 
-  // Assert target sets were correctly updated
-  targetSets[key1] = {
-    name: 'New target set',
-    targets: [],
-  };
-  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
+  // Assert update event emitted with correct target sets
+  expect(wrapper.emitted()['update:targetSets']).to.deep.equal([
+    [{
+      [key1]: {
+        name: 'New target set',
+        targets: [],
+      },
+      ...targetSets,
+    }],
+  ]);
 
   // Add another target set
   await wrapper.find('select').setValue('_new');
@@ -115,12 +119,27 @@ test('Create New Target Set option should correctly add target set', async () =>
   expect(options[4].element.value).to.equal('_new');
   expect(options.length).to.equal(5);
 
-  // Assert target sets were correctly updated
-  targetSets[key2] = {
-    name: 'New target set',
-    targets: [],
-  };
-  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
+  // Assert update event emitted with correct target sets
+  expect(wrapper.emitted()['update:targetSets']).to.deep.equal([
+    [{
+      [key1]: {
+        name: 'New target set',
+        targets: [],
+      },
+      ...targetSets,
+    }],
+    [{
+      [key1]: {
+        name: 'New target set',
+        targets: [],
+      },
+      ...targetSets,
+      [key2]: {
+        name: 'New target set',
+        targets: [],
+      },
+    }],
+  ]);
 });
 
 test('Revert event should correctly reset a default target set', async () => {
@@ -163,14 +182,27 @@ test('Revert event should correctly reset a default target set', async () => {
   expect(options[2].element.value).to.equal('_new');
   expect(options.length).to.equal(3);
 
-  // Assert target sets were correctly updated
-  targetSets._split_targets.name = '5K Mile Splits';
-  targetSets._split_targets.targets[2] = {
-    type: 'distance',
-    distanceValue: 5,
-    distanceUnit: 'kilometers',
-  };
-  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
+  // Assert update event emitted with correct target sets
+  expect(wrapper.emitted()['update:targetSets']).to.deep.equal([
+    [{
+      '_split_targets': {
+        name: '5K Mile Splits',
+        targets: [
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+        ],
+      },
+      '1234567890123': {
+        name: '2nd target set',
+        targets: [
+          { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
+        ],
+      },
+    }],
+  ]);
 });
 
 test('Revert event should correctly delete a custom target set', async () => {
@@ -211,9 +243,19 @@ test('Revert event should correctly delete a custom target set', async () => {
   expect(options[1].element.value).to.equal('_new');
   expect(options.length).to.equal(2);
 
-  // Assert target sets were correctly updated
-  delete targetSets['1234567890123'];
-  expect(wrapper.vm.targetSets).to.deep.equal(targetSets);
+  // Assert update event emitted with correct target sets
+  expect(wrapper.emitted()['update:targetSets']).to.deep.equal([
+    [{
+      '_split_targets': {
+        name: '1st target set',
+        targets: [
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+        ],
+      },
+    }],
+  ]);
 });
 
 test('edit button should open target editor with the correct props for default set', async () => {
@@ -313,24 +355,42 @@ test('should sort target set after target editor is closed', async () => {
   });
   await wrapper.findComponent({ name: 'target-editor' }).vm.$emit('close');
 
-  // Assert target set was sorted
-  expect(wrapper.findComponent({ name: 'target-editor' }).vm.modelValue).to.deep.equal({
-    name: '5K Mile Splits',
-    targets: [
-      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-      { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
-      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-      { type: 'time', timeValue: 60 },
-    ],
-  });
+  // Assert update events were emitted correctly
+  expect(wrapper.emitted()['update:targetSets']).to.deep.equal([
+    [{
+      _split_targets: {
+        name: '5K Mile Splits',
+        targets: [
+          { type: 'time', timeValue: 60 },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+        ],
+      },
+    }],
+    [{
+      _split_targets: {
+        name: '5K Mile Splits',
+        targets: [
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'time', timeValue: 60 },
+        ],
+      },
+    }],
+  ]);
 });
 
 test('should correctly pass setType prop to TargetEditor', async () => {
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
+      selectedTargetSet: '_new',
+      targetSets: {},
       setType: 'foo'
-    }
+    },
   });
 
   // Assert target editor props are correct
@@ -340,6 +400,8 @@ test('should correctly pass setType prop to TargetEditor', async () => {
 test('should correctly pass customWorkoutNames prop to TargetEditor', async () => {
   const wrapper = shallowMount(TargetSetSelector, {
     propsData: {
+      selectedTargetSet: '_new',
+      targetSets: {},
       customWorkoutNames: false,
     }
   });

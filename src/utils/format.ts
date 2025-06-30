@@ -1,12 +1,14 @@
 /**
  * Format a number as a string
- * @param {Number} value The number
- * @param {Number} minPadding The minimum number of digits to show before the decimal point
- * @param {Number} maxDigits The maximum number of digits to show after the decimal point
- * @param {Boolean} extraDigits Whether to show extra zeros after the decimal point
- * @returns {String} The formatted value
+ * @param {number} value The number
+ * @param {number} minPadding The minimum number of digits to show before the decimal point
+ * @param {number} maxDigits The maximum number of digits to show after the decimal point
+ * @param {boolean} extraDigits Whether to show extra zeros after the decimal point
+ * @returns {string} The formatted value
  */
-export function formatNumber(value, minPadding = 0, maxDigits = 2, extraDigits = true) {
+export function formatNumber(value: number, minPadding: number = 0, maxDigits: number = 2,
+                             extraDigits: boolean = true): string {
+
   // Initialize result
   let result = '';
 
@@ -45,13 +47,14 @@ export function formatNumber(value, minPadding = 0, maxDigits = 2, extraDigits =
 
 /**
  * Format a duration as a string
- * @param {Number} value The duration (in seconds)
- * @param {Number} minPadding The minimum number of digits to show before the decimal point
- * @param {Number} maxDigits The maximum number of digits to show after the decimal point
- * @param {Boolean} extraDigits Whether to show extra zeros after the decimal point
- * @returns {String} The formatted value
+ * @param {number} value The duration (in seconds)
+ * @param {number} minPadding The minimum number of digits to show before the decimal point
+ * @param {number} maxDigits The maximum number of digits to show after the decimal point
+ * @param {boolean} extraDigits Whether to show extra zeros after the decimal point
+ * @returns {string} The formatted value
  */
-export function formatDuration(value, minPadding = 6, maxDigits = 2, extraDigits = true) {
+export function formatDuration(value: number, minPadding: number = 6, maxDigits: number = 2,
+                               extraDigits: boolean = true): string {
   // Check if value is NaN
   if (Number.isNaN(value)) {
     return 'NaN';

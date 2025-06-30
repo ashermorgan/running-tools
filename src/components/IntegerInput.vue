@@ -2,7 +2,7 @@
   <input ref="inputElement" type="number" step="1" required @blur="onblur" v-model="stringValue">
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 
 /**
@@ -20,7 +20,7 @@ const props = defineProps({
   padding: {
     type: Number,
     default: 0,
-    validator(value) {
+    validator(value: number) {
       return value >= 0;
     },
   },
@@ -39,7 +39,7 @@ const stringValue = ref(format(model.value));
 /**
  * The input element
  */
-const inputElement = ref(null);
+const inputElement = ref();
 
 /**
  * Update the internal value when the component value changes
@@ -72,10 +72,10 @@ function onblur() {
 
 /**
  * Format an integer as a string
- * @param {Number} value The integer
- * @returns {String} The formated string
+ * @param {number} value The integer
+ * @returns {string} The formated string
  */
-function format(value) {
+function format(value: number): string {
   return value.toString().padStart(props.padding, '0');
 }
 </script>

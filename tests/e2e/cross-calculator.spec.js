@@ -216,18 +216,18 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row')).toHaveCount(5);
 
   // Assert general localStorage entries are correct
-  await expect(await page.evaluate(() => localStorage.length)).toEqual(18);
-  await expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
+  expect(await page.evaluate(() => localStorage.length)).toEqual(18);
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
     .toEqual(JSON.stringify('metric'));
 
   // Assert localStorage entries for the batch calculator are correct
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.batch-calculator-input'))).toEqual(JSON.stringify({
       distanceValue: 2,
       distanceUnit: 'miles',
       time: 630,
     }));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.batch-calculator-options'))).toEqual(JSON.stringify({
       calculator: 'race',
       increment: 10,
@@ -235,7 +235,7 @@ test('Cross-calculator', async ({ page }) => {
     }));
 
   // Assert localStorage entries for the pace calculator are correct
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.pace-calculator-input'))).toEqual(JSON.stringify({
       distanceValue: 2,
       distanceUnit: 'miles',
@@ -243,8 +243,8 @@ test('Cross-calculator', async ({ page }) => {
     }));
   const paceCalculatorKey = parseInt(JSON.parse(await page.evaluate(() =>
     localStorage.getItem('running-tools.pace-calculator-target-set'))));
-  await expect(paceCalculatorKey - parseInt(Date.now().toString())).toBeLessThan(100000);
-  await expect(await page.evaluate(() => localStorage.getItem('running-tools.pace-calculator-target-sets')))
+  expect(paceCalculatorKey - parseInt(Date.now().toString())).toBeLessThan(100000);
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.pace-calculator-target-sets')))
     .toEqual(JSON.stringify({
     _pace_targets: {
       name: 'Common Pace Targets',
@@ -292,21 +292,21 @@ test('Cross-calculator', async ({ page }) => {
   }));
 
   // Assert localStorage entries for the race calculator are correct
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.race-calculator-input'))).toEqual(JSON.stringify({
       distanceValue: 2,
       distanceUnit: 'miles',
       time: 630,
     }));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.race-calculator-options'))).toEqual(JSON.stringify({
       model: 'RiegelModel',
       riegelExponent: 1.06,
     }));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.race-calculator-target-set')))
     .toEqual(JSON.stringify('_race_targets'));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.race-calculator-target-sets'))).toEqual(JSON.stringify({
       _race_targets: {
         name: 'Common Race Targets',
@@ -332,10 +332,10 @@ test('Cross-calculator', async ({ page }) => {
     }));
 
   // Assert localStorage entries for the split calculator are correct
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.split-calculator-target-set')))
     .toEqual(JSON.stringify('_split_targets'));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.split-calculator-target-sets'))).toEqual(JSON.stringify({
       _split_targets: {
         name: '5K 1600m Splits',
@@ -348,10 +348,9 @@ test('Cross-calculator', async ({ page }) => {
     }));
 
   // Assert localStorage entries for the unit calculator are correct
-  await expect(await page.evaluate(() =>
-    localStorage.getItem('running-tools.unit-calculator-category')))
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.unit-calculator-category')))
     .toEqual(JSON.stringify('speed_and_pace'));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.unit-calculator-inputs'))).toEqual(JSON.stringify({
       distance: {
         inputValue: 1,
@@ -371,22 +370,22 @@ test('Cross-calculator', async ({ page }) => {
     }));
 
   // Assert localStorage entries for the workout calculator are correct
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-input'))).toEqual(JSON.stringify({
       distanceValue: 1,
       distanceUnit: 'miles',
       time: 301,
     }));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
       customTargetNames: true,
       model: 'VO2MaxModel',
       riegelExponent: 1.06,
     }));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-target-set')))
     .toEqual(JSON.stringify('_workout_targets'));
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-target-sets'))).toEqual(JSON.stringify({
       _workout_targets: {
         name: 'Common Workout Targets',
@@ -522,7 +521,7 @@ test('v1.4.1 Migration', async ({ page }) => {
 
   // Reload the app and assert localStorage is updated
   await page.goto('/');
-  await expect(await page.evaluate(() =>
+  expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
       model: 'VO2MaxModel',
       riegelExponent: 1.06,

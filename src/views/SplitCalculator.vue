@@ -11,8 +11,9 @@
 
       <div class="target-set">
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="split"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
+        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+          :set-type="TargetSetTypes.Split" v-model:targetSets="targetSets"
+          :default-unit-system="defaultUnitSystem"/>
       </div>
     </div>
 
@@ -22,35 +23,37 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
 import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+import { TargetSetTypes } from '@/utils/targets';
+import type { SplitTargetSet, SplitTargetSets } from '@/utils/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 
 import SplitOutputTable from '@/components/SplitOutputTable.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
+/*
  * The default unit system
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
-/**
+/*
  * The current selected target set
  */
-const selectedTargetSet = useStorage('split-calculator-target-set', '_split_targets');
+const selectedTargetSet = useStorage<string>('split-calculator-target-set', '_split_targets');
 
-/**
+/*
  * The default output targets
  */
-const targetSets = useStorage('split-calculator-target-sets', {
-  _split_targets: defaultTargetSets._split_targets
+const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets', {
+  _split_targets: defaultTargetSets._split_targets as SplitTargetSet
 });
 
-/**
+/*
  * The active target set
  */
 const targetSet = computed({

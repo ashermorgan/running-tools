@@ -36,41 +36,37 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
+import type { TargetResult } from '@/utils/calculators';
+import type { Target } from '@/utils/targets';
+
+interface Props {
   /**
    * The method that generates the target table rows
    */
-  calculateResult: {
-    type: Function,
-    required: true,
-  },
+  calculateResult: (x: Target) => TargetResult,
 
   /**
    * The target set
    */
-  targets: {
-    type: Array,
-    default: () => [],
-  },
+  targets: Array<Target>,
 
   /**
-   * Whether to show result paces
+   * Whether to show result paces (defaults to false)
    */
-  showPace: {
-    type: Boolean,
-    default: false,
-  },
-});
+  showPace?: boolean,
+};
+
+const props = withDefaults(defineProps<Props>(), { showPace: false });
 
 /**
  * The target table results
  */
 const results = computed(() => {
   // Calculate results
-  const result = [];
+  const result: Array<TargetResult> = [];
   props.targets.forEach((row) => {
     // Add result
     result.push(props.calculateResult(row));

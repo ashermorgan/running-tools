@@ -17,14 +17,23 @@
   </div>
 </template>
 
-<script setup>
-import DecimalInput from '@/components/DecimalInput.vue';
+<script setup lang="ts">
+import type { RaceOptions } from '@/utils/calculators';
 
-const model = defineModel({
-  type: Object,
-  default: {
-    model: 'AverageModel',
-    riegelExponent: 1.06,
-  },
-});
+import DecimalInput from '@/components/DecimalInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
+
+interface Props {
+  /**
+   * The component value
+   */
+  modelValue: RaceOptions,
+}
+
+const props = defineProps<Props>();
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel<RaceOptions>(() => props.modelValue,
+                                          (x) => emit('update:modelValue', x));
 </script>

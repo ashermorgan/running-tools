@@ -1,11 +1,12 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router';
+import type { RouteRecordNameGeneric } from 'vue-router';
 import VueFeather from 'vue-feather';
 </script>
 
 <template>
   <header>
-    <router-link :to="{ name: $route.meta.back }" v-if="$route.meta.back"
+    <router-link :to="{ name: $route.meta.back as RouteRecordNameGeneric }" v-if="$route.meta.back"
       class="icon" title="Back">
       <vue-feather type="chevron-left" aria-hidden="true"/>
     </router-link>

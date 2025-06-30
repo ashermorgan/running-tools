@@ -298,14 +298,14 @@ test('should load advanced model options from localStorage', async () => {
 
   // Assert race prediction options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
-  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
   });
 
   // Assert workout prediction options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
-  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
     model: 'RiegelModel',
     riegelExponent: 1.1,
   });

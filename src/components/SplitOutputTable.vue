@@ -19,7 +19,7 @@
       <tr v-for="(item, index) in results" :key="index">
         <td>
           {{ formatNumber(item.distanceValue, 0, 2, false) }}
-          {{ DISTANCE_UNITS[item.distanceUnit].symbol }}
+          {{ DistanceUnitData[item.distanceUnit].symbol }}
         </td>
 
         <td>
@@ -27,12 +27,12 @@
         </td>
 
         <td>
-          <time-input v-model="targets[index].splitTime" label="Split duration" :showHours="false"/>
+          <time-input v-model="model[index].splitTime" label="Split duration" :showHours="false"/>
         </td>
 
         <td>
           {{ formatDuration(item.pace, 3, 0, true) }}
-          / {{ DISTANCE_UNITS[getDefaultDistanceUnit(defaultUnitSystem)]
+          / {{ DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)]
           .symbol }}
         </td>
       </tr>
@@ -46,60 +46,73 @@
   </table>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
 import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
+import type { SplitTarget } from '@/utils/targets';
+import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
+  getDefaultDistanceUnit } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
-/**
- * The split targets
- */
-const targets = defineModel({
-  type: Array,
-  default: () => [],
-})
+interface SplitTargetResult {
+  distance: number,
+  distanceValue: number,
+  distanceUnit: DistanceUnits,
+  time: number,
+  splitTime: number,
+  pace: number,
+};
 
-const props = defineProps({
+interface Props {
   /**
-   * The unit system to use when showing result paces
+   * The unit system to use when showing result paces (defaults to metric)
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
-});
+  defaultUnitSystem?: UnitSystems,
+
+  /**
+   * The split targets
+   */
+  modelValue: Array<SplitTarget>,
+};
+
+const props = withDefaults(defineProps<Props>(), { defaultUnitSystem: UnitSystems.Metric });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel<Array<SplitTarget>>(() => props.modelValue,
+  (x) => emit('update:modelValue', x));
 
 /**
  * The target table results
  */
 const results = computed(() => {
   // Initialize results array
-  const results = [];
+  const results: Array<SplitTargetResult> = [];
 
-  for (let i = 0; i < targets.value.length; i += 1) {
+  for (let i = 0; i < model.value.length; i += 1) {
     // Calculate split and total times
-    const splitTime = targets.value[i].splitTime || 0;
+    const splitTime = model.value[i].splitTime || 0;
     const totalTime = i === 0 ? splitTime : results[i - 1].time + splitTime;
 
     // Calculate split and total distances
     const totalDistance = convertDistance(
-      targets.value[i].distanceValue,
-      targets.value[i].distanceUnit, 'meters',
+      model.value[i].distanceValue,
+      model.value[i].distanceUnit, DistanceUnits.Meters,
     );
     const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
 
     // Calculate pace
-    const pace = splitTime / convertDistance(splitDistance, 'meters',
+    const pace = splitTime / convertDistance(splitDistance, DistanceUnits.Meters,
       getDefaultDistanceUnit(props.defaultUnitSystem));
 
     // Add row to results array
     results.push({
       distance: totalDistance,
-      distanceValue: targets.value[i].distanceValue,
-      distanceUnit: targets.value[i].distanceUnit,
+      distanceValue: model.value[i].distanceValue,
+      distanceUnit: model.value[i].distanceUnit,
       time: totalTime,
       splitTime,
       pace,
