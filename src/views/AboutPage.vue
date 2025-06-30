@@ -10,14 +10,14 @@
     <h2>Installation</h2>
     <p>
       Running Tools can be installed as a progressive web app so it works offline:
-      <ul>
-        <li>On iOS devices, open Running Tools in Safari, press <span aria-label="Share">
-          <vue-feather type="share" aria-hidden="true"/></span>, and select Add to Home Screen</li>
-        <li>On all other platforms, open Running Tools in Chrome and click Install
-          <img src="@/assets/chrome-install.png" height="24" class="chrome-install" alt=""/>
-        </li>
-      </ul>
     </p>
+    <ul>
+      <li>On iOS devices, open Running Tools in Safari, press <span aria-label="Share">
+        <vue-feather type="share" aria-hidden="true"/></span>, and select Add to Home Screen</li>
+      <li>On all other platforms, open Running Tools in Chrome and click Install
+        <img src="@/assets/chrome-install.png" height="24" class="chrome-install" alt=""/>
+      </li>
+    </ul>
 
     <h2>The Calculators</h2>
     <p>Running Tools contains six calculators:</p>
