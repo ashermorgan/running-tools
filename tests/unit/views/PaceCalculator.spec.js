@@ -48,7 +48,8 @@ test('should correctly calculate distance results according to default units set
   });
 
   // Set default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('metric', 'defaultUnitSystem');
 
   // Get calculate result function
   const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
@@ -58,7 +59,8 @@ test('should correctly calculate distance results according to default units set
   expect(result.key).to.equal('1.61 km');
 
   // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('imperial', 'defaultUnitSystem');
 
   // Assert result is correct
   result = calculateResult({ type: 'time', time: 600 });
@@ -78,15 +80,15 @@ test('should correctly handle null target set', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('does_not_exist', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue({ selectedTargetSet: 'does_not_exist' }, 'options');
 
   // Assert empty array passed to SingleOutputTable component
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('_pace_targets', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue({ selectedTargetSet: '_pace_targets' }, 'options');
 
   // Assert valid targets passed to SingleOutputTable component
   const paceTargets = defaultTargetSets._pace_targets.targets;
@@ -161,8 +163,8 @@ test('should load options from localStorage', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('B');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options)
+    .to.deep.equal({ selectedTargetSet: 'B' });
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(targetSet2.targets);
 });
@@ -172,8 +174,8 @@ test('should save options to localStorage when modified', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('B', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue({ selectedTargetSet: 'B' }, 'options');
 
   // New selected target set should be saved to localStorage
   expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(JSON.stringify({
@@ -186,8 +188,10 @@ test('should save default units setting to localStorage when modified', async ()
   const wrapper = shallowMount(PaceCalculator);
 
   // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('metric', 'defaultUnitSystem');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('imperial', 'defaultUnitSystem');
 
   // New default units should be saved to localStorage
   expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');

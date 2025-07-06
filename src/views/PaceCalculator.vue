@@ -9,18 +9,8 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <div>
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-      <div>
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
+      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Pace"/>
     </details>
 
     <h2>Equivalent Paces</h2>
@@ -32,16 +22,16 @@
 </template>
 
 <script setup lang="ts">
-import { calculatePaceResults } from '@/utils/calculators';
+import { Calculators, calculatePaceResults } from '@/utils/calculators';
 import type { StandardOptions } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
 import type { StandardTargetSets } from '@/utils/targets';
 import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 

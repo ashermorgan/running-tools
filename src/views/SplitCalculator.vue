@@ -1,20 +1,8 @@
 <template>
   <div class="calculator">
     <div class="input">
-      <div class="default-units">
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-
-      <div class="target-set">
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
-          :set-type="TargetSetTypes.Split" v-model:targetSets="targetSets"
-          :default-unit-system="defaultUnitSystem"/>
-      </div>
+      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Split"/>
     </div>
 
     <div class="output">
@@ -26,14 +14,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import { Calculators } from '@/utils/calculators';
 import type { StandardOptions } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
-import { TargetSetTypes } from '@/utils/targets';
 import type { SplitTargetSet, SplitTargetSets } from '@/utils/targets';
 import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import SplitOutputTable from '@/components/SplitOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 

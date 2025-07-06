@@ -26,19 +26,8 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <div>
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-      <div>
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
-      <race-options-input v-model="options"/>
+      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Race"/>
     </details>
 
     <h2>Equivalent Race Results</h2>
@@ -52,7 +41,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
+import { Calculators, calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
 import type { RaceOptions, RaceStats } from '@/utils/calculators';
 import { formatNumber } from '@/utils/format';
 import { RacePredictionModel } from '@/utils/races';
@@ -61,10 +50,9 @@ import type { StandardTargetSets } from '@/utils/targets';
 import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
-import RaceOptionsInput from '@/components/RaceOptionsInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 

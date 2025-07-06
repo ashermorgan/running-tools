@@ -7,11 +7,14 @@ import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
   getDefaultDistanceUnit } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+/*
+ * The four main calculators (batch and unit calculators not included)
+ */
 export enum Calculators {
-  Pace,
-  Race,
-  Split,
-  Workout,
+  Pace = 'pace',
+  Race = 'race',
+  Split = 'split',
+  Workout = 'workout',
 }
 
 /*
@@ -37,6 +40,7 @@ export interface RaceOptions extends StandardOptions {
 export interface WorkoutOptions extends RaceOptions {
   customTargetNames: boolean,
 };
+export type CalculatorOptions = StandardOptions | RaceOptions | WorkoutOptions;
 
 /*
  * The two possible result fields of a target result: "key" and "value"

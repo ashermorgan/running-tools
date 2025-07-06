@@ -9,27 +9,8 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <div>
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-      <div>
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
-          :set-type="TargetSetTypes.Workout" :customWorkoutNames="options.customTargetNames"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
-      <div>
-        Target Name Customization:
-        <select v-model="options.customTargetNames" aria-label="Target name customization">
-          <option :value="false">Disabled</option>
-          <option :value="true">Enabled</option>
-        </select>
-      </div>
-      <race-options-input v-model="options"/>
+      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Workout"/>
     </details>
 
     <h2>Workout Splits</h2>
@@ -41,18 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { calculateWorkoutResults } from '@/utils/calculators';
+import { Calculators, calculateWorkoutResults } from '@/utils/calculators';
 import type { WorkoutOptions } from '@/utils/calculators';
 import { RacePredictionModel } from '@/utils/races';
-import { TargetSetTypes, defaultTargetSets } from '@/utils/targets';
+import { defaultTargetSets } from '@/utils/targets';
 import type { WorkoutTarget, WorkoutTargetSet, WorkoutTargetSets } from '@/utils/targets';
 import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
-import RaceOptionsInput from '@/components/RaceOptionsInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 

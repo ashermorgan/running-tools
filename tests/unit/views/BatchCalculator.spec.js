@@ -104,8 +104,7 @@ test('should load default units setting from localStorage', async () => {
   const wrapper = shallowMount(BatchCalculator);
 
   // Assert default units setting loaded
-  expect(wrapper.find('select[aria-label="Default units"]').element.value).to.equal('metric');
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.defaultUnitSystem)
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.defaultUnitSystem)
     .to.equal('metric');
 });
 
@@ -117,7 +116,8 @@ test('should save default units setting from localStorage when modified', async 
   const wrapper = shallowMount(BatchCalculator);
 
   // Change default units setting
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('imperial', 'defaultUnitSystem');
 
   // New default units should be saved to localStorage
   expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
@@ -195,32 +195,30 @@ test('should load calculator options from localStorage', async () => {
 
   // Assert pace calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('A');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    selectedTargetSet: 'A',
+  });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[0].targets);
 
   // Assert race calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
-  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
     selectedTargetSet: 'C',
   });
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('C');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[1].targets);
 
   // Assert workout calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
-  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
     model: 'RiegelModel',
     riegelExponent: 1.1,
     selectedTargetSet: 'E',
   });
-  expect(wrapper.find('select[aria-label="Target name customization"]').element.value)
-    .to.equal('true');
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('E');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[2].targets);
 });
@@ -297,31 +295,30 @@ test('should save calculator options to localStorage when modified', async () =>
 
   // Update pace calculator options X
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('A', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    selectedTargetSet: 'A',
+  }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[0].targets);
 
   // Update race calculator options
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
-  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
-    selectedTargetSet: 'D',
-  });
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('C', 'selectedTargetSet');
+    selectedTargetSet: 'C',
+  }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[1].targets);
 
   // Update workout calculator options
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
-  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
-    customTargetNames: false,
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: true,
     model: 'RiegelModel',
     riegelExponent: 1.1,
-    selectedTargetSet: 'F',
-  });
-  wrapper.find('select[aria-label="Target name customization"]').setValue('true');
-  await wrapper.findComponent({ name: 'target-set-selector' }).setValue('E', 'selectedTargetSet');
+    selectedTargetSet: 'E',
+  }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
     .to.deep.equal(selectedTargetSets[2].targets);
 
@@ -397,6 +394,23 @@ test('should pass correct input props to DoubleOutputTable', async () => {
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputTimes).to.deep.equal([
     600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740,
   ]);
+});
+
+test('should correctly set AdvancedOptionsInput type prop', async () => {
+  // Initialize component
+  const wrapper = shallowMount(BatchCalculator);
+
+  // Assert prop is correct for pace calculator
+  await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('pace');
+
+  // Update race calculator options
+  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('race');
+
+  // Update workout calculator options
+  await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('workout');
 });
 
 test('should correctly calculate outputs', async () => {

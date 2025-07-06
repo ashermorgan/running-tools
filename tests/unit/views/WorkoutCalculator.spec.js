@@ -37,15 +37,23 @@ test('should correctly handle null target set', async () => {
   const wrapper = shallowMount(WorkoutCalculator);
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('does_not_exist', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: false,
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+    selectedTargetSet: 'does_not_exist',
+  }, 'options');
 
   // Assert empty array passed to SingleOutputTable component
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('_workout_targets', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: false,
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+    selectedTargetSet: '_workout_targets',
+  }, 'options');
 
   // Assert valid targets passed to SingleOutputTable component
   const workoutTargets = defaultTargetSets._workout_targets.targets;
@@ -65,11 +73,12 @@ test('should correctly calculate results according to advanced model options', a
   });
 
   // Update model and Riegel Exponent
-  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: false,
     model: 'RiegelModel',
     riegelExponent: 1.10,
     selectedTargetSet: '_workout_targets',
-  });
+  }, 'options');
 
   // Calculate result
   const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
@@ -127,8 +136,10 @@ test('should save default units setting to localStorage when modified', async ()
   const wrapper = shallowMount(WorkoutCalculator);
 
   // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('metric', 'defaultUnitSystem');
+  await wrapper.findComponent({ name: 'advanced-options-input' })
+    .setValue('imperial', 'defaultUnitSystem');
 
   // New default units should be saved to localStorage
   expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
@@ -191,18 +202,14 @@ test('should load options from localStorage', async () => {
   const wrapper = shallowMount(WorkoutCalculator);
 
   // Assert data loaded
-  expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
     selectedTargetSet: 'B',
   });
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('B');
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
     .to.deep.equal(targetSet2.targets);
-  expect(wrapper.find('select[aria-label="Target name customization"]').element.value)
-    .to.equal('true');
 });
 
 test('should save options to localStorage when modified', async () => {
@@ -210,15 +217,12 @@ test('should save options to localStorage when modified', async () => {
   const wrapper = shallowMount(WorkoutCalculator);
 
   // Update options
-  await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
-    customTargetNames: false,
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: true,
     model: 'CameronModel',
-    riegelExponent: 1.30,
-    selectedTargetSet: '_workout_targets',
-  });
-  wrapper.find('select[aria-label="Target name customization"]').setValue('true');
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('B', 'selectedTargetSet');
+    riegelExponent: 1.3,
+    selectedTargetSet: 'B',
+  }, 'options');
 
   // Assert data saved to localStorage
   expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
@@ -227,4 +231,12 @@ test('should save options to localStorage when modified', async () => {
     riegelExponent: 1.3,
     selectedTargetSet: 'B',
   }));
+});
+
+test('should correctly set AdvancedOptionsInput type prop', async () => {
+  // Initialize component
+  const wrapper = shallowMount(WorkoutCalculator);
+
+  // Assert type prop is correctly set
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('workout');
 });
