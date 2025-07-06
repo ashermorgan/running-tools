@@ -18,7 +18,7 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
           :set-type="TargetSetTypes.Workout" :customWorkoutNames="options.customTargetNames"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
@@ -35,7 +35,8 @@
     <h2>Workout Splits</h2>
     <single-output-table class="output"
       :calculate-result="x => calculateWorkoutResults(input, x as WorkoutTarget, options, true)"
-      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+      :targets="targetSets[options.selectedTargetSet] ?
+      targetSets[options.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
@@ -76,12 +77,8 @@ const options = useStorage<WorkoutOptions>('workout-calculator-options', {
   customTargetNames: false,
   model: RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
+  selectedTargetSet: '_workout_targets',
 });
-
-/*
- * The current selected target set
- */
-const selectedTargetSet = useStorage<string>('workout-calculator-target-set', '_workout_targets');
 
 /*
  * The target sets

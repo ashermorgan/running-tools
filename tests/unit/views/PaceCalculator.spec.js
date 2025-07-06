@@ -132,7 +132,7 @@ test('should save input pace to localStorage', async () => {
   }));
 });
 
-test('should load selected target set from localStorage', async () => {
+test('should load options from localStorage', async () => {
   // Initialize localStorage
   const targetSet2 = {
     name: 'Pace targets #2',
@@ -153,7 +153,9 @@ test('should load selected target set from localStorage', async () => {
     },
     'B': targetSet2,
   }));
-  localStorage.setItem('running-tools.pace-calculator-target-set', '"B"');
+  localStorage.setItem('running-tools.pace-calculator-options', JSON.stringify({
+    selectedTargetSet: 'B',
+  }));
 
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
@@ -165,7 +167,7 @@ test('should load selected target set from localStorage', async () => {
     .to.deep.equal(targetSet2.targets);
 });
 
-test('should save selected target set to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
@@ -174,8 +176,9 @@ test('should save selected target set to localStorage when modified', async () =
     .setValue('B', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.pace-calculator-target-set'))
-    .to.equal('"B"');
+  expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(JSON.stringify({
+    selectedTargetSet: 'B',
+  }));
 });
 
 test('should save default units setting to localStorage when modified', async () => {

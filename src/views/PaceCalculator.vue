@@ -18,7 +18,7 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
     </details>
@@ -26,12 +26,14 @@
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
       calculatePaceResults(input, x, defaultUnitSystem, true)"
-     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+     :targets="targetSets[options.selectedTargetSet] ?
+     targetSets[options.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import { calculatePaceResults } from '@/utils/calculators';
+import type { StandardOptions } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
 import type { StandardTargetSets } from '@/utils/targets';
 import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
@@ -60,7 +62,9 @@ const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectD
 /*
  * The current selected target set
  */
-const selectedTargetSet = useStorage<string>('pace-calculator-target-set', '_pace_targets');
+const options = useStorage<StandardOptions>('pace-calculator-options', {
+  selectedTargetSet: '_pace_targets',
+});
 
 /*
  * The target sets

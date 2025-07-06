@@ -35,7 +35,7 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
       </div>
       <race-options-input v-model="options"/>
@@ -44,7 +44,8 @@
     <h2>Equivalent Race Results</h2>
     <single-output-table class="output" show-pace
       :calculate-result="x => calculateRaceResults(input, x, options, defaultUnitSystem, true)"
-      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+      :targets="targetSets[options.selectedTargetSet] ?
+      targetSets[options.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
@@ -82,17 +83,13 @@ const input = useStorage<DistanceTime>('race-calculator-input', {
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
 /*
-* The race prediction options
+* The race calculator options
 */
 const options = useStorage<RaceOptions>('race-calculator-options', {
   model: RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
+  selectedTargetSet: '_race_targets',
 });
-
-/*
- * The current selected target set
- */
-const selectedTargetSet = useStorage<string>('race-calculator-target-set', '_race_targets');
 
 /*
  * The target sets

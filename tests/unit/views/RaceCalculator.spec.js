@@ -123,7 +123,7 @@ test('should correctly calculate race statistics', async () => {
   expect(vo2Max).to.equal('V̇O₂ Max: 49.8 ml/kg/min')
 });
 
-test('should correctly calculate results according to advanced model options', async () => {
+test('should correctly calculate results according to model options', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
@@ -138,6 +138,7 @@ test('should correctly calculate results according to advanced model options', a
   await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'RiegelModel',
     riegelExponent: 1.06, // default value
+    selectedTargetSet: '_race_targets',
   });
 
   // Calculate result
@@ -155,6 +156,7 @@ test('should correctly calculate results according to advanced model options', a
   await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'RiegelModel', // existing value
     riegelExponent: 1,
+    selectedTargetSet: '_race_targets',
   });
 
   // Calculate result
@@ -206,7 +208,19 @@ test('should save input race to localStorage', async () => {
   }));
 });
 
-test('should load selected target set from localStorage', async () => {
+test('should save default units setting to localStorage when modified', async () => {
+  // Initialize component
+  const wrapper = shallowMount(RaceCalculator);
+
+  // Change default units
+  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
+  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
+});
+
+test('should load options from localStorage', async () => {
   // Initialize localStorage
   const targetSet2 = {
     name: 'Race targets #2',
@@ -227,48 +241,10 @@ test('should load selected target set from localStorage', async () => {
     },
     'B': targetSet2,
   }));
-  localStorage.setItem('running-tools.race-calculator-target-set', '"B"');
-
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('B');
-  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
-    .to.deep.equal(targetSet2.targets);
-});
-
-test('should save selected target set to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('B', 'selectedTargetSet');
-
-  // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-target-set'))
-    .to.equal('"B"');
-});
-
-test('should save default units setting to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
-});
-
-test('should load advanced model options from localStorage', async () => {
-  // Initialize localStorage
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
+    selectedTargetSet: 'B',
   }));
 
   // Initialize component
@@ -278,23 +254,32 @@ test('should load advanced model options from localStorage', async () => {
   expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
+    selectedTargetSet: 'B',
   });
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
+    .to.equal('B');
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(targetSet2.targets);
 });
 
-test('should save advanced model options to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Update advanced model options
+  // Update options
   await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'CameronModel',
     riegelExponent: 1.30,
+    selectedTargetSet: '_race_targets',
   });
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('B', 'selectedTargetSet');
 
   // Assert data saved to localStorage
   expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
     model: 'CameronModel',
     riegelExponent: 1.3,
+    selectedTargetSet: 'B',
   }));
 });
 

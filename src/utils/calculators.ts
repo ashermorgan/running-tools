@@ -7,6 +7,37 @@ import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
   getDefaultDistanceUnit } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
+export enum Calculators {
+  Pace,
+  Race,
+  Split,
+  Workout,
+}
+
+/*
+ * The type for the available race statistics
+ */
+export interface RaceStats {
+  purdyPoints: number,
+  vo2Max: number,
+  vo2: number,
+  vo2MaxPercentage: number,
+};
+
+/*
+ * The type for the options specific to each calculator
+ */
+export interface StandardOptions {
+  selectedTargetSet: string,
+}
+export interface RaceOptions extends StandardOptions {
+  model: raceUtils.RacePredictionModel,
+  riegelExponent: number,
+};
+export interface WorkoutOptions extends RaceOptions {
+  customTargetNames: boolean,
+};
+
 /*
  * The two possible result fields of a target result: "key" and "value"
  */
@@ -24,31 +55,6 @@ export interface TargetResult {
   pace: string,
   result: ResultType,
   sort: number,
-};
-
-/*
- * The type for the options specific to the race calculator
- */
-export interface RaceOptions {
-  model: raceUtils.RacePredictionModel,
-  riegelExponent: number,
-};
-
-/*
- * The type for the available race statistics
- */
-export interface RaceStats {
-  purdyPoints: number,
-  vo2Max: number,
-  vo2: number,
-  vo2MaxPercentage: number,
-};
-
-/*
- * The type for the options specific to the workout calculator
- */
-export interface WorkoutOptions extends RaceOptions {
-  customTargetNames: boolean,
 };
 
 /**

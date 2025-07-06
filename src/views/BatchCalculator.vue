@@ -36,29 +36,30 @@
       </div>
       <div>
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="calcOptions.selectedTargetSet"
           :set-type="options.calculator === BatchCompatableCalculators.Workout ?
           targetUtils.TargetSetTypes.Workout : targetUtils.TargetSetTypes.Standard"
           v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"
           :customWorkoutNames="options.calculator === BatchCompatableCalculators.Workout ?
-          (advancedOptions as WorkoutOptions).customTargetNames : false"/>
+          (calcOptions as WorkoutOptions).customTargetNames : false"/>
       </div>
       <div v-if="options.calculator === 'workout'">
         Target Name Customization:
-        <select v-model="(advancedOptions as WorkoutOptions).customTargetNames"
+        <select v-model="(calcOptions as WorkoutOptions).customTargetNames"
           aria-label="Target name customization">
           <option :value="false">Disabled</option>
           <option :value="true">Enabled</option>
         </select>
       </div>
       <race-options-input v-if="options.calculator !== BatchCompatableCalculators.Pace"
-        v-model="advancedOptions as RaceOptions"/>
+        v-model="calcOptions as RaceOptions"/>
     </details>
 
     <h2>Batch Results</h2>
     <double-output-table class="output" :input-times="inputTimes" :input-distance="inputDistance"
       :calculate-result="calculateResult"
-      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+      :targets="targetSets[calcOptions.selectedTargetSet] ?
+      targetSets[calcOptions.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
@@ -66,7 +67,8 @@
 import { computed } from 'vue';
 
 import * as calcUtils from '@/utils/calculators';
-import type { RaceOptions, TargetResult, WorkoutOptions } from '@/utils/calculators';
+import type { RaceOptions, StandardOptions, TargetResult,
+  WorkoutOptions } from '@/utils/calculators';
 import { RacePredictionModel } from '@/utils/races';
 import * as targetUtils from '@/utils/targets';
 import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
@@ -123,14 +125,6 @@ const options = useStorage<BatchCalculatorOptions>('batch-calculator-options', {
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
 /*
- * The current selected target sets for each calculator
- */
-const selectedPaceTargetSet = useStorage<string>('pace-calculator-target-set', '_pace_targets');
-const selectedRaceTargetSet = useStorage<string>('race-calculator-target-set', '_race_targets');
-const selectedWorkoutTargetSet = useStorage<string>('workout-calculator-target-set',
-  '_workout_targets');
-
-/*
  * The target sets for each calculator
  */
 const paceTargetSets = useStorage<targetUtils.StandardTargetSets>('pace-calculator-target-sets', {
@@ -144,16 +138,21 @@ const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>('workout-cal
 });
 
 /*
- * The advanced options for each calculator
+ * The options for each calculator
  */
+const paceOptions = useStorage<StandardOptions>('pace-calculator-options', {
+  selectedTargetSet: '_pace_targets',
+});
 const raceOptions = useStorage<RaceOptions>('race-calculator-options', {
   model: RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
+  selectedTargetSet: '_race_targets',
 });
 const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options', {
   customTargetNames: false,
   model: RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
+  selectedTargetSet: '_workout_targets',
 });
 
 /*
@@ -173,43 +172,6 @@ const inputTimes = computed<Array<number>>(() => {
     results.push(input.value.time + options.value.increment * i);
   }
   return results;
-});
-
-/*
- * The selected target set for the current calculator
- */
-const selectedTargetSet = computed<string>({
-  get: (): string => {
-    switch (options.value.calculator) {
-      case (BatchCompatableCalculators.Pace): {
-        return selectedPaceTargetSet.value;
-      }
-      case (BatchCompatableCalculators.Race): {
-        return selectedRaceTargetSet.value;
-      }
-      default:
-      case (BatchCompatableCalculators.Workout): {
-        return selectedWorkoutTargetSet.value;
-      }
-    }
-  },
-  set: (newValue: string) => {
-    switch (options.value.calculator) {
-      case (BatchCompatableCalculators.Pace): {
-        selectedPaceTargetSet.value = newValue;
-        break;
-      }
-      case (BatchCompatableCalculators.Race): {
-        selectedRaceTargetSet.value = newValue;
-        break;
-      }
-      default:
-      case (BatchCompatableCalculators.Workout): {
-        selectedWorkoutTargetSet.value = newValue;
-        break;
-      }
-    }
-  },
 });
 
 /*
@@ -250,13 +212,13 @@ const targetSets = computed<targetUtils.TargetSets>({
 });
 
 /*
- * The advanced options for the current calculator
+ * The options for the current calculator
  */
-const advancedOptions = computed<null | RaceOptions | WorkoutOptions>({
+const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
   get: () => {
     switch (options.value.calculator) {
       case (BatchCompatableCalculators.Pace): {
-        return null;
+        return paceOptions.value;
       }
       case (BatchCompatableCalculators.Race): {
         return raceOptions.value;
@@ -267,10 +229,10 @@ const advancedOptions = computed<null | RaceOptions | WorkoutOptions>({
       }
     }
   },
-  set: (newValue: null | RaceOptions | WorkoutOptions) => {
+  set: (newValue: StandardOptions | RaceOptions | WorkoutOptions) => {
     switch(options.value.calculator) {
       case (BatchCompatableCalculators.Pace): {
-        // do nothing
+        paceOptions.value = newValue as StandardOptions;
         break;
       }
       case (BatchCompatableCalculators.Race): {

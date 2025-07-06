@@ -8,7 +8,9 @@ beforeEach(() => {
 
 test('should load selected target set from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.split-calculator-target-set', '"B"');
+  localStorage.setItem('running-tools.split-calculator-options', JSON.stringify({
+    selectedTargetSet: 'B',
+  }));
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
@@ -65,13 +67,16 @@ test('should load targets from localStorage and pass to splitOutputTable', async
 
 test('should correctly handle null target set', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.split-calculator-target-set', '"does_not_exist"');
+  localStorage.setItem('running-tools.split-calculator-options', JSON.stringify({
+    selectedTargetSet: 'does_not_exist',
+  }));
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
 
   // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to.equal('does_not_exist');
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
+    .to.equal('does_not_exist');
 
   // Assert empty array passed to SplitOutputTable
   expect(wrapper.findComponent({ name: 'split-output-table' }).vm.modelValue).to.deep.equal([]);
@@ -133,8 +138,9 @@ test('should save selected target set to localStorage when modified', async () =
     .setValue('_race_targets', 'selectedTargetSet');
 
   // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.split-calculator-target-set'))
-    .to.equal('"_race_targets"');
+  expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(JSON.stringify({
+    selectedTargetSet: '_race_targets',
+  }));
 });
 
 test('should load default units from localStorage and pass to splitOutputTable', async () => {

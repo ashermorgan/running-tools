@@ -11,7 +11,7 @@
 
       <div class="target-set">
         Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
+        <target-set-selector v-model:selectedTargetSet="options.selectedTargetSet"
           :set-type="TargetSetTypes.Split" v-model:targetSets="targetSets"
           :default-unit-system="defaultUnitSystem"/>
       </div>
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import type { StandardOptions } from '@/utils/calculators';
 import { defaultTargetSets } from '@/utils/targets';
 import { TargetSetTypes } from '@/utils/targets';
 import type { SplitTargetSet, SplitTargetSets } from '@/utils/targets';
@@ -42,9 +43,11 @@ import useStorage from '@/composables/useStorage';
 const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
 
 /*
- * The current selected target set
+ * The split calculator options
  */
-const selectedTargetSet = useStorage<string>('split-calculator-target-set', '_split_targets');
+const options = useStorage<StandardOptions>('split-calculator-options', {
+  selectedTargetSet: '_split_targets'
+});
 
 /*
  * The default output targets
@@ -58,15 +61,15 @@ const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets', {
  */
 const targetSet = computed({
   get: () => {
-    if (targetSets.value[selectedTargetSet.value]) {
-      return targetSets.value[selectedTargetSet.value].targets
+    if (targetSets.value[options.value.selectedTargetSet]) {
+      return targetSets.value[options.value.selectedTargetSet].targets
     } else {
       return []
     }
   },
   set: (newValue) => {
-    if (targetSets.value[selectedTargetSet.value]) {
-      targetSets.value[selectedTargetSet.value].targets = newValue;
+    if (targetSets.value[options.value.selectedTargetSet]) {
+      targetSets.value[options.value.selectedTargetSet].targets = newValue;
     }
   },
 });

@@ -68,6 +68,7 @@ test('should correctly calculate results according to advanced model options', a
   await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
     model: 'RiegelModel',
     riegelExponent: 1.10,
+    selectedTargetSet: '_workout_targets',
   });
 
   // Calculate result
@@ -121,7 +122,19 @@ test('should save input race to localStorage', async () => {
   }));
 });
 
-test('should load selected target set from localStorage', async () => {
+test('should save default units setting to localStorage when modified', async () => {
+  // Initialize component
+  const wrapper = shallowMount(WorkoutCalculator);
+
+  // Change default units
+  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
+  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
+});
+
+test('should load options from localStorage', async () => {
   // Initialize localStorage
   const targetSet2 = {
     name: 'Workout targets #2',
@@ -167,48 +180,11 @@ test('should load selected target set from localStorage', async () => {
     },
     'B': targetSet2,
   }));
-  localStorage.setItem('running-tools.workout-calculator-target-set', '"B"');
-
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
-
-  // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('B');
-  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
-    .to.deep.equal(targetSet2.targets);
-});
-
-test('should save selected target set to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
-
-  // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('B', 'selectedTargetSet');
-
-  // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.workout-calculator-target-set'))
-    .to.equal('"B"');
-});
-
-test('should save default units setting to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
-
-  // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
-});
-
-test('should load advanced model options from localStorage', async () => {
-  // Initialize localStorage
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
+    customTargetNames: true,
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
+    selectedTargetSet: 'B',
   }));
 
   // Initialize component
@@ -216,24 +192,39 @@ test('should load advanced model options from localStorage', async () => {
 
   // Assert data loaded
   expect(wrapper.findComponent({ name: 'RaceOptionsInput' }).vm.modelValue).to.deep.equal({
+    customTargetNames: true,
     model: 'PurdyPointsModel',
     riegelExponent: 1.2,
+    selectedTargetSet: 'B',
   });
+  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
+    .to.equal('B');
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(targetSet2.targets);
+  expect(wrapper.find('select[aria-label="Target name customization"]').element.value)
+    .to.equal('true');
 });
 
-test('should save advanced model options to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(WorkoutCalculator);
 
-  // Update advanced model options
+  // Update options
   await wrapper.findComponent({ name: 'RaceOptionsInput' }).setValue({
+    customTargetNames: false,
     model: 'CameronModel',
     riegelExponent: 1.30,
+    selectedTargetSet: '_workout_targets',
   });
+  wrapper.find('select[aria-label="Target name customization"]').setValue('true');
+  await wrapper.findComponent({ name: 'target-set-selector' })
+    .setValue('B', 'selectedTargetSet');
 
   // Assert data saved to localStorage
   expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
+    customTargetNames: true,
     model: 'CameronModel',
     riegelExponent: 1.3,
+    selectedTargetSet: 'B',
   }));
 });

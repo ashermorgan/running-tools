@@ -216,7 +216,7 @@ test('Cross-calculator', async ({ page }) => {
   await expect(page.getByRole('row')).toHaveCount(5);
 
   // Assert general localStorage entries are correct
-  expect(await page.evaluate(() => localStorage.length)).toEqual(18);
+  expect(await page.evaluate(() => localStorage.length)).toEqual(16);
   expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
     .toEqual(JSON.stringify('metric'));
 
@@ -242,54 +242,54 @@ test('Cross-calculator', async ({ page }) => {
       time: 930,
     }));
   const paceCalculatorKey = parseInt(JSON.parse(await page.evaluate(() =>
-    localStorage.getItem('running-tools.pace-calculator-target-set'))));
+    localStorage.getItem('running-tools.pace-calculator-options'))).selectedTargetSet);
   expect(paceCalculatorKey - parseInt(Date.now().toString())).toBeLessThan(100000);
-  expect(await page.evaluate(() => localStorage.getItem('running-tools.pace-calculator-target-sets')))
-    .toEqual(JSON.stringify({
-    _pace_targets: {
-      name: 'Common Pace Targets',
-      targets: [
-        { type: 'distance', distanceValue: 100, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 200, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 300, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 600, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1000, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1200, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1500, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 3, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 3200, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 4, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 6, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 8, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 5, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 6, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 8, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 10, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 0.5, distanceUnit: 'marathons' },
-        { type: 'distance', distanceValue: 1, distanceUnit: 'marathons' },
-        { type: 'time', time: 600 },
-        { type: 'time', time: 1800 },
-        { type: 'time', time: 3600 },
-      ],
-    },
-    [paceCalculatorKey.toString()]: {
-      name: '800m Splits',
-      targets: [
-        { type: 'distance', distanceValue: 0.4, distanceUnit: 'kilometers' },
-        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
-        { type: 'time', time: 600 },
-      ],
-    },
-  }));
+  expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.pace-calculator-target-sets'))).toEqual(JSON.stringify({
+      _pace_targets: {
+        name: 'Common Pace Targets',
+        targets: [
+          { type: 'distance', distanceValue: 100, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 300, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 600, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1000, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1500, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 4, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 6, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 8, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 6, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 8, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 0.5, distanceUnit: 'marathons' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'marathons' },
+          { type: 'time', time: 600 },
+          { type: 'time', time: 1800 },
+          { type: 'time', time: 3600 },
+        ],
+      },
+      [paceCalculatorKey.toString()]: {
+        name: '800m Splits',
+        targets: [
+          { type: 'distance', distanceValue: 0.4, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+          { type: 'time', time: 600 },
+        ],
+      },
+    }));
 
   // Assert localStorage entries for the race calculator are correct
   expect(await page.evaluate(() =>
@@ -302,10 +302,8 @@ test('Cross-calculator', async ({ page }) => {
     localStorage.getItem('running-tools.race-calculator-options'))).toEqual(JSON.stringify({
       model: 'RiegelModel',
       riegelExponent: 1.06,
+      selectedTargetSet: '_race_targets',
     }));
-  expect(await page.evaluate(() =>
-    localStorage.getItem('running-tools.race-calculator-target-set')))
-    .toEqual(JSON.stringify('_race_targets'));
   expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.race-calculator-target-sets'))).toEqual(JSON.stringify({
       _race_targets: {
@@ -333,8 +331,10 @@ test('Cross-calculator', async ({ page }) => {
 
   // Assert localStorage entries for the split calculator are correct
   expect(await page.evaluate(() =>
-    localStorage.getItem('running-tools.split-calculator-target-set')))
-    .toEqual(JSON.stringify('_split_targets'));
+    localStorage.getItem('running-tools.split-calculator-options')))
+    .toEqual(JSON.stringify({
+      selectedTargetSet: '_split_targets',
+    }));
   expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.split-calculator-target-sets'))).toEqual(JSON.stringify({
       _split_targets: {
@@ -381,10 +381,8 @@ test('Cross-calculator', async ({ page }) => {
       customTargetNames: true,
       model: 'VO2MaxModel',
       riegelExponent: 1.06,
+      selectedTargetSet: '_workout_targets',
     }));
-  expect(await page.evaluate(() =>
-    localStorage.getItem('running-tools.workout-calculator-target-set')))
-    .toEqual(JSON.stringify('_workout_targets'));
   expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-target-sets'))).toEqual(JSON.stringify({
       _workout_targets: {
@@ -508,27 +506,250 @@ test('Cross-calculator', async ({ page }) => {
 test('v1.4.1 Migration', async ({ page }) => {
   // Structure:
   // - Set v1.4.1 localStorage entries
-  // - Reload app and assert the proper migrations were performed
+  // - Reload app
+  // - Assert the proper localStorage migrations were performed
+  // - Assert UI options are up to date
 
-  // Set v1.4.1 localStorage options
+  // Set general localStorage entries
   await page.goto('/');
-  await page.evaluate(() =>
-    localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
-      // No customTargetNames property
+  await page.evaluate(() => localStorage.setItem('running-tools.default-unit-system',
+    JSON.stringify('metric')));
+
+  // Set batch calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.batch-calculator-input',
+    JSON.stringify({
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 630,
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.batch-calculator-options',
+    JSON.stringify({
+      calculator: 'race',
+      increment: 10,
+      rows: 15,
+    })
+  ));
+
+  // Set pace calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.pace-calculator-input',
+    JSON.stringify({
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 930,
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.pace-calculator-target-set',
+    JSON.stringify('123456789'))); // Property moved after v1.4.1
+  await page.evaluate(() => localStorage.setItem('running-tools.pace-calculator-target-sets',
+    JSON.stringify({
+      _pace_targets: {
+        name: 'Common Pace Targets',
+        targets: [
+          { type: 'distance', distanceValue: 100, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 300, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 600, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1000, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1500, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 4, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 6, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 8, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 6, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 8, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 0.5, distanceUnit: 'marathons' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'marathons' },
+          { type: 'time', time: 600 },
+          { type: 'time', time: 1800 },
+          { type: 'time', time: 3600 },
+        ],
+      },
+      '123456789': {
+        name: '800m Splits',
+        targets: [
+          { type: 'distance', distanceValue: 0.4, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+          { type: 'time', time: 600 },
+        ],
+      },
+    })
+  ));
+
+  // Set race calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.race-calculator-input',
+    JSON.stringify({
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 630,
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.race-calculator-options',
+    JSON.stringify({
+      model: 'RiegelModel',
+      riegelExponent: 1.06,
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.race-calculator-target-set',
+    JSON.stringify('_race_targets'))); // Property moved after v1.4.1
+  await page.evaluate(() => localStorage.setItem('running-tools.race-calculator-target-sets',
+    JSON.stringify({
+      _race_targets: {
+        name: 'Common Race Targets',
+        targets: [
+          { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1500, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 3000, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 3200, distanceUnit: 'meters' },
+          { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 3, distanceUnit: 'miles' },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 6, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 8, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 10, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 15, distanceUnit: 'kilometers' },
+          { type: 'distance', distanceValue: 0.5, distanceUnit: 'marathons' },
+          { type: 'distance', distanceValue: 1, distanceUnit: 'marathons' },
+        ],
+      },
+    })
+  ));
+
+  // Set split calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.split-calculator-target-set',
+    JSON.stringify('_split_targets'))); // Property moved after v1.4.1
+  await page.evaluate(() => localStorage.setItem('running-tools.split-calculator-target-sets',
+    JSON.stringify({
+      _split_targets: {
+        name: '5K 1600m Splits',
+        targets: [
+          { type: 'distance', distanceValue: 1.6, distanceUnit: 'kilometers', splitTime: 420 },
+          { type: 'distance', distanceValue: 3.2, distanceUnit: 'kilometers', splitTime: 390 },
+          { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers', splitTime: 390 },
+        ],
+      },
+    })
+  ));
+
+  // Set unit calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.unit-calculator-category',
+    JSON.stringify('speed_and_pace')));
+  await page.evaluate(() => localStorage.setItem('running-tools.unit-calculator-inputs',
+    JSON.stringify({
+      distance: {
+        inputValue: 1,
+        inputUnit: 'miles',
+        outputUnit: 'kilometers',
+      },
+      time: {
+        inputValue: 1,
+        inputUnit: 'seconds',
+        outputUnit: 'hh:mm:ss',
+      },
+      speed_and_pace: {
+        inputValue: 10,
+        inputUnit: 'kilometers_per_hour',
+        outputUnit: 'seconds_per_mile',
+      },
+    })
+  ));
+
+  // Set workout calculator localStorage entries
+  await page.evaluate(() => localStorage.setItem('running-tools.workout-calculator-input',
+    JSON.stringify({
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 301,
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.workout-calculator-options',
+    JSON.stringify({
+      // customTargetNames property added after v1.4.1
       model: 'VO2MaxModel',
       riegelExponent: 1.06,
-    })));
+    })
+  ));
+  await page.evaluate(() => localStorage.setItem('running-tools.workout-calculator-target-set',
+    JSON.stringify('_workout_targets'))); // Property moved after v1.4.1
+  await page.evaluate(() => localStorage.setItem('running-tools.workout-calculator-target-sets',
+    JSON.stringify({
+      _workout_targets: {
+        name: 'Common Workout Targets',
+        targets: [
+          {
+            splitValue: 400, splitUnit: 'meters',
+            type: 'distance', distanceValue: 1, distanceUnit: 'miles',
+          },
+          {
+            splitValue: 800, splitUnit: 'meters',
+            type: 'distance', distanceValue: 5, distanceUnit: 'kilometers',
+          },
+          {
+            splitValue: 1600, splitUnit: 'meters',
+            type: 'time', time: 3600,
+          },
+          {
+            splitValue: 1, splitUnit: 'miles',
+            type: 'distance', distanceValue: 1, distanceUnit: 'marathons',
+          },
+        ],
+      },
+    })
+  ));
 
   // Reload the app and assert localStorage is updated
   await page.goto('/');
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.pace-calculator-options')))
+    .toEqual(JSON.stringify({
+      selectedTargetSet: '123456789',
+    }));
+  expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.pace-calculator-target-set'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.race-calculator-options')))
+    .toEqual(JSON.stringify({
+      model: 'RiegelModel',
+      riegelExponent: 1.06,
+      selectedTargetSet: '_race_targets',
+    }));
+  expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.race-calculator-target-set'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('running-tools.split-calculator-options')))
+    .toEqual(JSON.stringify({
+      selectedTargetSet: '_split_targets',
+    }));
+  expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.split-calculator-target-set'))).toBeNull();
   expect(await page.evaluate(() =>
     localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
       model: 'VO2MaxModel',
       riegelExponent: 1.06,
+      selectedTargetSet: '_workout_targets',
       customTargetNames: false,
     }));
+  expect(await page.evaluate(() =>
+    localStorage.getItem('running-tools.workout-calculator-target-set'))).toBeNull();
 
-  // Assert target name customization is disabled by default
+  // Assert migrated settings are correctly initialized and/or loaded
+  await page.getByRole('button', { name: 'Pace Calculator' }).click();
+  await page.getByText('Advanced Options').click();
+  await expect(page.getByLabel('Selected target set')).toHaveValue('123456789');
+  await page.getByRole('link', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Workout Calculator' }).click();
   await page.getByText('Advanced Options').click();
   await expect(page.getByLabel('Target name customization')).toHaveValue('false');
