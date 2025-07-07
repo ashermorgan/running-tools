@@ -10,7 +10,7 @@ export enum TargetTypes {
 };
 
 /*
- * The types for basic standard targets and target sets
+ * The types for basic standard targets and target sets used by the pace and race calculators
  */
 interface DistanceTarget {
   type: TargetTypes.Distance,
@@ -58,15 +58,6 @@ export interface WorkoutTargetSet {
 };
 export interface WorkoutTargetSets {
   [key: string]: WorkoutTargetSet,
-};
-
-/*
- * The three types of targets sets: standard (pace & race), split, and workout
- */
-export enum TargetSetTypes {
-  Standard = 'standard',
-  Split = 'split',
-  Workout = 'workout',
 };
 
 /*

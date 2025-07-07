@@ -23,12 +23,12 @@
     <tbody>
       <tr v-for="(item, index) in model.targets" :key="index">
         <td>
-          <span v-if="setType === 'workout' && customWorkoutNames">
+          <span v-if="setType === Calculators.Workout && customWorkoutNames">
             <input v-model="(item as WorkoutTarget).customName" aria-label="Custom target name"
               :placeholder="workoutTargetToString(item as WorkoutTarget)"/>:
           </span>
 
-          <span v-if="setType === 'workout'">
+          <span v-if="setType === Calculators.Workout">
             <decimal-input v-model="(item as WorkoutTarget).splitValue"
               aria-label="Split distance value" :min="0" :digits="2"/>
             <select v-model="(item as WorkoutTarget).splitUnit" aria-label="Split distance unit">
@@ -38,7 +38,7 @@
             </select>
           </span>
 
-          <span v-if="setType === 'workout'">
+          <span v-if="setType === Calculators.Workout">
             &nbsp;@&nbsp;
           </span>
 
@@ -77,7 +77,8 @@
           <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button title="Add time target" @click="addTimeTarget" v-if="setType !== 'split'">
+          <button title="Add time target" @click="addTimeTarget"
+            v-if="setType !== Calculators.Split">
             Add time target
           </button>
         </td>
@@ -89,7 +90,8 @@
 <script setup lang="ts">
 import VueFeather from 'vue-feather';
 
-import { TargetTypes, TargetSetTypes, workoutTargetToString } from '@/utils/targets';
+import { Calculators } from '@/utils/calculators';
+import { TargetTypes, workoutTargetToString } from '@/utils/targets';
 import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/utils/targets';
 import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/utils/units';
 
@@ -118,16 +120,16 @@ interface Props {
   modelValue: TargetSet,
 
   /**
-   * The target set type (Standard, Split, or Workout, defaults to Standard)
+   * The target set type (defaults to pace calculator target sets)
    */
-  setType?: TargetSetTypes,
+  setType?: Calculators,
 }
 
 const props = withDefaults(defineProps<Props>(), {
   customWorkoutNames: false,
   defaultUnitSystem: UnitSystems.Metric,
   isCustomSet: false,
-  setType: TargetSetTypes.Standard,
+  setType: Calculators.Pace,
 });
 
 // Declare emitted events
@@ -140,7 +142,7 @@ const model = useObjectModel<TargetSet>(() => props.modelValue, (x) => emit('upd
  * Add a new distance based target
  */
 function addDistanceTarget() {
-  if (props.setType === TargetSetTypes.Workout) {
+  if (props.setType === Calculators.Workout) {
     (model.value as WorkoutTargetSet).targets.push({
       type: TargetTypes.Distance,
       distanceValue: 1,
@@ -161,7 +163,7 @@ function addDistanceTarget() {
  * Add a new time based target
  */
 function addTimeTarget() {
-  if (props.setType === TargetSetTypes.Workout) {
+  if (props.setType === Calculators.Workout) {
     (model.value as WorkoutTargetSet).targets.push({
       type: TargetTypes.Time,
       time: 600,

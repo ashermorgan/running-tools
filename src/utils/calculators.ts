@@ -9,6 +9,8 @@ import type { DistanceTime } from '@/utils/units';
 
 /*
  * The four main calculators (batch and unit calculators not included)
+ *
+ * Used to determine available options and target set format
  */
 export enum Calculators {
   Pace = 'pace',

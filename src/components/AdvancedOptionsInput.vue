@@ -9,10 +9,8 @@
 
   <div>
     Target Set:
-    <target-set-selector :setType="props.type === Calculators.Workout ? TargetSetTypes.Workout :
-      (props.type === Calculators.Split ? TargetSetTypes.Split : TargetSetTypes.Standard)"
-      v-model:selected-target-set="options.selectedTargetSet"
-      v-model:target-sets="targetSets" :default-unit-system="defaultUnitSystem"
+    <target-set-selector :setType="props.type" :default-unit-system="defaultUnitSystem"
+      v-model:selected-target-set="options.selectedTargetSet" v-model:target-sets="targetSets"
       :customWorkoutNames="props.type === Calculators.Workout ?
       (options as WorkoutOptions).customTargetNames : false"/>
   </div>
@@ -48,7 +46,6 @@
 <script setup lang="ts">
 import { Calculators } from '@/utils/calculators';
 import type { CalculatorOptions, RaceOptions, WorkoutOptions } from '@/utils/calculators';
-import { TargetSetTypes } from '@/utils/targets';
 import type { TargetSets } from '@/utils/targets';
 import { UnitSystems } from '@/utils/units';
 
