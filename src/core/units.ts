@@ -1,4 +1,8 @@
 /*
+ * Implements handling of distance, pace, speed, and time units
+ */
+
+/*
  * The type for the data available for each unit
  */
 export interface UnitData {

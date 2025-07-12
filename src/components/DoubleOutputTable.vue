@@ -29,11 +29,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { ResultType } from '@/utils/calculators';
-import type { TargetResult } from '@/utils/calculators';
-import type { Target } from '@/utils/targets';
-import { formatDistance, formatDuration } from '@/utils/units';
-import type { Distance, DistanceTime } from '@/utils/units';
+import { ResultType } from '@/core/calculators';
+import type { TargetResult } from '@/core/calculators';
+import type { Target } from '@/core/targets';
+import { formatDistance, formatDuration } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
 
 interface Props {
   /**

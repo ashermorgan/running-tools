@@ -23,12 +23,12 @@
 
 <script setup lang="ts">
 import { Calculators, calculatePaceResults, defaultInput,
-  defaultPaceOptions } from '@/utils/calculators';
-import type { StandardOptions } from '@/utils/calculators';
-import { defaultPaceTargetSets } from '@/utils/targets';
-import type { StandardTargetSets } from '@/utils/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
-import type { DistanceTime } from '@/utils/units';
+  defaultPaceOptions } from '@/core/calculators';
+import type { StandardOptions } from '@/core/calculators';
+import { defaultPaceTargetSets } from '@/core/targets';
+import type { StandardTargetSets } from '@/core/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';

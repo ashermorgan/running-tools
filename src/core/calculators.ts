@@ -1,9 +1,13 @@
-import * as raceUtils from '@/utils/races';
-import { TargetTypes, workoutTargetToString } from '@/utils/targets';
-import type { StandardTarget, WorkoutTarget } from '@/utils/targets';
+/*
+ * Contains types and functions for core calculator functionality
+ */
+
+import * as racePrediction from '@/core/racePrediction';
+import { TargetTypes, workoutTargetToString } from '@/core/targets';
+import type { StandardTarget, WorkoutTarget } from '@/core/targets';
 import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration, formatPace,
-  getDefaultDistanceUnit, getDefaultPaceUnit } from '@/utils/units';
-import type { DistanceTime } from '@/utils/units';
+  getDefaultDistanceUnit, getDefaultPaceUnit } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 /*
  * The four main calculators (batch and unit calculators not included)
@@ -34,7 +38,7 @@ export interface StandardOptions {
   selectedTargetSet: string,
 }
 export interface RaceOptions extends StandardOptions {
-  model: raceUtils.RacePredictionModel,
+  model: racePrediction.RacePredictionModel,
   riegelExponent: number,
 };
 export interface WorkoutOptions extends RaceOptions {
@@ -82,7 +86,7 @@ export const defaultPaceOptions: StandardOptions = {
   selectedTargetSet: '_pace_targets',
 };
 export const defaultRaceOptions: RaceOptions = {
-  model: raceUtils.RacePredictionModel.AverageModel,
+  model: racePrediction.RacePredictionModel.AverageModel,
   riegelExponent: 1.06,
   selectedTargetSet: '_race_targets',
 };
@@ -179,8 +183,8 @@ export function calculateRaceResults(input: DistanceTime, target: StandardTarget
                                      preciseDurations: boolean = true): TargetResult {
 
   return calculateStandardResult(input, target,
-    (d1, t1, d2) => raceUtils.predictTime(d1, t1, d2, options.model, options.riegelExponent),
-    (t1, d1, t2) => raceUtils.predictDistance(t1, d1, t2, options.model, options.riegelExponent),
+    (d1, t1, d2) => racePrediction.predictTime(d1, t1, d2, options.model, options.riegelExponent),
+    (t1, d1, t2) => racePrediction.predictDistance(t1, d1, t2, options.model, options.riegelExponent),
     defaultUnitSystem, preciseDurations);
 }
 
@@ -193,10 +197,10 @@ export function calculateRaceStats(input: DistanceTime): RaceStats {
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
 
   return {
-    purdyPoints: raceUtils.getPurdyPoints(d1, input.time),
-    vo2Max: raceUtils.getVO2Max(d1, input.time),
-    vo2: raceUtils.getVO2(d1, input.time),
-    vo2MaxPercentage: raceUtils.getVO2Percentage(input.time) * 100,
+    purdyPoints: racePrediction.getPurdyPoints(d1, input.time),
+    vo2Max: racePrediction.getVO2Max(d1, input.time),
+    vo2: racePrediction.getVO2(d1, input.time),
+    vo2MaxPercentage: racePrediction.getVO2Percentage(input.time) * 100,
   }
 }
 
@@ -223,12 +227,12 @@ export function calculateWorkoutResults(input: DistanceTime, target: WorkoutTarg
     d2 = convertDistance(target.distanceValue, target.distanceUnit, DistanceUnits.Meters);
 
     // Get workout split prediction
-    t2 = raceUtils.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
+    t2 = racePrediction.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
   } else {
     t2 = target.time;
 
     // Get workout split prediction
-    d2 = raceUtils.predictDistance(t1, d1, t2, options.model, options.riegelExponent);
+    d2 = racePrediction.predictDistance(t1, d1, t2, options.model, options.riegelExponent);
   }
   const t3 = (t2 / d2) * d3;
 

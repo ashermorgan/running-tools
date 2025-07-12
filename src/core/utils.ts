@@ -1,15 +1,37 @@
-import { deepCopy } from '@/utils/misc';
-import { defaultRaceOptions, defaultWorkoutOptions } from '@/utils/calculators';
+/*
+ * Contains utility functions for handling nested objects and interacting with localStorage
+ */
+
+import { defaultRaceOptions, defaultWorkoutOptions } from '@/core/calculators';
 
 // The global localStorage prefix
 const LocalStoragePrefix = 'running-tools';
+
+/**
+ * Create a deep copy of an object
+ * @param {Type} value The object to copy
+ * @returns {Type} The copied object
+ */
+export function deepCopy<Type>(value: Type): Type {
+  return JSON.parse(JSON.stringify(value));
+}
+
+/**
+ * Test whether two objects are deeply equal
+ * @param {Type} value1 The first object
+ * @param {Type} value2 The second object
+ * @returns {boolean} Whether the two objects are equal
+ */
+export function deepEqual<Type>(value1: Type, value2: Type): boolean {
+  return JSON.stringify(value1) === JSON.stringify(value2);
+}
 
 /**
  * Read an object from a localStorage item
  * @param {string} key The localStorage item's key
  * @returns {Type} The object
  */
-export function get<Type>(key: string): Type | null {
+export function getLocalStorage<Type>(key: string): Type | null {
   try {
     return JSON.parse(localStorage.getItem(`${LocalStoragePrefix}.${key}`) || '');
   } catch {
@@ -22,7 +44,7 @@ export function get<Type>(key: string): Type | null {
  * @param {string} key The localStorage item's key
  * @param {Type} value The object to write
  */
-export function set<Type>(key: string, value: Type) {
+export function setLocalStorage<Type>(key: string, value: Type) {
   localStorage.setItem(`${LocalStoragePrefix}.${key}`, JSON.stringify(value));
 }
 
@@ -30,64 +52,64 @@ export function set<Type>(key: string, value: Type) {
  * Delete a localStorage item
  * @param {string} key The localStorage item's key
  */
-export function unset(key: string) {
+export function unsetLocalStorage(key: string) {
   localStorage.removeItem(`${LocalStoragePrefix}.${key}`);
 }
 
 /**
  * Migrate outdated localStorage options
  */
-export function migrate() {
+export function migrateLocalStorage() {
   /* eslint-disable @typescript-eslint/no-explicit-any */
 
   // Move pace-calculator-target-set into new pace-calculator-options (>1.4.1)
-  const paceSelectedTargetSet = get<string>('pace-calculator-target-set');
+  const paceSelectedTargetSet = getLocalStorage<string>('pace-calculator-target-set');
   if (paceSelectedTargetSet !== null) {
     const paceOptions = { selectedTargetSet: paceSelectedTargetSet };
-    set('pace-calculator-options', paceOptions);
-    unset('pace-calculator-target-set');
+    setLocalStorage('pace-calculator-options', paceOptions);
+    unsetLocalStorage('pace-calculator-target-set');
   }
 
   // Move race-calculator-target-set into race-calculator-options (>1.4.1)
-  const raceSelectedTargetSet = get<string>('race-calculator-target-set');
-  const raceOptions = get<any>('race-calculator-options')
+  const raceSelectedTargetSet = getLocalStorage<string>('race-calculator-target-set');
+  const raceOptions = getLocalStorage<any>('race-calculator-options')
     || deepCopy(defaultRaceOptions);
   if (raceSelectedTargetSet !== null) {
     raceOptions.selectedTargetSet = raceSelectedTargetSet;
-    set('race-calculator-options', raceOptions);
-    unset('race-calculator-target-set');
+    setLocalStorage('race-calculator-options', raceOptions);
+    unsetLocalStorage('race-calculator-target-set');
   }
   if (raceOptions !== null && raceOptions.selectedTargetSet === undefined) {
     raceOptions.selectedTargetSet = defaultRaceOptions.selectedTargetSet;
-    set('race-calculator-options', raceOptions);
+    setLocalStorage('race-calculator-options', raceOptions);
   }
 
   // Move split-calculator-target-set into new split-calculator-options (>1.4.1)
-  const splitSelectedTargetSet = get<string>('split-calculator-target-set');
+  const splitSelectedTargetSet = getLocalStorage<string>('split-calculator-target-set');
   if (splitSelectedTargetSet !== null) {
     const splitOptions = { selectedTargetSet: splitSelectedTargetSet };
-    set('split-calculator-options', splitOptions);
-    unset('split-calculator-target-set');
+    setLocalStorage('split-calculator-options', splitOptions);
+    unsetLocalStorage('split-calculator-target-set');
   }
 
   // Move workout-calculator-target-set into workout-calculator-options (>1.4.1)
-  const workoutSelectedTargetSet = get<string>('workout-calculator-target-set');
-  const workoutOptions = get<any>('workout-calculator-options')
+  const workoutSelectedTargetSet = getLocalStorage<string>('workout-calculator-target-set');
+  const workoutOptions = getLocalStorage<any>('workout-calculator-options')
     || deepCopy(defaultWorkoutOptions);
   if (workoutSelectedTargetSet !== null) {
     workoutOptions.selectedTargetSet = workoutSelectedTargetSet;
-    set('workout-calculator-options', workoutOptions);
-    unset('workout-calculator-target-set');
+    setLocalStorage('workout-calculator-options', workoutOptions);
+    unsetLocalStorage('workout-calculator-target-set');
   }
   if (workoutOptions !== null && workoutOptions.selectedTargetSet === undefined) {
     workoutOptions.selectedTargetSet = defaultWorkoutOptions.selectedTargetSet;
-    set('workout-calculator-options', workoutOptions);
+    setLocalStorage('workout-calculator-options', workoutOptions);
   }
 
   // Add customTargetNames property to workout-calculator-options (>1.4.1)
   if (workoutOptions.customTargetNames === undefined) {
     workoutOptions.customTargetNames = false;
-    set('workout-calculator-options', workoutOptions);
+    setLocalStorage('workout-calculator-options', workoutOptions);
   }
 
   /* eslint-enable @typescript-eslint/no-explicit-any */

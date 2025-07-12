@@ -90,10 +90,10 @@
 <script setup lang="ts">
 import VueFeather from 'vue-feather';
 
-import { Calculators } from '@/utils/calculators';
-import { TargetTypes, workoutTargetToString } from '@/utils/targets';
-import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/utils/targets';
-import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/utils/units';
+import { Calculators } from '@/core/calculators';
+import { TargetTypes, workoutTargetToString } from '@/core/targets';
+import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/core/targets';
+import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';

@@ -1,7 +1,7 @@
 import { ref, onActivated, watchEffect } from 'vue';
 import type { Ref } from 'vue';
 
-import * as storage from '@/utils/storage';
+import { deepCopy, getLocalStorage, setLocalStorage } from '@/core/utils';
 
 /*
  * Create a reactive value that is synced with a localStorage item
@@ -10,12 +10,12 @@ import * as storage from '@/utils/storage';
  * @returns {Ref<Type>} The synchronized ref
  */
 export default function useStorage<Type>(key: string, defaultValue: Type): Ref<Type> {
-  const clonedDefault: Type = JSON.parse(JSON.stringify(defaultValue));
+  const clonedDefault: Type = deepCopy(defaultValue);
   const value: Ref<Type> = ref<Type>(clonedDefault) as Ref<Type>;
 
   // (Re)load value from localStorage
   function updateValue() {
-    const parsedValue = storage.get<Type>(key);
+    const parsedValue = getLocalStorage<Type>(key);
     if (parsedValue !== null) value.value = parsedValue;
   }
   updateValue();
@@ -24,7 +24,7 @@ export default function useStorage<Type>(key: string, defaultValue: Type): Ref<T
   // Save value to localStorage when modified
   watchEffect(() => {
     if (typeof localStorage !== 'undefined') {
-      storage.set<Type>(key, value.value);
+      setLocalStorage<Type>(key, value.value);
     }
   })
 

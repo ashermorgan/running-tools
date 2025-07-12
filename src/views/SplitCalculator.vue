@@ -14,11 +14,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { Calculators, defaultSplitOptions } from '@/utils/calculators';
-import type { StandardOptions } from '@/utils/calculators';
-import { defaultSplitTargetSets } from '@/utils/targets';
-import type { SplitTargetSets } from '@/utils/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import { Calculators, defaultSplitOptions } from '@/core/calculators';
+import type { StandardOptions } from '@/core/calculators';
+import { defaultSplitTargetSets } from '@/core/targets';
+import type { SplitTargetSets } from '@/core/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import SplitOutputTable from '@/components/SplitOutputTable.vue';

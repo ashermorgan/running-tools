@@ -42,12 +42,12 @@
 import { computed } from 'vue';
 
 import { Calculators, calculateRaceResults, calculateRaceStats, defaultInput,
-  defaultRaceOptions } from '@/utils/calculators';
-import type { RaceOptions, RaceStats } from '@/utils/calculators';
-import { defaultRaceTargetSets } from '@/utils/targets';
-import type { StandardTargetSets } from '@/utils/targets';
-import { UnitSystems, detectDefaultUnitSystem, formatNumber } from '@/utils/units';
-import type { DistanceTime } from '@/utils/units';
+  defaultRaceOptions } from '@/core/calculators';
+import type { RaceOptions, RaceStats } from '@/core/calculators';
+import { defaultRaceTargetSets } from '@/core/targets';
+import type { StandardTargetSets } from '@/core/targets';
+import { UnitSystems, detectDefaultUnitSystem, formatNumber } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';

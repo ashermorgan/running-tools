@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import * as units from '@/utils/units';
+import * as units from '@/core/units';
 
 describe('convertTime method', () => {
   test('90 seconds should equal 1.5 minutes', () => {

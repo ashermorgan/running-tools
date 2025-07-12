@@ -23,12 +23,12 @@
 
 <script setup lang="ts">
 import { Calculators, calculateWorkoutResults, defaultInput,
-  defaultWorkoutOptions } from '@/utils/calculators';
-import type { WorkoutOptions } from '@/utils/calculators';
-import { defaultWorkoutTargetSets } from '@/utils/targets';
-import type { WorkoutTarget, WorkoutTargetSets } from '@/utils/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
-import type { DistanceTime } from '@/utils/units';
+  defaultWorkoutOptions } from '@/core/calculators';
+import type { WorkoutOptions } from '@/core/calculators';
+import { defaultWorkoutTargetSets } from '@/core/targets';
+import type { WorkoutTarget, WorkoutTargetSets } from '@/core/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';

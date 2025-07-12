@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import * as calculatorUtils from '@/utils/calculators';
+import * as calculators from '@/core/calculators';
 
 describe('calculatePaceResults method', () => {
   test('should correctly calculate pace times', () => {
@@ -14,7 +14,7 @@ describe('calculatePaceResults method', () => {
       type: 'distance',
     };
 
-    const result = calculatorUtils.calculatePaceResults(input, target, 'metric');
+    const result = calculators.calculatePaceResults(input, target, 'metric');
 
     expect(result).to.deep.equal({
       key: '20 m',
@@ -36,8 +36,8 @@ describe('calculatePaceResults method', () => {
       type: 'time',
     };
 
-    const result1 = calculatorUtils.calculatePaceResults(input, target, 'metric');
-    const result2 = calculatorUtils.calculatePaceResults(input, target, 'imperial');
+    const result1 = calculators.calculatePaceResults(input, target, 'metric');
+    const result2 = calculators.calculatePaceResults(input, target, 'imperial');
 
     expect(result1.key).to.equal('1.61 km');
     expect(result1.value).to.equal('10:00');
@@ -70,7 +70,7 @@ describe('calculateRaceResults method', () => {
       riegelExponent: 1.06,
     }
 
-    const result = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
+    const result = calculators.calculateRaceResults(input, target, options, 'imperial');
 
     expect(result.key).to.equal('10 km');
     expect(result.value).to.equal('41:34.80');
@@ -94,8 +94,8 @@ describe('calculateRaceResults method', () => {
       riegelExponent: 1.06,
     }
 
-    const result1 = calculatorUtils.calculateRaceResults(input, target, options, 'metric');
-    const result2 = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
+    const result1 = calculators.calculateRaceResults(input, target, options, 'metric');
+    const result2 = calculators.calculateRaceResults(input, target, options, 'imperial');
 
     expect(result1.key).to.equal('10.00 km');
     expect(result1.value).to.equal('41:35');
@@ -126,7 +126,7 @@ describe('calculateRaceResults method', () => {
       riegelExponent: 1.12,
     }
 
-    const result = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
+    const result = calculators.calculateRaceResults(input, target, options, 'imperial');
 
     expect(result.key).to.equal('5 km');
     expect(result.value).to.equal('17:11.78');
@@ -144,7 +144,7 @@ describe('calculateRaceStats method', () => {
       time: 1200,
     };
 
-    const results = calculatorUtils.calculateRaceStats(input);
+    const results = calculators.calculateRaceStats(input);
 
     expect(results.purdyPoints).to.be.closeTo(454.5, 0.1);
     expect(results.vo2).to.be.closeTo(47.4, 0.1);
@@ -173,7 +173,7 @@ describe('calculateWorkoutResults method', () => {
       riegelExponent: 1.12,
     }
 
-    const result = calculatorUtils.calculateWorkoutResults(input, target, options);
+    const result = calculators.calculateWorkoutResults(input, target, options);
 
     expect(result.key).to.equal('1000 m @ 5 km');
     expect(result.value).to.equal('3:26.36');
@@ -215,10 +215,10 @@ describe('calculateWorkoutResults method', () => {
       riegelExponent: 1.12,
     };
 
-    const result1a = calculatorUtils.calculateWorkoutResults(input, target_1, options_a);
-    const result1b = calculatorUtils.calculateWorkoutResults(input, target_1, options_b);
-    const result2a = calculatorUtils.calculateWorkoutResults(input, target_2, options_a);
-    const result2b = calculatorUtils.calculateWorkoutResults(input, target_2, options_b);
+    const result1a = calculators.calculateWorkoutResults(input, target_1, options_a);
+    const result1b = calculators.calculateWorkoutResults(input, target_1, options_b);
+    const result2a = calculators.calculateWorkoutResults(input, target_2, options_a);
+    const result2b = calculators.calculateWorkoutResults(input, target_2, options_b);
 
     expect(result1a.key).to.equal('1000 m @ 5 km');
     expect(result1b.key).to.equal('1000 m @ 5 km');
@@ -244,7 +244,7 @@ describe('calculateWorkoutResults method', () => {
       riegelExponent: 1.06,
     }
 
-    const result = calculatorUtils.calculateWorkoutResults(input, target, options);
+    const result = calculators.calculateWorkoutResults(input, target, options);
 
     expect(result.key).to.equal('1 mi @ 41:35');
     expect(result.value).to.equal('6:41.50');

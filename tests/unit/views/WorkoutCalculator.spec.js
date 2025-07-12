@@ -1,7 +1,7 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import WorkoutCalculator from '@/views/WorkoutCalculator.vue';
-import { defaultTargetSets } from '@/utils/targets';
+import { defaultTargetSets } from '@/core/targets';
 
 beforeEach(() => {
   localStorage.clear();

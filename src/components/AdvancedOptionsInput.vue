@@ -44,10 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import { Calculators } from '@/utils/calculators';
-import type { StandardOptions, RaceOptions, WorkoutOptions } from '@/utils/calculators';
-import type { TargetSets } from '@/utils/targets';
-import { UnitSystems } from '@/utils/units';
+import { Calculators } from '@/core/calculators';
+import type { StandardOptions, RaceOptions, WorkoutOptions } from '@/core/calculators';
+import type { TargetSets } from '@/core/targets';
+import { UnitSystems } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';

@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue';
 import type { Ref } from 'vue';
 
-import { deepCopy, deepEqual } from '@/utils/misc';
+import { deepCopy, deepEqual } from '@/core/utils';
 
 /*
  * Generate an internal ref that implements support for v-model with objects

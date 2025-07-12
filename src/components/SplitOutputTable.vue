@@ -46,10 +46,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { SplitTarget } from '@/utils/targets';
+import type { SplitTarget } from '@/core/targets';
 import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration,
-  formatPace, getDefaultPaceUnit } from '@/utils/units';
-import type { Distance, DistanceTime } from '@/utils/units';
+  formatPace, getDefaultPaceUnit } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
 
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';

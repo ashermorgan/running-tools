@@ -42,12 +42,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import * as calcUtils from '@/utils/calculators';
+import * as calculators from '@/core/calculators';
 import type { BatchOptions, RaceOptions, StandardOptions, TargetResult,
-  WorkoutOptions } from '@/utils/calculators';
-import * as targetUtils from '@/utils/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
-import type { Distance, DistanceTime } from '@/utils/units';
+  WorkoutOptions } from '@/core/calculators';
+import * as targetUtils from '@/core/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import DoubleOutputTable from '@/components/DoubleOutputTable.vue';
@@ -60,12 +60,13 @@ import useStorage from '@/composables/useStorage';
 /*
  * The input pace
  */
-const input = useStorage<DistanceTime>('batch-calculator-input', calcUtils.defaultInput);
+const input = useStorage<DistanceTime>('batch-calculator-input', calculators.defaultInput);
 
 /*
  * The batch input options
  */
-const options = useStorage<BatchOptions>('batch-calculator-options', calcUtils.defaultBatchOptions);
+const options = useStorage<BatchOptions>('batch-calculator-options',
+  calculators.defaultBatchOptions);
 
 /*
  * The default unit system
@@ -79,18 +80,18 @@ const paceTargetSets = useStorage<targetUtils.StandardTargetSets>('pace-calculat
   targetUtils.defaultPaceTargetSets);
 const raceTargetSets = useStorage<targetUtils.StandardTargetSets>('race-calculator-target-sets',
   targetUtils.defaultRaceTargetSets);
-const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>('workout-calculator-target-sets',
-  targetUtils.defaultWorkoutTargetSets);
+const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>(
+  'workout-calculator-target-sets', targetUtils.defaultWorkoutTargetSets);
 
 /*
  * The options for each calculator
  */
 const paceOptions = useStorage<StandardOptions>('pace-calculator-options',
-  calcUtils.defaultPaceOptions);
+  calculators.defaultPaceOptions);
 const raceOptions = useStorage<RaceOptions>('race-calculator-options',
-  calcUtils.defaultRaceOptions);
+  calculators.defaultRaceOptions);
 const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options',
-  calcUtils.defaultWorkoutOptions);
+  calculators.defaultWorkoutOptions);
 
 /*
  * The input distance
@@ -117,30 +118,30 @@ const inputTimes = computed<Array<number>>(() => {
 const targetSets = computed<targetUtils.TargetSets>({
   get: () => {
     switch (options.value.calculator) {
-      case (calcUtils.Calculators.Pace): {
+      case (calculators.Calculators.Pace): {
         return paceTargetSets.value;
       }
-      case (calcUtils.Calculators.Race): {
+      case (calculators.Calculators.Race): {
         return raceTargetSets.value;
       }
       default:
-      case (calcUtils.Calculators.Workout): {
+      case (calculators.Calculators.Workout): {
         return workoutTargetSets.value;
       }
     }
   },
   set: (newValue: targetUtils.TargetSets) => {
     switch (options.value.calculator) {
-      case (calcUtils.Calculators.Pace): {
+      case (calculators.Calculators.Pace): {
         paceTargetSets.value = newValue as targetUtils.StandardTargetSets;
         break;
       }
-      case (calcUtils.Calculators.Race): {
+      case (calculators.Calculators.Race): {
         raceTargetSets.value = newValue as targetUtils.StandardTargetSets;
         break;
       }
       default:
-      case (calcUtils.Calculators.Workout): {
+      case (calculators.Calculators.Workout): {
         workoutTargetSets.value = newValue as targetUtils.WorkoutTargetSets;
         break;
       }
@@ -154,30 +155,30 @@ const targetSets = computed<targetUtils.TargetSets>({
 const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
   get: () => {
     switch (options.value.calculator) {
-      case (calcUtils.Calculators.Pace): {
+      case (calculators.Calculators.Pace): {
         return paceOptions.value;
       }
-      case (calcUtils.Calculators.Race): {
+      case (calculators.Calculators.Race): {
         return raceOptions.value;
       }
       default:
-      case (calcUtils.Calculators.Workout): {
+      case (calculators.Calculators.Workout): {
         return workoutOptions.value;
       }
     }
   },
   set: (newValue: StandardOptions | RaceOptions | WorkoutOptions) => {
     switch(options.value.calculator) {
-      case (calcUtils.Calculators.Pace): {
+      case (calculators.Calculators.Pace): {
         paceOptions.value = newValue as StandardOptions;
         break;
       }
-      case (calcUtils.Calculators.Race): {
+      case (calculators.Calculators.Race): {
         raceOptions.value = newValue as RaceOptions;
         break;
       }
       default:
-      case (calcUtils.Calculators.Workout): {
+      case (calculators.Calculators.Workout): {
         workoutOptions.value = newValue as WorkoutOptions;
         break;
       }
@@ -190,16 +191,16 @@ const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
  */
 const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => TargetResult>(() => {
   switch(options.value.calculator) {
-    case (calcUtils.Calculators.Pace): {
-      return (x,y) => calcUtils.calculatePaceResults(x, y, defaultUnitSystem.value, false);
+    case (calculators.Calculators.Pace): {
+      return (x,y) => calculators.calculatePaceResults(x, y, defaultUnitSystem.value, false);
     }
-    case (calcUtils.Calculators.Race): {
-      return (x,y) => calcUtils.calculateRaceResults(x, y, raceOptions.value,
+    case (calculators.Calculators.Race): {
+      return (x,y) => calculators.calculateRaceResults(x, y, raceOptions.value,
         defaultUnitSystem.value, false);
     }
     default:
-    case (calcUtils.Calculators.Workout): {
-      return (x,y) => calcUtils.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
+    case (calculators.Calculators.Workout): {
+      return (x,y) => calculators.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
         workoutOptions.value, false);
     }
   }

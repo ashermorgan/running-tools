@@ -39,8 +39,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { TargetResult } from '@/utils/calculators';
-import type { Target } from '@/utils/targets';
+import type { TargetResult } from '@/core/calculators';
+import type { Target } from '@/core/targets';
 
 interface Props {
   /**

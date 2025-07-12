@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { DistanceUnits, DistanceUnitData } from '@/utils/units';
-import type { DistanceTime } from '@/utils/units';
+import { DistanceUnits, DistanceUnitData } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';

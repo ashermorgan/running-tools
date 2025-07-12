@@ -1,4 +1,8 @@
 /*
+ * Implements various race prediction models
+ */
+
+/*
  * The available race prediction models
  */
 export enum RacePredictionModel {

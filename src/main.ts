@@ -2,11 +2,11 @@ import { createApp } from 'vue';
 
 import App from '@/App.vue';
 import router from '@/router';
-import * as storage from '@/utils/storage';
+import { migrateLocalStorage } from '@/core/utils';
 
 import '@/assets/global.css';
 
-storage.migrate();
+migrateLocalStorage();
 
 const app = createApp(App);
 app.use(router);

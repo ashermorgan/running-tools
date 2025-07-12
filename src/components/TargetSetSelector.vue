@@ -25,11 +25,11 @@ import { computed, nextTick, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import { Calculators } from '@/utils/calculators';
-import { deepCopy } from '@/utils/misc';
-import { sort, defaultTargetSets } from '@/utils/targets';
-import type { TargetSet, TargetSets } from '@/utils/targets';
-import { UnitSystems } from '@/utils/units';
+import { Calculators } from '@/core/calculators';
+import { sort, defaultTargetSets } from '@/core/targets';
+import type { TargetSet, TargetSets } from '@/core/targets';
+import { deepCopy } from '@/core/utils';
+import { UnitSystems } from '@/core/units';
 
 import TargetEditor from '@/components/TargetEditor.vue';
 import useObjectModel from '@/composables/useObjectModel';

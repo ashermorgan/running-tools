@@ -1,5 +1,9 @@
-import { DistanceUnits, convertDistance, formatDistance, formatDuration } from '@/utils/units';
-import type { Distance } from '@/utils/units';
+/*
+ * Contains types and helper functions for calculator target sets
+ */
+
+import { DistanceUnits, convertDistance, formatDistance, formatDuration } from '@/core/units';
+import type { Distance } from '@/core/units';
 
 /*
  * The two basic types of targets: those defined by distance and those defined by time

@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RaceOptions } from '@/utils/calculators';
+import type { RaceOptions } from '@/core/calculators';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import useObjectModel from '@/composables/useObjectModel';

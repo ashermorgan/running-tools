@@ -12,7 +12,7 @@
       v-model="input.inputValue" :min="0" :digits="2"/>
 
     <select v-model="input.inputUnit" class="input-units" aria-label="Input units">
-      <option v-for="(value, key) in units" :key="key" :value="key">
+      <option v-for="(value, key) in categoryUnits" :key="key" :value="key">
         {{ value?.name }}
       </option>
     </select>
@@ -20,14 +20,14 @@
     <span class="equals"> = </span>
 
     <span v-if="isTimeUnit(input.outputUnit)" class="output-value" aria-label="Output value">
-      {{ unitUtils.formatDuration(outputValue, 6, 3, true) }}
+      {{ units.formatDuration(outputValue, 6, 3, true) }}
     </span>
     <span v-else class="output-value" aria-label="Output value">
-      {{ unitUtils.formatNumber(outputValue, 0, 3, true) }}
+      {{ units.formatNumber(outputValue, 0, 3, true) }}
     </span>
 
     <select v-model="input.outputUnit" class="output-units" aria-label="Output units">
-      <option v-for="(value, key) in units" :key="key" :value="key">
+      <option v-for="(value, key) in categoryUnits" :key="key" :value="key">
         {{ value?.name }}
       </option>
     </select>
@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import * as unitUtils from '@/utils/units';
+import * as units from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
@@ -56,12 +56,12 @@ enum UnitTypes {
 /*
  * The supported time units: Hours, Minutes, Seconds, and 'hh:mm:ss'
  */
-type ExtendedTimeUnits = unitUtils.TimeUnits | 'hh:mm:ss';
+type ExtendedTimeUnits = units.TimeUnits | 'hh:mm:ss';
 
 /*
  * The support units from all categories
  */
-type AllUnits = unitUtils.DistanceUnits | ExtendedTimeUnits | unitUtils.SpeedPaceUnits;
+type AllUnits = units.DistanceUnits | ExtendedTimeUnits | units.SpeedPaceUnits;
 
 /*
  * The type of the calculator inputs
@@ -69,8 +69,8 @@ type AllUnits = unitUtils.DistanceUnits | ExtendedTimeUnits | unitUtils.SpeedPac
 interface UnitCalculatorInputs {
   [UnitTypes.Distance]: {
     inputValue: number,
-    inputUnit: unitUtils.DistanceUnits,
-    outputUnit: unitUtils.DistanceUnits,
+    inputUnit: units.DistanceUnits,
+    outputUnit: units.DistanceUnits,
   },
   [UnitTypes.Time]: {
     inputValue: number,
@@ -79,8 +79,8 @@ interface UnitCalculatorInputs {
   },
   [UnitTypes.SpeedPace]: {
     inputValue: number,
-    inputUnit: unitUtils.SpeedPaceUnits,
-    outputUnit: unitUtils.SpeedPaceUnits,
+    inputUnit: units.SpeedPaceUnits,
+    outputUnit: units.SpeedPaceUnits,
   },
 };
 
@@ -90,18 +90,18 @@ interface UnitCalculatorInputs {
 const inputs = useStorage<UnitCalculatorInputs>('unit-calculator-inputs', {
   [UnitTypes.Distance]: {
     inputValue: 1,
-    inputUnit: unitUtils.DistanceUnits.Miles,
-    outputUnit: unitUtils.DistanceUnits.Kilometers,
+    inputUnit: units.DistanceUnits.Miles,
+    outputUnit: units.DistanceUnits.Kilometers,
   },
   [UnitTypes.Time]: {
     inputValue: 1,
-    inputUnit: unitUtils.TimeUnits.Seconds,
+    inputUnit: units.TimeUnits.Seconds,
     outputUnit: 'hh:mm:ss',
   },
   [UnitTypes.SpeedPace]: {
     inputValue: 600,
-    inputUnit: unitUtils.PaceUnits.TimePerMile,
-    outputUnit: unitUtils.SpeedUnits.MilesPerHour,
+    inputUnit: units.PaceUnits.TimePerMile,
+    outputUnit: units.SpeedUnits.MilesPerHour,
   },
 });
 
@@ -123,8 +123,8 @@ const input = computed<{ inputValue: number, inputUnit: AllUnits, outputUnit: Al
       case UnitTypes.Distance: {
         inputs.value[category.value] = {
           inputValue: newValue.inputValue,
-          inputUnit: newValue.inputUnit as unitUtils.DistanceUnits,
-          outputUnit: newValue.outputUnit as unitUtils.DistanceUnits,
+          inputUnit: newValue.inputUnit as units.DistanceUnits,
+          outputUnit: newValue.outputUnit as units.DistanceUnits,
         };
         break;
       }
@@ -139,8 +139,8 @@ const input = computed<{ inputValue: number, inputUnit: AllUnits, outputUnit: Al
       case UnitTypes.SpeedPace: {
         inputs.value[category.value] = {
           inputValue: newValue.inputValue,
-          inputUnit: newValue.inputUnit as unitUtils.SpeedPaceUnits,
-          outputUnit: newValue.outputUnit as unitUtils.SpeedPaceUnits,
+          inputUnit: newValue.inputUnit as units.SpeedPaceUnits,
+          outputUnit: newValue.outputUnit as units.SpeedPaceUnits,
         };
         break;
       }
@@ -151,15 +151,15 @@ const input = computed<{ inputValue: number, inputUnit: AllUnits, outputUnit: Al
 /*
  * The data for the units in the current category
  */
-const units = computed<{ [key in AllUnits]?: unitUtils.UnitData }>(() => {
+const categoryUnits = computed<{ [key in AllUnits]?: units.UnitData }>(() => {
   switch (category.value) {
     default:
     case UnitTypes.Distance: {
-      return unitUtils.DistanceUnitData;
+      return units.DistanceUnitData;
     }
     case UnitTypes.Time: {
       return {
-        ...unitUtils.TimeUnitData,
+        ...units.TimeUnitData,
         'hh:mm:ss': {
           name: 'hh:mm:ss',
           symbol: '',
@@ -168,7 +168,7 @@ const units = computed<{ [key in AllUnits]?: unitUtils.UnitData }>(() => {
       };
     }
     case UnitTypes.SpeedPace: {
-      return { ...unitUtils.PaceUnitData, ...unitUtils.SpeedUnitData };
+      return { ...units.PaceUnitData, ...units.SpeedUnitData };
     }
   }
 });
@@ -180,9 +180,9 @@ const outputValue = computed<number>(() => {
   switch (category.value) {
     default:
     case UnitTypes.Distance: {
-      return unitUtils.convertDistance(input.value.inputValue,
-        input.value.inputUnit as unitUtils.DistanceUnits,
-        input.value.outputUnit as unitUtils.DistanceUnits);
+      return units.convertDistance(input.value.inputValue,
+        input.value.inputUnit as units.DistanceUnits,
+        input.value.outputUnit as units.DistanceUnits);
     }
     case UnitTypes.Time: {
       // Correct input and output units for 'hh:mm:ss' unit
@@ -190,13 +190,13 @@ const outputValue = computed<number>(() => {
       const realOutput = input.value.outputUnit === 'hh:mm:ss' ? 'seconds' : input.value.outputUnit;
 
       // Calculate conversion
-      return unitUtils.convertTime(input.value.inputValue, realInput as unitUtils.TimeUnits,
-        realOutput as unitUtils.TimeUnits);
+      return units.convertTime(input.value.inputValue, realInput as units.TimeUnits,
+        realOutput as units.TimeUnits);
     }
     case UnitTypes.SpeedPace: {
-      return unitUtils.convertSpeedPace(input.value.inputValue,
-        input.value.inputUnit as unitUtils.SpeedPaceUnits,
-        input.value.outputUnit as unitUtils.SpeedPaceUnits);
+      return units.convertSpeedPace(input.value.inputValue,
+        input.value.inputUnit as units.SpeedPaceUnits,
+        input.value.outputUnit as units.SpeedPaceUnits);
     }
   }
 });
@@ -207,7 +207,7 @@ const outputValue = computed<number>(() => {
  * @returns {boolean} Whether the unit should be represented as a time
  */
 function isTimeUnit(unit: AllUnits): boolean {
-  return unit in unitUtils.PaceUnitData || unit === 'hh:mm:ss';
+  return unit in units.PaceUnitData || unit === 'hh:mm:ss';
 }
 </script>
 
