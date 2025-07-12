@@ -22,12 +22,12 @@
 </template>
 
 <script setup lang="ts">
-import { Calculators, calculateWorkoutResults } from '@/utils/calculators';
+import { Calculators, calculateWorkoutResults, defaultInput,
+  defaultWorkoutOptions } from '@/utils/calculators';
 import type { WorkoutOptions } from '@/utils/calculators';
-import { RacePredictionModel } from '@/utils/races';
-import { defaultTargetSets } from '@/utils/targets';
-import type { WorkoutTarget, WorkoutTargetSet, WorkoutTargetSets } from '@/utils/targets';
-import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import { defaultWorkoutTargetSets } from '@/utils/targets';
+import type { WorkoutTarget, WorkoutTargetSets } from '@/utils/targets';
+import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -39,11 +39,7 @@ import useStorage from '@/composables/useStorage';
 /*
  * The input race
  */
-const input = useStorage<DistanceTime>('workout-calculator-input', {
-  distanceValue: 5,
-  distanceUnit: DistanceUnits.Kilometers,
-  time: 1200,
-});
+const input = useStorage<DistanceTime>('workout-calculator-input', defaultInput);
 
 /*
  * The default unit system
@@ -53,19 +49,13 @@ const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectD
 /*
  * The race prediction options
  */
-const options = useStorage<WorkoutOptions>('workout-calculator-options', {
-  customTargetNames: false,
-  model: RacePredictionModel.AverageModel,
-  riegelExponent: 1.06,
-  selectedTargetSet: '_workout_targets',
-});
+const options = useStorage<WorkoutOptions>('workout-calculator-options', defaultWorkoutOptions);
 
 /*
  * The target sets
  */
-const targetSets = useStorage<WorkoutTargetSets>('workout-calculator-target-sets', {
-  _workout_targets: defaultTargetSets._workout_targets as WorkoutTargetSet
-});
+const targetSets = useStorage<WorkoutTargetSets>('workout-calculator-target-sets',
+  defaultWorkoutTargetSets);
 </script>
 
 <style scoped>

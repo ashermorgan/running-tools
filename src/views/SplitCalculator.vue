@@ -14,10 +14,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { Calculators } from '@/utils/calculators';
+import { Calculators, defaultSplitOptions } from '@/utils/calculators';
 import type { StandardOptions } from '@/utils/calculators';
-import { defaultTargetSets } from '@/utils/targets';
-import type { SplitTargetSet, SplitTargetSets } from '@/utils/targets';
+import { defaultSplitTargetSets } from '@/utils/targets';
+import type { SplitTargetSets } from '@/utils/targets';
 import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -33,16 +33,13 @@ const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectD
 /*
  * The split calculator options
  */
-const options = useStorage<StandardOptions>('split-calculator-options', {
-  selectedTargetSet: '_split_targets'
-});
+const options = useStorage<StandardOptions>('split-calculator-options', defaultSplitOptions);
 
 /*
  * The default output targets
  */
-const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets', {
-  _split_targets: defaultTargetSets._split_targets as SplitTargetSet
-});
+const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets',
+  defaultSplitTargetSets);
 
 /*
  * The active target set

@@ -40,7 +40,11 @@ export interface RaceOptions extends StandardOptions {
 export interface WorkoutOptions extends RaceOptions {
   customTargetNames: boolean,
 };
-export type CalculatorOptions = StandardOptions | RaceOptions | WorkoutOptions;
+export interface BatchOptions {
+  calculator: Calculators.Pace | Calculators.Race | Calculators.Workout,
+  increment: number,
+  rows: number,
+};
 
 /*
  * The two possible result fields of a target result: "key" and "value"
@@ -59,6 +63,36 @@ export interface TargetResult {
   pace: string,
   result: ResultType,
   sort: number,
+};
+
+/*
+ * The default input and options for each calculator
+ */
+export const defaultInput: DistanceTime = {
+  distanceValue: 5,
+  distanceUnit: DistanceUnits.Kilometers,
+  time: 1200,
+};
+export const defaultBatchOptions: BatchOptions = {
+  calculator: Calculators.Workout,
+  increment: 15,
+  rows: 20,
+};
+export const defaultPaceOptions: StandardOptions = {
+  selectedTargetSet: '_pace_targets',
+};
+export const defaultRaceOptions: RaceOptions = {
+  model: raceUtils.RacePredictionModel.AverageModel,
+  riegelExponent: 1.06,
+  selectedTargetSet: '_race_targets',
+};
+export const defaultSplitOptions: StandardOptions = {
+  selectedTargetSet: '_split_targets',
+};
+export const defaultWorkoutOptions: WorkoutOptions = {
+  customTargetNames: false,
+  ...defaultRaceOptions,
+  selectedTargetSet: '_workout_targets',
 };
 
 /**

@@ -101,116 +101,107 @@ export function workoutTargetToString(target: WorkoutTarget): string {
 }
 
 /*
- * A set of common pace calculator targets
+ * The default target sets for each calculator
  */
-const common_pace_targets: StandardTargetSet = {
-  name: 'Common Pace Targets',
-  targets: sort([
-    { type: TargetTypes.Distance, distanceValue: 100, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 200, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 300, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 600, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1000, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1200, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
-
-    { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 4, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
-
-    { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Miles },
-
-    { type: TargetTypes.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
-    { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
-
-    { type: TargetTypes.Time, time: 600 },
-    { type: TargetTypes.Time, time: 1800 },
-    { type: TargetTypes.Time, time: 3600 },
-  ]),
-};
-
-/*
- * A set of common race calculator targets
- */
-const common_race_targets: StandardTargetSet = {
-  name: 'Common Race Targets',
-  targets: sort([
-    { type: TargetTypes.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 3000, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
-    { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
-
-    { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
-    { type: TargetTypes.Distance, distanceValue: 15, distanceUnit: DistanceUnits.Kilometers },
-
-    { type: TargetTypes.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
-    { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
-  ]),
-};
-
-
-/*
- * A set of targets for 5K mile splits
- */
-const five_k_mile_splits: SplitTargetSet = {
-  name: '5K Mile Splits',
-  targets: [
-    { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
-    { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
-  ],
-};
-
-/*
- * A set of common workout calculator targets
- */
-const common_workout_targets: WorkoutTargetSet = {
-  name: 'Common Workout Targets',
-  targets: [
-    {
-      splitValue: 400, splitUnit: DistanceUnits.Meters,
-      type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles,
-    },
-    {
-      splitValue: 800, splitUnit: DistanceUnits.Meters,
-      type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers,
-    },
-    {
-      splitValue: 1600, splitUnit: DistanceUnits.Meters,
-      type: TargetTypes.Time, time: 3600,
-    },
-    {
-      splitValue: 1, splitUnit: DistanceUnits.Miles,
-      type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons,
-    },
-  ],
-};
-
 export const defaultTargetSets: { [key: string]: TargetSet } = {
-  '_pace_targets': common_pace_targets,
-  '_race_targets': common_race_targets,
-  '_split_targets': five_k_mile_splits,
-  '_workout_targets': common_workout_targets,
+  '_pace_targets': {
+    name: 'Common Pace Targets',
+    targets: sort([
+      { type: TargetTypes.Distance, distanceValue: 100, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 200, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 300, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 600, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1000, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1200, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
+
+      { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 4, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
+
+      { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Miles },
+
+      { type: TargetTypes.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
+      { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
+
+      { type: TargetTypes.Time, time: 600 },
+      { type: TargetTypes.Time, time: 1800 },
+      { type: TargetTypes.Time, time: 3600 },
+    ]),
+  }, '_race_targets': {
+    name: 'Common Race Targets',
+    targets: sort([
+      { type: TargetTypes.Distance, distanceValue: 400, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 800, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1500, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1600, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 3000, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 3200, distanceUnit: DistanceUnits.Meters },
+      { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
+
+      { type: TargetTypes.Distance, distanceValue: 3, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 6, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 8, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 10, distanceUnit: DistanceUnits.Kilometers },
+      { type: TargetTypes.Distance, distanceValue: 15, distanceUnit: DistanceUnits.Kilometers },
+
+      { type: TargetTypes.Distance, distanceValue: 0.5, distanceUnit: DistanceUnits.Marathons },
+      { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons },
+    ]),
+  }, '_split_targets': {
+    name: '5K Mile Splits',
+    targets: [
+      { type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 2, distanceUnit: DistanceUnits.Miles },
+      { type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers },
+    ],
+  }, '_workout_targets': {
+    name: 'Common Workout Targets',
+    targets: [
+      {
+        splitValue: 400, splitUnit: DistanceUnits.Meters,
+        type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Miles,
+      },
+      {
+        splitValue: 800, splitUnit: DistanceUnits.Meters,
+        type: TargetTypes.Distance, distanceValue: 5, distanceUnit: DistanceUnits.Kilometers,
+      },
+      {
+        splitValue: 1600, splitUnit: DistanceUnits.Meters,
+        type: TargetTypes.Time, time: 3600,
+      },
+      {
+        splitValue: 1, splitUnit: DistanceUnits.Miles,
+        type: TargetTypes.Distance, distanceValue: 1, distanceUnit: DistanceUnits.Marathons,
+      },
+    ],
+  },
+};
+export const defaultPaceTargetSets: StandardTargetSets = {
+  '_pace_targets': defaultTargetSets._pace_targets,
+};
+export const defaultRaceTargetSets: StandardTargetSets = {
+  '_race_targets': defaultTargetSets._race_targets,
+};
+export const defaultSplitTargetSets: SplitTargetSets = {
+  '_split_targets': defaultTargetSets._split_targets as SplitTargetSet,
+};
+export const defaultWorkoutTargetSets: WorkoutTargetSets = {
+  '_workout_targets': defaultTargetSets._workout_targets as WorkoutTargetSet,
 };

@@ -43,11 +43,10 @@
 import { computed } from 'vue';
 
 import * as calcUtils from '@/utils/calculators';
-import type { RaceOptions, StandardOptions, TargetResult,
+import type { BatchOptions, RaceOptions, StandardOptions, TargetResult,
   WorkoutOptions } from '@/utils/calculators';
-import { RacePredictionModel } from '@/utils/races';
 import * as targetUtils from '@/utils/targets';
-import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import { UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
 import type { Distance, DistanceTime } from '@/utils/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -59,31 +58,14 @@ import TimeInput from '@/components/TimeInput.vue';
 import useStorage from '@/composables/useStorage';
 
 /*
- * The type for options specific to the batch calculator
- */
-interface BatchCalculatorOptions {
-  calculator: calcUtils.Calculators,
-  increment: number,
-  rows: number,
-};
-
-/*
  * The input pace
  */
-const input = useStorage<DistanceTime>('batch-calculator-input', {
-  distanceValue: 5,
-  distanceUnit: DistanceUnits.Kilometers,
-  time: 1200,
-});
+const input = useStorage<DistanceTime>('batch-calculator-input', calcUtils.defaultInput);
 
 /*
  * The batch input options
  */
-const options = useStorage<BatchCalculatorOptions>('batch-calculator-options', {
-  calculator: calcUtils.Calculators.Workout,
-  increment: 15,
-  rows: 20,
-});
+const options = useStorage<BatchOptions>('batch-calculator-options', calcUtils.defaultBatchOptions);
 
 /*
  * The default unit system
@@ -93,33 +75,22 @@ const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectD
 /*
  * The target sets for each calculator
  */
-const paceTargetSets = useStorage<targetUtils.StandardTargetSets>('pace-calculator-target-sets', {
-  _pace_targets: targetUtils.defaultTargetSets._pace_targets as targetUtils.StandardTargetSet
-});
-const raceTargetSets = useStorage<targetUtils.StandardTargetSets>('race-calculator-target-sets', {
-  _race_targets: targetUtils.defaultTargetSets._race_targets as targetUtils.StandardTargetSet
-});
-const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>('workout-calculator-target-sets', {
-  _workout_targets: targetUtils.defaultTargetSets._workout_targets as targetUtils.WorkoutTargetSet
-});
+const paceTargetSets = useStorage<targetUtils.StandardTargetSets>('pace-calculator-target-sets',
+  targetUtils.defaultPaceTargetSets);
+const raceTargetSets = useStorage<targetUtils.StandardTargetSets>('race-calculator-target-sets',
+  targetUtils.defaultRaceTargetSets);
+const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>('workout-calculator-target-sets',
+  targetUtils.defaultWorkoutTargetSets);
 
 /*
  * The options for each calculator
  */
-const paceOptions = useStorage<StandardOptions>('pace-calculator-options', {
-  selectedTargetSet: '_pace_targets',
-});
-const raceOptions = useStorage<RaceOptions>('race-calculator-options', {
-  model: RacePredictionModel.AverageModel,
-  riegelExponent: 1.06,
-  selectedTargetSet: '_race_targets',
-});
-const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options', {
-  customTargetNames: false,
-  model: RacePredictionModel.AverageModel,
-  riegelExponent: 1.06,
-  selectedTargetSet: '_workout_targets',
-});
+const paceOptions = useStorage<StandardOptions>('pace-calculator-options',
+  calcUtils.defaultPaceOptions);
+const raceOptions = useStorage<RaceOptions>('race-calculator-options',
+  calcUtils.defaultRaceOptions);
+const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options',
+  calcUtils.defaultWorkoutOptions);
 
 /*
  * The input distance

@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { Calculators } from '@/utils/calculators';
-import type { CalculatorOptions, RaceOptions, WorkoutOptions } from '@/utils/calculators';
+import type { StandardOptions, RaceOptions, WorkoutOptions } from '@/utils/calculators';
 import type { TargetSets } from '@/utils/targets';
 import { UnitSystems } from '@/utils/units';
 
@@ -53,6 +53,8 @@ import DecimalInput from '@/components/DecimalInput.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useObjectModel from '@/composables/useObjectModel';
+
+type CalculatorOptions = StandardOptions | RaceOptions | WorkoutOptions;
 
 /*
  * The default unit system
