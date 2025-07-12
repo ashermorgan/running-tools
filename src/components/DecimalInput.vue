@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { formatNumber } from '@/utils/format';
+import { formatNumber } from '@/utils/units';
 
 /**
  * The component value

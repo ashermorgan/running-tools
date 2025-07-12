@@ -18,12 +18,11 @@
     <tbody>
       <tr v-for="(item, index) in results" :key="index">
         <td>
-          {{ formatNumber(item.distanceValue, 0, 2, false) }}
-          {{ DistanceUnitData[item.distanceUnit].symbol }}
+          {{ formatDistance(model[index] as Distance, false) }}
         </td>
 
         <td>
-          {{ formatDuration(item.time, 3, 2, true) }}
+          {{ formatDuration(item.total.time, 3, 2, true) }}
         </td>
 
         <td>
@@ -31,9 +30,7 @@
         </td>
 
         <td>
-          {{ formatDuration(item.pace, 3, 0, true) }}
-          / {{ DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)]
-          .symbol }}
+          {{ formatPace(item.split, getDefaultPaceUnit(defaultUnitSystem)) }}
         </td>
       </tr>
 
@@ -49,21 +46,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { formatDuration, formatNumber } from '@/utils/format';
 import type { SplitTarget } from '@/utils/targets';
-import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
-  getDefaultDistanceUnit } from '@/utils/units';
+import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration,
+  formatPace, getDefaultPaceUnit } from '@/utils/units';
+import type { Distance, DistanceTime } from '@/utils/units';
 
 import TimeInput from '@/components/TimeInput.vue';
 import useObjectModel from '@/composables/useObjectModel';
 
 interface SplitTargetResult {
-  distance: number,
-  distanceValue: number,
-  distanceUnit: DistanceUnits,
-  time: number,
-  splitTime: number,
-  pace: number,
+  split: DistanceTime,
+  total: DistanceTime,
 };
 
 interface Props {
@@ -95,27 +88,29 @@ const results = computed(() => {
   for (let i = 0; i < model.value.length; i += 1) {
     // Calculate split and total times
     const splitTime = model.value[i].splitTime || 0;
-    const totalTime = i === 0 ? splitTime : results[i - 1].time + splitTime;
+    const totalTime = i === 0 ? splitTime : results[i - 1].total.time + splitTime;
 
     // Calculate split and total distances
     const totalDistance = convertDistance(
       model.value[i].distanceValue,
-      model.value[i].distanceUnit, DistanceUnits.Meters,
+      model.value[i].distanceUnit,
+      DistanceUnits.Meters,
     );
-    const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
-
-    // Calculate pace
-    const pace = splitTime / convertDistance(splitDistance, DistanceUnits.Meters,
-      getDefaultDistanceUnit(props.defaultUnitSystem));
+    const splitDistance = i === 0 ? totalDistance :
+      totalDistance - results[i - 1].total.distanceValue;
 
     // Add row to results array
     results.push({
-      distance: totalDistance,
-      distanceValue: model.value[i].distanceValue,
-      distanceUnit: model.value[i].distanceUnit,
-      time: totalTime,
-      splitTime,
-      pace,
+      split: {
+        distanceValue: splitDistance,
+        distanceUnit: DistanceUnits.Meters,
+        time: splitTime,
+      },
+      total: {
+        distanceValue: totalDistance,
+        distanceUnit: DistanceUnits.Meters,
+        time: totalTime,
+      },
     });
   }
 

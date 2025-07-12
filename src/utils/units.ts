@@ -237,6 +237,133 @@ export function detectDefaultUnitSystem(): UnitSystems {
 }
 
 /**
+ * Format a number as a string
+ * @param {number} value The number
+ * @param {number} minPadding The minimum number of digits to show before the decimal point
+ * @param {number} maxDigits The maximum number of digits to show after the decimal point
+ * @param {boolean} extraDigits Whether to show extra zeros after the decimal point
+ * @returns {string} The formatted number
+ */
+export function formatNumber(value: number, minPadding: number = 0, maxDigits: number = 2,
+                             extraDigits: boolean = true): string {
+
+  // Initialize result
+  let result = '';
+
+  // Remove sign
+  const negative = value < 0;
+  const fixedValue = Math.abs(value);
+
+  // Address edge cases
+  if (Number.isNaN(fixedValue)) {
+    return 'NaN';
+  }
+  if (fixedValue === Infinity) {
+    return negative ? '-Infinity' : 'Infinity';
+  }
+
+  // Convert number to string
+  if (extraDigits) {
+    result = fixedValue.toFixed(maxDigits);
+  } else {
+    const power = 10 ** maxDigits;
+    result = (Math.round((fixedValue + Number.EPSILON) * power) / power).toString();
+  }
+
+  // Add padding
+  const currentPadding = result.split('.')[0].length;
+  result = result.padStart(result.length - currentPadding + minPadding, '0');
+
+  // Add negative sign
+  if (negative) {
+    result = `-${result}`;
+  }
+
+  // Return result
+  return result;
+}
+
+/**
+ * Format a distance as a string
+ * @param {Distance} input The distance
+ * @param {boolean} extraDigits Whether to show extra zeros after the decimal point
+ * @returns {string} The formatted distance
+ */
+export function formatDistance(input: Distance, extraDigits: boolean) {
+  return formatNumber(input.distanceValue, 0, 2, extraDigits) + ' '
+    + DistanceUnitData[input.distanceUnit].symbol;
+}
+
+/**
+ * Format a duration as a string
+ * @param {number} value The duration (in seconds)
+ * @param {number} minPadding The minimum number of digits to show before the decimal point
+ * @param {number} maxDigits The maximum number of digits to show after the decimal point
+ * @param {boolean} extraDigits Whether to show extra zeros after the decimal point
+ * @returns {string} The formatted duration
+ */
+export function formatDuration(value: number, minPadding: number = 6, maxDigits: number = 2,
+                               extraDigits: boolean = true): string {
+  // Check if value is NaN
+  if (Number.isNaN(value)) {
+    return 'NaN';
+  }
+
+  // Initialize result
+  let result = '';
+
+  // Check value sign
+  if (value < 0) {
+    result += '-';
+  }
+
+  // Check if value is valid
+  if (Math.abs(value) === Infinity) {
+    return `${result}Infinity`;
+  }
+
+  // Validate padding
+  let fixedPadding = Math.min(minPadding, 6);
+
+  // Prevent rounding errors
+  const fixedValue = parseFloat(Math.abs(value).toFixed(maxDigits));
+
+  // Calculate parts
+  const hours = Math.floor(fixedValue / 3600);
+  const minutes = Math.floor((fixedValue % 3600) / 60);
+  const seconds = fixedValue % 60;
+
+  // Format parts
+  if (hours !== 0 || fixedPadding >= 5) {
+    result += hours.toString().padStart(fixedPadding - 4, '0');
+    result += ':';
+    fixedPadding = 4;
+  }
+  if (minutes !== 0 || fixedPadding >= 3) {
+    result += minutes.toString().padStart(fixedPadding - 2, '0');
+    result += ':';
+    fixedPadding = 2;
+  }
+  result += formatNumber(seconds, fixedPadding, maxDigits, extraDigits);
+
+  // Return result
+  return result;
+}
+
+/**
+ * Calculate the pace of a distance/time pair and format it as a string
+ * @param {DistanceTime} input The input distance/time pair
+ * @param {PaceUnits} unit The desired pace unit
+ * @returns {string} The formatted pace
+ */
+export function formatPace(input: DistanceTime, unit: PaceUnits) {
+  const dist = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
+  const pace = convertPace(input.time / dist, PaceUnits.SecondsPerMeter, unit)
+  const result = formatDuration(pace, 3, 0, true) + ' ' + PaceUnitData[unit].symbol;
+  return result;
+}
+
+/**
  * Get the default distance unit in a unit system
  * @param {UnitSystems} unitSystem The unit system
  * @returns {DistanceUnits} The default distance unit

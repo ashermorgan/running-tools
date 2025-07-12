@@ -31,9 +31,8 @@ import { computed } from 'vue';
 
 import { ResultType } from '@/utils/calculators';
 import type { TargetResult } from '@/utils/calculators';
-import { formatDuration, formatNumber } from '@/utils/format';
 import type { Target } from '@/utils/targets';
-import { DistanceUnitData } from '@/utils/units';
+import { formatDistance, formatDuration } from '@/utils/units';
 import type { Distance, DistanceTime } from '@/utils/units';
 
 interface Props {
@@ -66,8 +65,7 @@ const props = defineProps<Props>();
 const results = computed(() => {
   // Calculate results
   const results: Array<Array<string>> = [[
-    formatNumber(props.inputDistance.distanceValue, 0, 2, false) + ' '
-      + DistanceUnitData[props.inputDistance.distanceUnit].symbol
+    formatDistance(props.inputDistance, false),
   ]];
 
   props.inputTimes.forEach((input, y) => {

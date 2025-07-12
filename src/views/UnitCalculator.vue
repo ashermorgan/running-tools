@@ -20,10 +20,10 @@
     <span class="equals"> = </span>
 
     <span v-if="isTimeUnit(input.outputUnit)" class="output-value" aria-label="Output value">
-      {{ formatDuration(outputValue, 6, 3, true) }}
+      {{ unitUtils.formatDuration(outputValue, 6, 3, true) }}
     </span>
     <span v-else class="output-value" aria-label="Output value">
-      {{ formatNumber(outputValue, 0, 3, true) }}
+      {{ unitUtils.formatNumber(outputValue, 0, 3, true) }}
     </span>
 
     <select v-model="input.outputUnit" class="output-units" aria-label="Output units">
@@ -37,7 +37,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { formatDuration, formatNumber } from '@/utils/format';
 import * as unitUtils from '@/utils/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';

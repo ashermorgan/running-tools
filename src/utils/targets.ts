@@ -1,5 +1,5 @@
-import { formatDuration, formatNumber } from '@/utils/format';
-import { DistanceUnits, DistanceUnitData, convertDistance } from '@/utils/units';
+import { DistanceUnits, convertDistance, formatDistance, formatDuration } from '@/utils/units';
+import type { Distance } from '@/utils/units';
 
 /*
  * The two basic types of targets: those defined by distance and those defined by time
@@ -89,13 +89,13 @@ export function sort(targets: Array<Target>): Array<Target> {
  * @return {string} The string description
  */
 export function workoutTargetToString(target: WorkoutTarget): string {
-  let result = formatNumber(target.splitValue, 0, 2, false) + ' ' +
-    DistanceUnitData[target.splitUnit].symbol;
+  let result = formatDistance({ distanceValue: target.splitValue, distanceUnit: target.splitUnit },
+                              false);
+
   if (target.type === TargetTypes.Time) {
     result += ' @ ' + formatDuration(target.time, 3, 2, false);
   } else if (target.distanceValue != target.splitValue || target.distanceUnit != target.splitUnit) {
-    result += ' @ ' + formatNumber(target.distanceValue, 0, 2, false) + ' ' +
-      DistanceUnitData[target.distanceUnit].symbol;
+    result += ' @ ' + formatDistance(target as Distance, false);
   }
   return result;
 }

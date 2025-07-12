@@ -43,11 +43,10 @@ import { computed } from 'vue';
 
 import { Calculators, calculateRaceResults, calculateRaceStats } from '@/utils/calculators';
 import type { RaceOptions, RaceStats } from '@/utils/calculators';
-import { formatNumber } from '@/utils/format';
 import { RacePredictionModel } from '@/utils/races';
 import { defaultTargetSets } from '@/utils/targets';
 import type { StandardTargetSets } from '@/utils/targets';
-import { DistanceUnits, UnitSystems, detectDefaultUnitSystem } from '@/utils/units';
+import { DistanceUnits, UnitSystems, detectDefaultUnitSystem, formatNumber } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';

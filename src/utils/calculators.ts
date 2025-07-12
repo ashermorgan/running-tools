@@ -1,10 +1,9 @@
-import { formatDuration, formatNumber } from '@/utils/format';
 import * as paceUtils from '@/utils/paces';
 import * as raceUtils from '@/utils/races';
 import { TargetTypes, workoutTargetToString } from '@/utils/targets';
 import type { StandardTarget, WorkoutTarget } from '@/utils/targets';
-import { DistanceUnits, DistanceUnitData, UnitSystems, convertDistance,
-  getDefaultDistanceUnit } from '@/utils/units';
+import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration, formatPace,
+  getDefaultDistanceUnit, getDefaultPaceUnit } from '@/utils/units';
 import type { DistanceTime } from '@/utils/units';
 
 /*
@@ -99,21 +98,15 @@ function calculateStandardResult(input: DistanceTime, target: StandardTarget,
     distanceUnit = units;
   }
 
-  // Calculate numerical pace
-  const pace = time / convertDistance(distanceValue, distanceUnit,
-    getDefaultDistanceUnit(defaultUnitSystem));
-
   return {
     // Convert distance to key string
-    key: formatNumber(distanceValue, 0, 2, target.type === TargetTypes.Time) + ' ' +
-      DistanceUnitData[distanceUnit].symbol,
+    key: formatDistance({ distanceValue, distanceUnit }, target.type === TargetTypes.Time),
 
     // Convert time to time string
     value: formatDuration(time, 3, preciseDurations ? 2 : 0, target.type === TargetTypes.Distance),
 
     // Convert pace to pace string
-    pace: formatDuration(pace, 3, 0, true) + ' / '
-      + DistanceUnitData[getDefaultDistanceUnit(defaultUnitSystem)].symbol,
+    pace: formatPace({ time, distanceValue, distanceUnit }, getDefaultPaceUnit(defaultUnitSystem)),
 
     // Convert dist/time result to key/value
     result: target.type === TargetTypes.Distance ? ResultType.Value : ResultType.Key,
