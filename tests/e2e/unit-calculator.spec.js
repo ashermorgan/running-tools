@@ -1,68 +1,72 @@
 import { test, expect } from '@playwright/test';
 
 test('Unit Calculator', async ({ page }) => {
-  // Structure:
-  // - Test distance unit conversion
-  // - Test speed and pace unit conversion
-  // - Test time unit conversion
-  // - Reload page
-  // - Assert distance inputs are still loaded
-  // - Assert time inputs are still loaded
-  // - Assert speed and pace inputs are still loaded
-
   // Go to unit calculator
   await page.goto('/');
   await page.getByRole('button', { name: 'Unit Calculator' }).click();
   await expect(page).toHaveTitle('Unit Calculator - Running Tools');
 
-  // Convert distance units (5000m to mi)
-  await page.getByLabel('Input units').selectOption('Meters');
-  await page.getByLabel('Input value').fill('5000');
-  await page.getByLabel('Output units').selectOption('Miles');
-  await expect(page.getByLabel('Output value')).toHaveText('3.107');
+  // Test distance unit conversion
+  {
+    // Convert distance units (5000m to mi)
+    await page.getByLabel('Input units').selectOption('Meters');
+    await page.getByLabel('Input value').fill('5000');
+    await page.getByLabel('Output units').selectOption('Miles');
+    await expect(page.getByLabel('Output value')).toHaveText('3.107');
+  }
 
-  // Convert speed and pace units (0:04:32/km to mph)
-  await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
-  await page.getByLabel('Input units').selectOption('Time per Kilometer');
-  await page.getByLabel('Input time hours').fill('0');
-  await page.getByLabel('Input time minutes').fill('4');
-  await page.getByLabel('Input time seconds').fill('32');
-  await page.getByLabel('Output units').selectOption('Miles per Hour');
-  await expect(page.getByLabel('Output value')).toHaveText('8.224');
+  // Test speed and pace unit conversion
+  {
+    // Convert speed and pace units (0:04:32/km to mph)
+    await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
+    await page.getByLabel('Input units').selectOption('Time per Kilometer');
+    await page.getByLabel('Input time hours').fill('0');
+    await page.getByLabel('Input time minutes').fill('4');
+    await page.getByLabel('Input time seconds').fill('32');
+    await page.getByLabel('Output units').selectOption('Miles per Hour');
+    await expect(page.getByLabel('Output value')).toHaveText('8.224');
 
-  // Convert speed and pace units (10 kph to time per mile)
-  await page.getByLabel('Input units').selectOption('Kilometers per Hour');
-  await page.getByLabel('Input value').fill('10');
-  await page.getByLabel('Output units').selectOption('Time per Mile');
-  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
+    // Convert speed and pace units (10 kph to time per mile)
+    await page.getByLabel('Input units').selectOption('Kilometers per Hour');
+    await page.getByLabel('Input value').fill('10');
+    await page.getByLabel('Output units').selectOption('Time per Mile');
+    await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
+  }
 
-  // Convert time units (83.76 min to hh:mm:ss)
-  await page.getByLabel('Selected unit category').selectOption('Time');
-  await page.getByLabel('Input units').selectOption('Minutes');
-  await page.getByLabel('Input value').fill('83.76');
-  await page.getByLabel('Output units').selectOption('hh:mm:ss');
-  await expect(page.getByLabel('Output value')).toHaveText('01:23:45.600');
+  // Test time unit conversion
+  {
+    // Convert time units (83.76 min to hh:mm:ss)
+    await page.getByLabel('Selected unit category').selectOption('Time');
+    await page.getByLabel('Input units').selectOption('Minutes');
+    await page.getByLabel('Input value').fill('83.76');
+    await page.getByLabel('Output units').selectOption('hh:mm:ss');
+    await expect(page.getByLabel('Output value')).toHaveText('01:23:45.600');
 
-  // Convert time units (6:54:32.100 to seconds)
-  await page.getByLabel('Selected unit category').selectOption('Time');
-  await page.getByLabel('Input units').selectOption('hh:mm:ss');
-  await page.getByLabel('Input time hours').fill('6');
-  await page.getByLabel('Input time minutes').fill('54');
-  await page.getByLabel('Input time seconds').fill('32.1');
-  await page.getByLabel('Output units').selectOption('seconds');
-  await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+    // Convert time units (6:54:32.100 to seconds)
+    await page.getByLabel('Selected unit category').selectOption('Time');
+    await page.getByLabel('Input units').selectOption('hh:mm:ss');
+    await page.getByLabel('Input time hours').fill('6');
+    await page.getByLabel('Input time minutes').fill('54');
+    await page.getByLabel('Input time seconds').fill('32.1');
+    await page.getByLabel('Output units').selectOption('seconds');
+    await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+  }
 
   // Reload page
   await page.reload();
 
-  // Assert time result is correct (state not reset)
-  await expect(page.getByLabel('Output value')).toHaveText('24872.100');
+  // Assert inputs are still loaded
+  {
+    // Assert time result is correct (state not reset)
+    await expect(page.getByLabel('Selected unit category')).toHaveValue('time');
+    await expect(page.getByLabel('Output value')).toHaveText('24872.100');
 
-  // Assert distance result is correct (state not reset)
-  await page.getByLabel('Selected unit category').selectOption('Distance');
-  await expect(page.getByLabel('Output value')).toHaveText('3.107');
+    // Assert distance result is correct (state not reset)
+    await page.getByLabel('Selected unit category').selectOption('Distance');
+    await expect(page.getByLabel('Output value')).toHaveText('3.107');
 
-  // Assert speed & pace result is correct (state not reset)
-  await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
-  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
+    // Assert speed & pace result is correct (state not reset)
+    await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
+    await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
+  }
 });
