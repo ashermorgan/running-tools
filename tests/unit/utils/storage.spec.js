@@ -53,37 +53,90 @@ describe('set method', () => {
 });
 
 describe('migrate method', () => {
-  test('should correctly migrate <=1.4.1 workout calculator options', async () => {
+  test('should correctly migrate <=1.4.1 calculator options', async () => {
     // Initialize localStorage
+    localStorage.setItem('running-tools.pace-calculator-target-set', '"A"');
+    localStorage.setItem('running-tools.race-calculator-options',
+      '{"model":"RiegelModel","riegelExponent":1.07}');
+    localStorage.setItem('running-tools.race-calculator-target-set', '"B"');
+    localStorage.setItem('running-tools.split-calculator-target-set', '"C"');
     localStorage.setItem('running-tools.workout-calculator-options',
-      '{"model":"PurdyPointsModel","riegelExponent":1.1}');
+      '{"model":"RiegelModel","riegelExponent":1.08}');
+    localStorage.setItem('running-tools.workout-calculator-target-set', '"D"');
 
-    // Run migratinos
+    // Run migrations
     storage.migrate();
 
     // Assert localStorage entries correctly migrated
+    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
+      '{"selectedTargetSet":"A"}');
+    expect(localStorage.getItem('running-tools.pace-calculator-target-set')).to.equal(null);
+    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
+      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
+    expect(localStorage.getItem('running-tools.race-calculator-target-set')).to.equal(null);
+    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(
+      '{"selectedTargetSet":"C"}');
+    expect(localStorage.getItem('running-tools.split-calculator-target-set')).to.equal(null);
     expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
-      '{"model":"PurdyPointsModel","riegelExponent":1.1,"customTargetNames":false}');
+      '{"model":"RiegelModel","riegelExponent":1.08,"selectedTargetSet":"D",' +
+      '"customTargetNames":false}');
+    expect(localStorage.getItem('running-tools.workout-calculator-target-set')).to.equal(null);
   });
 
-  test('should not modify >1.4.1 workout calculator options', async () => {
-    // Initialize localStorage
+  test('should correctly migrate partial <=1.4.1 calculator options', async () => {
+    // Initialize localStorage (*-target-set options missing)
+    localStorage.setItem('running-tools.race-calculator-options',
+      '{"model":"RiegelModel","riegelExponent":1.07}');
     localStorage.setItem('running-tools.workout-calculator-options',
-      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.1}');
+      '{"model":"RiegelModel","riegelExponent":1.08}');
 
-    // Run migratinos
+    // Run migrations
     storage.migrate();
 
-    // Assert localStorage entries not modified
+    // Assert localStorage entries correctly migrated
+    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
+      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"_race_targets"}');
     expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
-      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.1}');
+      '{"model":"RiegelModel","riegelExponent":1.08,"selectedTargetSet":"_workout_targets",' +
+      '"customTargetNames":false}');
   });
 
-  test('should not modify missing workout calculator options', async () => {
-    // Run migratinos
+
+  test('should not modify >1.4.1 calculator options', async () => {
+    // Initialize localStorage
+    localStorage.setItem('running-tools.pace-calculator-options',
+      '{"selectedTargetSet":"A"}');
+    localStorage.setItem('running-tools.race-calculator-options',
+      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
+    localStorage.setItem('running-tools.split-calculator-options',
+      '{"selectedTargetSet":"C"}');
+    localStorage.setItem('running-tools.workout-calculator-options',
+      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.08,' +
+      '"selectedTargetSet":"D"}');
+
+    // Run migrations
     storage.migrate();
 
     // Assert localStorage entries not modified
+    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
+      '{"selectedTargetSet":"A"}');
+    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
+      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
+    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(
+      '{"selectedTargetSet":"C"}');
+    expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
+      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.08,' +
+      '"selectedTargetSet":"D"}');
+  });
+
+  test('should not modify missing calculator options', async () => {
+    // Run migrations
+    storage.migrate();
+
+    // Assert localStorage entries not modified
+    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(null);
+    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(null);
+    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(null);
     expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(null);
   });
 });

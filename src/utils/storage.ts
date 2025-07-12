@@ -1,7 +1,8 @@
-import { RacePredictionModel } from '@/utils/races';
+import { deepCopy } from '@/utils/misc';
+import { defaultRaceOptions, defaultWorkoutOptions } from '@/utils/calculators';
 
 // The global localStorage prefix
-const prefix = 'running-tools';
+const LocalStoragePrefix = 'running-tools';
 
 /**
  * Read an object from a localStorage item
@@ -10,7 +11,7 @@ const prefix = 'running-tools';
  */
 export function get<Type>(key: string): Type | null {
   try {
-    return JSON.parse(localStorage.getItem(`${prefix}.${key}`) || '');
+    return JSON.parse(localStorage.getItem(`${LocalStoragePrefix}.${key}`) || '');
   } catch {
     return null;
   }
@@ -22,7 +23,7 @@ export function get<Type>(key: string): Type | null {
  * @param {Type} value The object to write
  */
 export function set<Type>(key: string, value: Type) {
-  localStorage.setItem(`${prefix}.${key}`, JSON.stringify(value));
+  localStorage.setItem(`${LocalStoragePrefix}.${key}`, JSON.stringify(value));
 }
 
 /**
@@ -30,7 +31,7 @@ export function set<Type>(key: string, value: Type) {
  * @param {string} key The localStorage item's key
  */
 export function unset(key: string) {
-  localStorage.removeItem(`${prefix}.${key}`);
+  localStorage.removeItem(`${LocalStoragePrefix}.${key}`);
 }
 
 /**
@@ -49,15 +50,16 @@ export function migrate() {
 
   // Move race-calculator-target-set into race-calculator-options (>1.4.1)
   const raceSelectedTargetSet = get<string>('race-calculator-target-set');
-  const raceOptions = get<any>('race-calculator-options') || {
-    model: RacePredictionModel.AverageModel,
-    riegelExponent: 1.06,
-    selectedTargetSet: '_race_targets',
-  };
+  const raceOptions = get<any>('race-calculator-options')
+    || deepCopy(defaultRaceOptions);
   if (raceSelectedTargetSet !== null) {
     raceOptions.selectedTargetSet = raceSelectedTargetSet;
     set('race-calculator-options', raceOptions);
     unset('race-calculator-target-set');
+  }
+  if (raceOptions !== null && raceOptions.selectedTargetSet === undefined) {
+    raceOptions.selectedTargetSet = defaultRaceOptions.selectedTargetSet;
+    set('race-calculator-options', raceOptions);
   }
 
   // Move split-calculator-target-set into new split-calculator-options (>1.4.1)
@@ -70,16 +72,16 @@ export function migrate() {
 
   // Move workout-calculator-target-set into workout-calculator-options (>1.4.1)
   const workoutSelectedTargetSet = get<string>('workout-calculator-target-set');
-  const workoutOptions = get<any>('workout-calculator-options') || {
-    customTargetNames: false,
-    model: RacePredictionModel.AverageModel,
-    riegelExponent: 1.06,
-    selectedTargetSet: '_workout_targets',
-  };
+  const workoutOptions = get<any>('workout-calculator-options')
+    || deepCopy(defaultWorkoutOptions);
   if (workoutSelectedTargetSet !== null) {
     workoutOptions.selectedTargetSet = workoutSelectedTargetSet;
     set('workout-calculator-options', workoutOptions);
     unset('workout-calculator-target-set');
+  }
+  if (workoutOptions !== null && workoutOptions.selectedTargetSet === undefined) {
+    workoutOptions.selectedTargetSet = defaultWorkoutOptions.selectedTargetSet;
+    set('workout-calculator-options', workoutOptions);
   }
 
   // Add customTargetNames property to workout-calculator-options (>1.4.1)
