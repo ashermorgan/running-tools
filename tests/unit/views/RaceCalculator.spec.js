@@ -29,7 +29,7 @@ test('should correctly predict race times', async () => {
   // Assert result is correct
   expect(result.key).to.equal('10 km');
   expect(result.value).to.equal('41:34.80');
-  expect(result.pace).to.equal('6:42 / mi');
+  expect(result.pace).to.equal('6:41 / mi');
   expect(result.result).to.equal('value');
   expect(result.sort).to.be.closeTo(2494.80, 0.01);
 });

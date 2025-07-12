@@ -48,7 +48,7 @@ test('Race Calculator', async ({ page }) => {
 
   // Assert race predictions are correct
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '5:02.17' + '3:08 / km');
-  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.86' + '3:21 / km');
+  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.87' + '3:21 / km');
   await expect(page.getByRole('row')).toHaveCount(17);
 
   // Change Riegel exponent
@@ -56,7 +56,7 @@ test('Race Calculator', async ({ page }) => {
 
   // Assert race predictions are correct
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:49.86' + '3:00 / km');
-  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.77' + '3:26 / km');
+  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
   await expect(page.getByRole('row')).toHaveCount(17);
 
   // Edit default target set
@@ -95,16 +95,16 @@ test('Race Calculator', async ({ page }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert race predictions are correct
-  await expect(page.getByRole('row').nth(1)).toHaveText('5 km' + '17:11.77' + '3:26 / km');
-  await expect(page.getByRole('row').nth(2)).toHaveText('10 km' + '37:22.53' + '3:44 / km');
+  await expect(page.getByRole('row').nth(1)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
+  await expect(page.getByRole('row').nth(2)).toHaveText('10 km' + '37:22.54' + '3:44 / km');
   await expect(page.getByRole('row')).toHaveCount(3);
 
   // Reload page
   await page.reload();
 
   // Assert race predictions are correct (custom targets, default units, and model settings not reset)
-  await expect(page.getByRole('row').nth(1)).toHaveText('5 km' + '17:11.77' + '3:26 / km');
-  await expect(page.getByRole('row').nth(2)).toHaveText('10 km' + '37:22.53' + '3:44 / km');
+  await expect(page.getByRole('row').nth(1)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
+  await expect(page.getByRole('row').nth(2)).toHaveText('10 km' + '37:22.54' + '3:44 / km');
   await expect(page.getByRole('row')).toHaveCount(3);
 
   // Switch target set
@@ -137,7 +137,7 @@ test('Race Calculator', async ({ page }) => {
 
   // Assert paces are correct
   await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:49.86' + '3:00 / km');
-  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.77' + '3:26 / km');
+  await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
   await expect(page.getByRole('row')).toHaveCount(17);
 
   // Assert title was reset

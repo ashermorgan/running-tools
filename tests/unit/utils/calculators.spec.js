@@ -74,7 +74,7 @@ describe('calculateRaceResults method', () => {
 
     expect(result.key).to.equal('10 km');
     expect(result.value).to.equal('41:34.80');
-    expect(result.pace).to.equal('6:42 / mi');
+    expect(result.pace).to.equal('6:41 / mi');
     expect(result.result).to.equal('value');
     expect(result.sort).to.be.closeTo(2494.80, 0.01);
   });
@@ -129,7 +129,7 @@ describe('calculateRaceResults method', () => {
     const result = calculatorUtils.calculateRaceResults(input, target, options, 'imperial');
 
     expect(result.key).to.equal('5 km');
-    expect(result.value).to.equal('17:11.77');
+    expect(result.value).to.equal('17:11.78');
     expect(result.pace).to.equal('5:32 / mi');
     expect(result.result).to.equal('value');
     expect(result.sort).to.be.closeTo(1031.77, 0.01);
@@ -176,7 +176,7 @@ describe('calculateWorkoutResults method', () => {
     const result = calculatorUtils.calculateWorkoutResults(input, target, options);
 
     expect(result.key).to.equal('1000 m @ 5 km');
-    expect(result.value).to.equal('3:26.35');
+    expect(result.value).to.equal('3:26.36');
     expect(result.pace).to.equal('');
     expect(result.result).to.equal('value');
     expect(result.sort).to.be.closeTo(206.35, 0.01);

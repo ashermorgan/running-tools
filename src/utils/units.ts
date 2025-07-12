@@ -62,7 +62,7 @@ export const DistanceUnitData: { [key in DistanceUnits]: UnitData } = {
   [DistanceUnits.Miles]: {
     name: 'Miles',
     symbol: 'mi',
-    value: 1609.3499,
+    value: 1609.344,
   },
   [DistanceUnits.Marathons]: {
     name: 'Marathons',

@@ -75,7 +75,7 @@ test('Pace Calculator', async ({ page }) => {
   await page.getByRole('button', { name: 'Close' }).click();
 
   // Assert paces are correct
-  await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.57');
+  await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.58');
   await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
   await expect(page.getByRole('row')).toHaveCount(3);
 
@@ -83,7 +83,7 @@ test('Pace Calculator', async ({ page }) => {
   await page.reload();
 
   // Assert paces are correct (custom targets and default units not reset)
-  await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.57');
+  await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.58');
   await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
   await expect(page.getByRole('row')).toHaveCount(3);
 

@@ -34,7 +34,7 @@ test('Unit Calculator', async ({ page }) => {
   await page.getByLabel('Input units').selectOption('Kilometers per Hour');
   await page.getByLabel('Input value').fill('10');
   await page.getByLabel('Output units').selectOption('Time per Mile');
-  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
 
   // Convert time units (83.76 min to hh:mm:ss)
   await page.getByLabel('Selected unit category').selectOption('Time');
@@ -64,5 +64,5 @@ test('Unit Calculator', async ({ page }) => {
 
   // Assert speed & pace result is correct (state not reset)
   await page.getByLabel('Selected unit category').selectOption('Speed & Pace');
-  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.366');
+  await expect(page.getByLabel('Output value')).toHaveText('00:09:39.364');
 });
