@@ -1,4 +1,3 @@
-import * as paceUtils from '@/utils/paces';
 import * as raceUtils from '@/utils/races';
 import { TargetTypes, workoutTargetToString } from '@/utils/targets';
 import type { StandardTarget, WorkoutTarget } from '@/utils/targets';
@@ -128,8 +127,8 @@ export function calculatePaceResults(input: DistanceTime, target: StandardTarget
                                      defaultUnitSystem: UnitSystems,
                                      preciseDurations: boolean = true): TargetResult {
 
-  return calculateStandardResult(input, target, (d1, t1, d2) => paceUtils.calculateTime(d1, t1, d2),
-    (t1, d1, t2) => paceUtils.calculateDistance(t1, d1, t2), defaultUnitSystem, preciseDurations);
+  return calculateStandardResult(input, target, (d1, t1, d2) => ((t1 / d1) * d2),
+    (t1, d1, t2) => ((d1 / t1) * t2), defaultUnitSystem, preciseDurations);
 }
 
 /**
@@ -197,7 +196,7 @@ export function calculateWorkoutResults(input: DistanceTime, target: WorkoutTarg
     // Get workout split prediction
     d2 = raceUtils.predictDistance(t1, d1, t2, options.model, options.riegelExponent);
   }
-  const t3 = paceUtils.calculateTime(d2, t2, d3);
+  const t3 = (t2 / d2) * d3;
 
   // Return result
   return {
