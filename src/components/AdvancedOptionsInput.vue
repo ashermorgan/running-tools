@@ -27,15 +27,17 @@
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout">
     Prediction Model:
     <select v-model="(options as RaceOptions).model" aria-label="Prediction model">
-      <option value="AverageModel">Average</option>
-      <option value="PurdyPointsModel">Purdy Points Model</option>
-      <option value="VO2MaxModel">V&#775;O&#8322; Max Model</option>
-      <option value="CameronModel">Cameron's Model</option>
-      <option value="RiegelModel">Riegel's Model</option>
+      <option :value="RacePredictionModels.AverageModel">Average</option>
+      <option :value="RacePredictionModels.PurdyPointsModel">Purdy Points Model</option>
+      <option :value="RacePredictionModels.VO2MaxModel">V&#775;O&#8322; Max Model</option>
+      <option :value="RacePredictionModels.CameronModel">Cameron's Model</option>
+      <option :value="RacePredictionModels.RiegelModel">Riegel's Model</option>
     </select>
   </div>
 
-  <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout">
+  <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout"
+       v-show="(options as RaceOptions).model == RacePredictionModels.AverageModel ||
+               (options as RaceOptions).model == RacePredictionModels.RiegelModel">
     Riegel Exponent:
     <decimal-input v-model="(options as RaceOptions).riegelExponent"
       aria-label="Riegel exponent" :min="1" :max="1.3" :digits="2" :step="0.01"/>
@@ -46,6 +48,7 @@
 <script setup lang="ts">
 import { Calculators } from '@/core/calculators';
 import type { StandardOptions, RaceOptions, WorkoutOptions } from '@/core/calculators';
+import { RacePredictionModels } from '@/core/racePrediction';
 import type { TargetSets } from '@/core/targets';
 import { UnitSystems } from '@/core/units';
 

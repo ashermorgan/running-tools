@@ -38,7 +38,7 @@ export interface StandardOptions {
   selectedTargetSet: string,
 }
 export interface RaceOptions extends StandardOptions {
-  model: racePrediction.RacePredictionModel,
+  model: racePrediction.RacePredictionModels,
   riegelExponent: number,
 };
 export interface WorkoutOptions extends RaceOptions {
@@ -86,7 +86,7 @@ export const defaultPaceOptions: StandardOptions = {
   selectedTargetSet: '_pace_targets',
 };
 export const defaultRaceOptions: RaceOptions = {
-  model: racePrediction.RacePredictionModel.AverageModel,
+  model: racePrediction.RacePredictionModels.AverageModel,
   riegelExponent: 1.06,
   selectedTargetSet: '_race_targets',
 };

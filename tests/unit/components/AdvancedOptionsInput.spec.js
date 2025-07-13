@@ -85,6 +85,43 @@ test('should be correctly render race options according to props', () => {
   expect(wrapper.find('select[aria-label="Prediction model"]').element.value).to
     .equal('PurdyPointsModel');
   expect(wrapper.findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1.2);
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(false);
+});
+
+test('should render riegel exponent field only for supported race prediction models', async () => {
+  // Initialize component
+  const wrapper = shallowMount(AdvancedOptionsInput, {
+    propsData: {
+      defaultUnitSystem: 'metric',
+      options: {
+        model: 'AverageModel',
+        riegelExponent: 1.2,
+        selectedTargetSet: '_new',
+      },
+      type: 'race',
+      targetSets: {},
+    },
+    attachTo: document.body,
+  });
+
+  // Assert field is visible for Average model
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(true);
+
+  // Assert field is not visible for Purdy Points model
+  await wrapper.find('select[aria-label="Prediction model"]').setValue('PurdyPointsModel');
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(false);
+
+  // Assert field is not visible for VO2 Max model
+  await wrapper.find('select[aria-label="Prediction model"]').setValue('VO2MaxModel');
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(false);
+
+  // Assert field is not visible for Cameron model
+  await wrapper.find('select[aria-label="Prediction model"]').setValue('CameronModel');
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(false);
+
+  // Assert field is not visible for Riegel model
+  await wrapper.find('select[aria-label="Prediction model"]').setValue('RiegelModel');
+  expect(wrapper.findComponent({ name: 'decimal-input' }).isVisible()).to.equal(true);
 });
 
 test('should be correctly render split options according to props', () => {

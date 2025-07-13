@@ -5,7 +5,7 @@
 /*
  * The available race prediction models
  */
-export enum RacePredictionModel {
+export enum RacePredictionModels {
   AverageModel = 'AverageModel',
   PurdyPointsModel = 'PurdyPointsModel',
   VO2MaxModel = 'VO2MaxModel',
@@ -442,19 +442,19 @@ const AverageModel = {
    * @param {number} c The value of the exponent in Pete Riegel's Model
  */
 export function predictTime(d1: number, t1: number, d2: number,
-                            model: RacePredictionModel = RacePredictionModel.AverageModel,
+                            model: RacePredictionModels = RacePredictionModels.AverageModel,
                             c: number = 1.06): number {
   switch (model) {
     default:
-    case RacePredictionModel.AverageModel:
+    case RacePredictionModels.AverageModel:
       return AverageModel.predictTime(d1, t1, d2, c);
-    case RacePredictionModel.PurdyPointsModel:
+    case RacePredictionModels.PurdyPointsModel:
       return PurdyPointsModel.predictTime(d1, t1, d2);
-    case RacePredictionModel.VO2MaxModel:
+    case RacePredictionModels.VO2MaxModel:
       return VO2MaxModel.predictTime(d1, t1, d2);
-    case RacePredictionModel.RiegelModel:
+    case RacePredictionModels.RiegelModel:
       return RiegelModel.predictTime(d1, t1, d2, c);
-    case RacePredictionModel.CameronModel:
+    case RacePredictionModels.CameronModel:
       return CameronModel.predictTime(d1, t1, d2);
   }
 }
@@ -468,19 +468,19 @@ export function predictTime(d1: number, t1: number, d2: number,
    * @param {number} c The value of the exponent in Pete Riegel's Model
  */
 export function predictDistance(t1: number, d1: number, t2: number,
-                                model: RacePredictionModel = RacePredictionModel.AverageModel,
+                                model: RacePredictionModels = RacePredictionModels.AverageModel,
                                 c: number = 1.06) {
   switch (model) {
     default:
-    case RacePredictionModel.AverageModel:
+    case RacePredictionModels.AverageModel:
       return AverageModel.predictDistance(t1, d1, t2, c);
-    case RacePredictionModel.PurdyPointsModel:
+    case RacePredictionModels.PurdyPointsModel:
       return PurdyPointsModel.predictDistance(t1, d1, t2);
-    case RacePredictionModel.VO2MaxModel:
+    case RacePredictionModels.VO2MaxModel:
       return VO2MaxModel.predictDistance(t1, d1, t2);
-    case RacePredictionModel.RiegelModel:
+    case RacePredictionModels.RiegelModel:
       return RiegelModel.predictDistance(t1, d1, t2, c);
-    case RacePredictionModel.CameronModel:
+    case RacePredictionModels.CameronModel:
       return CameronModel.predictDistance(t1, d1, t2);
   }
 }
