@@ -180,6 +180,8 @@ describe('set method', () => {
 describe('migrate method', () => {
   test('should correctly migrate <=1.4.1 calculator options', async () => {
     // Initialize localStorage
+    localStorage.setItem('running-tools.batch-calculator-options',
+      '{"calculator":"race","increment":32,"rows":15}');
     localStorage.setItem('running-tools.pace-calculator-target-set', '"A"');
     localStorage.setItem('running-tools.race-calculator-options',
       '{"model":"RiegelModel","riegelExponent":1.07}');
@@ -193,6 +195,8 @@ describe('migrate method', () => {
     utils.migrateLocalStorage();
 
     // Assert localStorage entries correctly migrated
+    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(
+      '{"calculator":"race","increment":32,"rows":15,"label":""}');
     expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
       '{"selectedTargetSet":"A"}');
     expect(localStorage.getItem('running-tools.pace-calculator-target-set')).to.equal(null);
@@ -209,9 +213,7 @@ describe('migrate method', () => {
   });
 
   test('should correctly migrate partial <=1.4.1 calculator options', async () => {
-    // Initialize localStorage (*-target-set options missing)
-    localStorage.setItem('running-tools.race-calculator-options',
-      '{"model":"RiegelModel","riegelExponent":1.07}');
+    // Initialize localStorage (workout-target-set option missing)
     localStorage.setItem('running-tools.workout-calculator-options',
       '{"model":"RiegelModel","riegelExponent":1.08}');
 
@@ -219,16 +221,15 @@ describe('migrate method', () => {
     utils.migrateLocalStorage();
 
     // Assert localStorage entries correctly migrated
-    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
-      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"_race_targets"}');
     expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
       '{"model":"RiegelModel","riegelExponent":1.08,"selectedTargetSet":"_workout_targets",' +
       '"customTargetNames":false}');
   });
 
-
   test('should not modify >1.4.1 calculator options', async () => {
     // Initialize localStorage
+    localStorage.setItem('running-tools.batch-calculator-options',
+      '{"calculator":"race","increment":32,"label":"foo","rows":15}');
     localStorage.setItem('running-tools.pace-calculator-options',
       '{"selectedTargetSet":"A"}');
     localStorage.setItem('running-tools.race-calculator-options',
@@ -243,6 +244,8 @@ describe('migrate method', () => {
     utils.migrateLocalStorage();
 
     // Assert localStorage entries not modified
+    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(
+      '{"calculator":"race","increment":32,"label":"foo","rows":15}');
     expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
       '{"selectedTargetSet":"A"}');
     expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
@@ -259,6 +262,7 @@ describe('migrate method', () => {
     utils.migrateLocalStorage();
 
     // Assert localStorage entries not modified
+    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(null);
     expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(null);
     expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(null);
     expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(null);

@@ -23,6 +23,11 @@ test('should load input from localStorage', async () => {
     distanceUnit: 'miles',
     time: 600,
   });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchInput).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 600,
+  });
 });
 
 test('should save input to localStorage when modified', async () => {
@@ -49,6 +54,7 @@ test('should load batch options from localStorage', async () => {
   localStorage.setItem('running-tools.batch-calculator-options', JSON.stringify({
     calculator: 'race',
     increment: 32,
+    label: 'foo',
     rows: 15,
   }));
 
@@ -59,29 +65,26 @@ test('should load batch options from localStorage', async () => {
   expect(wrapper.find('select[aria-label="Calculator"]').element.value).to.equal('race');
   expect(wrapper.findComponent({ name: 'time-input' }).vm.modelValue).to.equal(32);
   expect(wrapper.findComponent({ name: 'integer-input' }).vm.modelValue).to.equal(15);
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchOptions).to.deep.equal({
+    calculator: 'race',
+    increment: 32,
+    label: 'foo',
+    rows: 15,
+  });
 });
 
 test('should save batch options to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(BatchCalculator);
 
-  // Update active calculator
-  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
-
-  // Assert options saved
-  expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
-    calculator: 'race',
-    increment: 15,
-    rows: 20,
-  }));
-
   // Update increment value
   await wrapper.findComponent({ name: 'time-input' }).setValue(32);
 
   // Assert options saved
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
-    calculator: 'race',
+    calculator: 'workout',
     increment: 32,
+    label: '',
     rows: 20,
   }));
 
@@ -90,8 +93,36 @@ test('should save batch options to localStorage when modified', async () => {
 
   // Assert options saved
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
+    calculator: 'workout',
+    increment: 32,
+    label: '',
+    rows: 15,
+  }));
+
+  // Update batch column label
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    calculator: 'workout',
+    increment: 32,
+    label: 'foo',
+    rows: 15,
+  }, 'batch-options');
+
+  // Assert options saved
+  expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
+    calculator: 'workout',
+    increment: 32,
+    label: 'foo',
+    rows: 15,
+  }));
+
+  // Update active calculator
+  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+
+  // Assert options saved
+  expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
     calculator: 'race',
     increment: 32,
+    label: 'foo',
     rows: 15,
   }));
 });
@@ -352,6 +383,7 @@ test('should pass correct input props to DoubleOutputTable', async () => {
     1200, 1215, 1230, 1245, 1260, 1275, 1290, 1305, 1320, 1335,
     1350, 1365, 1380, 1395, 1410, 1425, 1440, 1455, 1470, 1485,
   ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('5 km');
 
   // Change input pace
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
@@ -369,6 +401,7 @@ test('should pass correct input props to DoubleOutputTable', async () => {
     600, 615, 630, 645, 660, 675, 690, 705, 720, 735,
     750, 765, 780, 795, 810, 825, 840, 855, 870, 885,
   ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('2 mi');
 
   // Change increment value
   await wrapper.findComponent({ name: 'time-input' }).setValue(10);
@@ -382,6 +415,7 @@ test('should pass correct input props to DoubleOutputTable', async () => {
     600, 610, 620, 630, 640, 650, 660, 670, 680, 690,
     700, 710, 720, 730, 740, 750, 760, 770, 780, 790,
   ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('2 mi');
 
   // Change number of rows
   await wrapper.findComponent({ name: 'integer-input' }).setValue(15);
@@ -394,23 +428,109 @@ test('should pass correct input props to DoubleOutputTable', async () => {
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputTimes).to.deep.equal([
     600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740,
   ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('2 mi');
+
+  // Enter custom batch column label
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    calculator: 'workout',
+    increment: 10,
+    label: 'foo',
+    rows: 15,
+  }, 'batchOptions');
+
+  // Assert that the props are updated
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputDistance).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+  });
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputTimes).to.deep.equal([
+    600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740,
+  ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('2 mi');
+
+  // Enable target name customization
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: true,
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+    selectedTargetSet: '_workout_targets',
+  }, 'options');
+
+  // Assert that the props are updated
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputDistance).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+  });
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputTimes).to.deep.equal([
+    600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740,
+  ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('foo');
+
+  // Switch calculators
+  await wrapper.find('select[aria-label="Calculator"]').setValue('race');
+
+  // Assert that the props are updated
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputDistance).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+  });
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.inputTimes).to.deep.equal([
+    600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740,
+  ]);
+  expect(wrapper.findComponent({ name: 'double-output-table' }).vm.label).to.equal('2 mi');
 });
 
-test('should correctly set AdvancedOptionsInput type prop', async () => {
+test('should correctly set AdvancedOptionsInput props', async () => {
   // Initialize component
   const wrapper = shallowMount(BatchCalculator);
 
-  // Assert prop is correct for pace calculator
+  // Set input pace and batch options
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+  await wrapper.findComponent({ name: 'time-input' }).setValue(32);
+  await wrapper.findComponent({ name: 'integer-input' }).setValue(15);
+
+  // Assert batch props are correct
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchInput).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchOptions).to.deep.equal({
+    calculator: 'workout',
+    increment: 32,
+    label: '',
+    rows: 15,
+  });
+
+  // Assert props are correct for pace calculator
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('pace');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    selectedTargetSet: '_pace_targets',
+  });
 
-  // Update race calculator options
+  // Assert props are correct for race calculator
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('race');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+    selectedTargetSet: '_race_targets',
+  });
 
-  // Update workout calculator options
+  // Assert props are correct for workout calculator
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('workout');
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    customTargetNames: false,
+    model: 'AverageModel',
+    riegelExponent: 1.06,
+    selectedTargetSet: '_workout_targets',
+  });
 });
 
 test('should correctly calculate outputs', async () => {

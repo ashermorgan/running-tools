@@ -16,9 +16,9 @@
       <div>
         Calculator:
         <select aria-label="Calculator" v-model="options.calculator">
-          <option value="pace">Pace Calculator</option>
-          <option value="race">Race Calculator</option>
-          <option value="workout">Workout Calculator</option>
+          <option :value="calculators.Calculators.Pace">Pace Calculator</option>
+          <option :value="calculators.Calculators.Race">Race Calculator</option>
+          <option :value="calculators.Calculators.Workout">Workout Calculator</option>
         </select>
       </div>
     </div>
@@ -27,13 +27,14 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
-        v-model:options="calcOptions" v-model:targetSets="targetSets" :type="options.calculator"/>
+      <advanced-options-input :batch-input="input" v-model:batch-options="options"
+        v-model:defaultUnitSystem="defaultUnitSystem" v-model:options="calcOptions"
+        v-model:targetSets="targetSets" :type="options.calculator"/>
     </details>
 
     <h2>Batch Results</h2>
-    <double-output-table class="output" :input-times="inputTimes" :input-distance="inputDistance"
-      :calculate-result="calculateResult"
+    <double-output-table class="output" :calculate-result="calculateResult"
+      :input-distance="inputDistance" :input-times="inputTimes" :label="batchColumnLabel"
       :targets="targetSets[calcOptions.selectedTargetSet] ?
       targetSets[calcOptions.selectedTargetSet].targets : []"/>
   </div>
@@ -46,7 +47,7 @@ import * as calculators from '@/core/calculators';
 import type { BatchOptions, RaceOptions, StandardOptions, TargetResult,
   WorkoutOptions } from '@/core/calculators';
 import * as targetUtils from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
+import { UnitSystems, detectDefaultUnitSystem, formatDistance } from '@/core/units';
 import type { Distance, DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -203,6 +204,18 @@ const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => Tar
       return (x,y) => calculators.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
         workoutOptions.value, false);
     }
+  }
+});
+
+/*
+ * The label to render for the batch column
+ */
+const batchColumnLabel = computed<string>(() => {
+  if (options.value.calculator == calculators.Calculators.Workout &&
+    (calcOptions.value as WorkoutOptions).customTargetNames && options.value.label) {
+    return options.value.label;
+  } else {
+    return formatDistance(input.value, false);
   }
 });
 </script>

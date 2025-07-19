@@ -34,12 +34,13 @@ test('should correctly render table body rows and headers', () => {
         distanceUnit: 'miles',
         distanceValue: 2,
       },
+      label: 'foo',
     },
   });
 
   // Assert headers are correctly generated from first row of results
   const headers = wrapper.findAll('th');
-  expect(headers[0].element.textContent).to.equal('2 mi');
+  expect(headers[0].element.textContent).to.equal('foo');
   expect(headers[1].element.textContent).to.equal('key1');
   expect(headers[2].element.textContent).to.equal('key2');
   expect(headers[3].element.textContent).to.equal('key3');
@@ -80,12 +81,13 @@ test('Should display message when inputs are empty', () => {
         distanceUnit: 'miles',
         distanceValue: 2,
       },
+      label: 'foo',
     },
   });
 
   // Assert headers are correctly generated
   const headers = wrapper.findAll('th');
-  expect(headers[0].element.textContent).to.equal('2 mi');
+  expect(headers[0].element.textContent).to.equal('foo');
   expect(headers.length).to.equal(1);
 
   // Assert results are correctly rendered

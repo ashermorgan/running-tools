@@ -33,13 +33,14 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row')).toHaveCount(16);
 
-    // Change prediction model and enable customized target names
+    // Change prediction model, enable customized target names, and set custom batch column label
     await page.getByText('Advanced Options').click();
     await page.getByLabel('Prediction model').selectOption('Riegel\'s Model');
     await page.getByLabel('Target name customization').selectOption('Enabled');
+    await page.getByLabel('Batch column label').fill('foo');
 
     // Assert workout results are correct
-    await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+    await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('foo');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
@@ -167,7 +168,7 @@ test('Batch calculator', async ({ page }) => {
   {
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
     await expect(page.getByLabel('Target name customization')).toHaveValue("true");
-    await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
+    await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('foo');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');

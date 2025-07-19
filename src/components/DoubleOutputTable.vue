@@ -32,40 +32,45 @@ import { computed } from 'vue';
 import { ResultType } from '@/core/calculators';
 import type { TargetResult } from '@/core/calculators';
 import type { Target } from '@/core/targets';
-import { formatDistance, formatDuration } from '@/core/units';
+import { formatDuration } from '@/core/units';
 import type { Distance, DistanceTime } from '@/core/units';
 
 interface Props {
-  /**
+  /*
    * The method that generates the target table rows
    */
   calculateResult: (x: DistanceTime, y: Target) => TargetResult,
 
-  /**
-   * The target set
+  /*
+   * The input distance
    */
-  targets: Array<Target>,
+  inputDistance: Distance,
 
-  /**
+  /*
    * The set of input times
    */
   inputTimes: Array<number>,
 
-  /**
-   * The input distance
+  /*
+   * The label to use for the first column
    */
-  inputDistance: Distance,
+  label: string,
+
+  /*
+   * The target set
+   */
+  targets: Array<Target>,
 }
 
 const props = defineProps<Props>();
 
-/**
+/*
  * The target table results
  */
 const results = computed(() => {
   // Calculate results
   const results: Array<Array<string>> = [[
-    formatDistance(props.inputDistance, false),
+    props.label
   ]];
 
   props.inputTimes.forEach((input, y) => {

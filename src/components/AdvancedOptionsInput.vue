@@ -24,6 +24,13 @@
     </select>
   </div>
 
+  <div v-if="batchOptions && props.batchInput && props.type === Calculators.Workout"
+       v-show="(options as WorkoutOptions).customTargetNames">
+    Batch Column Label:
+    <input v-model="batchOptions.label" :placeholder="formatDistance(props.batchInput, false)"
+           aria-label="Batch column label"/>
+  </div>
+
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout">
     Prediction Model:
     <select v-model="(options as RaceOptions).model" aria-label="Prediction model">
@@ -47,10 +54,12 @@
 
 <script setup lang="ts">
 import { Calculators } from '@/core/calculators';
-import type { StandardOptions, RaceOptions, WorkoutOptions } from '@/core/calculators';
+import type { BatchOptions, StandardOptions, RaceOptions,
+  WorkoutOptions } from '@/core/calculators';
 import { RacePredictionModels } from '@/core/racePrediction';
 import type { TargetSets } from '@/core/targets';
-import { UnitSystems } from '@/core/units';
+import { UnitSystems, formatDistance } from '@/core/units';
+import type { DistanceTime } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
@@ -65,6 +74,16 @@ type CalculatorOptions = StandardOptions | RaceOptions | WorkoutOptions;
 const defaultUnitSystem = defineModel<UnitSystems>('defaultUnitSystem');
 
 const props = defineProps<{
+  /*
+   * The batch calculator input (if applicable, used to generate custom batch label placeholder)
+   */
+  batchInput?: DistanceTime,
+
+  /*
+   * The batch calculator options (if applicable)
+   */
+  batchOptions?: BatchOptions,
+
   /*
    * The calculator options
    */
@@ -82,7 +101,9 @@ const props = defineProps<{
 }>();
 
 // Generate internal refs tied to options and targetSets props
-const emit = defineEmits(['update:options', 'update:targetSets']);
+const emit = defineEmits(['update:batchOptions', 'update:options', 'update:targetSets']);
+const batchOptions = useObjectModel<BatchOptions | undefined>(() => props.batchOptions, (x) =>
+  emit('update:batchOptions', x));
 const options = useObjectModel<CalculatorOptions>(() => props.options, (x) =>
   emit('update:options', x));
 const targetSets = useObjectModel<TargetSets>(() => props.targetSets, (x) =>

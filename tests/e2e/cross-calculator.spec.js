@@ -234,6 +234,7 @@ test('Cross-calculator', async ({ page }) => {
       localStorage.getItem('running-tools.batch-calculator-options'))).toEqual(JSON.stringify({
         calculator: 'race',
         increment: 10,
+        label: '',
         rows: 15,
       }));
 
@@ -739,6 +740,7 @@ test('v1.4.1 Migration', async ({ page }) => {
         calculator: 'race',
         increment: 10,
         rows: 15,
+        label: '',
       }));
 
     // Assert localStorage entries for the pace calculator are correct

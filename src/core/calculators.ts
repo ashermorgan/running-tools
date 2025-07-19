@@ -47,6 +47,7 @@ export interface WorkoutOptions extends RaceOptions {
 export interface BatchOptions {
   calculator: Calculators.Pace | Calculators.Race | Calculators.Workout,
   increment: number,
+  label: string,
   rows: number,
 };
 
@@ -80,6 +81,7 @@ export const defaultInput: DistanceTime = {
 export const defaultBatchOptions: BatchOptions = {
   calculator: Calculators.Workout,
   increment: 15,
+  label: '',
   rows: 20,
 };
 export const defaultPaceOptions: StandardOptions = {

@@ -56,6 +56,8 @@ test('should be correctly render pace options according to props', () => {
   });
   expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
     .length(0);
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
+    .length(0);
   expect(wrapper.findAll('select[aria-label="Prediction model"]')).to.have.length(0);
   expect(wrapper.findAllComponents({ name: 'decimal-input' })).to.have.length(0);
 });
@@ -81,6 +83,8 @@ test('should be correctly render race options according to props', () => {
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to
     .equal('_new');
   expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
+    .length(0);
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
   expect(wrapper.find('select[aria-label="Prediction model"]').element.value).to
     .equal('PurdyPointsModel');
@@ -144,6 +148,8 @@ test('should be correctly render split options according to props', () => {
     .equal('_new');
   expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
     .length(0);
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
+    .length(0);
   expect(wrapper.findAll('select[aria-label="Prediction model"]')).to.have.length(0);
   expect(wrapper.findAllComponents({ name: 'decimal-input' })).to.have.length(0);
 });
@@ -170,9 +176,116 @@ test('should be correctly render workout options according to props', () => {
     .equal('_new');
   expect(wrapper.find('select[aria-label="Target name customization"]').element.value).to
     .equal('true');
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
+    .length(0);
   expect(wrapper.find('select[aria-label="Prediction model"]').element.value).to
     .equal('PurdyPointsModel');
   expect(wrapper.findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1.2);
+});
+
+test('should only show batch column label field when applicable', async () => {
+  // Initialize component with workout target name customization enabled
+  const wrapper = shallowMount(AdvancedOptionsInput, {
+    propsData: {
+      defaultUnitSystem: 'metric',
+      options: {
+        customTargetNames: true,
+        model: 'PurdyPointsModel',
+        riegelExponent: 1.2,
+        selectedTargetSet: '_new',
+      },
+      targetSets: {},
+      type: 'workout',
+    },
+    attachTo: document.body,
+  });
+
+  // Assert batch column label field is hidden
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
+    .length(0);
+
+  // Add batchInput and batchOptions but disable workout target name customization
+  await wrapper.setProps({
+    batchInput: { // added
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    batchOptions: { // added
+      calculator: 'workout',
+      increment: 32,
+      label: 'foo',
+      rows: 15,
+    },
+    defaultUnitSystem: 'metric',
+    options: {
+      customTargetNames: false, // disabled
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+      selectedTargetSet: '_new',
+    },
+    targetSets: {},
+    type: 'workout',
+  });
+
+  // Assert batch column label field is still hidden
+  expect(wrapper.find('input[aria-label="Batch column label"]').isVisible()).to.equal(false);
+
+  // Enable workout target name customization
+  await wrapper.setProps({
+    batchInput: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    batchOptions: {
+      calculator: 'workout',
+      increment: 32,
+      label: 'foo',
+      rows: 15,
+    },
+    defaultUnitSystem: 'metric',
+    options: {
+      customTargetNames: true, // enabled
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+      selectedTargetSet: '_new',
+    },
+    targetSets: {},
+    type: 'workout',
+  });
+
+  // Assert batch column label field is now visible
+  expect(wrapper.find('input[aria-label="Batch column label"]').isVisible()).to.equal(true);
+  expect(wrapper.find('input[aria-label="Batch column label"]').element.placeholder).to.equal('2 mi')
+  expect(wrapper.find('input[aria-label="Batch column label"]').element.value).to.equal('foo')
+
+  // Switch to race calculator
+  await wrapper.setProps({
+    batchInput: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    batchOptions: {
+      calculator: 'workout',
+      increment: 32,
+      label: 'foo',
+      rows: 15,
+    },
+    defaultUnitSystem: 'metric',
+    options: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+      selectedTargetSet: '_new',
+    },
+    targetSets: {},
+    type: 'race', // changed
+  });
+
+  // Assert batch column label field is hidden again
+  expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
+    .length(0);
 });
 
 test('should pass correct props to TargetSetSelector', async () => {

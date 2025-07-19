@@ -62,6 +62,13 @@ export function unsetLocalStorage(key: string) {
 export function migrateLocalStorage() {
   /* eslint-disable @typescript-eslint/no-explicit-any */
 
+  // Add label property to batch-calculator-options (>1.4.1)
+  const batchOptions = getLocalStorage<any>('batch-calculator-options');
+  if (batchOptions !== null && batchOptions.label === undefined) {
+    batchOptions.label = '';
+    setLocalStorage('batch-calculator-options', batchOptions);
+  }
+
   // Move pace-calculator-target-set into new pace-calculator-options (>1.4.1)
   const paceSelectedTargetSet = getLocalStorage<string>('pace-calculator-target-set');
   if (paceSelectedTargetSet !== null) {
