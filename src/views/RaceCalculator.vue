@@ -10,7 +10,7 @@
         <h2>Race Statistics</h2>
       </summary>
       <div>
-        Purdy Points: <b>{{ formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
+        Purdy points: <b>{{ formatNumber(raceStats.purdyPoints, 0, 1, true) }}</b>
       </div>
       <div>
         V&#775;O&#8322;: <b>{{ formatNumber(raceStats.vo2, 0, 1, true) }}</b> ml/kg/min

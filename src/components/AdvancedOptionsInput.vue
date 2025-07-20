@@ -8,7 +8,7 @@
   </div>
 
   <div>
-    Target Set:
+    Target set:
     <target-set-selector :setType="props.type" :default-unit-system="defaultUnitSystem"
       v-model:selected-target-set="options.selectedTargetSet" v-model:target-sets="targetSets"
       :customWorkoutNames="props.type === Calculators.Workout ?
@@ -16,7 +16,7 @@
   </div>
 
   <div v-if="props.type === Calculators.Workout">
-    Target Name Customization:
+    Target name customization:
     <select v-model="(options as WorkoutOptions).customTargetNames"
       aria-label="Target name customization">
       <option :value="false">Disabled</option>
@@ -26,13 +26,13 @@
 
   <div v-if="batchOptions && props.batchInput && props.type === Calculators.Workout"
        v-show="(options as WorkoutOptions).customTargetNames">
-    Batch Column Label:
+    Batch column label:
     <input v-model="batchOptions.label" :placeholder="formatDistance(props.batchInput, false)"
            aria-label="Batch column label"/>
   </div>
 
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout">
-    Prediction Model:
+    Prediction model:
     <select v-model="(options as RaceOptions).model" aria-label="Prediction model">
       <option :value="RacePredictionModels.AverageModel">Average</option>
       <option :value="RacePredictionModels.PurdyPointsModel">Purdy Points Model</option>
@@ -45,7 +45,7 @@
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout"
        v-show="(options as RaceOptions).model == RacePredictionModels.AverageModel ||
                (options as RaceOptions).model == RacePredictionModels.RiegelModel">
-    Riegel Exponent:
+    Riegel exponent:
     <decimal-input v-model="(options as RaceOptions).riegelExponent"
       aria-label="Riegel exponent" :min="1" :max="1.3" :digits="2" :step="0.01"/>
       (default: 1.06)

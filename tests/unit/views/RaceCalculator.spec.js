@@ -126,7 +126,7 @@ test('should correctly calculate race statistics', async () => {
   const vo2Max = raceStats.findAll('div')[2].element.textContent.trim();
 
   // Assert race statistics are correct
-  expect(purdyPoints).to.equal('Purdy Points: 454.5');
+  expect(purdyPoints).to.equal('Purdy points: 454.5');
   expect(vo2).to.equal('V̇O₂: 47.5 ml/kg/min (95.3% of max)')
   expect(vo2Max).to.equal('V̇O₂ Max: 49.8 ml/kg/min')
 });
