@@ -1,90 +1,112 @@
 # Changelog
 
-## 1.4.1 - 2024-09-07
+## 1.4.1 -- 2024-09-07
 
 ### Fixed
-- Bug that prevented workout split distances from being edited through the Batch
-  Calculator
-- Improved accuracy of the VO2 Max model
-- Miscellaneous dark mode issues
 
-## 1.4.0 - 2024-07-11
+- Allow workout split distances to be edited from the Batch Calculator
+- Improve accuracy of the VO2 Max race prediction model
+- Fix miscellaneous dark mode issues
+
+## 1.4.0 -- 2024-07-11
 
 ### Added
-- Batch Calculator
-- Workout Calculator
+
+- Add batch calculator for performing pace, race, and workout calculations over
+  a range of input times
+- Add workout calculator for estimating target workout splits
 
 ### Changed
-- The edit target set dialog is opened automatically after a new target set is
+
+- Open the edit target set dialog automatically after a new target set is
   created
-- Target sets can only be used by the calculator they were created in (and by
-  the Batch Calculator for pace, race, and workout target sets)
+
+## Removed
+
+- Remove support for using target sets across multiple calculators (excluding
+  the batch calculator, where applicable)
 
 ### Fixed
-- Bug that prevented Split Calculator splits from being saved after a new target
-  set was created
 
-## 1.3.0 - 2024-03-25
+- Ensure split calculator splits are saved after a new target set is created
+
+## 1.3.0 -- 2024-03-25
 
 ### Added
-- Support for custom cross-calculator target sets
-- About page
+
+- Add about page
 
 ### Changed
-- Reorganized Race Calculator options and output
-- Default units can now be customized
+
+- Allow target sets to be used across multiple calculators
+- Reorganize race calculator options and output
+- Allow default units to be customized
 
 ### Fixed
-- Improved input element behavior and validation
-- Improved accuracy of the Purdy Points model for time-based targets
-- Improved accessibility
 
-## 1.2.0 - 2021-11-20
+- Improve input element behavior and validation
+- Improve accuracy of the Purdy Points race prediction model for time-based
+  targets
+- Improve accessibility
+
+## 1.2.0 -- 2021-11-20
 
 ### Added
-- Split calculator
+
+- Add split calculator for calculating split paces and cumulative times of
+  races
 
 ### Changed
-- Calculator state is saved between sessions
-- Improved arrow key behavior in time input fields
-- Improved formatting of distances and durations
 
-## 1.1.1 - 2021-09-19
+- Save calculator state between sessions
+- Improve arrow key behavior in time input fields
+- Improve formatting of distances and durations
+
+## 1.1.1 -- 2021-09-19
 
 ### Fixed
-- Bug in how default units were chosen
-- Issue that caused all pace and race calculator results to be NaN
 
-## 1.1.0 - 2021-09-16
+- Fix bug in how default units are chosen
+- Fix issue that caused all pace and race calculator results to be NaN after
+  updating to version 1.1.0
+
+## 1.1.0 -- 2021-09-16
 
 ### Added
-- Time based targets in pace and race calculators
-- Advanced race calculator options and output
+
+- Support time-based targets in pace and race calculators
+- Add advanced options and output in race calculator
 
 ### Changed
-- Race calculator shows pace of each result
-- Improved calculator interfaces
-- Default units are chosen automatically
 
-## 1.0.0 - 2021-08-30
+- Show the pace of each result in race calculator
+- Improve calculator interfaces
+- Choose default units automatically according to the user's language region
+
+## 1.0.0 -- 2021-08-30
 
 ### Added
-- Dark mode
-- Race calculator
+
+- Add race calculator for estimating equivalent race results
+- Implement dark mode
 
 ### Changed
-- The list of distance targets can be edited
-- Improved appearance
-- Inactive pages are cached
-- Minute and second input fields wrap around
 
-## 0.2.0 - 2021-08-18
+- Allow the list of pace calculator targets to be edited
+- Improve appearance on mobile devices
+- Cache inactive pages
+- Allow minute and second input fields to wrap around
 
-### Added
-- Pace and Unit Calculators
-- Progressive Web App
-
-## 0.1.0 - 2021-07-29
+## 0.2.0 -- 2021-08-18
 
 ### Added
-- Basic app structure
+
+- Add pace calculator for calculating distances and times that are at equivalent
+  paces
+- Add unit calculator for converting between distance, time, speed, and pace
+  units
+- Implement Progressive Web App functionality
+
+## 0.1.0 -- 2021-07-29
+
+*Initial release with basic app structure.*
