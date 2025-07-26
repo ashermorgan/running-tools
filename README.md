@@ -1,8 +1,10 @@
 # Running Tools
-A collection of tools for runners and their coaches.
-Try it out [here](https://apps.ashermorgan.net/running-tools/).
+
+A collection of tools for runners and their coaches. Try it out
+[here](https://apps.ashermorgan.net/running-tools/).
 
 ## Features
+
 Running Tools contains six calculators:
 
 - [Batch Calculator](https://apps.ashermorgan.net/running-tools/#/calculate/batch):
@@ -18,10 +20,13 @@ Running Tools contains six calculators:
 - [Workout Calculator](https://apps.ashermorgan.net/running-tools/#/calculate/workouts):
   Estimate target workout splits using previous race results
 
-More information about each calculator can be found
+The Pace, Race, and Unit Calculators are the simplest to use, while the Batch,
+Split, and Workout Calculators are designed for more advanced use cases. More
+information about each calculator can be found
 [here](https://apps.ashermorgan.net/running-tools/#/about).
 
 ## Setup
+
 Install dependencies
 
 ```

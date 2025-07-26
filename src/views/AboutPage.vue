@@ -20,7 +20,11 @@
     </ul>
 
     <h2>The Calculators</h2>
-    <p>Running Tools contains six calculators:</p>
+    <p>
+      Running Tools consists of six calculators.
+      The Pace, Race, and Unit Calculators are the simplest to use, while the Batch, Split, and
+        Workout Calculators are designed for more advanced use cases.
+    </p>
 
     <h3>Batch Calculator</h3>
     <p>
@@ -33,7 +37,7 @@
       The Batch Calculator is useful for tasks such as:
     </p>
     <ul class="questions">
-      <li>Generating a table of mile splits and the corresponding marathon finish times.</li>
+      <li>Generating a table of marathon finish times and the corresponding mile splits.</li>
       <li>Generating a table of equivalent race results for many distances and speeds.</li>
       <li>Generating a table of workout split times for an entire team.</li>
     </ul>
@@ -71,7 +75,7 @@
         <li>The Purdy Points Model</li>
         <li>The V&#775;O&#8322; Max Model</li>
         <li>Dave Cameron's Model</li>
-        <li>Pete Riegel's Model</li>
+        <li>Pete Riegel's Model (includes a configurable exponent)</li>
         <li>Average Model (averages the output of the other four models)</li>
       </ul>
       <p>
@@ -86,8 +90,8 @@
     <p>
       <strong>Note:</strong> Output race times and V&#775;O&#8322; / V&#775;O&#8322; Max values are
         just estimates.
-      Race predictions are most accurate for similar distances and assume identical conditions and
-        equal fitness.
+      Race predictions assume equivalent fitness and conditions to the input race, and are most
+        accurate for similar distances.
     </p>
 
     <h3>Split Calculator</h3>
@@ -128,7 +132,8 @@
       The selected target set controls which race distances and/or times the calculator calculates
         outputs for and the distances of the splits that are shown for these races.
       The Advanced Options section includes the option to switch between the same five prediction
-        models that are available in the Race Calculator.
+        models that are available in the Race Calculator, as well as the ability to enable support
+        for specifying custom target names (e.g. "1 mile threshold" instead of "1 mi @ 1:00:00").
     </p>
     <p>
       The Workout Calculator is useful for answering questions like:
@@ -140,8 +145,8 @@
     <p>
       <strong>Note:</strong> Results are just estimated race splits that are helpful for estimating
         target workout splits.
-      As with the Race Calculator, splits are most accurate for similar distances and assume equal
-        fitness.
+      As with the Race Calculator, splits assume equivalent fitness and conditions to the input
+        race, and are most accurate for similar paces.
     </p>
 
     <h2>Target Sets</h2>
@@ -155,8 +160,8 @@
         calculator.
     </p>
     <p>
-      <strong>Note:</strong> The split calculator only supports distance targets. The workout
-        calculator also includes a split distance field for each target.
+      <strong>Note:</strong> The Split Calculator only supports distance targets. The Workout
+        Calculator also includes a split distance field for each target.
     </p>
   </div>
 </template>
