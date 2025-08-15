@@ -32,7 +32,8 @@
 
     <h2>Equivalent Race Results</h2>
     <single-output-table class="output" show-pace
-      :calculate-result="x => calculateRaceResults(input, x, options, defaultUnitSystem, true)"
+      :calculate-result="x => calculateRaceResults(input, x, options.predictionOptions,
+                         defaultUnitSystem, true)"
       :targets="targetSets[options.selectedTargetSet] ?
       targetSets[options.selectedTargetSet].targets : []"/>
   </div>

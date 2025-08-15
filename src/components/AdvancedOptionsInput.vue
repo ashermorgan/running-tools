@@ -33,7 +33,8 @@
 
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout">
     Prediction model:
-    <select v-model="(options as RaceOptions).model" aria-label="Prediction model">
+    <select v-model="(options as RaceOptions).predictionOptions.model"
+      aria-label="Prediction model">
       <option :value="RacePredictionModels.AverageModel">Average</option>
       <option :value="RacePredictionModels.PurdyPointsModel">Purdy Points Model</option>
       <option :value="RacePredictionModels.VO2MaxModel">V&#775;O&#8322; Max Model</option>
@@ -43,10 +44,10 @@
   </div>
 
   <div v-if="props.type === Calculators.Race || props.type === Calculators.Workout"
-       v-show="(options as RaceOptions).model == RacePredictionModels.AverageModel ||
-               (options as RaceOptions).model == RacePredictionModels.RiegelModel">
+       v-show="(options as RaceOptions).predictionOptions.model == RacePredictionModels.AverageModel
+         || (options as RaceOptions).predictionOptions.model == RacePredictionModels.RiegelModel">
     Riegel exponent:
-    <decimal-input v-model="(options as RaceOptions).riegelExponent"
+    <decimal-input v-model="(options as RaceOptions).predictionOptions.riegelExponent"
       aria-label="Riegel exponent" :min="1" :max="1.3" :digits="2" :step="0.01"/>
       (default: 1.06)
   </div>

@@ -68,8 +68,10 @@ test('should be correctly render race options according to props', () => {
     propsData: {
       defaultUnitSystem: 'metric',
       options: {
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        predictionOptions: {
+          model: 'PurdyPointsModel',
+          riegelExponent: 1.2,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -98,8 +100,10 @@ test('should render riegel exponent field only for supported race prediction mod
     propsData: {
       defaultUnitSystem: 'metric',
       options: {
-        model: 'AverageModel',
-        riegelExponent: 1.2,
+        predictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.2,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -161,8 +165,10 @@ test('should be correctly render workout options according to props', () => {
       defaultUnitSystem: 'metric',
       options: {
         customTargetNames: true,
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        predictionOptions: {
+          model: 'PurdyPointsModel',
+          riegelExponent: 1.2,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -190,8 +196,10 @@ test('should only show batch column label field when applicable', async () => {
       defaultUnitSystem: 'metric',
       options: {
         customTargetNames: true,
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        predictionOptions: {
+          model: 'PurdyPointsModel',
+          riegelExponent: 1.2,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -220,8 +228,10 @@ test('should only show batch column label field when applicable', async () => {
     defaultUnitSystem: 'metric',
     options: {
       customTargetNames: false, // disabled
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      predictionOptions: {
+        model: 'PurdyPointsModel',
+        riegelExponent: 1.2,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -247,8 +257,10 @@ test('should only show batch column label field when applicable', async () => {
     defaultUnitSystem: 'metric',
     options: {
       customTargetNames: true, // enabled
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      predictionOptions: {
+        model: 'PurdyPointsModel',
+        riegelExponent: 1.2,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -275,8 +287,10 @@ test('should only show batch column label field when applicable', async () => {
     },
     defaultUnitSystem: 'metric',
     options: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      predictionOptions: {
+        model: 'PurdyPointsModel',
+        riegelExponent: 1.2,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -295,8 +309,10 @@ test('should pass correct props to TargetSetSelector', async () => {
       defaultUnitSystem: 'metric',
       options: {
         customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        predictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.06,
+        },
         selectedTargetSet: 'B',
       },
       targetSets: {
@@ -359,8 +375,10 @@ test('should emit input events when options are modified', async () => {
       defaultUnitSystem: 'metric',
       options: {
         customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        predictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.06,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -416,26 +434,34 @@ test('should emit input events when options are modified', async () => {
   expect(wrapper.emitted()['update:options']).to.deep.equal([
     [{
         customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        predictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.06,
+        },
         selectedTargetSet: 'B',
     }],
     [{
         customTargetNames: true,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        predictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.06,
+        },
         selectedTargetSet: 'B',
     }],
     [{
         customTargetNames: true,
-        model: 'CameronModel',
-        riegelExponent: 1.06,
+        predictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.06,
+        },
         selectedTargetSet: 'B',
     }],
     [{
         customTargetNames: true,
-        model: 'CameronModel',
-        riegelExponent: 1.3,
+        predictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.3,
+        },
         selectedTargetSet: 'B',
     }],
   ]);

@@ -75,8 +75,10 @@ test('should correctly calculate results according to advanced model options', a
   // Update model and Riegel Exponent
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: false,
-    model: 'RiegelModel',
-    riegelExponent: 1.10,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.10,
+    },
     selectedTargetSet: '_workout_targets',
   }, 'options');
 

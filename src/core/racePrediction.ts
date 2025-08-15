@@ -14,6 +14,14 @@ export enum RacePredictionModels {
 };
 
 /*
+ * The type for race prediction options
+ */
+export interface RacePredictionOptions {
+  model: RacePredictionModels,
+  riegelExponent: number,
+};
+
+/*
  * The type for internal variables used by the Purdy Points race prediction model
  */
 interface PurdyPointsVariables {
@@ -438,22 +446,21 @@ const AverageModel = {
    * @param {number} d1 The distance of the input race in meters
    * @param {number} t1 The finish time of the input race in seconds
    * @param {number} d2 The distance of the output race in meters
-   * @param {string} model The race prediction model to use
-   * @param {number} c The value of the exponent in Pete Riegel's Model
+   * @param {RacePredictionOptions} options The race prediction options
+   * @param {number} The predicted finish time in seconds
  */
 export function predictTime(d1: number, t1: number, d2: number,
-                            model: RacePredictionModels = RacePredictionModels.AverageModel,
-                            c: number = 1.06): number {
-  switch (model) {
+                            options: RacePredictionOptions): number {
+  switch (options.model) {
     default:
     case RacePredictionModels.AverageModel:
-      return AverageModel.predictTime(d1, t1, d2, c);
+      return AverageModel.predictTime(d1, t1, d2, options.riegelExponent);
     case RacePredictionModels.PurdyPointsModel:
       return PurdyPointsModel.predictTime(d1, t1, d2);
     case RacePredictionModels.VO2MaxModel:
       return VO2MaxModel.predictTime(d1, t1, d2);
     case RacePredictionModels.RiegelModel:
-      return RiegelModel.predictTime(d1, t1, d2, c);
+      return RiegelModel.predictTime(d1, t1, d2, options.riegelExponent);
     case RacePredictionModels.CameronModel:
       return CameronModel.predictTime(d1, t1, d2);
   }
@@ -464,22 +471,21 @@ export function predictTime(d1: number, t1: number, d2: number,
    * @param {number} t1 The finish time of the input race in seconds
    * @param {number} d1 The distance of the input race in meters
    * @param {number} t2 The finish time of the output race in seconds
-   * @param {string} model The race prediction model to use
-   * @param {number} c The value of the exponent in Pete Riegel's Model
+   * @param {RacePredictionOptions} options The race prediction options
+   * @param {number} The predicted finish distance in meters
  */
 export function predictDistance(t1: number, d1: number, t2: number,
-                                model: RacePredictionModels = RacePredictionModels.AverageModel,
-                                c: number = 1.06) {
-  switch (model) {
+                                options: RacePredictionOptions): number {
+  switch (options.model) {
     default:
     case RacePredictionModels.AverageModel:
-      return AverageModel.predictDistance(t1, d1, t2, c);
+      return AverageModel.predictDistance(t1, d1, t2, options.riegelExponent);
     case RacePredictionModels.PurdyPointsModel:
       return PurdyPointsModel.predictDistance(t1, d1, t2);
     case RacePredictionModels.VO2MaxModel:
       return VO2MaxModel.predictDistance(t1, d1, t2);
     case RacePredictionModels.RiegelModel:
-      return RiegelModel.predictDistance(t1, d1, t2, c);
+      return RiegelModel.predictDistance(t1, d1, t2, options.riegelExponent);
     case RacePredictionModels.CameronModel:
       return CameronModel.predictDistance(t1, d1, t2);
   }

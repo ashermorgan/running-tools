@@ -87,8 +87,10 @@ test('should correctly handle null target set', async () => {
 
   // Switch to invalid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: 'does_not_exist',
   }, 'options');
 
@@ -97,8 +99,10 @@ test('should correctly handle null target set', async () => {
 
   // Switch to valid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: '_race_targets',
   }, 'options');
 
@@ -144,8 +148,10 @@ test('should correctly calculate results according to model options', async () =
 
   // Switch model
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'RiegelModel', // changed from the Riegel Model
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'RiegelModel', // changed from the Riegel Model
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: '_race_targets',
   }, 'options');
 
@@ -162,8 +168,10 @@ test('should correctly calculate results according to model options', async () =
 
   // Update Riegel Exponent
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'RiegelModel',
-    riegelExponent: 1, // changed from 1.06
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1, // changed from 1.06
+    },
     selectedTargetSet: '_race_targets',
   }, 'options');
 
@@ -252,8 +260,10 @@ test('should load options from localStorage', async () => {
     'B': targetSet2,
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'B',
   }));
 
@@ -262,8 +272,10 @@ test('should load options from localStorage', async () => {
 
   // Assert data loaded
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'B',
   });
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
@@ -276,15 +288,19 @@ test('should save options to localStorage when modified', async () => {
 
   // Update options
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'CameronModel',
-    riegelExponent: 1.30,
+    predictionOptions: {
+      model: 'CameronModel',
+      riegelExponent: 1.30,
+    },
     selectedTargetSet: 'B',
   }, 'options');
 
   // Assert data saved to localStorage
   expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
-    model: 'CameronModel',
-    riegelExponent: 1.3,
+    predictionOptions: {
+      model: 'CameronModel',
+      riegelExponent: 1.3,
+    },
     selectedTargetSet: 'B',
   }));
 });

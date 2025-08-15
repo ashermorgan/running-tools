@@ -15,7 +15,8 @@
 
     <h2>Workout Splits</h2>
     <single-output-table class="output"
-      :calculate-result="x => calculateWorkoutResults(input, x as WorkoutTarget, options, true)"
+      :calculate-result="x => calculateWorkoutResults(input, x as WorkoutTarget,
+                         options.predictionOptions, options.customTargetNames, true)"
       :targets="targetSets[options.selectedTargetSet] ?
       targetSets[options.selectedTargetSet].targets : []"/>
   </div>

@@ -196,13 +196,13 @@ const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => Tar
       return (x,y) => calculators.calculatePaceResults(x, y, defaultUnitSystem.value, false);
     }
     case (calculators.Calculators.Race): {
-      return (x,y) => calculators.calculateRaceResults(x, y, raceOptions.value,
+      return (x,y) => calculators.calculateRaceResults(x, y, raceOptions.value.predictionOptions,
         defaultUnitSystem.value, false);
     }
     default:
     case (calculators.Calculators.Workout): {
       return (x,y) => calculators.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
-        workoutOptions.value, false);
+        workoutOptions.value.predictionOptions, workoutOptions.value.customTargetNames, false);
     }
   }
 });

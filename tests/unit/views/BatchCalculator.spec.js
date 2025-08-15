@@ -210,14 +210,18 @@ test('should load calculator options from localStorage', async () => {
     selectedTargetSet: 'A',
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'C',
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customTargetNames: true,
-    model: 'RiegelModel',
-    riegelExponent: 1.1,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.1,
+    },
     selectedTargetSet: 'E',
   }));
 
@@ -235,8 +239,10 @@ test('should load calculator options from localStorage', async () => {
   // Assert race calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'C',
   });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -246,8 +252,10 @@ test('should load calculator options from localStorage', async () => {
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
-    model: 'RiegelModel',
-    riegelExponent: 1.1,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.1,
+    },
     selectedTargetSet: 'E',
   });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -301,8 +309,10 @@ test('should save calculator options to localStorage when modified', async () =>
     }
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: 'D',
   }));
   localStorage.setItem('running-tools.workout-calculator-target-sets', JSON.stringify({
@@ -316,8 +326,10 @@ test('should save calculator options to localStorage when modified', async () =>
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customWorkoutNames: false,
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: 'F',
   }));
 
@@ -335,8 +347,10 @@ test('should save calculator options to localStorage when modified', async () =>
   // Update race calculator options
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'C',
   }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -346,8 +360,10 @@ test('should save calculator options to localStorage when modified', async () =>
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
-    model: 'RiegelModel',
-    riegelExponent: 1.1,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.1,
+    },
     selectedTargetSet: 'E',
   }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -358,14 +374,18 @@ test('should save calculator options to localStorage when modified', async () =>
     selectedTargetSet: 'A',
   }));
   expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
     selectedTargetSet: 'C',
   }));
   expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
     customTargetNames: true,
-    model: 'RiegelModel',
-    riegelExponent: 1.1,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.1,
+    },
     selectedTargetSet: 'E',
   }));
 });
@@ -451,8 +471,10 @@ test('should pass correct input props to DoubleOutputTable', async () => {
   // Enable target name customization
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: '_workout_targets',
   }, 'options');
 
@@ -517,8 +539,10 @@ test('should correctly set AdvancedOptionsInput props', async () => {
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('race');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: '_race_targets',
   });
 
@@ -527,8 +551,10 @@ test('should correctly set AdvancedOptionsInput props', async () => {
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('workout');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: false,
-    model: 'AverageModel',
-    riegelExponent: 1.06,
+    predictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
     selectedTargetSet: '_workout_targets',
   });
 });
@@ -537,13 +563,17 @@ test('should correctly calculate outputs', async () => {
   // Initialize localStorage
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
     selectedTargetSet: '_race_targets',
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
+    predictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     selectedTargetSet: '_workout_targets',
-    model: 'RiegelModel',
-    riegelExponent: 1.1,
+    predictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1.1,
+    },
   }));
   localStorage.setItem('running-tools.default-unit-system', '"imperial"');
 
