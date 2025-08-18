@@ -9,25 +9,24 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+      <advanced-options-input v-model:globalOptions="globalOptions"
         v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Pace"/>
     </details>
 
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
-      calculatePaceResults(input, x, defaultUnitSystem, true)"
+      calculatePaceResults(input, x, globalOptions.defaultUnitSystem, true)"
      :targets="targetSets[options.selectedTargetSet] ?
      targetSets[options.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Calculators, calculatePaceResults, defaultInput,
+import { Calculators, calculatePaceResults, defaultGlobalOptions, defaultInput,
   defaultPaceOptions } from '@/core/calculators';
-import type { StandardOptions } from '@/core/calculators';
+import type { GlobalOptions, StandardOptions } from '@/core/calculators';
 import { defaultPaceTargetSets } from '@/core/targets';
 import type { StandardTargetSets } from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
 import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -42,9 +41,9 @@ import useStorage from '@/composables/useStorage';
 const input = useStorage<DistanceTime>('pace-calculator-input', defaultInput);
 
 /*
- * The default unit system
+ * The global options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
 /*
  * The current selected target set

@@ -9,26 +9,25 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+      <advanced-options-input v-model:globalOptions="globalOptions"
         v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Workout"/>
     </details>
 
     <h2>Workout Splits</h2>
     <single-output-table class="output"
       :calculate-result="x => calculateWorkoutResults(input, x as WorkoutTarget,
-                         options.predictionOptions, options.customTargetNames, true)"
+                         globalOptions.racePredictionOptions, options.customTargetNames, true)"
       :targets="targetSets[options.selectedTargetSet] ?
       targetSets[options.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Calculators, calculateWorkoutResults, defaultInput,
+import { Calculators, calculateWorkoutResults, defaultGlobalOptions, defaultInput,
   defaultWorkoutOptions } from '@/core/calculators';
-import type { WorkoutOptions } from '@/core/calculators';
+import type { GlobalOptions, WorkoutOptions } from '@/core/calculators';
 import { defaultWorkoutTargetSets } from '@/core/targets';
 import type { WorkoutTarget, WorkoutTargetSets } from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
 import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -43,9 +42,9 @@ import useStorage from '@/composables/useStorage';
 const input = useStorage<DistanceTime>('workout-calculator-input', defaultInput);
 
 /*
- * The default unit system
+ * The global options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
 /*
  * The race prediction options

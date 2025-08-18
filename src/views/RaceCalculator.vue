@@ -26,14 +26,14 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
+      <advanced-options-input v-model:globalOptions="globalOptions"
         v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Race"/>
     </details>
 
     <h2>Equivalent Race Results</h2>
     <single-output-table class="output" show-pace
-      :calculate-result="x => calculateRaceResults(input, x, options.predictionOptions,
-                         defaultUnitSystem, true)"
+      :calculate-result="x => calculateRaceResults(input, x, globalOptions.racePredictionOptions,
+                         globalOptions.defaultUnitSystem, true)"
       :targets="targetSets[options.selectedTargetSet] ?
       targetSets[options.selectedTargetSet].targets : []"/>
   </div>
@@ -42,12 +42,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { Calculators, calculateRaceResults, calculateRaceStats, defaultInput,
+import { Calculators, calculateRaceResults, calculateRaceStats, defaultGlobalOptions, defaultInput,
   defaultRaceOptions } from '@/core/calculators';
-import type { RaceOptions, RaceStats } from '@/core/calculators';
+import type { GlobalOptions, RaceOptions, RaceStats } from '@/core/calculators';
 import { defaultRaceTargetSets } from '@/core/targets';
 import type { StandardTargetSets } from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem, formatNumber } from '@/core/units';
+import { formatNumber } from '@/core/units';
 import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -62,9 +62,9 @@ import useStorage from '@/composables/useStorage';
 const input = useStorage<DistanceTime>('race-calculator-input', defaultInput);
 
 /*
- * The default unit system
+ * The global options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
 /*
 * The race calculator options
@@ -72,7 +72,7 @@ const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectD
 const options = useStorage<RaceOptions>('race-calculator-options', defaultRaceOptions);
 
 /*
- * The target sets
+ * The race calculator target sets
  */
 const targetSets = useStorage<StandardTargetSets>('race-calculator-target-sets',
   defaultRaceTargetSets);

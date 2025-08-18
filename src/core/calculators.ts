@@ -6,8 +6,8 @@ import * as racePrediction from '@/core/racePrediction';
 import type { RacePredictionOptions } from '@/core/racePrediction';
 import { TargetTypes, workoutTargetToString } from '@/core/targets';
 import type { StandardTarget, WorkoutTarget } from '@/core/targets';
-import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration, formatPace,
-  getDefaultDistanceUnit, getDefaultPaceUnit } from '@/core/units';
+import { DistanceUnits, UnitSystems, convertDistance, detectDefaultUnitSystem, formatDistance,
+  formatDuration, formatPace, getDefaultDistanceUnit, getDefaultPaceUnit } from '@/core/units';
 import type { DistanceTime } from '@/core/units';
 
 /*
@@ -35,12 +35,14 @@ export interface RaceStats {
 /*
  * The type for the options specific to each calculator
  */
+export interface GlobalOptions {
+  defaultUnitSystem: UnitSystems,
+  racePredictionOptions: RacePredictionOptions,
+};
 export interface StandardOptions {
   selectedTargetSet: string,
-}
-export interface RaceOptions extends StandardOptions {
-  predictionOptions: RacePredictionOptions,
 };
+export type RaceOptions = StandardOptions;
 export interface WorkoutOptions extends RaceOptions {
   customTargetNames: boolean,
 };
@@ -73,6 +75,10 @@ export interface TargetResult {
 /*
  * The default input and options for each calculator
  */
+export const defaultGlobalOptions: GlobalOptions = {
+  defaultUnitSystem: detectDefaultUnitSystem(),
+  racePredictionOptions: racePrediction.defaultRacePredictionOptions,
+};
 export const defaultInput: DistanceTime = {
   distanceValue: 5,
   distanceUnit: DistanceUnits.Kilometers,
@@ -88,10 +94,6 @@ export const defaultPaceOptions: StandardOptions = {
   selectedTargetSet: '_pace_targets',
 };
 export const defaultRaceOptions: RaceOptions = {
-  predictionOptions: {
-    model: racePrediction.RacePredictionModels.AverageModel,
-    riegelExponent: 1.06,
-  },
   selectedTargetSet: '_race_targets',
 };
 export const defaultSplitOptions: StandardOptions = {
@@ -99,7 +101,6 @@ export const defaultSplitOptions: StandardOptions = {
 };
 export const defaultWorkoutOptions: WorkoutOptions = {
   customTargetNames: false,
-  ...defaultRaceOptions,
   selectedTargetSet: '_workout_targets',
 };
 

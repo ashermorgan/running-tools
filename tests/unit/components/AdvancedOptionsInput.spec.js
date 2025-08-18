@@ -6,7 +6,13 @@ test('should be correctly render pace options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         selectedTargetSet: 'B',
       },
@@ -66,12 +72,14 @@ test('should be correctly render race options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
-      options: {
-        predictionOptions: {
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
           model: 'PurdyPointsModel',
           riegelExponent: 1.2,
         },
+      },
+      options: {
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -98,12 +106,14 @@ test('should render riegel exponent field only for supported race prediction mod
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
-      options: {
-        predictionOptions: {
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
           model: 'AverageModel',
           riegelExponent: 1.2,
         },
+      },
+      options: {
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -136,7 +146,13 @@ test('should be correctly render split options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         selectedTargetSet: '_new',
       },
@@ -162,13 +178,15 @@ test('should be correctly render workout options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
-      options: {
-        customTargetNames: true,
-        predictionOptions: {
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
           model: 'PurdyPointsModel',
           riegelExponent: 1.2,
         },
+      },
+      options: {
+        customTargetNames: true,
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -193,7 +211,13 @@ test('should only show batch column label field when applicable', async () => {
   // Initialize component with workout target name customization enabled
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         customTargetNames: true,
         predictionOptions: {
@@ -225,7 +249,13 @@ test('should only show batch column label field when applicable', async () => {
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
       customTargetNames: false, // disabled
       predictionOptions: {
@@ -254,7 +284,13 @@ test('should only show batch column label field when applicable', async () => {
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
       customTargetNames: true, // enabled
       predictionOptions: {
@@ -285,7 +321,13 @@ test('should only show batch column label field when applicable', async () => {
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
       predictionOptions: {
         model: 'PurdyPointsModel',
@@ -306,7 +348,13 @@ test('should pass correct props to TargetSetSelector', async () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         customTargetNames: false,
         predictionOptions: {
@@ -372,13 +420,15 @@ test('should emit input events when options are modified', async () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
-      options: {
-        customTargetNames: false,
-        predictionOptions: {
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
           model: 'AverageModel',
           riegelExponent: 1.06,
         },
+      },
+      options: {
+        customTargetNames: false,
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -412,7 +462,29 @@ test('should emit input events when options are modified', async () => {
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(1.3);
 
   // Assert correct update events emitted
-  expect(wrapper.emitted()['update:defaultUnitSystem']).to.deep.equal([['imperial']]);
+  expect(wrapper.emitted()['update:globalOptions']).to.deep.equal([
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'AverageModel',
+        riegelExponent: 1.06,
+      },
+    }],
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.06,
+      },
+    }],
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.3,
+      },
+    }],
+  ]);
   expect(wrapper.emitted()['update:targetSets']).to.deep.equal([[{
     'A': {
       name: '1st target set v2',
@@ -433,36 +505,12 @@ test('should emit input events when options are modified', async () => {
   }]]);
   expect(wrapper.emitted()['update:options']).to.deep.equal([
     [{
-        customTargetNames: false,
-        predictionOptions: {
-          model: 'AverageModel',
-          riegelExponent: 1.06,
-        },
-        selectedTargetSet: 'B',
+      customTargetNames: false,
+      selectedTargetSet: 'B',
     }],
     [{
-        customTargetNames: true,
-        predictionOptions: {
-          model: 'AverageModel',
-          riegelExponent: 1.06,
-        },
-        selectedTargetSet: 'B',
-    }],
-    [{
-        customTargetNames: true,
-        predictionOptions: {
-          model: 'CameronModel',
-          riegelExponent: 1.06,
-        },
-        selectedTargetSet: 'B',
-    }],
-    [{
-        customTargetNames: true,
-        predictionOptions: {
-          model: 'CameronModel',
-          riegelExponent: 1.3,
-        },
-        selectedTargetSet: 'B',
+      customTargetNames: true,
+      selectedTargetSet: 'B',
     }],
   ]);
 });

@@ -105,15 +105,15 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:15');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:44');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
 
     // Change Riegel exponent
-    await expect(page.getByLabel('Prediction model')).toHaveValue('AverageModel');
+    await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
     await page.getByLabel('Riegel Exponent').fill('1.12');
 
     // Assert race results are correct
@@ -124,7 +124,7 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:12');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:40');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:42');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
   }
@@ -141,7 +141,7 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:12');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:40');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:42');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
   }
@@ -164,7 +164,7 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row')).toHaveCount(16);
   }
 
-  // Assert workout results are correct (inputs and options not reset)
+  // Assert workout results are correct (inputs not reset, but updated options are used)
   {
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
     await expect(page.getByLabel('Target name customization')).toHaveValue("true");
@@ -172,10 +172,10 @@ test('Batch calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:45');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:17');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:22');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row')).toHaveCount(16);
   }

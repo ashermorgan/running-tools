@@ -22,6 +22,14 @@ export interface RacePredictionOptions {
 };
 
 /*
+ * The default race prediction options
+ */
+export const defaultRacePredictionOptions = {
+  model: RacePredictionModels.AverageModel,
+  riegelExponent: 1.06,
+};
+
+/*
  * The type for internal variables used by the Purdy Points race prediction model
  */
 interface PurdyPointsVariables {

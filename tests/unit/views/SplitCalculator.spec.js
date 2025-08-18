@@ -4,26 +4,31 @@ import SplitCalculator from '@/views/SplitCalculator.vue';
 
 beforeEach(() => {
   localStorage.clear();
-})
+});
 
-test('should load selected target set from localStorage', async () => {
+test('should load global options from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.split-calculator-options', JSON.stringify({
-    selectedTargetSet: 'B',
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
   }));
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
 
-  // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
-    selectedTargetSet: 'B',
-  });
+  // Assert data loaded
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions
+    .defaultUnitSystem).to.equal('imperial');
+  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.defaultUnitSystem)
+    .to.equal('imperial');
 });
 
-test('should load targets from localStorage and pass to splitOutputTable', async () => {
+test('should load local options and target sets from localStorage', async () => {
   // Initialize localStorage
-  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
+  const targetSets = {
     '_split_targets': {
       name: 'Split targets',
       targets: [
@@ -40,32 +45,131 @@ test('should load targets from localStorage and pass to splitOutputTable', async
         { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
       ],
     },
+  };
+  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify(targetSets));
+  localStorage.setItem('running-tools.split-calculator-options', JSON.stringify({
+    selectedTargetSet: 'B',
   }));
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
 
-  // Assert default split targets are initially loaded
+  // Assert data loaded
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
-    selectedTargetSet: '_split_targets',
+    selectedTargetSet: 'B',
   });
-  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.modelValue).to.deep.equal([
-    { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-    { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-    { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-  ]);
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal(targetSets);
+  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.modelValue)
+    .to.deep.equal(targetSets.B.targets);
+});
 
-  // Select a new target set
+test('should save global options to localStorage when modified', async () => {
+  // Initialize component
+  const wrapper = shallowMount(SplitCalculator);
+
+  // Set default units setting
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'metric',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
+    defaultUnitSystem: 'metric',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }));
+
+  // Update default units setting
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }));
+});
+
+test('should save local options and target sets to localStorage when modified', async () => {
+  const targetSets1 = {
+    '_split_targets': {
+      name: 'Split targets',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+    'B': {
+      name: 'Split targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
+      ],
+    },
+  };
+  const targetSets2 = {
+    '_split_targets': {
+      name: 'Split targets',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+    'B': {
+      name: 'Split targets #2',
+      targets: [
+        // split times modified:
+        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 185 },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 195 },
+        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 205 },
+      ],
+    },
+  };
+
+  // Initialize component
+  const wrapper = shallowMount(SplitCalculator);
+
+  // Update target sets and selected target set via AdvancedOptionsInput
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets1,
+    'targetSets');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     selectedTargetSet: 'B',
   }, 'options');
 
-  // Assert new target set is loaded
-  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.modelValue).to.deep.equal([
-    { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-    { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-    { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
-  ]);
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.split-calculator-target-sets'))
+    .to.equal(JSON.stringify(targetSets1));
+  expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(JSON.stringify({
+    selectedTargetSet: 'B',
+  }));
+
+  // Update target sets via SplitOutputTable
+  await wrapper.findComponent({ name: 'split-output-table' }).setValue(targetSets2.B.targets);
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.split-calculator-target-sets'))
+    .to.equal(JSON.stringify(targetSets2));
+  expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(JSON.stringify({
+    selectedTargetSet: 'B',
+  }));
 });
 
 test('should correctly handle null target set', async () => {
@@ -96,100 +200,6 @@ test('should correctly handle null target set', async () => {
     { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
     { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
   ]);
-});
-
-test('should update targets in localStorage when modified by splitOutputTable', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify({
-    '_split_targets': {
-      name: 'Split targets',
-      targets: [
-        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 180 },
-        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 180 },
-      ],
-    },
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Update split times
-  await wrapper.findComponent({ name: 'split-output-table' }).setValue([
-    { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-    { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-    { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
-  ]);
-
-  // Assert targets correctly saved in localStorage
-  expect(localStorage.getItem('running-tools.split-calculator-target-sets')).to.equal(JSON.stringify({
-    '_split_targets': {
-      name: 'Split targets',
-      targets: [
-        { type: 'distance', distanceValue: 1, distanceUnit: 'kilometers', split: 180 },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'kilometers', split: 190 },
-        { type: 'distance', distanceValue: 3000, distanceUnit: 'meters', split: 200 },
-      ],
-    },
-  }));
-});
-
-test('should save selected target set to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Select a new target set
-  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    selectedTargetSet: '_race_targets',
-  }, 'options');
-
-  // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(JSON.stringify({
-    selectedTargetSet: '_race_targets',
-  }));
-});
-
-test('should load default units from localStorage and pass to splitOutputTable', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.default-unit-system', '"metric"');
-
-  // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Assert default units setting is initialy loaded
-  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.defaultUnitSystem)
-    .to.equal('metric');
-
-  // Assert prop is correct
-  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.defaultUnitSystem)
-    .to.equal('metric');
-
-  // Change default units
-  await wrapper.findComponent({ name: 'advanced-options-input' })
-    .setValue('imperial', 'defaultUnitSystem');
-
-  // Assert prop is correct
-  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.defaultUnitSystem)
-    .to.equal('imperial');
-});
-
-test('should save default units setting to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Set default units setting
-  await wrapper.findComponent({ name: 'advanced-options-input' })
-    .setValue('metric', 'defaultUnitSystem');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"metric"');
-
-  // Set default units setting
-  await wrapper.findComponent({ name: 'advanced-options-input' })
-    .setValue('imperial', 'defaultUnitSystem');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
 });
 
 test('should correctly set AdvancedOptionsInput type prop', async () => {

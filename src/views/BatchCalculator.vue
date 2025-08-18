@@ -28,7 +28,7 @@
         <h2>Advanced Options</h2>
       </summary>
       <advanced-options-input :batch-input="input" v-model:batch-options="options"
-        v-model:defaultUnitSystem="defaultUnitSystem" v-model:options="calcOptions"
+        v-model:globalOptions="globalOptions" v-model:options="calcOptions"
         v-model:targetSets="targetSets" :type="options.calculator"/>
     </details>
 
@@ -44,10 +44,10 @@
 import { computed } from 'vue';
 
 import * as calculators from '@/core/calculators';
-import type { BatchOptions, RaceOptions, StandardOptions, TargetResult,
+import type { BatchOptions, GlobalOptions, RaceOptions, StandardOptions, TargetResult,
   WorkoutOptions } from '@/core/calculators';
 import * as targetUtils from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem, formatDistance } from '@/core/units';
+import { formatDistance } from '@/core/units';
 import type { Distance, DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
@@ -70,9 +70,9 @@ const options = useStorage<BatchOptions>('batch-calculator-options',
   calculators.defaultBatchOptions);
 
 /*
- * The default unit system
+ * The global options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', calculators.defaultGlobalOptions);
 
 /*
  * The target sets for each calculator
@@ -193,16 +193,17 @@ const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
 const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => TargetResult>(() => {
   switch(options.value.calculator) {
     case (calculators.Calculators.Pace): {
-      return (x,y) => calculators.calculatePaceResults(x, y, defaultUnitSystem.value, false);
+      return (x,y) => calculators.calculatePaceResults(x, y, globalOptions.value.defaultUnitSystem,
+        false);
     }
     case (calculators.Calculators.Race): {
-      return (x,y) => calculators.calculateRaceResults(x, y, raceOptions.value.predictionOptions,
-        defaultUnitSystem.value, false);
+      return (x,y) => calculators.calculateRaceResults(x, y,
+        globalOptions.value.racePredictionOptions, globalOptions.value.defaultUnitSystem, false);
     }
     default:
     case (calculators.Calculators.Workout): {
       return (x,y) => calculators.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
-        workoutOptions.value.predictionOptions, workoutOptions.value.customTargetNames, false);
+        globalOptions.value.racePredictionOptions, workoutOptions.value.customTargetNames, false);
     }
   }
 });
