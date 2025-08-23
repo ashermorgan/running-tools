@@ -130,7 +130,7 @@ describe('deepEqual method', () => {
   });
 });
 
-describe('get method', () => {
+describe('getLocalStorage method', () => {
   test('should correctly parse correct localStorage item', async () => {
     // Initialize localStorage
     localStorage.setItem('running-tools.foo', '{"bar":123}');
@@ -156,7 +156,7 @@ describe('get method', () => {
   });
 });
 
-describe('set method', () => {
+describe('setLocalStorage method', () => {
   test('should correctly set new localStorage item', async () => {
     // Set localStorage item
     utils.setLocalStorage('foo', { baz: 456 });
@@ -177,95 +177,30 @@ describe('set method', () => {
   });
 });
 
-describe('migrate method', () => {
-  test('should correctly migrate <=1.4.1 calculator options', async () => {
-    // Initialize localStorage
-    localStorage.setItem('running-tools.batch-calculator-options',
-      '{"calculator":"race","increment":32,"rows":15}');
-    localStorage.setItem('running-tools.pace-calculator-target-set', '"A"');
-    localStorage.setItem('running-tools.race-calculator-options',
-      '{"model":"RiegelModel","riegelExponent":1.07}');
-    localStorage.setItem('running-tools.race-calculator-target-set', '"B"');
-    localStorage.setItem('running-tools.split-calculator-target-set', '"C"');
-    localStorage.setItem('running-tools.workout-calculator-options',
-      '{"model":"RiegelModel","riegelExponent":1.08}');
-    localStorage.setItem('running-tools.workout-calculator-target-set', '"D"');
+describe('unsetLocalStorage method', () => {
+  test('should correctly remove existing localStorage item', async () => {
+    // Set localStorage item
+    localStorage.setItem('running-tools.foo', '1');
+    localStorage.setItem('running-tools.bar', '2');
 
-    // Run migrations
-    utils.migrateLocalStorage();
+    // Remove localStorage item
+    utils.unsetLocalStorage('bar');
 
-    // Assert localStorage entries correctly migrated
-    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(
-      '{"calculator":"race","increment":32,"rows":15,"label":""}');
-    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
-      '{"selectedTargetSet":"A"}');
-    expect(localStorage.getItem('running-tools.pace-calculator-target-set')).to.equal(null);
-    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
-      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
-    expect(localStorage.getItem('running-tools.race-calculator-target-set')).to.equal(null);
-    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(
-      '{"selectedTargetSet":"C"}');
-    expect(localStorage.getItem('running-tools.split-calculator-target-set')).to.equal(null);
-    expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
-      '{"model":"RiegelModel","riegelExponent":1.08,"selectedTargetSet":"D",' +
-      '"customTargetNames":false}');
-    expect(localStorage.getItem('running-tools.workout-calculator-target-set')).to.equal(null);
+    // Assert localStorage updated correctly
+    expect(localStorage.getItem('running-tools.foo')).to.equal('1');
+    expect(localStorage.getItem('running-tools.bar')).to.equal(null);
+    expect(localStorage.length).to.equal(1);
   });
 
-  test('should correctly migrate partial <=1.4.1 calculator options', async () => {
-    // Initialize localStorage (workout-target-set option missing)
-    localStorage.setItem('running-tools.workout-calculator-options',
-      '{"model":"RiegelModel","riegelExponent":1.08}');
+  test('should remove non-existant localStorage item without error', async () => {
+    // Set localStorage item
+    localStorage.setItem('running-tools.foo', '1');
 
-    // Run migrations
-    utils.migrateLocalStorage();
+    // Remove localStorage item
+    utils.unsetLocalStorage('missing');
 
-    // Assert localStorage entries correctly migrated
-    expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
-      '{"model":"RiegelModel","riegelExponent":1.08,"selectedTargetSet":"_workout_targets",' +
-      '"customTargetNames":false}');
-  });
-
-  test('should not modify >1.4.1 calculator options', async () => {
-    // Initialize localStorage
-    localStorage.setItem('running-tools.batch-calculator-options',
-      '{"calculator":"race","increment":32,"label":"foo","rows":15}');
-    localStorage.setItem('running-tools.pace-calculator-options',
-      '{"selectedTargetSet":"A"}');
-    localStorage.setItem('running-tools.race-calculator-options',
-      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
-    localStorage.setItem('running-tools.split-calculator-options',
-      '{"selectedTargetSet":"C"}');
-    localStorage.setItem('running-tools.workout-calculator-options',
-      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.08,' +
-      '"selectedTargetSet":"D"}');
-
-    // Run migrations
-    utils.migrateLocalStorage();
-
-    // Assert localStorage entries not modified
-    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(
-      '{"calculator":"race","increment":32,"label":"foo","rows":15}');
-    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(
-      '{"selectedTargetSet":"A"}');
-    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(
-      '{"model":"RiegelModel","riegelExponent":1.07,"selectedTargetSet":"B"}');
-    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(
-      '{"selectedTargetSet":"C"}');
-    expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(
-      '{"customTargetNames":true,"model":"PurdyPointsModel","riegelExponent":1.08,' +
-      '"selectedTargetSet":"D"}');
-  });
-
-  test('should not modify missing calculator options', async () => {
-    // Run migrations
-    utils.migrateLocalStorage();
-
-    // Assert localStorage entries not modified
-    expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(null);
-    expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(null);
-    expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(null);
-    expect(localStorage.getItem('running-tools.split-calculator-options')).to.equal(null);
-    expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(null);
+    // Assert localStorage updated correctly
+    expect(localStorage.length).to.equal(1);
+    expect(localStorage.getItem('running-tools.foo')).to.equal('1');
   });
 });

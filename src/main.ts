@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 
 import App from '@/App.vue';
 import router from '@/router';
-import { migrateLocalStorage } from '@/core/utils';
+import { migrateLocalStorage } from '@/core/migrations';
 
 import '@/assets/global.css';
 
