@@ -12,9 +12,9 @@
 
 ### Added
 
-- Add batch calculator for performing pace, race, and workout calculations over
+- Add Batch Calculator for performing pace, race, and workout calculations over
   a range of input times
-- Add workout calculator for estimating target workout splits
+- Add Workout Calculator for estimating target workout splits
 
 ### Changed
 
@@ -24,11 +24,11 @@
 ## Removed
 
 - Remove support for using target sets across multiple calculators (excluding
-  the batch calculator, where applicable)
+  the Batch Calculator, where applicable)
 
 ### Fixed
 
-- Ensure split calculator splits are saved after a new target set is created
+- Ensure Split Calculator splits are saved after a new target set is created
 
 ## 1.3.0 -- 2024-03-25
 
@@ -39,7 +39,7 @@
 ### Changed
 
 - Allow target sets to be used across multiple calculators
-- Reorganize race calculator options and output
+- Reorganize Race Calculator options and output
 - Allow default units to be customized
 
 ### Fixed
@@ -53,7 +53,7 @@
 
 ### Added
 
-- Add split calculator for calculating split paces and cumulative times of
+- Add Split Calculator for calculating split paces and cumulative times of
   races
 
 ### Changed
@@ -67,19 +67,19 @@
 ### Fixed
 
 - Fix bug in how default units are chosen
-- Fix issue that caused all pace and race calculator results to be NaN after
+- Fix issue that caused all Pace and Race Calculator results to be NaN after
   updating to version 1.1.0
 
 ## 1.1.0 -- 2021-09-16
 
 ### Added
 
-- Support time-based targets in pace and race calculators
-- Add advanced options and output in race calculator
+- Support time-based targets in Pace and Race Calculators
+- Add advanced options and output in Race Calculator
 
 ### Changed
 
-- Show the pace of each result in race calculator
+- Show the pace of each result in Race Calculator
 - Improve calculator interfaces
 - Choose default units automatically according to the user's language region
 
@@ -87,12 +87,12 @@
 
 ### Added
 
-- Add race calculator for estimating equivalent race results
+- Add Race Calculator for estimating equivalent race results
 - Implement dark mode
 
 ### Changed
 
-- Allow the list of pace calculator targets to be edited
+- Allow the list of Pace Calculator targets to be edited
 - Improve appearance on mobile devices
 - Cache inactive pages
 - Allow minute and second input fields to wrap around
@@ -101,9 +101,9 @@
 
 ### Added
 
-- Add pace calculator for calculating distances and times that are at equivalent
+- Add Pace Calculator for calculating distances and times that are at equivalent
   paces
-- Add unit calculator for converting between distance, time, speed, and pace
+- Add Unit Calculator for converting between distance, time, speed, and pace
   units
 - Implement Progressive Web App functionality
 
