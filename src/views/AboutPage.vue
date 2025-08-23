@@ -32,6 +32,8 @@
         results for a range of input times using the Pace, Race, or Workout Calculators.
       Options such as the default unit system, selected target set, and race prediction model are
         synced from the active calculator.
+      If the Workout Calculator is being used with custom workout names enabled, a custom name may
+        also be specified for the batch column header.
     </p>
     <p>
       The Batch Calculator is useful for tasks such as:
@@ -133,7 +135,7 @@
         outputs for and the distances of the splits that are shown for these races.
       The Advanced Options section includes the option to switch between the same five prediction
         models that are available in the Race Calculator, as well as the ability to enable support
-        for specifying custom target names (e.g. "1 mile threshold" instead of "1 mi @ 1:00:00").
+        for specifying custom workout names (e.g. "1 mile threshold" instead of "1 mi @ 1:00:00").
     </p>
     <p>
       The Workout Calculator is useful for answering questions like:
