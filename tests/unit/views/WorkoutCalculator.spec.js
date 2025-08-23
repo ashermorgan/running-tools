@@ -2,36 +2,40 @@ import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import WorkoutCalculator from '@/views/WorkoutCalculator.vue';
 import { defaultTargetSets } from '@/core/targets';
+import { detectDefaultUnitSystem } from '@/core/units';
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-test('should load global options from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.global-options', JSON.stringify({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
-    },
-  }));
-
+test('should initialize options to default values', async () => {
   // Initialize component
   const wrapper = shallowMount(WorkoutCalculator);
 
-  // Assert data loaded
+  // Assert options are initialized
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
-    defaultUnitSystem: 'imperial',
+    defaultUnitSystem: detectDefaultUnitSystem(),
     racePredictionOptions: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      model: 'AverageModel',
+      riegelExponent: 1.06,
     },
   });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    customTargetNames: false,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_workout_targets',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal({ _workout_targets: defaultTargetSets._workout_targets });
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(defaultTargetSets._workout_targets.targets);
 });
 
-test('should load workout options and target sets from localStorage', async () => {
-  // Initialize localStorage
+test('should load options from localStorage', async () => {
   const targetSets = {
     '_workout_targets': {
       name: 'Workout targets #1',
@@ -75,6 +79,15 @@ test('should load workout options and target sets from localStorage', async () =
       ],
     },
   };
+
+  // Initialize localStorage
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }));
   localStorage.setItem('running-tools.workout-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customTargetNames: true,
@@ -89,7 +102,14 @@ test('should load workout options and target sets from localStorage', async () =
   // Initialize component
   const wrapper = shallowMount(WorkoutCalculator);
 
-  // Assert data loaded
+  // Assert options are loaded
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
     input: {
@@ -105,7 +125,51 @@ test('should load workout options and target sets from localStorage', async () =
     .to.deep.equal(targetSets.B.targets);
 });
 
-test('should save global options to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
+  const targetSets = {
+    '_workout_targets': {
+      name: 'Workout targets #1',
+      targets: [
+        {
+          splitValue: 400, splitUnit: 'meters',
+          type: 'distance', distanceValue: 1, distanceUnit: 'miles',
+        },
+        {
+          splitValue: 800, splitUnit: 'meters',
+          type: 'distance', distanceValue: 5, distanceUnit: 'kilometers',
+        },
+        {
+          splitValue: 1600, splitUnit: 'meters',
+          type: 'time', time: 3600,
+        },
+        {
+          splitValue: 2, splitUnit: 'miles',
+          type: 'time', time: 7200,
+        },
+      ],
+    },
+    'B': {
+      name: 'Workout targets #2',
+      targets: [
+        {
+          distanceUnit: 'miles', distanceValue: 2,
+          splitUnit: 'meters', splitValue: 400,
+          type: 'distance',
+        },
+        {
+          time: 6000,
+          splitUnit: 'kilometers', splitValue: 2,
+          type: 'time',
+        },
+        {
+          distanceUnit: 'kilometers', distanceValue: 5,
+          splitUnit: 'miles', splitValue: 1,
+          type: 'distance'
+        },
+      ],
+    },
+  };
+
   // Initialize component
   const wrapper = shallowMount(WorkoutCalculator);
 
@@ -126,55 +190,6 @@ test('should save global options to localStorage when modified', async () => {
       riegelExponent: 1.3,
     },
   }));
-});
-
-test('should save workout options and target sets to localStorage when modified', async () => {
-  const targetSets = {
-    '_workout_targets': {
-      name: 'Workout targets #1',
-      targets: [
-        {
-          splitValue: 400, splitUnit: 'meters',
-          type: 'distance', distanceValue: 1, distanceUnit: 'miles',
-        },
-        {
-          splitValue: 800, splitUnit: 'meters',
-          type: 'distance', distanceValue: 5, distanceUnit: 'kilometers',
-        },
-        {
-          splitValue: 1600, splitUnit: 'meters',
-          type: 'time', time: 3600,
-        },
-        {
-          splitValue: 2, splitUnit: 'miles',
-          type: 'time', time: 7200,
-        },
-      ],
-    },
-    'B': {
-      name: 'Workout targets #2',
-      targets: [
-        {
-          distanceUnit: 'miles', distanceValue: 2,
-          splitUnit: 'meters', splitValue: 400,
-          type: 'distance',
-        },
-        {
-          time: 6000,
-          splitUnit: 'kilometers', splitValue: 2,
-          type: 'time',
-        },
-        {
-          distanceUnit: 'kilometers', distanceValue: 5,
-          splitUnit: 'miles', splitValue: 1,
-          type: 'distance'
-        },
-      ],
-    },
-  };
-
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
 
   // Update input race
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
@@ -309,9 +324,9 @@ test('should correctly calculate results according to options', async () => {
 
   // Enter input race data
   await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 5,
-    distanceUnit: 'kilometers',
-    time: 1200,
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 630,
   });
 
   // Update model and Riegel exponent
@@ -333,15 +348,15 @@ test('should correctly calculate results according to options', async () => {
 
   // Assert result is correct
   expect(result.key).to.equal('1 km @ 10 km');
-  expect(result.value).to.equal('4:17.23');
+  expect(result.value).to.equal('3:39.23');
 
   // Update target name customization
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
     input: {
-      distanceValue: 5,
-      distanceUnit: 'kilometers',
-      time: 1200,
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 630,
     },
     selectedTargetSet: '_workout_targets',
   }, 'options');
@@ -355,7 +370,7 @@ test('should correctly calculate results according to options', async () => {
 
   // Assert result is correct
   expect(result.key).to.equal('foo');
-  expect(result.value).to.equal('4:17.23');
+  expect(result.value).to.equal('3:39.23');
 });
 
 test('should correctly set AdvancedOptionsInput type prop', async () => {

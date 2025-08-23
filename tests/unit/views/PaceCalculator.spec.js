@@ -2,31 +2,39 @@ import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 import { defaultTargetSets } from '@/core/targets';
+import { detectDefaultUnitSystem } from '@/core/units';
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-test('should load global options from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.global-options', JSON.stringify({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
-    },
-  }));
-
+test('should initialize options to default values', async () => {
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
-  // Assert selection is loaded
+  // Assert options are initialized
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 5,
+    distanceUnit: 'kilometers',
+    time: 1200,
+  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions
-    .defaultUnitSystem).to.equal('imperial');
+    .defaultUnitSystem).to.equal(detectDefaultUnitSystem());
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_pace_targets',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal({ _pace_targets: defaultTargetSets._pace_targets });
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(defaultTargetSets._pace_targets.targets);
 });
 
-test('should load pace options and target sets from localStorage', async () => {
-  // Initialize localStorage
+test('should load options from localStorage', async () => {
   const targetSets = {
     '_pace_targets': {
       name: 'Pace targets #1',
@@ -45,6 +53,15 @@ test('should load pace options and target sets from localStorage', async () => {
       ],
     },
   };
+
+  // Initialize localStorage
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }));
   localStorage.setItem('running-tools.pace-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.pace-calculator-options', JSON.stringify({
     input: {
@@ -58,12 +75,14 @@ test('should load pace options and target sets from localStorage', async () => {
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
-  // Assert selection is loaded
+  // Assert options are loaded
   expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
     distanceValue: 1,
     distanceUnit: 'miles',
     time: 600,
   });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions
+    .defaultUnitSystem).to.equal('imperial');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     input: {
       distanceValue: 1,
@@ -78,7 +97,26 @@ test('should load pace options and target sets from localStorage', async () => {
     .to.deep.equal(targetSets.B.targets);
 });
 
-test('should save global options to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
+  const targetSets = {
+    '_pace_targets': {
+      name: 'Pace targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': {
+      name: 'Pace targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+  };
+
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
@@ -99,30 +137,6 @@ test('should save global options to localStorage when modified', async () => {
       riegelExponent: 1.06,
     },
   }));
-});
-
-test('should save pace options and target sets to localStorage when modified', async () => {
-  const targetSets = {
-    '_pace_targets': {
-      name: 'Pace targets #1',
-      targets: [
-        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
-      ],
-    },
-    'B': {
-      name: 'Pace targets #2',
-      targets: [
-        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-      ],
-    },
-  };
-
-  // Initialize component
-  const wrapper = shallowMount(PaceCalculator);
 
   // Update input pace
   await wrapper.findComponent({ name: 'pace-input' }).setValue({

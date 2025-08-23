@@ -2,36 +2,44 @@ import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 import { defaultTargetSets } from '@/core/targets';
+import { detectDefaultUnitSystem } from '@/core/units';
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-test('should load global options from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.global-options', JSON.stringify({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
-    },
-  }));
-
+test('should initialize options to default values', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Assert data loaded
+  // Assert options are initialized
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 5,
+    distanceUnit: 'kilometers',
+    time: 1200,
+  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
-    defaultUnitSystem: 'imperial',
+    defaultUnitSystem: detectDefaultUnitSystem(),
     racePredictionOptions: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      model: 'AverageModel',
+      riegelExponent: 1.06,
     },
   });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_race_targets',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal({ _race_targets: defaultTargetSets._race_targets });
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(defaultTargetSets._race_targets.targets);
 });
 
-test('should load race options and target sets from localStorage', async () => {
-  // Initialize localStorage
+test('should load options from localStorage', async () => {
   const targetSets = {
     '_race_targets': {
       name: 'Race targets #1',
@@ -50,6 +58,15 @@ test('should load race options and target sets from localStorage', async () => {
       ],
     },
   };
+
+  // Initialize localStorage
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }));
   localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
     input: {
@@ -63,7 +80,14 @@ test('should load race options and target sets from localStorage', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Assert data loaded
+  // Assert options are loaded
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  });
   expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
     distanceValue: 1,
     distanceUnit: 'miles',
@@ -83,7 +107,26 @@ test('should load race options and target sets from localStorage', async () => {
     .to.deep.equal(targetSets.B.targets);
 });
 
-test('should save global options to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
+  const targetSets = {
+    '_race_targets': {
+      name: 'Race targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': {
+      name: 'Race targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+  };
+
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
@@ -104,30 +147,6 @@ test('should save global options to localStorage when modified', async () => {
       riegelExponent: 1.2,
     },
   }));
-});
-
-test('should save local options and target sets to localStorage when modified', async () => {
-  const targetSets = {
-    '_race_targets': {
-      name: 'Race targets #1',
-      targets: [
-        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
-      ],
-    },
-    'B': {
-      name: 'Race targets #2',
-      targets: [
-        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-      ],
-    },
-  };
-
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
 
   // Update input race
   await wrapper.findComponent({ name: 'pace-input' }).setValue({

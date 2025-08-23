@@ -1,33 +1,32 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import SplitCalculator from '@/views/SplitCalculator.vue';
+import { defaultTargetSets } from '@/core/targets';
+import { detectDefaultUnitSystem } from '@/core/units';
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-test('should load global options from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.global-options', JSON.stringify({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    },
-  }));
-
+test('should initialize options to default values', async () => {
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
 
-  // Assert data loaded
+  // Assert options are initialized
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions
-    .defaultUnitSystem).to.equal('imperial');
+    .defaultUnitSystem).to.equal(detectDefaultUnitSystem());
   expect(wrapper.findComponent({ name: 'split-output-table' }).vm.defaultUnitSystem)
-    .to.equal('imperial');
+    .to.equal(detectDefaultUnitSystem());
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    selectedTargetSet: '_split_targets',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal({ _split_targets: defaultTargetSets._split_targets });
+  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.modelValue)
+    .to.deep.equal(defaultTargetSets._split_targets.targets);
 });
 
-test('should load split options and target sets from localStorage', async () => {
-  // Initialize localStorage
+test('should load options from localStorage', async () => {
   const targetSets = {
     '_split_targets': {
       name: 'Split targets',
@@ -46,6 +45,15 @@ test('should load split options and target sets from localStorage', async () => 
       ],
     },
   };
+
+  // Initialize localStorage
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }));
   localStorage.setItem('running-tools.split-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.split-calculator-options', JSON.stringify({
     selectedTargetSet: 'B',
@@ -54,7 +62,11 @@ test('should load split options and target sets from localStorage', async () => 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
 
-  // Assert data loaded
+  // Assert options are loaded
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions
+    .defaultUnitSystem).to.equal('imperial');
+  expect(wrapper.findComponent({ name: 'split-output-table' }).vm.defaultUnitSystem)
+    .to.equal('imperial');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     selectedTargetSet: 'B',
   });
@@ -64,48 +76,7 @@ test('should load split options and target sets from localStorage', async () => 
     .to.deep.equal(targetSets.B.targets);
 });
 
-test('should save global options to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(SplitCalculator);
-
-  // Set default units setting
-  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    defaultUnitSystem: 'metric',
-    racePredictionOptions: {
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    },
-  }, 'globalOptions');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
-    defaultUnitSystem: 'metric',
-    racePredictionOptions: {
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    },
-  }));
-
-  // Update default units setting
-  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    },
-  }, 'globalOptions');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
-    defaultUnitSystem: 'imperial',
-    racePredictionOptions: {
-      model: 'AverageModel',
-      riegelExponent: 1.06,
-    },
-  }));
-});
-
-test('should save split options and target sets to localStorage when modified', async () => {
+test('should save options to localStorage when modified', async () => {
   const targetSets1 = {
     '_split_targets': {
       name: 'Split targets',
@@ -146,6 +117,42 @@ test('should save split options and target sets to localStorage when modified', 
 
   // Initialize component
   const wrapper = shallowMount(SplitCalculator);
+
+  // Set default units setting
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'metric',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
+    defaultUnitSystem: 'metric',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }));
+
+  // Update default units setting
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // New default units should be saved to localStorage
+  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }));
 
   // Update target sets and selected target set via AdvancedOptionsInput
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets1,
