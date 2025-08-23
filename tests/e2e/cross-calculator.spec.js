@@ -113,7 +113,7 @@ test('Cross-calculator', async ({ page }) => {
     // Change riegel exponent and enable target name customization
     await page.getByText('Advanced Options').click();
     await page.getByLabel('Riegel Exponent').fill('1.12');
-    await page.getByLabel('Target name customization').selectOption('Enabled');
+    await page.getByLabel('Workout name customization').selectOption('Enabled');
 
     // Change default units (should update on other calculators too)
     await page.getByLabel('Default units').selectOption('Kilometers');
@@ -152,7 +152,7 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert workout results are correct (new workout options loaded)
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
-    await expect(page.getByLabel('Target name customization')).toHaveValue("true");
+    await expect(page.getByLabel('Workout name customization')).toHaveValue("true");
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
@@ -449,7 +449,7 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert workout results are correct (new workout options loaded)
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
-    await expect(page.getByLabel('Target name customization')).toHaveValue("true");
+    await expect(page.getByLabel('Workout name customization')).toHaveValue("true");
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
@@ -992,7 +992,7 @@ test('v1.4.1 Migration', async ({ page }) => {
     await page.getByText('Advanced Options').click();
     await expect(page.getByLabel('Default units')).toHaveValue('metric');
     await expect(page.getByLabel('Selected target set')).toHaveValue('_workout_targets');
-    await expect(page.getByLabel('Target name customization')).toHaveValue('false');
+    await expect(page.getByLabel('Workout name customization')).toHaveValue('false');
     await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
     await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
 
@@ -1089,7 +1089,7 @@ test('v1.4.1 Migration', async ({ page }) => {
     await page.getByText('Advanced Options').click();
     await expect(page.getByLabel('Default units')).toHaveValue('metric');
     await expect(page.getByLabel('Selected target set')).toHaveValue('_workout_targets');
-    await expect(page.getByLabel('Target name customization')).toHaveValue('false');
+    await expect(page.getByLabel('Workout name customization')).toHaveValue('false');
     await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
     await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
 

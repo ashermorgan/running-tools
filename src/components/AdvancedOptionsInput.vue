@@ -17,9 +17,9 @@
   </div>
 
   <div v-if="props.type === Calculators.Workout">
-    Target name customization:
+    Workout name customization:
     <select v-model="(options as WorkoutOptions).customTargetNames"
-      aria-label="Target name customization">
+      aria-label="Workout name customization">
       <option :value="false">Disabled</option>
       <option :value="true">Enabled</option>
     </select>

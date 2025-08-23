@@ -77,7 +77,7 @@ test('Workout Calculator', async ({ page }) => {
   // Test custom target set (with custom target names)
   {
     // Enable target name customization
-    await page.getByLabel('Target name customization').selectOption('Enabled');
+    await page.getByLabel('Workout name customization').selectOption('Enabled');
 
     // Create custom target set
     await page.getByLabel('Selected target set').selectOption('[ Create New Target Set ]');

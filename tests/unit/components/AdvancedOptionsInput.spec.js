@@ -65,7 +65,7 @@ test('should be correctly render pace options according to props', () => {
       ],
     },
   });
-  expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
+  expect(wrapper.findAll('select[aria-label="Workout name customization"]')).to.have
     .length(0);
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
@@ -102,7 +102,7 @@ test('should be correctly render race options according to props', () => {
     .equal('metric');
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to
     .equal('_new');
-  expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
+  expect(wrapper.findAll('select[aria-label="Workout name customization"]')).to.have
     .length(0);
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
@@ -181,7 +181,7 @@ test('should be correctly render split options according to props', () => {
     .equal('metric');
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to
     .equal('_new');
-  expect(wrapper.findAll('select[aria-label="Target name customization"]')).to.have
+  expect(wrapper.findAll('select[aria-label="Workout name customization"]')).to.have
     .length(0);
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
@@ -218,7 +218,7 @@ test('should be correctly render workout options according to props', () => {
   expect(wrapper.find('select[aria-label="Default units"]').element.value).to.equal('metric');
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet).to
     .equal('_new');
-  expect(wrapper.find('select[aria-label="Target name customization"]').element.value).to
+  expect(wrapper.find('select[aria-label="Workout name customization"]').element.value).to
     .equal('true');
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
@@ -434,7 +434,7 @@ test('should pass correct props to TargetSetSelector', async () => {
     .to.equal(false);
 
   // Update options
-  await wrapper.find('select[aria-label="Target name customization"]').setValue('true');
+  await wrapper.find('select[aria-label="Workout name customization"]').setValue('true');
 
   // Assert props are updated
   expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.customWorkoutNames)
@@ -487,7 +487,7 @@ test('should emit input events when options are modified', async () => {
     },
   }, 'targetSets');
   await wrapper.findComponent({ name: 'target-set-selector' }).setValue('B', 'selectedTargetSet');
-  await wrapper.find('select[aria-label="Target name customization"]').setValue('true');
+  await wrapper.find('select[aria-label="Workout name customization"]').setValue('true');
   await wrapper.find('select[aria-label="Prediction model"]').setValue('CameronModel');
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(1.3);
 

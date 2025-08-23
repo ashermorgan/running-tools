@@ -36,7 +36,7 @@ test('Batch calculator', async ({ page }) => {
     // Change prediction model, enable customized target names, and set custom batch column label
     await page.getByText('Advanced Options').click();
     await page.getByLabel('Prediction model').selectOption('Riegel\'s Model');
-    await page.getByLabel('Target name customization').selectOption('Enabled');
+    await page.getByLabel('Workout name customization').selectOption('Enabled');
     await page.getByLabel('Batch column label').fill('foo');
 
     // Assert workout results are correct
@@ -167,7 +167,7 @@ test('Batch calculator', async ({ page }) => {
   // Assert workout results are correct (inputs not reset, but updated options are used)
   {
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
-    await expect(page.getByLabel('Target name customization')).toHaveValue("true");
+    await expect(page.getByLabel('Workout name customization')).toHaveValue("true");
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('foo');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
