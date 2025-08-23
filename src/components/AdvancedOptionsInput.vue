@@ -25,10 +25,10 @@
     </select>
   </div>
 
-  <div v-if="batchOptions && props.batchInput && props.type === Calculators.Workout"
+  <div v-if="batchOptions && props.type === Calculators.Workout"
        v-show="(options as WorkoutOptions).customTargetNames">
     Batch column label:
-    <input v-model="batchOptions.label" :placeholder="formatDistance(props.batchInput, false)"
+    <input v-model="batchOptions.label" :placeholder="formatDistance(batchOptions.input, false)"
            aria-label="Batch column label"/>
   </div>
 
@@ -56,26 +56,20 @@
 
 <script setup lang="ts">
 import { Calculators } from '@/core/calculators';
-import type { BatchOptions, GlobalOptions, StandardOptions, RaceOptions,
+import type { BatchOptions, GlobalOptions, PaceOptions, RaceOptions, SplitOptions,
   WorkoutOptions } from '@/core/calculators';
 import { RacePredictionModels } from '@/core/racePrediction';
 import type { TargetSets } from '@/core/targets';
 import { formatDistance } from '@/core/units';
-import type { DistanceTime } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useObjectModel from '@/composables/useObjectModel';
 
-type CalculatorOptions = StandardOptions | RaceOptions | WorkoutOptions;
+type CalculatorOptions = PaceOptions | RaceOptions | SplitOptions | WorkoutOptions;
 
 const props = defineProps<{
-  /*
-   * The batch calculator input (if applicable, used to generate custom batch label placeholder)
-   */
-  batchInput?: DistanceTime,
-
   /*
    * The batch calculator options (if applicable)
    */

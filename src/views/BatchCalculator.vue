@@ -2,20 +2,20 @@
   <div class="calculator">
     <h2>Batch Input</h2>
     <div class="input">
-      <pace-input v-model="input" aria-label="Input"/>
+      <pace-input v-model="batchOptions.input" aria-label="Input"/>
     </div>
 
     <h2>Batch Options</h2>
     <div class="input">
       <div>
         Increment:
-        <time-input v-model="options.increment" label="Duration increment" :show-hours="false"/>
+        <time-input v-model="batchOptions.increment" label="Duration increment" :show-hours="false"/>
         &times;
-        <integer-input v-model="options.rows" min="1" aria-label="Number of rows"/>
+        <integer-input v-model="batchOptions.rows" min="1" aria-label="Number of rows"/>
       </div>
       <div>
         Calculator:
-        <select aria-label="Calculator" v-model="options.calculator">
+        <select aria-label="Calculator" v-model="batchOptions.calculator">
           <option :value="calculators.Calculators.Pace">Pace Calculator</option>
           <option :value="calculators.Calculators.Race">Race Calculator</option>
           <option :value="calculators.Calculators.Workout">Workout Calculator</option>
@@ -27,9 +27,9 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input :batch-input="input" v-model:batch-options="options"
+      <advanced-options-input v-model:batch-options="batchOptions"
         v-model:globalOptions="globalOptions" v-model:options="calcOptions"
-        v-model:targetSets="targetSets" :type="options.calculator"/>
+        v-model:targetSets="targetSets" :type="batchOptions.calculator"/>
     </details>
 
     <h2>Batch Results</h2>
@@ -44,7 +44,7 @@
 import { computed } from 'vue';
 
 import * as calculators from '@/core/calculators';
-import type { BatchOptions, GlobalOptions, RaceOptions, StandardOptions, TargetResult,
+import type { BatchOptions, GlobalOptions, PaceOptions, RaceOptions, TargetResult,
   WorkoutOptions } from '@/core/calculators';
 import * as targetUtils from '@/core/targets';
 import { formatDistance } from '@/core/units';
@@ -59,20 +59,25 @@ import TimeInput from '@/components/TimeInput.vue';
 import useStorage from '@/composables/useStorage';
 
 /*
- * The input pace
- */
-const input = useStorage<DistanceTime>('batch-calculator-input', calculators.defaultInput);
-
-/*
- * The batch input options
- */
-const options = useStorage<BatchOptions>('batch-calculator-options',
-  calculators.defaultBatchOptions);
-
-/*
  * The global options
  */
 const globalOptions = useStorage<GlobalOptions>('global-options', calculators.defaultGlobalOptions);
+
+/*
+ * The batch calculator options
+ */
+const batchOptions = useStorage<BatchOptions>('batch-calculator-options',
+  calculators.defaultBatchOptions);
+
+/*
+ * The options for each calculator
+ */
+const paceOptions = useStorage<PaceOptions>('pace-calculator-options',
+  calculators.defaultPaceOptions);
+const raceOptions = useStorage<RaceOptions>('race-calculator-options',
+  calculators.defaultRaceOptions);
+const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options',
+  calculators.defaultWorkoutOptions);
 
 /*
  * The target sets for each calculator
@@ -85,21 +90,11 @@ const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>(
   'workout-calculator-target-sets', targetUtils.defaultWorkoutTargetSets);
 
 /*
- * The options for each calculator
- */
-const paceOptions = useStorage<StandardOptions>('pace-calculator-options',
-  calculators.defaultPaceOptions);
-const raceOptions = useStorage<RaceOptions>('race-calculator-options',
-  calculators.defaultRaceOptions);
-const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options',
-  calculators.defaultWorkoutOptions);
-
-/*
  * The input distance
  */
 const inputDistance = computed<Distance>(() => ({
-  distanceValue: input.value.distanceValue,
-  distanceUnit: input.value.distanceUnit,
+  distanceValue: batchOptions.value.input.distanceValue,
+  distanceUnit: batchOptions.value.input.distanceUnit,
 }));
 
 /*
@@ -107,8 +102,8 @@ const inputDistance = computed<Distance>(() => ({
  */
 const inputTimes = computed<Array<number>>(() => {
   const results = [];
-  for (let i = 0; i < options.value.rows; i++) {
-    results.push(input.value.time + options.value.increment * i);
+  for (let i = 0; i < batchOptions.value.rows; i++) {
+    results.push(batchOptions.value.input.time + batchOptions.value.increment * i);
   }
   return results;
 });
@@ -118,7 +113,7 @@ const inputTimes = computed<Array<number>>(() => {
  */
 const targetSets = computed<targetUtils.TargetSets>({
   get: () => {
-    switch (options.value.calculator) {
+    switch (batchOptions.value.calculator) {
       case (calculators.Calculators.Pace): {
         return paceTargetSets.value;
       }
@@ -132,7 +127,7 @@ const targetSets = computed<targetUtils.TargetSets>({
     }
   },
   set: (newValue: targetUtils.TargetSets) => {
-    switch (options.value.calculator) {
+    switch (batchOptions.value.calculator) {
       case (calculators.Calculators.Pace): {
         paceTargetSets.value = newValue as targetUtils.StandardTargetSets;
         break;
@@ -153,9 +148,9 @@ const targetSets = computed<targetUtils.TargetSets>({
 /*
  * The options for the current calculator
  */
-const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
+const calcOptions = computed<PaceOptions | RaceOptions | WorkoutOptions>({
   get: () => {
-    switch (options.value.calculator) {
+    switch (batchOptions.value.calculator) {
       case (calculators.Calculators.Pace): {
         return paceOptions.value;
       }
@@ -168,10 +163,10 @@ const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
       }
     }
   },
-  set: (newValue: StandardOptions | RaceOptions | WorkoutOptions) => {
-    switch(options.value.calculator) {
+  set: (newValue: PaceOptions | RaceOptions | WorkoutOptions) => {
+    switch(batchOptions.value.calculator) {
       case (calculators.Calculators.Pace): {
-        paceOptions.value = newValue as StandardOptions;
+        paceOptions.value = newValue as PaceOptions;
         break;
       }
       case (calculators.Calculators.Race): {
@@ -191,7 +186,7 @@ const calcOptions = computed<StandardOptions | RaceOptions | WorkoutOptions>({
  * The appropriate calculate_results function for the current calculator
  */
 const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => TargetResult>(() => {
-  switch(options.value.calculator) {
+  switch(batchOptions.value.calculator) {
     case (calculators.Calculators.Pace): {
       return (x,y) => calculators.calculatePaceResults(x, y, globalOptions.value.defaultUnitSystem,
         false);
@@ -212,11 +207,11 @@ const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => Tar
  * The label to render for the batch column
  */
 const batchColumnLabel = computed<string>(() => {
-  if (options.value.calculator == calculators.Calculators.Workout &&
-    (calcOptions.value as WorkoutOptions).customTargetNames && options.value.label) {
-    return options.value.label;
+  if (batchOptions.value.calculator == calculators.Calculators.Workout &&
+    (calcOptions.value as WorkoutOptions).customTargetNames && batchOptions.value.label) {
+    return batchOptions.value.label;
   } else {
-    return formatDistance(input.value, false);
+    return formatDistance(batchOptions.value.input, false);
   }
 });
 </script>

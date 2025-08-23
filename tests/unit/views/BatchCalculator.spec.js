@@ -29,35 +29,16 @@ test('should load global options from localStorage', async () => {
   });
 });
 
-test('should load input from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.batch-calculator-input', JSON.stringify({
-    distanceValue: 2,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(BatchCalculator);
-
-  // Assert options loaded
-  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
-    distanceValue: 2,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchInput).to.deep.equal({
-    distanceValue: 2,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-});
-
 test('should load batch options from localStorage', async () => {
   // Initialize localStorage
   localStorage.setItem('running-tools.batch-calculator-options', JSON.stringify({
     calculator: 'race',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: 'foo',
     rows: 15,
   }));
@@ -67,10 +48,20 @@ test('should load batch options from localStorage', async () => {
 
   // Assert options loaded
   expect(wrapper.find('select[aria-label="Calculator"]').element.value).to.equal('race');
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 2,
+    distanceUnit: 'miles',
+    time: 600,
+  });
   expect(wrapper.findComponent({ name: 'time-input' }).vm.modelValue).to.equal(32);
   expect(wrapper.findComponent({ name: 'integer-input' }).vm.modelValue).to.equal(15);
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchOptions).to.deep.equal({
     calculator: 'race',
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     increment: 32,
     label: 'foo',
     rows: 15,
@@ -130,13 +121,28 @@ test('should load calculator options from localStorage', async () => {
     }
   }));
   localStorage.setItem('running-tools.pace-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 300,
+    },
     selectedTargetSet: 'A',
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: 'C',
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customTargetNames: true,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: 'E',
   }));
 
@@ -146,6 +152,11 @@ test('should load calculator options from localStorage', async () => {
   // Assert pace calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 1.0,
+      distanceUnit: 'miles',
+      time: 300,
+    },
     selectedTargetSet: 'A',
   });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -154,6 +165,11 @@ test('should load calculator options from localStorage', async () => {
   // Assert race calculator options are loaded
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: 'C',
   });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -163,6 +179,11 @@ test('should load calculator options from localStorage', async () => {
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: 'E',
   });
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -195,7 +216,7 @@ test('should save global options to localStorage when modified', async () => {
   }));
 });
 
-test('should save input to localStorage when modified', async () => {
+test('should save batch options to localStorage when modified', async () => {
   // Initialize component
   const wrapper = shallowMount(BatchCalculator);
 
@@ -206,17 +227,18 @@ test('should save input to localStorage when modified', async () => {
     time: 600,
   });
 
-  // Assert input saved
-  expect(localStorage.getItem('running-tools.batch-calculator-input')).to.equal(JSON.stringify({
-    distanceValue: 2,
-    distanceUnit: 'miles',
-    time: 600,
+  // Assert options saved
+  expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
+    calculator: 'workout',
+    increment: 15,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    label: '',
+    rows: 20,
   }));
-});
-
-test('should save batch options to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(BatchCalculator);
 
   // Update increment value
   await wrapper.findComponent({ name: 'time-input' }).setValue(32);
@@ -225,6 +247,11 @@ test('should save batch options to localStorage when modified', async () => {
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
     calculator: 'workout',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: '',
     rows: 20,
   }));
@@ -236,6 +263,11 @@ test('should save batch options to localStorage when modified', async () => {
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
     calculator: 'workout',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: '',
     rows: 15,
   }));
@@ -244,6 +276,11 @@ test('should save batch options to localStorage when modified', async () => {
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     calculator: 'workout',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: 'foo',
     rows: 15,
   }, 'batch-options');
@@ -252,6 +289,11 @@ test('should save batch options to localStorage when modified', async () => {
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
     calculator: 'workout',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: 'foo',
     rows: 15,
   }));
@@ -263,6 +305,11 @@ test('should save batch options to localStorage when modified', async () => {
   expect(localStorage.getItem('running-tools.batch-calculator-options')).to.equal(JSON.stringify({
     calculator: 'race',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: 'foo',
     rows: 15,
   }));
@@ -303,6 +350,11 @@ test('should save calculator options to localStorage when modified', async () =>
     }
   }));
   localStorage.setItem('running-tools.pace-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 300,
+    },
     selectedTargetSet: 'B',
   }));
   localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify({
@@ -315,6 +367,11 @@ test('should save calculator options to localStorage when modified', async () =>
     }
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: 'D',
   }));
   localStorage.setItem('running-tools.workout-calculator-target-sets', JSON.stringify({
@@ -328,6 +385,11 @@ test('should save calculator options to localStorage when modified', async () =>
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customWorkoutNames: false,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: 'F',
   }));
 
@@ -337,6 +399,11 @@ test('should save calculator options to localStorage when modified', async () =>
   // Update pace calculator options X
   await wrapper.find('select[aria-label="Calculator"]').setValue('pace');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 1.0,
+      distanceUnit: 'miles',
+      time: 300,
+    },
     selectedTargetSet: 'A',
   }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -345,6 +412,11 @@ test('should save calculator options to localStorage when modified', async () =>
   // Update race calculator options
   await wrapper.find('select[aria-label="Calculator"]').setValue('race');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: 'C',
   }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -354,6 +426,11 @@ test('should save calculator options to localStorage when modified', async () =>
   await wrapper.find('select[aria-label="Calculator"]').setValue('workout');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: 'E',
   }, 'options');
   expect(wrapper.findComponent({ name: 'double-output-table' }).vm.targets)
@@ -361,13 +438,28 @@ test('should save calculator options to localStorage when modified', async () =>
 
   // Assert options saved to localStorage
   expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1.0,
+      distanceUnit: 'miles',
+      time: 300,
+    },
     selectedTargetSet: 'A',
   }));
   expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: 'C',
   }));
   expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
     customTargetNames: true,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: 'E',
   }));
 });
@@ -436,6 +528,11 @@ test('should pass correct input props to DoubleOutputTable', async () => {
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     calculator: 'workout',
     increment: 10,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: 'foo',
     rows: 15,
   }, 'batchOptions');
@@ -453,6 +550,11 @@ test('should pass correct input props to DoubleOutputTable', async () => {
   // Enable target name customization
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_workout_targets',
   }, 'options');
 
@@ -494,14 +596,14 @@ test('should correctly set AdvancedOptionsInput props', async () => {
   await wrapper.findComponent({ name: 'integer-input' }).setValue(15);
 
   // Assert batch props are correct
-  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchInput).to.deep.equal({
-    distanceValue: 2,
-    distanceUnit: 'miles',
-    time: 600,
-  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.batchOptions).to.deep.equal({
     calculator: 'workout',
     increment: 32,
+    input: {
+      distanceValue: 2,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     label: '',
     rows: 15,
   });
@@ -517,6 +619,11 @@ test('should correctly set AdvancedOptionsInput props', async () => {
     },
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_pace_targets',
   });
 
@@ -531,6 +638,11 @@ test('should correctly set AdvancedOptionsInput props', async () => {
     },
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_race_targets',
   });
 
@@ -546,6 +658,11 @@ test('should correctly set AdvancedOptionsInput props', async () => {
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: false,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_workout_targets',
   });
 });
@@ -560,10 +677,20 @@ test('should correctly calculate outputs', async () => {
     },
   }));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1.1,
+      distanceUnit: 'miles',
+      time: 310,
+    },
     selectedTargetSet: '_race_targets',
   }));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customTargetNames: false,
+    input: {
+      distanceValue: 1.2,
+      distanceUnit: 'miles',
+      time: 320,
+    },
     selectedTargetSet: '_workout_targets',
   }));
 

@@ -39,16 +39,20 @@ export interface GlobalOptions {
   defaultUnitSystem: UnitSystems,
   racePredictionOptions: RacePredictionOptions,
 };
-export interface StandardOptions {
+export interface SplitOptions {
   selectedTargetSet: string,
 };
-export type RaceOptions = StandardOptions;
-export interface WorkoutOptions extends RaceOptions {
+export interface PaceOptions extends SplitOptions {
+  input: DistanceTime,
+};
+export type RaceOptions = PaceOptions;
+export interface WorkoutOptions extends PaceOptions {
   customTargetNames: boolean,
 };
 export interface BatchOptions {
   calculator: Calculators.Pace | Calculators.Race | Calculators.Workout,
   increment: number,
+  input: DistanceTime,
   label: string,
   rows: number,
 };
@@ -87,20 +91,24 @@ export const defaultInput: DistanceTime = {
 export const defaultBatchOptions: BatchOptions = {
   calculator: Calculators.Workout,
   increment: 15,
+  input: defaultInput,
   label: '',
   rows: 20,
 };
-export const defaultPaceOptions: StandardOptions = {
+export const defaultPaceOptions: PaceOptions = {
+  input: defaultInput,
   selectedTargetSet: '_pace_targets',
 };
 export const defaultRaceOptions: RaceOptions = {
+  input: defaultInput,
   selectedTargetSet: '_race_targets',
 };
-export const defaultSplitOptions: StandardOptions = {
+export const defaultSplitOptions: SplitOptions = {
   selectedTargetSet: '_split_targets',
 };
 export const defaultWorkoutOptions: WorkoutOptions = {
   customTargetNames: false,
+  input: defaultInput,
   selectedTargetSet: '_workout_targets',
 };
 

@@ -26,7 +26,7 @@ test('should load global options from localStorage', async () => {
     .to.equal('imperial');
 });
 
-test('should load local options and target sets from localStorage', async () => {
+test('should load split options and target sets from localStorage', async () => {
   // Initialize localStorage
   const targetSets = {
     '_split_targets': {
@@ -105,7 +105,7 @@ test('should save global options to localStorage when modified', async () => {
   }));
 });
 
-test('should save local options and target sets to localStorage when modified', async () => {
+test('should save split options and target sets to localStorage when modified', async () => {
   const targetSets1 = {
     '_split_targets': {
       name: 'Split targets',

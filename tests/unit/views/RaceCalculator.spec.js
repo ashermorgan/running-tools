@@ -30,26 +30,7 @@ test('should load global options from localStorage', async () => {
   });
 });
 
-test('should load input race from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.race-calculator-input', JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Assert data loaded
-  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-});
-
-test('should load local options and target sets from localStorage', async () => {
+test('should load race options and target sets from localStorage', async () => {
   // Initialize localStorage
   const targetSets = {
     '_race_targets': {
@@ -71,6 +52,11 @@ test('should load local options and target sets from localStorage', async () => 
   };
   localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 
@@ -78,7 +64,17 @@ test('should load local options and target sets from localStorage', async () => 
   const wrapper = shallowMount(RaceCalculator);
 
   // Assert data loaded
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
@@ -110,25 +106,6 @@ test('should save global options to localStorage when modified', async () => {
   }));
 });
 
-test('should save input race to localStorage', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Enter input race data
-  await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-
-  // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-input')).to.equal(JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-});
-
 test('should save local options and target sets to localStorage when modified', async () => {
   const targetSets = {
     '_race_targets': {
@@ -152,10 +129,32 @@ test('should save local options and target sets to localStorage when modified', 
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
+  // Update input race
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_race_targets',
+  }));
+
   // Update target sets and selected target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets,
     'targetSets');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }, 'options');
 
@@ -163,6 +162,11 @@ test('should save local options and target sets to localStorage when modified', 
   expect(localStorage.getItem('running-tools.race-calculator-target-sets'))
     .to.equal(JSON.stringify(targetSets));
   expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 });
@@ -208,6 +212,11 @@ test('should correctly handle null target set', async () => {
 
   // Switch to invalid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: 'does_not_exist',
   }, 'options');
 
@@ -216,6 +225,11 @@ test('should correctly handle null target set', async () => {
 
   // Switch to valid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_race_targets',
   }, 'options');
 

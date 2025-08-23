@@ -14,6 +14,11 @@ test('should be correctly render pace options according to props', () => {
         },
       },
       options: {
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: 'B',
       },
       targetSets: {
@@ -80,6 +85,11 @@ test('should be correctly render race options according to props', () => {
         },
       },
       options: {
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -114,6 +124,11 @@ test('should render riegel exponent field only for supported race prediction mod
         },
       },
       options: {
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -187,6 +202,11 @@ test('should be correctly render workout options according to props', () => {
       },
       options: {
         customTargetNames: true,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -220,9 +240,10 @@ test('should only show batch column label field when applicable', async () => {
       },
       options: {
         customTargetNames: true,
-        predictionOptions: {
-          model: 'PurdyPointsModel',
-          riegelExponent: 1.2,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
         },
         selectedTargetSet: '_new',
       },
@@ -236,16 +257,16 @@ test('should only show batch column label field when applicable', async () => {
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
 
-  // Add batchInput and batchOptions but disable workout target name customization
+  // Add batchOptions but disable workout target name customization
   await wrapper.setProps({
-    batchInput: { // added
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: { // added
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
@@ -258,9 +279,10 @@ test('should only show batch column label field when applicable', async () => {
     },
     options: {
       customTargetNames: false, // disabled
-      predictionOptions: {
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
       },
       selectedTargetSet: '_new',
     },
@@ -273,14 +295,14 @@ test('should only show batch column label field when applicable', async () => {
 
   // Enable workout target name customization
   await wrapper.setProps({
-    batchInput: {
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: {
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
@@ -293,9 +315,10 @@ test('should only show batch column label field when applicable', async () => {
     },
     options: {
       customTargetNames: true, // enabled
-      predictionOptions: {
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
       },
       selectedTargetSet: '_new',
     },
@@ -310,14 +333,14 @@ test('should only show batch column label field when applicable', async () => {
 
   // Switch to race calculator
   await wrapper.setProps({
-    batchInput: {
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: {
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
@@ -329,9 +352,10 @@ test('should only show batch column label field when applicable', async () => {
       },
     },
     options: {
-      predictionOptions: {
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
       },
       selectedTargetSet: '_new',
     },
@@ -357,9 +381,10 @@ test('should pass correct props to TargetSetSelector', async () => {
       },
       options: {
         customTargetNames: false,
-        predictionOptions: {
-          model: 'AverageModel',
-          riegelExponent: 1.06,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
         },
         selectedTargetSet: 'B',
       },
@@ -429,6 +454,11 @@ test('should emit input events when options are modified', async () => {
       },
       options: {
         customTargetNames: false,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -506,10 +536,20 @@ test('should emit input events when options are modified', async () => {
   expect(wrapper.emitted()['update:options']).to.deep.equal([
     [{
       customTargetNames: false,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
       selectedTargetSet: 'B',
     }],
     [{
       customTargetNames: true,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
       selectedTargetSet: 'B',
     }],
   ]);

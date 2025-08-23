@@ -30,26 +30,7 @@ test('should load global options from localStorage', async () => {
   });
 });
 
-test('should load input race from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.workout-calculator-input', JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
-
-  // Assert data loaded
-  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-});
-
-test('should load local options and target sets from localStorage', async () => {
+test('should load workout options and target sets from localStorage', async () => {
   // Initialize localStorage
   const targetSets = {
     '_workout_targets': {
@@ -97,6 +78,11 @@ test('should load local options and target sets from localStorage', async () => 
   localStorage.setItem('running-tools.workout-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.workout-calculator-options', JSON.stringify({
     customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 
@@ -106,6 +92,11 @@ test('should load local options and target sets from localStorage', async () => 
   // Assert data loaded
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
     customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
@@ -137,26 +128,7 @@ test('should save global options to localStorage when modified', async () => {
   }));
 });
 
-test('should save input race to localStorage', async () => {
-  // Initialize component
-  const wrapper = shallowMount(WorkoutCalculator);
-
-  // Enter input race data
-  await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-
-  // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.workout-calculator-input')).to.equal(JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-});
-
-test('should save local options and target sets to localStorage when modified', async () => {
+test('should save workout options and target sets to localStorage when modified', async () => {
   const targetSets = {
     '_workout_targets': {
       name: 'Workout targets #1',
@@ -204,11 +176,56 @@ test('should save local options and target sets to localStorage when modified', 
   // Initialize component
   const wrapper = shallowMount(WorkoutCalculator);
 
-  // Update target sets, selected target set, and target name customization
+  // Update input race
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
+    customTargetNames: false,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_workout_targets',
+  }));
+
+  // Update target name customization
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_workout_targets',
+  }, 'options');
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
+    customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_workout_targets',
+  }));
+
+  // Update target sets and selected target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets,
     'targetSets');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }, 'options');
 
@@ -217,6 +234,11 @@ test('should save local options and target sets to localStorage when modified', 
     .to.equal(JSON.stringify(targetSets));
   expect(localStorage.getItem('running-tools.workout-calculator-options')).to.equal(JSON.stringify({
     customTargetNames: true,
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 });
@@ -253,6 +275,11 @@ test('should correctly handle null target set', async () => {
   // Switch to invalid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: false,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: 'does_not_exist',
   }, 'options');
 
@@ -262,6 +289,11 @@ test('should correctly handle null target set', async () => {
   // Switch to valid target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: false,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_workout_targets',
   }, 'options');
 
@@ -306,6 +338,11 @@ test('should correctly calculate results according to options', async () => {
   // Update target name customization
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
     customTargetNames: true,
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
     selectedTargetSet: '_workout_targets',
   }, 'options');
 

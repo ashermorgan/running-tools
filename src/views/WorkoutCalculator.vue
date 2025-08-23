@@ -2,7 +2,7 @@
   <div class="calculator">
     <h2>Input Race Result</h2>
     <div class="input">
-      <pace-input v-model="input" label="Input race"/>
+      <pace-input v-model="workoutOptions.input" label="Input race"/>
     </div>
 
     <details>
@@ -10,36 +10,30 @@
         <h2>Advanced Options</h2>
       </summary>
       <advanced-options-input v-model:globalOptions="globalOptions"
-        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Workout"/>
+        v-model:options="workoutOptions" v-model:targetSets="targetSets" :type="Calculators.Workout"/>
     </details>
 
     <h2>Workout Splits</h2>
-    <single-output-table class="output"
-      :calculate-result="x => calculateWorkoutResults(input, x as WorkoutTarget,
-                         globalOptions.racePredictionOptions, options.customTargetNames, true)"
-      :targets="targetSets[options.selectedTargetSet] ?
-      targetSets[options.selectedTargetSet].targets : []"/>
+    <single-output-table class="output" :calculate-result="x =>
+      calculateWorkoutResults(workoutOptions.input, x as WorkoutTarget,
+      globalOptions.racePredictionOptions, workoutOptions.customTargetNames, true)"
+      :targets="targetSets[workoutOptions.selectedTargetSet] ?
+      targetSets[workoutOptions.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Calculators, calculateWorkoutResults, defaultGlobalOptions, defaultInput,
+import { Calculators, calculateWorkoutResults, defaultGlobalOptions,
   defaultWorkoutOptions } from '@/core/calculators';
 import type { GlobalOptions, WorkoutOptions } from '@/core/calculators';
 import { defaultWorkoutTargetSets } from '@/core/targets';
 import type { WorkoutTarget, WorkoutTargetSets } from '@/core/targets';
-import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
 
 import useStorage from '@/composables/useStorage';
-
-/*
- * The input race
- */
-const input = useStorage<DistanceTime>('workout-calculator-input', defaultInput);
 
 /*
  * The global options
@@ -49,7 +43,7 @@ const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalO
 /*
  * The race prediction options
  */
-const options = useStorage<WorkoutOptions>('workout-calculator-options', defaultWorkoutOptions);
+const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options', defaultWorkoutOptions);
 
 /*
  * The target sets

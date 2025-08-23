@@ -219,7 +219,7 @@ test('Cross-calculator', async ({ page }) => {
   // Assert localStorage entries are correct
   {
     // Assert global localStorage entries are correct
-    expect(await page.evaluate(() => localStorage.length)).toEqual(16);
+    expect(await page.evaluate(() => localStorage.length)).toEqual(12);
     expect(await page.evaluate(() => localStorage.getItem('running-tools.global-options')))
       .toEqual(JSON.stringify({
         defaultUnitSystem: 'metric',
@@ -231,29 +231,31 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert localStorage entries for the batch calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.batch-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
-    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.batch-calculator-options'))).toEqual(JSON.stringify({
         calculator: 'race',
         increment: 10,
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
         label: '',
         rows: 15,
       }));
 
     // Assert localStorage entries for the pace calculator are correct
-    expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.pace-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 930,
-      }));
     const paceCalculatorKey = parseInt(JSON.parse(await page.evaluate(() =>
       localStorage.getItem('running-tools.pace-calculator-options'))).selectedTargetSet);
     expect(paceCalculatorKey - parseInt(Date.now().toString())).toBeLessThan(100000);
+    expect(await page.evaluate(() =>
+      localStorage.getItem('running-tools.pace-calculator-options'))).toEqual(JSON.stringify({
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 930,
+        },
+        selectedTargetSet: paceCalculatorKey.toString(),
+      }));
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.pace-calculator-target-sets'))).toEqual(JSON.stringify({
         _pace_targets: {
@@ -303,13 +305,12 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert localStorage entries for the race calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.race-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
-    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.race-calculator-options'))).toEqual(JSON.stringify({
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
         selectedTargetSet: '_race_targets',
       }));
     expect(await page.evaluate(() =>
@@ -379,14 +380,13 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert localStorage entries for the workout calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.workout-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 1,
-        distanceUnit: 'miles',
-        time: 301,
-      }));
-    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
         customTargetNames: true,
+        input: {
+          distanceValue: 1,
+          distanceUnit: 'miles',
+          time: 301,
+        },
         selectedTargetSet: '_workout_targets',
       }));
     expect(await page.evaluate(() =>

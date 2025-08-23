@@ -2,7 +2,7 @@
   <div class="calculator">
     <div class="input">
       <advanced-options-input v-model:globalOptions="globalOptions"
-        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Split"/>
+        v-model:options="splitOptions" v-model:targetSets="targetSets" :type="Calculators.Split"/>
     </div>
 
     <div class="output">
@@ -16,7 +16,7 @@
 import { computed } from 'vue';
 
 import { Calculators, defaultGlobalOptions, defaultSplitOptions } from '@/core/calculators';
-import type { GlobalOptions, StandardOptions } from '@/core/calculators';
+import type { GlobalOptions, SplitOptions } from '@/core/calculators';
 import { defaultSplitTargetSets } from '@/core/targets';
 import type { SplitTargetSets } from '@/core/targets';
 
@@ -33,7 +33,7 @@ const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalO
 /*
  * The split calculator options
  */
-const options = useStorage<StandardOptions>('split-calculator-options', defaultSplitOptions);
+const splitOptions = useStorage<SplitOptions>('split-calculator-options', defaultSplitOptions);
 
 /*
  * The split calculator target sets
@@ -46,15 +46,15 @@ const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets',
  */
 const targetSet = computed({
   get: () => {
-    if (targetSets.value[options.value.selectedTargetSet]) {
-      return targetSets.value[options.value.selectedTargetSet].targets
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      return targetSets.value[splitOptions.value.selectedTargetSet].targets
     } else {
       return []
     }
   },
   set: (newValue) => {
-    if (targetSets.value[options.value.selectedTargetSet]) {
-      targetSets.value[options.value.selectedTargetSet].targets = newValue;
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      targetSets.value[splitOptions.value.selectedTargetSet].targets = newValue;
     }
   },
 });

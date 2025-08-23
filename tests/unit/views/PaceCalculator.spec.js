@@ -25,26 +25,7 @@ test('should load global options from localStorage', async () => {
     .defaultUnitSystem).to.equal('imperial');
 });
 
-test('should load input pace from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.pace-calculator-input', JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(PaceCalculator);
-
-  // Assert data loaded
-  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-});
-
-test('should load local options and target sets from localStorage', async () => {
+test('should load pace options and target sets from localStorage', async () => {
   // Initialize localStorage
   const targetSets = {
     '_pace_targets': {
@@ -66,6 +47,11 @@ test('should load local options and target sets from localStorage', async () => 
   };
   localStorage.setItem('running-tools.pace-calculator-target-sets', JSON.stringify(targetSets));
   localStorage.setItem('running-tools.pace-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 
@@ -73,7 +59,17 @@ test('should load local options and target sets from localStorage', async () => 
   const wrapper = shallowMount(PaceCalculator);
 
   // Assert selection is loaded
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   });
   expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
@@ -105,26 +101,7 @@ test('should save global options to localStorage when modified', async () => {
   }));
 });
 
-test('should save input pace to localStorage', async () => {
-  // Initialize component
-  const wrapper = shallowMount(PaceCalculator);
-
-  // Enter input pace data
-  await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-
-  // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.pace-calculator-input')).to.equal(JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-});
-
-test('should save local options and target sets to localStorage when modified', async () => {
+test('should save pace options and target sets to localStorage when modified', async () => {
   const targetSets = {
     '_pace_targets': {
       name: 'Pace targets #1',
@@ -147,10 +124,32 @@ test('should save local options and target sets to localStorage when modified', 
   // Initialize component
   const wrapper = shallowMount(PaceCalculator);
 
+  // Update input pace
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+
+  // New input pace should be saved to localStorage
+  expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_pace_targets',
+  }));
+
   // Update target sets and selected target set
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets,
     'targetSets');
   await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }, 'options');
 
@@ -158,6 +157,11 @@ test('should save local options and target sets to localStorage when modified', 
   expect(localStorage.getItem('running-tools.pace-calculator-target-sets'))
     .to.equal(JSON.stringify(targetSets));
   expect(localStorage.getItem('running-tools.pace-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
     selectedTargetSet: 'B',
   }));
 });
@@ -245,15 +249,27 @@ test('should correctly handle null target set', async () => {
   const wrapper = shallowMount(PaceCalculator);
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'advanced-options-input' })
-    .setValue({ selectedTargetSet: 'does_not_exist' }, 'options');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: 'does_not_exist'
+  }, 'options');
 
   // Assert empty array passed to SingleOutputTable component
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'advanced-options-input' })
-    .setValue({ selectedTargetSet: '_pace_targets' }, 'options');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_pace_targets'
+  }, 'options');
 
   // Assert valid targets passed to SingleOutputTable component
   const paceTargets = defaultTargetSets._pace_targets.targets;
