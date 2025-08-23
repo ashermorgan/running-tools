@@ -3,10 +3,11 @@
  */
 
 import * as racePrediction from '@/core/racePrediction';
+import type { RacePredictionOptions } from '@/core/racePrediction';
 import { TargetTypes, workoutTargetToString } from '@/core/targets';
 import type { StandardTarget, WorkoutTarget } from '@/core/targets';
-import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration, formatPace,
-  getDefaultDistanceUnit, getDefaultPaceUnit } from '@/core/units';
+import { DistanceUnits, UnitSystems, convertDistance, detectDefaultUnitSystem, formatDistance,
+  formatDuration, formatPace, getDefaultDistanceUnit, getDefaultPaceUnit } from '@/core/units';
 import type { DistanceTime } from '@/core/units';
 
 /*
@@ -34,19 +35,24 @@ export interface RaceStats {
 /*
  * The type for the options specific to each calculator
  */
-export interface StandardOptions {
-  selectedTargetSet: string,
-}
-export interface RaceOptions extends StandardOptions {
-  model: racePrediction.RacePredictionModels,
-  riegelExponent: number,
+export interface GlobalOptions {
+  defaultUnitSystem: UnitSystems,
+  racePredictionOptions: RacePredictionOptions,
 };
-export interface WorkoutOptions extends RaceOptions {
+export interface SplitOptions {
+  selectedTargetSet: string,
+};
+export interface PaceOptions extends SplitOptions {
+  input: DistanceTime,
+};
+export type RaceOptions = PaceOptions;
+export interface WorkoutOptions extends PaceOptions {
   customTargetNames: boolean,
 };
 export interface BatchOptions {
   calculator: Calculators.Pace | Calculators.Race | Calculators.Workout,
   increment: number,
+  input: DistanceTime,
   label: string,
   rows: number,
 };
@@ -73,6 +79,10 @@ export interface TargetResult {
 /*
  * The default input and options for each calculator
  */
+export const defaultGlobalOptions: GlobalOptions = {
+  defaultUnitSystem: detectDefaultUnitSystem(),
+  racePredictionOptions: racePrediction.defaultRacePredictionOptions,
+};
 export const defaultInput: DistanceTime = {
   distanceValue: 5,
   distanceUnit: DistanceUnits.Kilometers,
@@ -81,23 +91,24 @@ export const defaultInput: DistanceTime = {
 export const defaultBatchOptions: BatchOptions = {
   calculator: Calculators.Workout,
   increment: 15,
+  input: defaultInput,
   label: '',
   rows: 20,
 };
-export const defaultPaceOptions: StandardOptions = {
+export const defaultPaceOptions: PaceOptions = {
+  input: defaultInput,
   selectedTargetSet: '_pace_targets',
 };
 export const defaultRaceOptions: RaceOptions = {
-  model: racePrediction.RacePredictionModels.AverageModel,
-  riegelExponent: 1.06,
+  input: defaultInput,
   selectedTargetSet: '_race_targets',
 };
-export const defaultSplitOptions: StandardOptions = {
+export const defaultSplitOptions: SplitOptions = {
   selectedTargetSet: '_split_targets',
 };
 export const defaultWorkoutOptions: WorkoutOptions = {
   customTargetNames: false,
-  ...defaultRaceOptions,
+  input: defaultInput,
   selectedTargetSet: '_workout_targets',
 };
 
@@ -165,7 +176,7 @@ function calculateStandardResult(input: DistanceTime, target: StandardTarget,
  */
 export function calculatePaceResults(input: DistanceTime, target: StandardTarget,
                                      defaultUnitSystem: UnitSystems,
-                                     preciseDurations: boolean = true): TargetResult {
+                                     preciseDurations: boolean): TargetResult {
 
   return calculateStandardResult(input, target, (d1, t1, d2) => ((t1 / d1) * d2),
     (t1, d1, t2) => ((d1 / t1) * t2), defaultUnitSystem, preciseDurations);
@@ -175,18 +186,19 @@ export function calculatePaceResults(input: DistanceTime, target: StandardTarget
  * Predict race results from a target
  * @param {DistanceTime} input The input race
  * @param {StandardTarget} target The race target
- * @param {RaceOptions} options The race prediction options
+ * @param {RacePredictionOptions} racePredictionOptions The race prediction options
  * @param {UnitSystems} defaultUnitSystem The default unit system (imperial or metric)
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {TargetResult} The result
  */
 export function calculateRaceResults(input: DistanceTime, target: StandardTarget,
-                                     options: RaceOptions, defaultUnitSystem: UnitSystems,
-                                     preciseDurations: boolean = true): TargetResult {
+                                     racePredictionOptions: RacePredictionOptions,
+                                     defaultUnitSystem: UnitSystems, preciseDurations: boolean
+                                    ): TargetResult {
 
   return calculateStandardResult(input, target,
-    (d1, t1, d2) => racePrediction.predictTime(d1, t1, d2, options.model, options.riegelExponent),
-    (t1, d1, t2) => racePrediction.predictDistance(t1, d1, t2, options.model, options.riegelExponent),
+    (d1, t1, d2) => racePrediction.predictTime(d1, t1, d2, racePredictionOptions),
+    (t1, d1, t2) => racePrediction.predictDistance(t1, d1, t2, racePredictionOptions),
     defaultUnitSystem, preciseDurations);
 }
 
@@ -210,13 +222,15 @@ export function calculateRaceStats(input: DistanceTime): RaceStats {
  * Predict workout results from a target
  * @param {DistanceTime} input The input race
  * @param {WorkoutTarget} target The workout target
- * @param {WorkoutOptions} options The workout options
+ * @param {RacePredictionOptions} racePredictionOptions The race prediction options
+ * @param {Boolean} customTargetNames Whether to use custom target names
  * @param {Boolean} preciseDurations Whether to return precise, unrounded, durations
  * @returns {TargetResult} The result
  */
 export function calculateWorkoutResults(input: DistanceTime, target: WorkoutTarget,
-                                        options: WorkoutOptions,
-                                        preciseDurations: boolean = true): TargetResult {
+                                        racePredictionOptions: RacePredictionOptions,
+                                        customTargetNames: boolean, preciseDurations: boolean
+                                       ): TargetResult {
   // Initialize distance and time variables
   const d1 = convertDistance(input.distanceValue, input.distanceUnit, DistanceUnits.Meters);
   const t1 = input.time;
@@ -229,18 +243,18 @@ export function calculateWorkoutResults(input: DistanceTime, target: WorkoutTarg
     d2 = convertDistance(target.distanceValue, target.distanceUnit, DistanceUnits.Meters);
 
     // Get workout split prediction
-    t2 = racePrediction.predictTime(d1, input.time, d2, options.model, options.riegelExponent);
+    t2 = racePrediction.predictTime(d1, input.time, d2, racePredictionOptions);
   } else {
     t2 = target.time;
 
     // Get workout split prediction
-    d2 = racePrediction.predictDistance(t1, d1, t2, options.model, options.riegelExponent);
+    d2 = racePrediction.predictDistance(t1, d1, t2, racePredictionOptions);
   }
   const t3 = (t2 / d2) * d3;
 
   // Return result
   return {
-    key: (options.customTargetNames && target.customName) || workoutTargetToString(target),
+    key: (customTargetNames && target.customName) || workoutTargetToString(target),
     value: formatDuration(t3, 3, preciseDurations ? 2 : 0, true),
     pace: '', // Pace not used in workout calculator
     result: ResultType.Value,

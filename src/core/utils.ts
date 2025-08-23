@@ -2,8 +2,6 @@
  * Contains utility functions for handling nested objects and interacting with localStorage
  */
 
-import { defaultRaceOptions, defaultWorkoutOptions } from '@/core/calculators';
-
 // The global localStorage prefix
 const LocalStoragePrefix = 'running-tools';
 
@@ -54,70 +52,4 @@ export function setLocalStorage<Type>(key: string, value: Type) {
  */
 export function unsetLocalStorage(key: string) {
   localStorage.removeItem(`${LocalStoragePrefix}.${key}`);
-}
-
-/**
- * Migrate outdated localStorage options
- */
-export function migrateLocalStorage() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-
-  // Add label property to batch-calculator-options (>1.4.1)
-  const batchOptions = getLocalStorage<any>('batch-calculator-options');
-  if (batchOptions !== null && batchOptions.label === undefined) {
-    batchOptions.label = '';
-    setLocalStorage('batch-calculator-options', batchOptions);
-  }
-
-  // Move pace-calculator-target-set into new pace-calculator-options (>1.4.1)
-  const paceSelectedTargetSet = getLocalStorage<string>('pace-calculator-target-set');
-  if (paceSelectedTargetSet !== null) {
-    const paceOptions = { selectedTargetSet: paceSelectedTargetSet };
-    setLocalStorage('pace-calculator-options', paceOptions);
-    unsetLocalStorage('pace-calculator-target-set');
-  }
-
-  // Move race-calculator-target-set into race-calculator-options (>1.4.1)
-  const raceSelectedTargetSet = getLocalStorage<string>('race-calculator-target-set');
-  const raceOptions = getLocalStorage<any>('race-calculator-options')
-    || deepCopy(defaultRaceOptions);
-  if (raceSelectedTargetSet !== null) {
-    raceOptions.selectedTargetSet = raceSelectedTargetSet;
-    setLocalStorage('race-calculator-options', raceOptions);
-    unsetLocalStorage('race-calculator-target-set');
-  }
-  if (raceOptions !== null && raceOptions.selectedTargetSet === undefined) {
-    raceOptions.selectedTargetSet = defaultRaceOptions.selectedTargetSet;
-    setLocalStorage('race-calculator-options', raceOptions);
-  }
-
-  // Move split-calculator-target-set into new split-calculator-options (>1.4.1)
-  const splitSelectedTargetSet = getLocalStorage<string>('split-calculator-target-set');
-  if (splitSelectedTargetSet !== null) {
-    const splitOptions = { selectedTargetSet: splitSelectedTargetSet };
-    setLocalStorage('split-calculator-options', splitOptions);
-    unsetLocalStorage('split-calculator-target-set');
-  }
-
-  // Move workout-calculator-target-set into workout-calculator-options (>1.4.1)
-  const workoutSelectedTargetSet = getLocalStorage<string>('workout-calculator-target-set');
-  const workoutOptions = getLocalStorage<any>('workout-calculator-options')
-    || deepCopy(defaultWorkoutOptions);
-  if (workoutSelectedTargetSet !== null) {
-    workoutOptions.selectedTargetSet = workoutSelectedTargetSet;
-    setLocalStorage('workout-calculator-options', workoutOptions);
-    unsetLocalStorage('workout-calculator-target-set');
-  }
-  if (workoutOptions !== null && workoutOptions.selectedTargetSet === undefined) {
-    workoutOptions.selectedTargetSet = defaultWorkoutOptions.selectedTargetSet;
-    setLocalStorage('workout-calculator-options', workoutOptions);
-  }
-
-  // Add customTargetNames property to workout-calculator-options (>1.4.1)
-  if (workoutOptions.customTargetNames === undefined) {
-    workoutOptions.customTargetNames = false;
-    setLocalStorage('workout-calculator-options', workoutOptions);
-  }
-
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 }

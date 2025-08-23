@@ -2,33 +2,31 @@
   <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
-      <pace-input v-model="input"/>
+      <pace-input v-model="paceOptions.input"/>
     </div>
 
     <details>
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
-        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Pace"/>
+      <advanced-options-input v-model:globalOptions="globalOptions"
+        v-model:options="paceOptions" v-model:targetSets="targetSets" :type="Calculators.Pace"/>
     </details>
 
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
-      calculatePaceResults(input, x, defaultUnitSystem, true)"
-     :targets="targetSets[options.selectedTargetSet] ?
-     targetSets[options.selectedTargetSet].targets : []"/>
+      calculatePaceResults(paceOptions.input, x, globalOptions.defaultUnitSystem, true)"
+     :targets="targetSets[paceOptions.selectedTargetSet] ?
+     targetSets[paceOptions.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Calculators, calculatePaceResults, defaultInput,
+import { Calculators, calculatePaceResults, defaultGlobalOptions,
   defaultPaceOptions } from '@/core/calculators';
-import type { StandardOptions } from '@/core/calculators';
+import type { GlobalOptions, PaceOptions } from '@/core/calculators';
 import { defaultPaceTargetSets } from '@/core/targets';
 import type { StandardTargetSets } from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
-import type { DistanceTime } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
@@ -37,19 +35,14 @@ import SingleOutputTable from '@/components/SingleOutputTable.vue';
 import useStorage from '@/composables/useStorage';
 
 /*
- * The input pace
+ * The global options
  */
-const input = useStorage<DistanceTime>('pace-calculator-input', defaultInput);
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
 /*
- * The default unit system
+ * The pace calculator options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
-
-/*
- * The current selected target set
- */
-const options = useStorage<StandardOptions>('pace-calculator-options', defaultPaceOptions);
+const paceOptions = useStorage<PaceOptions>('pace-calculator-options', defaultPaceOptions);
 
 /*
  * The target sets

@@ -6,8 +6,19 @@ test('should be correctly render pace options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: 'B',
       },
       targetSets: {
@@ -66,10 +77,19 @@ test('should be correctly render race options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'PurdyPointsModel',
+          riegelExponent: 1.2,
+        },
+      },
       options: {
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -96,10 +116,19 @@ test('should render riegel exponent field only for supported race prediction mod
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.2,
+        },
+      },
       options: {
-        model: 'AverageModel',
-        riegelExponent: 1.2,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       type: 'race',
@@ -132,7 +161,13 @@ test('should be correctly render split options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         selectedTargetSet: '_new',
       },
@@ -158,11 +193,20 @@ test('should be correctly render workout options according to props', () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'PurdyPointsModel',
+          riegelExponent: 1.2,
+        },
+      },
       options: {
         customTargetNames: true,
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -187,11 +231,20 @@ test('should only show batch column label field when applicable', async () => {
   // Initialize component with workout target name customization enabled
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         customTargetNames: true,
-        model: 'PurdyPointsModel',
-        riegelExponent: 1.2,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -204,24 +257,33 @@ test('should only show batch column label field when applicable', async () => {
   expect(wrapper.findAll('input[aria-label="Batch column label"]')).to.have
     .length(0);
 
-  // Add batchInput and batchOptions but disable workout target name customization
+  // Add batchOptions but disable workout target name customization
   await wrapper.setProps({
-    batchInput: { // added
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: { // added
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
       customTargetNames: false, // disabled
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -233,22 +295,31 @@ test('should only show batch column label field when applicable', async () => {
 
   // Enable workout target name customization
   await wrapper.setProps({
-    batchInput: {
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: {
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
       customTargetNames: true, // enabled
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -262,21 +333,30 @@ test('should only show batch column label field when applicable', async () => {
 
   // Switch to race calculator
   await wrapper.setProps({
-    batchInput: {
-      distanceValue: 2,
-      distanceUnit: 'miles',
-      time: 600,
-    },
     batchOptions: {
       calculator: 'workout',
       increment: 32,
+      input: {
+        distanceValue: 2,
+        distanceUnit: 'miles',
+        time: 600,
+      },
       label: 'foo',
       rows: 15,
     },
-    defaultUnitSystem: 'metric',
+    globalOptions: {
+      defaultUnitSystem: 'metric',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.30,
+      },
+    },
     options: {
-      model: 'PurdyPointsModel',
-      riegelExponent: 1.2,
+      input: {
+        distanceValue: 5,
+        distanceUnit: 'kilometers',
+        time: 1200,
+      },
       selectedTargetSet: '_new',
     },
     targetSets: {},
@@ -292,11 +372,20 @@ test('should pass correct props to TargetSetSelector', async () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'CameronModel',
+          riegelExponent: 1.30,
+        },
+      },
       options: {
         customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: 'B',
       },
       targetSets: {
@@ -356,11 +445,20 @@ test('should emit input events when options are modified', async () => {
   // Initialize component
   const wrapper = shallowMount(AdvancedOptionsInput, {
     propsData: {
-      defaultUnitSystem: 'metric',
+      globalOptions: {
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'AverageModel',
+          riegelExponent: 1.06,
+        },
+      },
       options: {
         customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
         selectedTargetSet: '_new',
       },
       targetSets: {},
@@ -394,7 +492,29 @@ test('should emit input events when options are modified', async () => {
   await wrapper.findComponent({ name: 'decimal-input' }).setValue(1.3);
 
   // Assert correct update events emitted
-  expect(wrapper.emitted()['update:defaultUnitSystem']).to.deep.equal([['imperial']]);
+  expect(wrapper.emitted()['update:globalOptions']).to.deep.equal([
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'AverageModel',
+        riegelExponent: 1.06,
+      },
+    }],
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.06,
+      },
+    }],
+    [{
+      defaultUnitSystem: 'imperial',
+      racePredictionOptions: {
+        model: 'CameronModel',
+        riegelExponent: 1.3,
+      },
+    }],
+  ]);
   expect(wrapper.emitted()['update:targetSets']).to.deep.equal([[{
     'A': {
       name: '1st target set v2',
@@ -415,28 +535,22 @@ test('should emit input events when options are modified', async () => {
   }]]);
   expect(wrapper.emitted()['update:options']).to.deep.equal([
     [{
-        customTargetNames: false,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
-        selectedTargetSet: 'B',
+      customTargetNames: false,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
+      selectedTargetSet: 'B',
     }],
     [{
-        customTargetNames: true,
-        model: 'AverageModel',
-        riegelExponent: 1.06,
-        selectedTargetSet: 'B',
-    }],
-    [{
-        customTargetNames: true,
-        model: 'CameronModel',
-        riegelExponent: 1.06,
-        selectedTargetSet: 'B',
-    }],
-    [{
-        customTargetNames: true,
-        model: 'CameronModel',
-        riegelExponent: 1.3,
-        selectedTargetSet: 'B',
+      customTargetNames: true,
+        input: {
+          distanceValue: 5,
+          distanceUnit: 'kilometers',
+          time: 1200,
+        },
+      selectedTargetSet: 'B',
     }],
   ]);
 });

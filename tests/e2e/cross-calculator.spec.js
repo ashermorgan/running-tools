@@ -110,9 +110,9 @@ test('Cross-calculator', async ({ page }) => {
     await page.getByLabel('Input race duration minutes').fill('5');
     await page.getByLabel('Input race duration seconds').fill('1');
 
-    // Change prediction model and enable target name customization
+    // Change riegel exponent and enable target name customization
     await page.getByText('Advanced Options').click();
-    await page.getByLabel('Prediction model').selectOption('V̇O₂ Max Model');
+    await page.getByLabel('Riegel Exponent').fill('1.12');
     await page.getByLabel('Target name customization').selectOption('Enabled');
 
     // Change default units (should update on other calculators too)
@@ -125,15 +125,15 @@ test('Cross-calculator', async ({ page }) => {
     await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Batch Calculator' }).click();
 
-    // Assert pace results are correct (inputs and options not reset)
+    // Assert race results are correct (inputs and options not reset)
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:12');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:42');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -157,10 +157,10 @@ test('Cross-calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:42');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:45');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:17');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:22');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -182,8 +182,8 @@ test('Cross-calculator', async ({ page }) => {
     await page.getByRole('button', { name: 'Race Calculator' }).click();
 
     // Assert race predictions are correct (input race not resset and new prediction model loaded)
-    await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '5:02.17' + '3:08 / km');
-    await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.87' + '3:21 / km');
+    await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:49.86' + '3:00 / km');
+    await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
     await expect(page.getByRole('row')).toHaveCount(17);
 
     // Return to split calculator
@@ -212,42 +212,50 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert workout splits are correct (input race and prediction model not reset)
     await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:14.81');
-    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.56');
+    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '6:30.40');
     await expect(page.getByRole('row')).toHaveCount(5);
   }
 
   // Assert localStorage entries are correct
   {
-    // Assert general localStorage entries are correct
-    expect(await page.evaluate(() => localStorage.length)).toEqual(16);
-    expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
-      .toEqual(JSON.stringify('metric'));
+    // Assert global localStorage entries are correct
+    expect(await page.evaluate(() => localStorage.length)).toEqual(12);
+    expect(await page.evaluate(() => localStorage.getItem('running-tools.global-options')))
+      .toEqual(JSON.stringify({
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'RiegelModel',
+          riegelExponent: 1.12,
+        },
+      }));
 
     // Assert localStorage entries for the batch calculator are correct
-    expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.batch-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.batch-calculator-options'))).toEqual(JSON.stringify({
         calculator: 'race',
         increment: 10,
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
         label: '',
         rows: 15,
       }));
 
     // Assert localStorage entries for the pace calculator are correct
-    expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.pace-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 930,
-      }));
     const paceCalculatorKey = parseInt(JSON.parse(await page.evaluate(() =>
       localStorage.getItem('running-tools.pace-calculator-options'))).selectedTargetSet);
     expect(paceCalculatorKey - parseInt(Date.now().toString())).toBeLessThan(100000);
+    expect(await page.evaluate(() =>
+      localStorage.getItem('running-tools.pace-calculator-options'))).toEqual(JSON.stringify({
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 930,
+        },
+        selectedTargetSet: paceCalculatorKey.toString(),
+      }));
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.pace-calculator-target-sets'))).toEqual(JSON.stringify({
         _pace_targets: {
@@ -297,15 +305,12 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert localStorage entries for the race calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.race-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
-    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.race-calculator-options'))).toEqual(JSON.stringify({
-        model: 'RiegelModel',
-        riegelExponent: 1.06,
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
         selectedTargetSet: '_race_targets',
       }));
     expect(await page.evaluate(() =>
@@ -375,16 +380,13 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert localStorage entries for the workout calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.workout-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 1,
-        distanceUnit: 'miles',
-        time: 301,
-      }));
-    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
         customTargetNames: true,
-        model: 'VO2MaxModel',
-        riegelExponent: 1.06,
+        input: {
+          distanceValue: 1,
+          distanceUnit: 'miles',
+          time: 301,
+        },
         selectedTargetSet: '_workout_targets',
       }));
     expect(await page.evaluate(() =>
@@ -416,19 +418,19 @@ test('Cross-calculator', async ({ page }) => {
   // Reload app and assert the updated options are loaded
   // Identical to the previous "go back and assert the options are not resset" section
   {
-    // Reload app and go to batch calculator
-    await page.goto('/');
+    // Return to batch calculator
+    await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Batch Calculator' }).click();
 
-    // Assert pace results are correct (inputs and options not reset)
+    // Assert race results are correct (inputs and options not reset)
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:24');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:12');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:56');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('2:42');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -452,10 +454,10 @@ test('Cross-calculator', async ({ page }) => {
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:42');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:45');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
-    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:17');
+    await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:22');
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row')).toHaveCount(16);
 
@@ -477,8 +479,8 @@ test('Cross-calculator', async ({ page }) => {
     await page.getByRole('button', { name: 'Race Calculator' }).click();
 
     // Assert race predictions are correct (input race not resset and new prediction model loaded)
-    await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '5:02.17' + '3:08 / km');
-    await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.87' + '3:21 / km');
+    await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '4:49.86' + '3:00 / km');
+    await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '17:11.78' + '3:26 / km');
     await expect(page.getByRole('row')).toHaveCount(17);
 
     // Return to split calculator
@@ -507,7 +509,7 @@ test('Cross-calculator', async ({ page }) => {
 
     // Assert workout splits are correct (input race and prediction model not reset)
     await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:14.81');
-    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.56');
+    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '6:30.40');
     await expect(page.getByRole('row')).toHaveCount(5);
   }
 });
@@ -724,34 +726,44 @@ test('v1.4.1 Migration', async ({ page }) => {
   {
     // Reload the app and assert general localStorage entries are correct
     await page.goto('/');
-    expect(await page.evaluate(() => localStorage.length)).toEqual(16);
-    expect(await page.evaluate(() => localStorage.getItem('running-tools.default-unit-system')))
-      .toEqual(JSON.stringify('metric'));
+    expect(await page.evaluate(() => localStorage.length)).toEqual(12);
+    expect(await page.evaluate(() =>
+      localStorage.getItem('running-tools.default-unit-system'))).toBeNull();
+    expect(await page.evaluate(() =>
+      localStorage.getItem('running-tools.global-options'))).toEqual(JSON.stringify({
+        defaultUnitSystem: 'metric',
+        racePredictionOptions: {
+          model: 'RiegelModel',
+          riegelExponent: 1.06,
+        },
+      }));
 
     // Assert localStorage entries for the batch calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.batch-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
+      localStorage.getItem('running-tools.batch-calculator-input'))).toBeNull();
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.batch-calculator-options'))).toEqual(JSON.stringify({
         calculator: 'race',
         increment: 10,
         rows: 15,
         label: '',
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
       }));
 
     // Assert localStorage entries for the pace calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.pace-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 930,
-      }));
+      localStorage.getItem('running-tools.pace-calculator-input'))).toBeNull();
     expect(await page.evaluate(() => localStorage.getItem('running-tools.pace-calculator-options')))
       .toEqual(JSON.stringify({
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 930,
+        },
         selectedTargetSet: '123456789',
       }));
     expect(await page.evaluate(() =>
@@ -805,15 +817,14 @@ test('v1.4.1 Migration', async ({ page }) => {
 
     // Assert localStorage entries for the race calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.race-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 2,
-        distanceUnit: 'miles',
-        time: 630,
-      }));
+      localStorage.getItem('running-tools.race-calculator-input'))).toBeNull();
     expect(await page.evaluate(() => localStorage.getItem('running-tools.race-calculator-options')))
       .toEqual(JSON.stringify({
-        model: 'RiegelModel',
-        riegelExponent: 1.06,
+        input: {
+          distanceValue: 2,
+          distanceUnit: 'miles',
+          time: 630,
+        },
         selectedTargetSet: '_race_targets',
       }));
     expect(await page.evaluate(() =>
@@ -849,6 +860,8 @@ test('v1.4.1 Migration', async ({ page }) => {
         selectedTargetSet: '_split_targets',
       }));
     expect(await page.evaluate(() =>
+      localStorage.getItem('running-tools.split-calculator-target-set'))).toBeNull();
+    expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.split-calculator-target-sets'))).toEqual(JSON.stringify({
         _split_targets: {
           name: '5K 1600m Splits',
@@ -859,8 +872,6 @@ test('v1.4.1 Migration', async ({ page }) => {
           ],
         },
       }));
-    expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.split-calculator-target-set'))).toBeNull();
 
     // Assert localStorage entries for the unit calculator are correct
     expect(await page.evaluate(() => localStorage.getItem('running-tools.unit-calculator-category')))
@@ -886,17 +897,16 @@ test('v1.4.1 Migration', async ({ page }) => {
 
     // Assert localStorage entries for the workout calculator are correct
     expect(await page.evaluate(() =>
-      localStorage.getItem('running-tools.workout-calculator-input'))).toEqual(JSON.stringify({
-        distanceValue: 1,
-        distanceUnit: 'miles',
-        time: 301,
-      }));
+      localStorage.getItem('running-tools.workout-calculator-input'))).toBeNull();
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.workout-calculator-options'))).toEqual(JSON.stringify({
-        model: 'VO2MaxModel',
-        riegelExponent: 1.06,
-        selectedTargetSet: '_workout_targets',
         customTargetNames: false,
+        input: {
+          distanceValue: 1,
+          distanceUnit: 'miles',
+          time: 301,
+        },
+        selectedTargetSet: '_workout_targets',
       }));
     expect(await page.evaluate(() =>
       localStorage.getItem('running-tools.workout-calculator-target-set'))).toBeNull();
@@ -929,8 +939,26 @@ test('v1.4.1 Migration', async ({ page }) => {
   // Assert UI options are up to date
   // Very similar to the previous "go back and assert the options are not resset" section
   {
-    // Assert pace results are correct (inputs and options not reset)
+    // Assert batch options are correct
     await page.getByRole('button', { name: 'Batch Calculator' }).click();
+    await expect(page.getByLabel('Input distance value')).toHaveValue('2.00');
+    await expect(page.getByLabel('Input distance unit')).toHaveValue('miles');
+    await expect(page.getByLabel('Input duration hours')).toHaveValue('0');
+    await expect(page.getByLabel('Input duration minutes')).toHaveValue('10');
+    await expect(page.getByLabel('Input duration seconds')).toHaveValue('30.00');
+    await expect(page.getByLabel('Duration increment minutes')).toHaveValue('00');
+    await expect(page.getByLabel('Duration increment seconds')).toHaveValue('10.00');
+    await expect(page.getByLabel('Number of rows')).toHaveValue('15');
+    await expect(page.getByLabel('Calculator')).toHaveValue('race');
+
+    // Assert advanced options are correct for race calculator mode
+    await page.getByText('Advanced Options').click();
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('_race_targets');
+    await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
+    await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
+
+    // Assert race results are correct (inputs and options not reset)
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(17);
@@ -942,8 +970,12 @@ test('v1.4.1 Migration', async ({ page }) => {
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(17);
     await expect(page.getByRole('row')).toHaveCount(16);
 
-    // Assert pace results are correct (inputs and options not reset, new pace targets loaded)
+    // Assert advanced options are correct for pace calculator mode
     await page.getByLabel('Calculator').selectOption('Pace Calculator');
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('123456789');
+
+    // Assert pace results are correct (inputs and options not reset, new pace targets loaded)
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(4);
@@ -955,14 +987,21 @@ test('v1.4.1 Migration', async ({ page }) => {
     await expect(page.getByRole('row').nth(15).getByRole('cell')).toHaveCount(4);
     await expect(page.getByRole('row')).toHaveCount(16);
 
-    // Assert workout results are correct (new workout options loaded)
+    // Assert advanced options are correct for workout calculator mode
     await page.getByLabel('Calculator').selectOption('Workout Calculator');
+    await page.getByText('Advanced Options').click();
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('_workout_targets');
     await expect(page.getByLabel('Target name customization')).toHaveValue('false');
+    await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
+    await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
+
+    // Assert workout results are correct (new workout options loaded)
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(0)).toHaveText('2 mi');
     await expect(page.getByRole('row').nth(0).getByRole('cell').nth(2)).toHaveText('800 m @ 5 km');
     await expect(page.getByRole('row').nth(0).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(0)).toHaveText('10:30');
-    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:42');
+    await expect(page.getByRole('row').nth(1).getByRole('cell').nth(2)).toHaveText('2:41');
     await expect(page.getByRole('row').nth(1).getByRole('cell')).toHaveCount(5);
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(0)).toHaveText('12:50');
     await expect(page.getByRole('row').nth(15).getByRole('cell').nth(2)).toHaveText('3:17');
@@ -976,6 +1015,16 @@ test('v1.4.1 Migration', async ({ page }) => {
     await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Pace Calculator' }).click();
 
+    // Assert pace calculator options are correct
+    await expect(page.getByLabel('Input distance value')).toHaveValue('2.00');
+    await expect(page.getByLabel('Input distance unit')).toHaveValue('miles');
+    await expect(page.getByLabel('Input duration hours')).toHaveValue('0');
+    await expect(page.getByLabel('Input duration minutes')).toHaveValue('15');
+    await expect(page.getByLabel('Input duration seconds')).toHaveValue('30.00');
+    await page.getByText('Advanced Options').click();
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('123456789');
+
     // Assert paces are correct (input pace not reset)
     await expect(page.getByRole('row').nth(1)).toHaveText('0.4 km' + '1:55.58');
     await expect(page.getByRole('row').nth(2)).toHaveText('800 m' + '3:51.15');
@@ -986,6 +1035,18 @@ test('v1.4.1 Migration', async ({ page }) => {
     await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Race Calculator' }).click();
 
+    // Assert race calculator options are correct
+    await expect(page.getByLabel('Input race distance value')).toHaveValue('2.00');
+    await expect(page.getByLabel('Input race distance unit')).toHaveValue('miles');
+    await expect(page.getByLabel('Input race duration hours')).toHaveValue('0');
+    await expect(page.getByLabel('Input race duration minutes')).toHaveValue('10');
+    await expect(page.getByLabel('Input race duration seconds')).toHaveValue('30.00');
+    await page.getByText('Advanced Options').click();
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('_race_targets');
+    await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
+    await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
+
     // Assert race predictions are correct (input race not resset and new prediction model loaded)
     await expect(page.getByRole('row').nth(5)).toHaveText('1 mi' + '5:02.17' + '3:08 / km');
     await expect(page.getByRole('row').nth(10)).toHaveText('5 km' + '16:44.87' + '3:21 / km');
@@ -994,6 +1055,10 @@ test('v1.4.1 Migration', async ({ page }) => {
     // Return to split calculator
     await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Split Calculator' }).click();
+
+    // Assert split calculator options are correct
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('_split_targets');
 
     // Assert times and paces are correct (split times not reset)
     await expect(page.getByRole('row').nth(1).getByRole('cell').nth(1)).toHaveText('7:00.00');
@@ -1015,9 +1080,22 @@ test('v1.4.1 Migration', async ({ page }) => {
     await page.getByRole('link', { name: 'Back' }).click();
     await page.getByRole('button', { name: 'Workout Calculator' }).click();
 
+    // Assert workout calculator options are correct
+    await expect(page.getByLabel('Input race distance value')).toHaveValue('1.00');
+    await expect(page.getByLabel('Input race distance unit')).toHaveValue('miles');
+    await expect(page.getByLabel('Input race duration hours')).toHaveValue('0');
+    await expect(page.getByLabel('Input race duration minutes')).toHaveValue('05');
+    await expect(page.getByLabel('Input race duration seconds')).toHaveValue('01.00');
+    await page.getByText('Advanced Options').click();
+    await expect(page.getByLabel('Default units')).toHaveValue('metric');
+    await expect(page.getByLabel('Selected target set')).toHaveValue('_workout_targets');
+    await expect(page.getByLabel('Target name customization')).toHaveValue('false');
+    await expect(page.getByLabel('Prediction model')).toHaveValue('RiegelModel');
+    await expect(page.getByLabel('Riegel Exponent')).toHaveValue('1.06');
+
     // Assert workout splits are correct (input race and prediction model not reset)
     await expect(page.getByRole('row').nth(1)).toHaveText('400 m @ 1 mi' + '1:14.81');
-    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:53.56');
+    await expect(page.getByRole('row').nth(3)).toHaveText('1600 m @ 1:00:00' + '5:44.38');
     await expect(page.getByRole('row')).toHaveCount(5);
   }
 });

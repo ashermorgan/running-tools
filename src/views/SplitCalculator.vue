@@ -1,12 +1,13 @@
 <template>
   <div class="calculator">
     <div class="input">
-      <advanced-options-input v-model:defaultUnitSystem="defaultUnitSystem"
-        v-model:options="options" v-model:targetSets="targetSets" :type="Calculators.Split"/>
+      <advanced-options-input v-model:globalOptions="globalOptions"
+        v-model:options="splitOptions" v-model:targetSets="targetSets" :type="Calculators.Split"/>
     </div>
 
     <div class="output">
-      <split-output-table :default-unit-system="defaultUnitSystem" v-model="targetSet"/>
+      <split-output-table :default-unit-system="globalOptions.defaultUnitSystem"
+        v-model="targetSet"/>
     </div>
   </div>
 </template>
@@ -14,11 +15,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { Calculators, defaultSplitOptions } from '@/core/calculators';
-import type { StandardOptions } from '@/core/calculators';
+import { Calculators, defaultGlobalOptions, defaultSplitOptions } from '@/core/calculators';
+import type { GlobalOptions, SplitOptions } from '@/core/calculators';
 import { defaultSplitTargetSets } from '@/core/targets';
 import type { SplitTargetSets } from '@/core/targets';
-import { UnitSystems, detectDefaultUnitSystem } from '@/core/units';
 
 import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import SplitOutputTable from '@/components/SplitOutputTable.vue';
@@ -26,17 +26,17 @@ import SplitOutputTable from '@/components/SplitOutputTable.vue';
 import useStorage from '@/composables/useStorage';
 
 /*
- * The default unit system
+ * The global options
  */
-const defaultUnitSystem = useStorage<UnitSystems>('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
 /*
  * The split calculator options
  */
-const options = useStorage<StandardOptions>('split-calculator-options', defaultSplitOptions);
+const splitOptions = useStorage<SplitOptions>('split-calculator-options', defaultSplitOptions);
 
 /*
- * The default output targets
+ * The split calculator target sets
  */
 const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets',
   defaultSplitTargetSets);
@@ -46,15 +46,15 @@ const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets',
  */
 const targetSet = computed({
   get: () => {
-    if (targetSets.value[options.value.selectedTargetSet]) {
-      return targetSets.value[options.value.selectedTargetSet].targets
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      return targetSets.value[splitOptions.value.selectedTargetSet].targets
     } else {
       return []
     }
   },
   set: (newValue) => {
-    if (targetSets.value[options.value.selectedTargetSet]) {
-      targetSets.value[options.value.selectedTargetSet].targets = newValue;
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      targetSets.value[splitOptions.value.selectedTargetSet].targets = newValue;
     }
   },
 });

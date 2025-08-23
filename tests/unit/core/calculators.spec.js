@@ -14,7 +14,7 @@ describe('calculatePaceResults method', () => {
       type: 'distance',
     };
 
-    const result = calculators.calculatePaceResults(input, target, 'metric');
+    const result = calculators.calculatePaceResults(input, target, 'metric', true);
 
     expect(result).to.deep.equal({
       key: '20 m',
@@ -36,8 +36,8 @@ describe('calculatePaceResults method', () => {
       type: 'time',
     };
 
-    const result1 = calculators.calculatePaceResults(input, target, 'metric');
-    const result2 = calculators.calculatePaceResults(input, target, 'imperial');
+    const result1 = calculators.calculatePaceResults(input, target, 'metric', true);
+    const result2 = calculators.calculatePaceResults(input, target, 'imperial', true);
 
     expect(result1.key).to.equal('1.61 km');
     expect(result1.value).to.equal('10:00');
@@ -65,12 +65,13 @@ describe('calculateRaceResults method', () => {
       distanceUnit: 'kilometers',
       type: 'distance',
     };
-    const options = {
+    const racePredictionOptions = {
       model: 'AverageModel',
       riegelExponent: 1.06,
     }
 
-    const result = calculators.calculateRaceResults(input, target, options, 'imperial');
+    const result = calculators.calculateRaceResults(input, target, racePredictionOptions,
+      'imperial', true);
 
     expect(result.key).to.equal('10 km');
     expect(result.value).to.equal('41:34.80');
@@ -89,13 +90,15 @@ describe('calculateRaceResults method', () => {
       time: 2495,
       type: 'time',
     };
-    const options = {
+    const racePredictionOptions = {
       model: 'AverageModel',
       riegelExponent: 1.06,
-    }
+    };
 
-    const result1 = calculators.calculateRaceResults(input, target, options, 'metric');
-    const result2 = calculators.calculateRaceResults(input, target, options, 'imperial');
+    const result1 = calculators.calculateRaceResults(input, target, racePredictionOptions,
+      'metric', true);
+    const result2 = calculators.calculateRaceResults(input, target, racePredictionOptions,
+      'imperial', true);
 
     expect(result1.key).to.equal('10.00 km');
     expect(result1.value).to.equal('41:35');
@@ -121,12 +124,13 @@ describe('calculateRaceResults method', () => {
       distanceUnit: 'kilometers',
       type: 'distance',
     };
-    const options = {
+    const racePredictionOptions = {
       model: 'RiegelModel',
       riegelExponent: 1.12,
     }
 
-    const result = calculators.calculateRaceResults(input, target, options, 'imperial');
+    const result = calculators.calculateRaceResults(input, target, racePredictionOptions,
+      'imperial', true);
 
     expect(result.key).to.equal('5 km');
     expect(result.value).to.equal('17:11.78');
@@ -167,13 +171,13 @@ describe('calculateWorkoutResults method', () => {
       splitUnit: 'meters',
       type: 'distance',
     };
-    const options = {
-      customTargetNames: false,
+    const racePredictionOptions = {
       model: 'RiegelModel',
       riegelExponent: 1.12,
     }
 
-    const result = calculators.calculateWorkoutResults(input, target, options);
+    const result = calculators.calculateWorkoutResults(input, target, racePredictionOptions,
+                                                       false, true);
 
     expect(result.key).to.equal('1000 m @ 5 km');
     expect(result.value).to.equal('3:26.36');
@@ -204,21 +208,19 @@ describe('calculateWorkoutResults method', () => {
       type: 'distance',
       customName: 'my custom name',
     };
-    const options_a = {
-      customTargetNames: false,
-      model: 'RiegelModel',
-      riegelExponent: 1.12,
-    };
-    const options_b = {
-      customTargetNames: true,
+    const racePredictionOptions = {
       model: 'RiegelModel',
       riegelExponent: 1.12,
     };
 
-    const result1a = calculators.calculateWorkoutResults(input, target_1, options_a);
-    const result1b = calculators.calculateWorkoutResults(input, target_1, options_b);
-    const result2a = calculators.calculateWorkoutResults(input, target_2, options_a);
-    const result2b = calculators.calculateWorkoutResults(input, target_2, options_b);
+    const result1a = calculators.calculateWorkoutResults(input, target_1, racePredictionOptions,
+      false, true);
+    const result1b = calculators.calculateWorkoutResults(input, target_1, racePredictionOptions,
+      true, true);
+    const result2a = calculators.calculateWorkoutResults(input, target_2, racePredictionOptions,
+      false, true);
+    const result2b = calculators.calculateWorkoutResults(input, target_2, racePredictionOptions,
+      true, true);
 
     expect(result1a.key).to.equal('1000 m @ 5 km');
     expect(result1b.key).to.equal('1000 m @ 5 km');
@@ -238,13 +240,13 @@ describe('calculateWorkoutResults method', () => {
       splitUnit: 'miles',
       type: 'time',
     };
-    const options = {
-      customTargetNames: false,
+    const racePredictionOptions = {
       model: 'AverageModel',
       riegelExponent: 1.06,
     }
 
-    const result = calculators.calculateWorkoutResults(input, target, options);
+    const result = calculators.calculateWorkoutResults(input, target, racePredictionOptions, false,
+      true);
 
     expect(result.key).to.equal('1 mi @ 41:35');
     expect(result.value).to.equal('6:41.50');
