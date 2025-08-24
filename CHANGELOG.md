@@ -21,7 +21,7 @@
 - Open the edit target set dialog automatically after a new target set is
   created
 
-## Removed
+### Removed
 
 - Remove support for using target sets across multiple calculators (excluding
   the Batch Calculator, where applicable)

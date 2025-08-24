@@ -1,10 +1,11 @@
 <template>
-  <div class="about-page">
+  <div class="text">
     <p>
       Running Tools is an <a :href="git_url">open source</a> collection of tools for runners
         and their coaches.
       All calculations are performed locally on your device.
-      This is Running Tools version {{ version }}{{ development ? ' (dev)' : '' }}.
+      This is Running Tools version <router-link :to="{ name: 'changelog' }">
+        {{ version }}</router-link>{{ development ? ' (dev)' : '' }}.
     </p>
 
     <h2>Installation</h2>
@@ -178,27 +179,6 @@ const git_url: string = repository.url.slice(4);
 </script>
 
 <style scoped>
-.about-page {
-  max-width: 800px;
-  margin: auto;
-  font-size: 1.1em;
-}
-h2 {
-  text-align: center;
-}
-h2, h3 {
-  margin-top: 1em;
-}
-p, blockquote, ul {
-  margin-bottom: 0.5em;
-}
-li {
-  margin-bottom: 0.2em;
-  margin-left: 1.5em;
-}
-p {
-  line-height: 1.3;
-}
 .questions {
   font-style: italic;
 }
