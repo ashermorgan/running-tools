@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.5.0 -- 2025-08-30
+
+### Added
+
+- Support custom workout names (when enabled under advanced options)
+- Add changelog page
+
+### Changed
+
+- Synchronize prediction model and Riegel exponent options across all applicable
+  calculators
+- Round durations in the Batch Calculator to make the results more compact
+- Abbreviate default workout names where the split and total portions are equal
+  (e.g. "5 km @ 5 km" becomes just "5 km")
+- Hide Riegel exponent advanced option when not in use
+
+### Fixed
+
+- Prevent decimal input fields from being reformatted while the user is still
+  typing
+- Correct inaccuracies with unit conversions to and from miles
+
 ## 1.4.1 -- 2024-09-07
 
 ### Fixed
