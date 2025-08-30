@@ -1,6 +1,21 @@
 import { test, expect } from 'vitest';
-import { shallowMount, mount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import TimeInput from '@/components/TimeInput.vue';
+
+test('should correctly render input label', () => {
+  // Initialize component
+  const wrapper = mount(TimeInput, {
+    propsData: {
+      modelValue: 0,
+      label: 'My input',
+    },
+  });
+
+  // Assert input fields are correct
+  expect(wrapper.findAll('input')[0].element.ariaLabel).to.equal('My input hours');
+  expect(wrapper.findAll('input')[1].element.ariaLabel).to.equal('My input minutes');
+  expect(wrapper.findAll('input')[2].element.ariaLabel).to.equal('My input seconds');
+});
 
 test('value should be 0:00:0.00 by default', () => {
   // Initialize component

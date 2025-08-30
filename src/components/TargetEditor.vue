@@ -4,7 +4,7 @@
       <tr>
         <th>
           Edit
-          <input v-model="internalValue.name" placeholder="Target set label"
+          <input v-model="model.name" placeholder="Target set label"
             aria-label="Target set label"/>
           <button class="icon" :title="isCustomSet ? 'Delete target set' : 'Revert target set'"
             @click="emit('revert')">
@@ -21,19 +21,24 @@
     </thead>
 
     <tbody>
-      <tr v-for="(item, index) in internalValue.targets" :key="index">
+      <tr v-for="(item, index) in model.targets" :key="index">
         <td>
-          <span v-if="setType === 'workout'">
-            <decimal-input v-model="item.splitValue" aria-label="Split distance value"
-              :min="0" :digits="2"/>
-            <select v-model="item.splitUnit" aria-label="Split distance unit">
-              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+          <span v-if="setType === Calculators.Workout && customWorkoutNames">
+            <input v-model="(item as WorkoutTarget).customName" aria-label="Custom target name"
+              :placeholder="workoutTargetToString(item as WorkoutTarget)"/>:
+          </span>
+
+          <span v-if="setType === Calculators.Workout">
+            <decimal-input v-model="(item as WorkoutTarget).splitValue"
+              aria-label="Split distance value" :min="0" :digits="2"/>
+            <select v-model="(item as WorkoutTarget).splitUnit" aria-label="Split distance unit">
+              <option v-for="(value, key) in DistanceUnitData" :key="key" :value="key">
                 {{ value.name }}
               </option>
             </select>
           </span>
 
-          <span v-if="setType === 'workout'">
+          <span v-if="setType === Calculators.Workout">
             &nbsp;@&nbsp;
           </span>
 
@@ -41,7 +46,7 @@
             <decimal-input v-model="item.distanceValue" aria-label="Target distance value"
               :min="0" :digits="2"/>
             <select v-model="item.distanceUnit" aria-label="Target distance unit">
-              <option v-for="(value, key) in DISTANCE_UNITS" :key="key" :value="key">
+              <option v-for="(value, key) in DistanceUnitData" :key="key" :value="key">
                 {{ value.name }}
               </option>
             </select>
@@ -59,7 +64,7 @@
         </td>
       </tr>
 
-      <tr v-if="internalValue.targets.length === 0" class="empty-message">
+      <tr v-if="model.targets.length === 0" class="empty-message">
         <td colspan="2">
           There aren't any targets in this set yet.
         </td>
@@ -72,7 +77,8 @@
           <button title="Add distance target" @click="addDistanceTarget">
             Add distance target
           </button>
-          <button title="Add time target" @click="addTimeTarget" v-if="setType !== 'split'">
+          <button title="Add time target" @click="addTimeTarget"
+            v-if="setType !== Calculators.Split">
             Add time target
           </button>
         </td>
@@ -81,90 +87,72 @@
   </table>
 </template>
 
-<script setup>
-import { watch, ref } from 'vue';
-
+<script setup lang="ts">
 import VueFeather from 'vue-feather';
 
-import { DISTANCE_UNITS, getDefaultDistanceUnit } from '@/utils/units';
+import { Calculators } from '@/core/calculators';
+import { TargetTypes, workoutTargetToString } from '@/core/targets';
+import type { StandardTargetSet, TargetSet, WorkoutTarget, WorkoutTargetSet } from '@/core/targets';
+import { DistanceUnitData, UnitSystems, getDefaultDistanceUnit } from '@/core/units';
 
 import DecimalInput from '@/components/DecimalInput.vue';
 import TimeInput from '@/components/TimeInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
-/**
- * The component value
- */
-const model = defineModel({
-  type: Object,
-  default: {
-    name: 'New target set',
-    targets: [],
-  }
-});
-
-const props = defineProps({
+interface Props {
   /**
-   * Whether the target set is a custom or default set
+   * Whether to allow custom names for workout targets (defaults to false)
    */
-  isCustomSet: {
-    type: Boolean,
-    default: false,
-  },
+  customWorkoutNames?: boolean,
+  /**
+   * The unit system to use when creating distance targets (defaults to metric)
+   */
+  defaultUnitSystem?: UnitSystems,
 
   /**
-   * The unit system to use when creating distance targets
+   * Whether the target set is a custom or default set (defaults to false)
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
+  isCustomSet?: boolean,
 
   /**
-   * The target set type ('standard', 'split', or 'workout')
+   * The component value
    */
-  setType: {
-    type: String,
-    default: 'standard'
-  },
+  modelValue: TargetSet,
+
+  /**
+   * The target set type (defaults to pace calculator target sets)
+   */
+  setType?: Calculators,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  customWorkoutNames: false,
+  defaultUnitSystem: UnitSystems.Metric,
+  isCustomSet: false,
+  setType: Calculators.Pace,
 });
 
 // Declare emitted events
-const emit = defineEmits(['revert', 'close']);
+const emit = defineEmits(['close', 'revert', 'update:modelValue']);
 
-/**
- * The internal value
- */
-const internalValue = ref(model.value);
-
-/**
- * Update the internal value when the component value changes
- */
-watch(model, (newValue) => {
-    internalValue.value = newValue;
-}, { deep: true });
-
-/**
- * Update the component value when the internal value changes
- */
-watch(internalValue, (newValue) => {
-  model.value = newValue;
-}, { deep: true });
+// Generate internal ref tied to modelValue prop
+const model = useObjectModel<TargetSet>(() => props.modelValue, (x) => emit('update:modelValue', x));
 
 /**
  * Add a new distance based target
  */
 function addDistanceTarget() {
-  if (props.setType === 'workout') {
-    internalValue.value.targets.push({
-      type: 'distance',
+  if (props.setType === Calculators.Workout) {
+    (model.value as WorkoutTargetSet).targets.push({
+      type: TargetTypes.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    internalValue.value.targets.push({
-      type: 'distance',
+    (model.value as StandardTargetSet).targets.push({
+      type: TargetTypes.Distance,
       distanceValue: 1,
       distanceUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
@@ -175,16 +163,16 @@ function addDistanceTarget() {
  * Add a new time based target
  */
 function addTimeTarget() {
-  if (props.setType === 'workout') {
-    internalValue.value.targets.push({
-      type: 'time',
+  if (props.setType === Calculators.Workout) {
+    (model.value as WorkoutTargetSet).targets.push({
+      type: TargetTypes.Time,
       time: 600,
       splitValue: 1,
       splitUnit: getDefaultDistanceUnit(props.defaultUnitSystem),
     });
   } else {
-    internalValue.value.targets.push({
-      type: 'time',
+    (model.value as StandardTargetSet).targets.push({
+      type: TargetTypes.Time,
       time: 600,
     });
   }
@@ -192,10 +180,10 @@ function addTimeTarget() {
 
 /**
  * Remove a target
- * @param {Number} index The index of the target
+ * @param {number} index The index of the target
  */
-function removeTarget(index) {
-  internalValue.value.targets.splice(index, 1);
+function removeTarget(index: number) {
+  model.value.targets.splice(index, 1);
 }
 </script>
 
@@ -204,7 +192,7 @@ function removeTarget(index) {
 .target-editor th .icon {
   margin-left: 0.3em;
 }
-.target-editor tbody td:first-child::not(.empty-message) {
+.target-editor tbody td:first-child:not(.empty-message td) {
   display: flex;
   gap: 0.2em;
   flex-wrap: wrap;

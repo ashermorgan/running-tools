@@ -2,70 +2,53 @@
   <div class="calculator">
     <h2>Input Pace</h2>
     <div class="input">
-      <pace-input v-model="input"/>
+      <pace-input v-model="paceOptions.input"/>
     </div>
 
     <details>
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <div>
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-      <div>
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
+      <advanced-options-input v-model:globalOptions="globalOptions"
+        v-model:options="paceOptions" v-model:targetSets="targetSets" :type="Calculators.Pace"/>
     </details>
 
     <h2>Equivalent Paces</h2>
     <single-output-table class="output" :calculate-result="x =>
-      calculatePaceResults(input, x, defaultUnitSystem)"
-     :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+      calculatePaceResults(paceOptions.input, x, globalOptions.defaultUnitSystem, true)"
+     :targets="targetSets[paceOptions.selectedTargetSet] ?
+     targetSets[paceOptions.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
-<script setup>
-import { calculatePaceResults } from '@/utils/calculators';
-import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+<script setup lang="ts">
+import { Calculators, calculatePaceResults, defaultGlobalOptions,
+  defaultPaceOptions } from '@/core/calculators';
+import type { GlobalOptions, PaceOptions } from '@/core/calculators';
+import { defaultPaceTargetSets } from '@/core/targets';
+import type { StandardTargetSets } from '@/core/targets';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
 import SingleOutputTable from '@/components/SingleOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
- * The input pace
+/*
+ * The global options
  */
-const input = useStorage('pace-calculator-input', {
-  distanceValue: 5,
-  distanceUnit: 'kilometers',
-  time: 1200,
-});
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
-/**
- * The default unit system
+/*
+ * The pace calculator options
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const paceOptions = useStorage<PaceOptions>('pace-calculator-options', defaultPaceOptions);
 
-/**
- * The current selected target set
- */
-const selectedTargetSet = useStorage('pace-calculator-target-set', '_pace_targets');
-
-/**
+/*
  * The target sets
  */
-const targetSets = useStorage('pace-calculator-target-sets', {
-  _pace_targets: defaultTargetSets._pace_targets
-});
+const targetSets = useStorage<StandardTargetSets>('pace-calculator-target-sets',
+  defaultPaceTargetSets);
 </script>
 
 <style scoped>

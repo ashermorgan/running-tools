@@ -1,11 +1,194 @@
 import { beforeEach, test, expect } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import RaceCalculator from '@/views/RaceCalculator.vue';
-import { defaultTargetSets } from '@/utils/targets';
+import { defaultTargetSets } from '@/core/targets';
+import { detectDefaultUnitSystem } from '@/core/units';
 
 beforeEach(() => {
   localStorage.clear();
-})
+});
+
+test('should initialize options to default values', async () => {
+  // Initialize component
+  const wrapper = shallowMount(RaceCalculator);
+
+  // Assert options are initialized
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 5,
+    distanceUnit: 'kilometers',
+    time: 1200,
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
+    defaultUnitSystem: detectDefaultUnitSystem(),
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_race_targets',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal({ _race_targets: defaultTargetSets._race_targets });
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(defaultTargetSets._race_targets.targets);
+});
+
+test('should load options from localStorage', async () => {
+  const targetSets = {
+    '_race_targets': {
+      name: 'Race targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': {
+      name: 'Race targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+  };
+
+  // Initialize localStorage
+  localStorage.setItem('running-tools.global-options', JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }));
+  localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify(targetSets));
+  localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: 'B',
+  }));
+
+  // Initialize component
+  const wrapper = shallowMount(RaceCalculator);
+
+  // Assert options are loaded
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.globalOptions).to.deep.equal({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  });
+  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.options).to.deep.equal({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: 'B',
+  });
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.targetSets)
+    .to.deep.equal(targetSets);
+  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
+    .to.deep.equal(targetSets.B.targets);
+});
+
+test('should save options to localStorage when modified', async () => {
+  const targetSets = {
+    '_race_targets': {
+      name: 'Race targets #1',
+      targets: [
+        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
+        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
+      ],
+    },
+    'B': {
+      name: 'Race targets #2',
+      targets: [
+        { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
+        { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
+      ],
+    },
+  };
+
+  // Initialize component
+  const wrapper = shallowMount(RaceCalculator);
+
+  // Update options
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }, 'globalOptions');
+
+  // New global options should be saved to localStorage
+  expect(localStorage.getItem('running-tools.global-options')).to.equal(JSON.stringify({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'PurdyPointsModel',
+      riegelExponent: 1.2,
+    },
+  }));
+
+  // Update input race
+  await wrapper.findComponent({ name: 'pace-input' }).setValue({
+    distanceValue: 1,
+    distanceUnit: 'miles',
+    time: 600,
+  });
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: '_race_targets',
+  }));
+
+  // Update target sets and selected target set
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue(targetSets,
+    'targetSets');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: 'B',
+  }, 'options');
+
+  // Assert data saved to localStorage
+  expect(localStorage.getItem('running-tools.race-calculator-target-sets'))
+    .to.equal(JSON.stringify(targetSets));
+  expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
+    input: {
+      distanceValue: 1,
+      distanceUnit: 'miles',
+      time: 600,
+    },
+    selectedTargetSet: 'B',
+  }));
+});
 
 test('should correctly predict race times', async () => {
   // Initialize component
@@ -29,46 +212,9 @@ test('should correctly predict race times', async () => {
   // Assert result is correct
   expect(result.key).to.equal('10 km');
   expect(result.value).to.equal('41:34.80');
-  expect(result.pace).to.equal('6:42 / mi');
+  expect(result.pace).to.equal('6:41 / mi');
   expect(result.result).to.equal('value');
   expect(result.sort).to.be.closeTo(2494.80, 0.01);
-});
-
-test('should correctly calculate distance results according to default units setting', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Enter input race data
-  await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 5,
-    distanceUnit: 'kilometers',
-    time: 1200,
-  });
-
-  // Set default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-
-  // Get calculate result function
-  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
-
-  // Assert result is correct
-  let result = calculateResult({ type: 'time', time: 2495 });
-  expect(result.key).to.equal('10.00 km');
-  expect(result.value).to.equal('41:35');
-  expect(result.pace).to.equal('4:09 / km');
-  expect(result.result).to.equal('key');
-  expect(result.sort).to.equal(2495);
-
-  // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
-
-  // Assert result is correct
-  result = calculateResult({ type: 'time', time: 2495 });
-  expect(result.key).to.equal('6.21 mi');
-  expect(result.value).to.equal('41:35');
-  expect(result.pace).to.equal('6:41 / mi');
-  expect(result.result).to.equal('key');
-  expect(result.sort).to.equal(2495);
 });
 
 test('should show paces in results table', async () => {
@@ -84,15 +230,27 @@ test('should correctly handle null target set', async () => {
   const wrapper = shallowMount(RaceCalculator);
 
   // Switch to invalid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('does_not_exist', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: 'does_not_exist',
+  }, 'options');
 
   // Assert empty array passed to SingleOutputTable component
   expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets).to.deep.equal([]);
 
   // Switch to valid target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('_race_targets', 'selectedTargetSet');
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    input: {
+      distanceValue: 5,
+      distanceUnit: 'kilometers',
+      time: 1200,
+    },
+    selectedTargetSet: '_race_targets',
+  }, 'options');
 
   // Assert valid targets passed to SingleOutputTable component
   const raceTargets = defaultTargetSets._race_targets.targets;
@@ -118,12 +276,12 @@ test('should correctly calculate race statistics', async () => {
   const vo2Max = raceStats.findAll('div')[2].element.textContent.trim();
 
   // Assert race statistics are correct
-  expect(purdyPoints).to.equal('Purdy Points: 454.5');
+  expect(purdyPoints).to.equal('Purdy points: 454.5');
   expect(vo2).to.equal('V̇O₂: 47.5 ml/kg/min (95.3% of max)')
   expect(vo2Max).to.equal('V̇O₂ Max: 49.8 ml/kg/min')
 });
 
-test('should correctly calculate results according to advanced model options', async () => {
+test('should correctly calculate results according to options', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
@@ -134,15 +292,54 @@ test('should correctly calculate results according to advanced model options', a
     time: 1200,
   });
 
+  // Set default units
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'metric',
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // Get calculate result function
+  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
+
+  // Assert result is correct
+  let result = calculateResult({ type: 'time', time: 2495 });
+  expect(result.key).to.equal('10.00 km');
+  expect(result.value).to.equal('41:35');
+  expect(result.pace).to.equal('4:09 / km');
+  expect(result.result).to.equal('key');
+  expect(result.sort).to.equal(2495);
+
+  // Change default units
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial', // changed from metric
+    racePredictionOptions: {
+      model: 'AverageModel',
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
+
+  // Assert result is correct
+  result = calculateResult({ type: 'time', time: 2495 });
+  expect(result.key).to.equal('6.21 mi');
+  expect(result.value).to.equal('41:35');
+  expect(result.pace).to.equal('6:41 / mi');
+  expect(result.result).to.equal('key');
+  expect(result.sort).to.equal(2495);
+
   // Switch model
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
-    model: 'RiegelModel',
-    riegelExponent: 1.06, // default value
-  });
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'RiegelModel', // changed from the Average Model
+      riegelExponent: 1.06,
+    },
+  }, 'globalOptions');
 
   // Calculate result
-  const calculateResult = wrapper.findComponent({ name: 'single-output-table' }).vm.calculateResult;
-  let result = calculateResult({
+  result = calculateResult({
     distanceValue: 10,
     distanceUnit: 'kilometers',
     type: 'distance',
@@ -152,10 +349,13 @@ test('should correctly calculate results according to advanced model options', a
   expect(result.value).to.equal('41:41.92');
 
   // Update Riegel Exponent
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
-    model: 'RiegelModel', // existing value
-    riegelExponent: 1,
-  });
+  await wrapper.findComponent({ name: 'advanced-options-input' }).setValue({
+    defaultUnitSystem: 'imperial',
+    racePredictionOptions: {
+      model: 'RiegelModel',
+      riegelExponent: 1, // changed from 1.06
+    },
+  }, 'globalOptions');
 
   // Calculate result
   result = calculateResult({
@@ -168,133 +368,10 @@ test('should correctly calculate results according to advanced model options', a
   expect(result.value).to.equal('40:00.00');
 });
 
-test('should load input race from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.race-calculator-input', JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-
+test('should correctly set AdvancedOptionsInput type prop', async () => {
   // Initialize component
   const wrapper = shallowMount(RaceCalculator);
 
-  // Assert data loaded
-  expect(wrapper.findComponent({ name: 'pace-input' }).vm.modelValue).to.deep.equal({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
+  // Assert type prop is correctly set
+  expect(wrapper.findComponent({ name: 'advanced-options-input' }).vm.type).to.equal('race');
 });
-
-test('should save input race to localStorage', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Enter input race data
-  await wrapper.findComponent({ name: 'pace-input' }).setValue({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  });
-
-  // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-input')).to.equal(JSON.stringify({
-    distanceValue: 1,
-    distanceUnit: 'miles',
-    time: 600,
-  }));
-});
-
-test('should load selected target set from localStorage', async () => {
-  // Initialize localStorage
-  const targetSet2 = {
-    name: 'Race targets #2',
-    targets: [
-      { type: 'distance', distanceValue: 1, distanceUnit: 'miles' },
-      { type: 'distance', distanceValue: 2, distanceUnit: 'miles' },
-      { type: 'distance', distanceValue: 5, distanceUnit: 'kilometers' },
-    ],
-  };
-  localStorage.setItem('running-tools.race-calculator-target-sets', JSON.stringify({
-    '_race_targets': {
-      name: 'Race targets #1',
-      targets: [
-        { type: 'distance', distanceValue: 400, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 800, distanceUnit: 'meters' },
-        { type: 'distance', distanceValue: 1600, distanceUnit: 'meters' },
-      ],
-    },
-    'B': targetSet2,
-  }));
-  localStorage.setItem('running-tools.race-calculator-target-set', '"B"');
-
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Assert selection is loaded
-  expect(wrapper.findComponent({ name: 'target-set-selector' }).vm.selectedTargetSet)
-    .to.equal('B');
-  expect(wrapper.findComponent({ name: 'single-output-table' }).vm.targets)
-    .to.deep.equal(targetSet2.targets);
-});
-
-test('should save selected target set to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Select a new target set
-  await wrapper.findComponent({ name: 'target-set-selector' })
-    .setValue('B', 'selectedTargetSet');
-
-  // New selected target set should be saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-target-set'))
-    .to.equal('"B"');
-});
-
-test('should save default units setting to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Change default units
-  await wrapper.find('select[aria-label="Default units"]').setValue('metric');
-  await wrapper.find('select[aria-label="Default units"]').setValue('imperial');
-
-  // New default units should be saved to localStorage
-  expect(localStorage.getItem('running-tools.default-unit-system')).to.equal('"imperial"');
-});
-
-test('should load advanced model options from localStorage', async () => {
-  // Initialize localStorage
-  localStorage.setItem('running-tools.race-calculator-options', JSON.stringify({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
-  }));
-
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Assert data loaded
-  expect(wrapper.findComponent({ name: 'RaceOptions' }).vm.modelValue).to.deep.equal({
-    model: 'PurdyPointsModel',
-    riegelExponent: 1.2,
-  });
-});
-
-test('should save advanced model options to localStorage when modified', async () => {
-  // Initialize component
-  const wrapper = shallowMount(RaceCalculator);
-
-  // Update advanced model options
-  await wrapper.findComponent({ name: 'RaceOptions' }).setValue({
-    model: 'CameronModel',
-    riegelExponent: 1.30,
-  });
-
-  // Assert data saved to localStorage
-  expect(localStorage.getItem('running-tools.race-calculator-options')).to.equal(JSON.stringify({
-    model: 'CameronModel',
-    riegelExponent: 1.3,
-  }));
-});
-

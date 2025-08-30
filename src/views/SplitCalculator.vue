@@ -1,69 +1,60 @@
 <template>
   <div class="calculator">
     <div class="input">
-      <div class="default-units">
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-
-      <div class="target-set">
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet" setType="split"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
+      <advanced-options-input v-model:globalOptions="globalOptions"
+        v-model:options="splitOptions" v-model:targetSets="targetSets" :type="Calculators.Split"/>
     </div>
 
     <div class="output">
-      <split-output-table :default-unit-system="defaultUnitSystem" v-model="targetSet"/>
+      <split-output-table :default-unit-system="globalOptions.defaultUnitSystem"
+        v-model="targetSet"/>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+import { Calculators, defaultGlobalOptions, defaultSplitOptions } from '@/core/calculators';
+import type { GlobalOptions, SplitOptions } from '@/core/calculators';
+import { defaultSplitTargetSets } from '@/core/targets';
+import type { SplitTargetSets } from '@/core/targets';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import SplitOutputTable from '@/components/SplitOutputTable.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
- * The default unit system
+/*
+ * The global options
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const globalOptions = useStorage<GlobalOptions>('global-options', defaultGlobalOptions);
 
-/**
- * The current selected target set
+/*
+ * The split calculator options
  */
-const selectedTargetSet = useStorage('split-calculator-target-set', '_split_targets');
+const splitOptions = useStorage<SplitOptions>('split-calculator-options', defaultSplitOptions);
 
-/**
- * The default output targets
+/*
+ * The split calculator target sets
  */
-const targetSets = useStorage('split-calculator-target-sets', {
-  _split_targets: defaultTargetSets._split_targets
-});
+const targetSets = useStorage<SplitTargetSets>('split-calculator-target-sets',
+  defaultSplitTargetSets);
 
-/**
+/*
  * The active target set
  */
 const targetSet = computed({
   get: () => {
-    if (targetSets.value[selectedTargetSet.value]) {
-      return targetSets.value[selectedTargetSet.value].targets
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      return targetSets.value[splitOptions.value.selectedTargetSet].targets
     } else {
       return []
     }
   },
   set: (newValue) => {
-    if (targetSets.value[selectedTargetSet.value]) {
-      targetSets.value[selectedTargetSet.value].targets = newValue;
+    if (targetSets.value[splitOptions.value.selectedTargetSet]) {
+      targetSets.value[splitOptions.value.selectedTargetSet].targets = newValue;
     }
   },
 });

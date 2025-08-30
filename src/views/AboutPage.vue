@@ -1,25 +1,31 @@
 <template>
-  <div class="about-page">
+  <div class="text">
     <p>
-      Running Tools is an open source collection of tools for runners and their coaches.
+      Running Tools is an <a :href="git_url">open source</a> collection of tools for runners
+        and their coaches.
       All calculations are performed locally on your device.
-      This is Running Tools version {{ version }}{{ development ? ' (dev)' : '' }}.
+      This is Running Tools version <router-link :to="{ name: 'changelog' }">
+        {{ version }}</router-link>{{ development ? ' (dev)' : '' }}.
     </p>
 
     <h2>Installation</h2>
     <p>
       Running Tools can be installed as a progressive web app so it works offline:
-      <ul>
-        <li>On iOS devices, open Running Tools in Safari, press <span aria-label="Share">
-          <vue-feather type="share" aria-hidden="true"/></span>, and select Add to Home Screen</li>
-        <li>On all other platforms, open Running Tools in Chrome and click Install
-          <img src="@/assets/chrome-install.png" height="24" class="chrome-install" alt=""/>
-        </li>
-      </ul>
     </p>
+    <ul>
+      <li>On iOS devices, open Running Tools in Safari, press <span aria-label="Share">
+        <vue-feather type="share" aria-hidden="true"/></span>, and select Add to Home Screen</li>
+      <li>On all other platforms, open Running Tools in Chrome and click Install
+        <img src="@/assets/chrome-install.png" height="24" class="chrome-install" alt=""/>
+      </li>
+    </ul>
 
     <h2>The Calculators</h2>
-    <p>Running Tools contains six calculators:</p>
+    <p>
+      Running Tools consists of six calculators.
+      The Pace, Race, and Unit Calculators are the simplest to use, while the Batch, Split, and
+        Workout Calculators are designed for more advanced use cases.
+    </p>
 
     <h3>Batch Calculator</h3>
     <p>
@@ -27,12 +33,14 @@
         results for a range of input times using the Pace, Race, or Workout Calculators.
       Options such as the default unit system, selected target set, and race prediction model are
         synced from the active calculator.
+      If the Workout Calculator is being used with custom workout names enabled, a custom name may
+        also be specified for the batch column header.
     </p>
     <p>
       The Batch Calculator is useful for tasks such as:
     </p>
     <ul class="questions">
-      <li>Generating a table of mile splits and the corresponding marathon finish times.</li>
+      <li>Generating a table of marathon finish times and the corresponding mile splits.</li>
       <li>Generating a table of equivalent race results for many distances and speeds.</li>
       <li>Generating a table of workout split times for an entire team.</li>
     </ul>
@@ -70,7 +78,7 @@
         <li>The Purdy Points Model</li>
         <li>The V&#775;O&#8322; Max Model</li>
         <li>Dave Cameron's Model</li>
-        <li>Pete Riegel's Model</li>
+        <li>Pete Riegel's Model (includes a configurable exponent)</li>
         <li>Average Model (averages the output of the other four models)</li>
       </ul>
       <p>
@@ -85,8 +93,8 @@
     <p>
       <strong>Note:</strong> Output race times and V&#775;O&#8322; / V&#775;O&#8322; Max values are
         just estimates.
-      Race predictions are most accurate for similar distances and assume identical conditions and
-        equal fitness.
+      Race predictions assume equivalent fitness and conditions to the input race, and are most
+        accurate for similar distances.
     </p>
 
     <h3>Split Calculator</h3>
@@ -127,7 +135,8 @@
       The selected target set controls which race distances and/or times the calculator calculates
         outputs for and the distances of the splits that are shown for these races.
       The Advanced Options section includes the option to switch between the same five prediction
-        models that are available in the Race Calculator.
+        models that are available in the Race Calculator, as well as the ability to enable support
+        for specifying custom workout names (e.g. "1 mile threshold" instead of "1 mi @ 1:00:00").
     </p>
     <p>
       The Workout Calculator is useful for answering questions like:
@@ -139,8 +148,8 @@
     <p>
       <strong>Note:</strong> Results are just estimated race splits that are helpful for estimating
         target workout splits.
-      As with the Race Calculator, splits are most accurate for similar distances and assume equal
-        fitness.
+      As with the Race Calculator, splits assume equivalent fitness and conditions to the input
+        race, and are most accurate for similar paces.
     </p>
 
     <h2>Target Sets</h2>
@@ -154,42 +163,22 @@
         calculator.
     </p>
     <p>
-      <strong>Note:</strong> The split calculator only supports distance targets. The workout
-        calculator also includes a split distance field for each target.
+      <strong>Note:</strong> The Split Calculator only supports distance targets. The Workout
+        Calculator also includes a split distance field for each target.
     </p>
   </div>
 </template>
 
-<script setup>
-import { version } from '/package.json';
+<script setup lang="ts">
+import { repository, version } from '/package.json';
 
 import VueFeather from 'vue-feather';
 
-const development = process.env.NODE_ENV === 'development';
+const development: boolean = process.env.NODE_ENV === 'development';
+const git_url: string = repository.url.slice(4);
 </script>
 
 <style scoped>
-.about-page {
-  max-width: 800px;
-  margin: auto;
-  font-size: 1.1em;
-}
-h2 {
-  text-align: center;
-}
-h2, h3 {
-  margin-top: 1em;
-}
-p, blockquote, ul {
-  margin-bottom: 0.5em;
-}
-li {
-  margin-bottom: 0.2em;
-  margin-left: 1.5em;
-}
-p {
-  line-height: 1.3;
-}
 .questions {
   font-style: italic;
 }

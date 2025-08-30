@@ -18,22 +18,19 @@
     <tbody>
       <tr v-for="(item, index) in results" :key="index">
         <td>
-          {{ formatNumber(item.distanceValue, 0, 2, false) }}
-          {{ DISTANCE_UNITS[item.distanceUnit].symbol }}
+          {{ formatDistance(model[index] as Distance, false) }}
         </td>
 
         <td>
-          {{ formatDuration(item.time, 3, 2, true) }}
+          {{ formatDuration(item.total.time, 3, 2, true) }}
         </td>
 
         <td>
-          <time-input v-model="targets[index].splitTime" label="Split duration" :showHours="false"/>
+          <time-input v-model="model[index].splitTime" label="Split duration" :showHours="false"/>
         </td>
 
         <td>
-          {{ formatDuration(item.pace, 3, 0, true) }}
-          / {{ DISTANCE_UNITS[getDefaultDistanceUnit(defaultUnitSystem)]
-          .symbol }}
+          {{ formatPace(item.split, getDefaultPaceUnit(defaultUnitSystem)) }}
         </td>
       </tr>
 
@@ -46,63 +43,74 @@
   </table>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS, convertDistance, getDefaultDistanceUnit } from '@/utils/units';
+import type { SplitTarget } from '@/core/targets';
+import { DistanceUnits, UnitSystems, convertDistance, formatDistance, formatDuration,
+  formatPace, getDefaultPaceUnit } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
 
 import TimeInput from '@/components/TimeInput.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
-/**
- * The split targets
- */
-const targets = defineModel({
-  type: Array,
-  default: () => [],
-})
+interface SplitTargetResult {
+  split: DistanceTime,
+  total: DistanceTime,
+};
 
-const props = defineProps({
+interface Props {
   /**
-   * The unit system to use when showing result paces
+   * The unit system to use when showing result paces (defaults to metric)
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
-});
+  defaultUnitSystem?: UnitSystems,
+
+  /**
+   * The split targets
+   */
+  modelValue: Array<SplitTarget>,
+};
+
+const props = withDefaults(defineProps<Props>(), { defaultUnitSystem: UnitSystems.Metric });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:modelValue']);
+const model = useObjectModel<Array<SplitTarget>>(() => props.modelValue,
+  (x) => emit('update:modelValue', x));
 
 /**
  * The target table results
  */
 const results = computed(() => {
   // Initialize results array
-  const results = [];
+  const results: Array<SplitTargetResult> = [];
 
-  for (let i = 0; i < targets.value.length; i += 1) {
+  for (let i = 0; i < model.value.length; i += 1) {
     // Calculate split and total times
-    const splitTime = targets.value[i].splitTime || 0;
-    const totalTime = i === 0 ? splitTime : results[i - 1].time + splitTime;
+    const splitTime = model.value[i].splitTime || 0;
+    const totalTime = i === 0 ? splitTime : results[i - 1].total.time + splitTime;
 
     // Calculate split and total distances
     const totalDistance = convertDistance(
-      targets.value[i].distanceValue,
-      targets.value[i].distanceUnit, 'meters',
+      model.value[i].distanceValue,
+      model.value[i].distanceUnit,
+      DistanceUnits.Meters,
     );
-    const splitDistance = i === 0 ? totalDistance : totalDistance - results[i - 1].distance;
-
-    // Calculate pace
-    const pace = splitTime / convertDistance(splitDistance, 'meters',
-      getDefaultDistanceUnit(props.defaultUnitSystem));
+    const splitDistance = i === 0 ? totalDistance :
+      totalDistance - results[i - 1].total.distanceValue;
 
     // Add row to results array
     results.push({
-      distance: totalDistance,
-      distanceValue: targets.value[i].distanceValue,
-      distanceUnit: targets.value[i].distanceUnit,
-      time: totalTime,
-      splitTime,
-      pace,
+      split: {
+        distanceValue: splitDistance,
+        distanceUnit: DistanceUnits.Meters,
+        time: splitTime,
+      },
+      total: {
+        distanceValue: totalDistance,
+        distanceUnit: DistanceUnits.Meters,
+        time: totalTime,
+      },
     });
   }
 

@@ -26,66 +26,61 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
-import { formatDuration, formatNumber } from '@/utils/format';
-import { DISTANCE_UNITS } from '@/utils/units';
 
-const props = defineProps({
-  /**
+import { ResultType } from '@/core/calculators';
+import type { TargetResult } from '@/core/calculators';
+import type { Target } from '@/core/targets';
+import { formatDuration } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
+
+interface Props {
+  /*
    * The method that generates the target table rows
    */
-  calculateResult: {
-    type: Function,
-    required: true,
-  },
+  calculateResult: (x: DistanceTime, y: Target) => TargetResult,
 
-  /**
-   * The target set
-   */
-  targets: {
-    type: Array,
-    default: () => [],
-  },
-
-  /**
-   * The set of input times
-   */
-  inputTimes: {
-    type: Array,
-    default: () => [],
-  },
-
-  /**
+  /*
    * The input distance
    */
-  inputDistance: {
-    type: Object,
-    default: () => ({
-      distanceValue: 5,
-      distanceUnit: 'kilometers',
-    }),
-  }
-});
+  inputDistance: Distance,
 
-/**
+  /*
+   * The set of input times
+   */
+  inputTimes: Array<number>,
+
+  /*
+   * The label to use for the first column
+   */
+  label: string,
+
+  /*
+   * The target set
+   */
+  targets: Array<Target>,
+}
+
+const props = defineProps<Props>();
+
+/*
  * The target table results
  */
 const results = computed(() => {
   // Calculate results
-  const results = [[
-    formatNumber(props.inputDistance.distanceValue, 0, 2, false) + ' '
-      + DISTANCE_UNITS[props.inputDistance.distanceUnit].symbol
+  const results: Array<Array<string>> = [[
+    props.label
   ]];
 
   props.inputTimes.forEach((input, y) => {
-    let row = [formatDuration(input, 3, 2, false)];
+    const row = [formatDuration(input, 3, 2, false)];
 
     props.targets.forEach(target => {
-      let result = props.calculateResult({ ...props.inputDistance, time: input }, target);
+      const result = props.calculateResult({ ...props.inputDistance, time: input }, target);
 
       if (y === 0) {
-        results[0].push(result[result.result === 'key' ? 'value' : 'key']);
+        results[0].push(result[result.result === ResultType.Key ? 'value' : 'key']);
       }
 
       row.push(result[result.result]);

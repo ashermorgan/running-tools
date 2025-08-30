@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomePage from '@/views/HomePage.vue';
 import AboutPage from '@/views/AboutPage.vue';
 import BatchCalculator from '@/views/BatchCalculator.vue';
+import ChangeLog from '@/views/ChangeLog.vue';
 import PaceCalculator from '@/views/PaceCalculator.vue';
 import RaceCalculator from '@/views/RaceCalculator.vue';
 import SplitCalculator from '@/views/SplitCalculator.vue';
@@ -31,6 +32,15 @@ const router = createRouter({
       component: AboutPage,
       meta: {
         title: 'About',
+        back: 'home',
+      },
+    },
+    {
+      path: '/changelog',
+      name: 'changelog',
+      component: ChangeLog,
+      meta: {
+        title: 'Change Log',
         back: 'home',
       },
     },

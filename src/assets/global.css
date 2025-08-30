@@ -144,6 +144,29 @@ header h1 {
   }
 }
 
+/* long-form text styles */
+.text {
+  max-width: 800px;
+  margin: auto;
+  font-size: 1.1em;
+}
+.text h2 {
+  text-align: center;
+}
+.text * + h2, .text :not(h2) + h3 {
+  margin-top: 1em;
+}
+.text p, .text ul {
+  margin-bottom: 0.5em;
+}
+.text p {
+  line-height: 1.3;
+}
+.text li {
+  margin-bottom: 0.2em;
+  margin-left: 1.5em;
+}
+
 /* light/default theme */
 :root {
   /* The theme color of the app */

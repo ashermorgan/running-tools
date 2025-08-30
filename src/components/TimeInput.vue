@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
 import IntegerInput from '@/components/IntegerInput.vue';
@@ -25,27 +25,26 @@ import DecimalInput from '@/components/DecimalInput.vue';
 const model = defineModel({
   type: Number,
   default: 0,
-  validator(value) {
+  validator(value: number) {
     return value >= 0 && value <= 359999.99;
   },
 });
 
-const props = defineProps({
+interface Props {
   /**
-   * Whether to show the hour field
+   * Whether to show the hour field (defaults to true)
    */
-  showHours: {
-    type: Boolean,
-    default: true,
-  },
+  showHours?: boolean,
 
   /**
-   * The prefix for each field's aria-label
+   * The prefix for each field's aria-label (defaults to 'Input')
    */
-  label: {
-    type: String,
-    default: '',
-  },
+  label?: string,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showHours: true,
+  label: 'Input',
 });
 
 /**
@@ -99,7 +98,7 @@ const seconds = computed({
 /**
  * Update the internal value when the component value changes
  */
-watch(model, (newValue) => {
+watch(model, (newValue: number) => {
   if (newValue !== internalValue.value) {
     internalValue.value = newValue;
   }
@@ -108,7 +107,7 @@ watch(model, (newValue) => {
 /**
  * Update the component value when the internal value changes
  */
-watch(internalValue, (newValue) => {
+watch(internalValue, (newValue: number) => {
   model.value = newValue;
 });
 
@@ -116,7 +115,7 @@ watch(internalValue, (newValue) => {
  * Process up and down arrow presses
  * @param {Object} e The keydown event args
  */
-function onkeydown(e, step = 1) {
+function onkeydown(e: KeyboardEvent, step: number = 1) {
   if (e.key === 'ArrowUp') {
     if (Math.floor(internalValue.value) + step > max.value) {
       internalValue.value = max.value;

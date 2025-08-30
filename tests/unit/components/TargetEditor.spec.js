@@ -15,16 +15,20 @@ test('should correctly render standard target set', async () => {
         ],
       },
       setType: 'standard',
+      customWorkoutNames: true, // name input should not be rendered
     },
   });
 
   // Assert target set correctly rendered
   expect(wrapper.find('input').element.value).to.equal('My target set');
   const rows = wrapper.findAll('tbody tr');
+  expect(rows[0].findAll('input').length).to.equal(0);
   expect(rows[0].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1.61);
   expect(rows[0].find('select').element.value).to.equal('kilometers');
+  expect(rows[1].findAll('input').length).to.equal(0);
   expect(rows[1].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(3.11);
   expect(rows[1].find('select').element.value).to.equal('miles');
+  expect(rows[2].findAll('input').length).to.equal(0);
   expect(rows[2].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(600);
   expect(rows.length).to.equal(3);
 });
@@ -47,14 +51,16 @@ test('should correctly render split target set', async () => {
   // Assert target set correctly rendered
   expect(wrapper.find('input').element.value).to.equal('My target set');
   const rows = wrapper.findAll('tbody tr');
+  expect(rows[0].findAll('input').length).to.equal(0);
   expect(rows[0].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(1.61);
   expect(rows[0].find('select').element.value).to.equal('kilometers');
+  expect(rows[1].findAll('input').length).to.equal(0);
   expect(rows[1].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(3.11);
   expect(rows[1].find('select').element.value).to.equal('miles');
   expect(rows.length).to.equal(2);
 });
 
-test('should correctly render workout target set', async () => {
+test('should correctly render workout target set without custom names', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
     propsData: {
@@ -85,13 +91,71 @@ test('should correctly render workout target set', async () => {
   // Assert target set correctly rendered
   expect(wrapper.find('input').element.value).to.equal('My target set');
   const rows = wrapper.findAll('tbody tr');
+  expect(rows[0].findAll('input').length).to.equal(0);
   expect(rows[0].findAllComponents({ name: 'decimal-input' })[0].vm.modelValue).to.equal(400);
   expect(rows[0].findAll('select')[0].element.value).to.equal('meters');
   expect(rows[0].findAllComponents({ name: 'decimal-input' })[1].vm.modelValue).to.equal(2);
   expect(rows[0].findAll('select')[1].element.value).to.equal('miles');
+  expect(rows[1].findAll('input').length).to.equal(0);
   expect(rows[1].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(2);
   expect(rows[1].find('select').element.value).to.equal('kilometers');
   expect(rows[1].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(6000);
+  expect(rows[2].findAll('input').length).to.equal(0);
+  expect(rows[2].findAllComponents({ name: 'decimal-input' })[0].vm.modelValue).to.equal(1);
+  expect(rows[2].findAll('select')[0].element.value).to.equal('miles');
+  expect(rows[2].findAllComponents({ name: 'decimal-input' })[1].vm.modelValue).to.equal(5);
+  expect(rows[2].findAll('select')[1].element.value).to.equal('kilometers');
+  expect(rows.length).to.equal(3);
+});
+
+test('should correctly render workout target set with custom names', async () => {
+  // Initialize component
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [
+          {
+            // customName is undefined
+            distanceUnit: 'miles', distanceValue: 2,
+            splitUnit: 'meters', splitValue: 400,
+            type: 'distance',
+          },
+          {
+            customName: '',
+            time: 6000,
+            splitUnit: 'kilometers', splitValue: 2,
+            type: 'time',
+          },
+          {
+            customName: 'my custom name',
+            distanceUnit: 'kilometers', distanceValue: 5,
+            splitUnit: 'miles', splitValue: 1,
+            type: 'distance'
+          },
+        ],
+      },
+      setType: 'workout',
+      customWorkoutNames: true,
+    },
+  });
+
+  // Assert target set correctly rendered
+  expect(wrapper.find('input').element.value).to.equal('My target set');
+  const rows = wrapper.findAll('tbody tr');
+  expect(rows[0].find('input').element.value).to.equal('');
+  expect(rows[0].find('input').element.placeholder).to.equal('400 m @ 2 mi');
+  expect(rows[0].findAllComponents({ name: 'decimal-input' })[0].vm.modelValue).to.equal(400);
+  expect(rows[0].findAll('select')[0].element.value).to.equal('meters');
+  expect(rows[0].findAllComponents({ name: 'decimal-input' })[1].vm.modelValue).to.equal(2);
+  expect(rows[0].findAll('select')[1].element.value).to.equal('miles');
+  expect(rows[1].find('input').element.value).to.equal('');
+  expect(rows[1].find('input').element.placeholder).to.equal('2 km @ 1:40:00');
+  expect(rows[1].findComponent({ name: 'decimal-input' }).vm.modelValue).to.equal(2);
+  expect(rows[1].find('select').element.value).to.equal('kilometers');
+  expect(rows[1].findComponent({ name: 'time-input' }).vm.modelValue).to.equal(6000);
+  expect(rows[2].find('input').element.value).to.equal('my custom name');
+  expect(rows[2].find('input').element.placeholder).to.equal('1 mi @ 5 km');
   expect(rows[2].findAllComponents({ name: 'decimal-input' })[0].vm.modelValue).to.equal(1);
   expect(rows[2].findAll('select')[0].element.value).to.equal('miles');
   expect(rows[2].findAllComponents({ name: 'decimal-input' })[1].vm.modelValue).to.equal(5);
@@ -101,7 +165,14 @@ test('should correctly render workout target set', async () => {
 
 test('revert button should emit revert event', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
+    },
+  });
 
   // Click revert button
   await wrapper.find('button[title="Revert target set"]').trigger('click');
@@ -114,8 +185,12 @@ test('delete button should emit revert event', async () => {
   // Initialize component
   const wrapper = shallowMount(TargetEditor, {
     propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
       isCustomSet: true,
-    }
+    },
   });
 
   // Click delete button
@@ -127,7 +202,14 @@ test('delete button should emit revert event', async () => {
 
 test('close button should emit close event', async () => {
   // Initialize component
-  const wrapper = shallowMount(TargetEditor);
+  const wrapper = shallowMount(TargetEditor, {
+    propsData: {
+      modelValue: {
+        name: 'My target set',
+        targets: [],
+      },
+    },
+  });
 
   // Call close method
   await wrapper.find('button[title="Close"]').trigger('click');
@@ -148,7 +230,7 @@ test('add distance target button should correctly add standard imperial distance
         ],
       },
       setType: 'standard',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -180,7 +262,7 @@ test('add distance target button should correctly add standard metric distance t
         ],
       },
       setType: 'standard',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -211,7 +293,7 @@ test('add distance target button should correctly add split imperial distance ta
         ],
       },
       setType: 'split',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -241,7 +323,7 @@ test('add distance target button should correctly add split metric distance targ
         ],
       },
       setType: 'split',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -280,7 +362,7 @@ test('add distance target button should correctly add workout imperial distance 
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -332,7 +414,7 @@ test('add distance target button should correctly add workout metric distance ta
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 
@@ -433,7 +515,7 @@ test('add time target button should correctly add workout imperial time target',
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'imperial'
+      defaultUnitSystem: 'imperial',
     },
   });
 
@@ -485,7 +567,7 @@ test('add time target button should correctly add workout metric time target', a
         ],
       },
       setType: 'workout',
-      defaultUnitSystem: 'metric'
+      defaultUnitSystem: 'metric',
     },
   });
 

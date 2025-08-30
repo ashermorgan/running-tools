@@ -2,23 +2,23 @@
   <div class="calculator">
     <h2>Batch Input</h2>
     <div class="input">
-      <pace-input v-model="input" aria-label="Input"/>
+      <pace-input v-model="batchOptions.input" aria-label="Input"/>
     </div>
 
     <h2>Batch Options</h2>
     <div class="input">
       <div>
         Increment:
-        <time-input v-model="options.increment" label="Duration increment" :show-hours="false"/>
+        <time-input v-model="batchOptions.increment" label="Duration increment" :show-hours="false"/>
         &times;
-        <integer-input v-model="options.rows" min="1" aria-label="Number of rows"/>
+        <integer-input v-model="batchOptions.rows" min="1" aria-label="Number of rows"/>
       </div>
       <div>
         Calculator:
-        <select aria-label="Calculator" v-model="options.calculator">
-          <option value="pace">Pace Calculator</option>
-          <option value="race">Race Calculator</option>
-          <option value="workout">Workout Calculator</option>
+        <select aria-label="Calculator" v-model="batchOptions.calculator">
+          <option :value="calculators.Calculators.Pace">Pace Calculator</option>
+          <option :value="calculators.Calculators.Race">Race Calculator</option>
+          <option :value="calculators.Calculators.Workout">Workout Calculator</option>
         </select>
       </div>
     </div>
@@ -27,179 +27,191 @@
       <summary>
         <h2>Advanced Options</h2>
       </summary>
-      <div>
-        Default units:
-        <select v-model="defaultUnitSystem" aria-label="Default units">
-          <option value="imperial">Miles</option>
-          <option value="metric">Kilometers</option>
-        </select>
-      </div>
-      <div>
-        Target Set:
-        <target-set-selector v-model:selectedTargetSet="selectedTargetSet"
-          :setType="options.calculator === 'workout' ? 'workout' : 'standard'"
-          v-model:targetSets="targetSets" :default-unit-system="defaultUnitSystem"/>
-      </div>
-      <race-options v-if="options.calculator !== 'pace'" v-model="advancedOptions"/>
+      <advanced-options-input v-model:batch-options="batchOptions"
+        v-model:globalOptions="globalOptions" v-model:options="calcOptions"
+        v-model:targetSets="targetSets" :type="batchOptions.calculator"/>
     </details>
 
     <h2>Batch Results</h2>
-    <double-output-table class="output" :input-times="inputTimes" :input-distance="inputDistance"
-      :calculate-result="calculateResult"
-      :targets="targetSets[selectedTargetSet] ? targetSets[selectedTargetSet].targets : []"/>
+    <double-output-table class="output" :calculate-result="calculateResult"
+      :input-distance="inputDistance" :input-times="inputTimes" :label="batchColumnLabel"
+      :targets="targetSets[calcOptions.selectedTargetSet] ?
+      targetSets[calcOptions.selectedTargetSet].targets : []"/>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-import * as calcUtils from '@/utils/calculators';
-import { defaultTargetSets } from '@/utils/targets';
-import { detectDefaultUnitSystem } from '@/utils/units';
+import * as calculators from '@/core/calculators';
+import type { BatchOptions, GlobalOptions, PaceOptions, RaceOptions, TargetResult,
+  WorkoutOptions } from '@/core/calculators';
+import * as targetUtils from '@/core/targets';
+import { formatDistance } from '@/core/units';
+import type { Distance, DistanceTime } from '@/core/units';
 
+import AdvancedOptionsInput from '@/components/AdvancedOptionsInput.vue';
 import DoubleOutputTable from '@/components/DoubleOutputTable.vue';
 import IntegerInput from '@/components/IntegerInput.vue';
 import PaceInput from '@/components/PaceInput.vue';
-import RaceOptions from '@/components/RaceOptions.vue';
-import TargetSetSelector from '@/components/TargetSetSelector.vue';
 import TimeInput from '@/components/TimeInput.vue';
 
 import useStorage from '@/composables/useStorage';
 
-/**
- * The input pace
+/*
+ * The global options
  */
-const input = useStorage('batch-calculator-input', {
-  distanceValue: 5,
-  distanceUnit: 'kilometers',
-  time: 1200,
-});
+const globalOptions = useStorage<GlobalOptions>('global-options', calculators.defaultGlobalOptions);
 
-/**
- * The batch input options
+/*
+ * The batch calculator options
  */
-const options = useStorage('batch-calculator-options', {
-  calculator: 'workout',
-  increment: 15,
-  rows: 20,
-});
+const batchOptions = useStorage<BatchOptions>('batch-calculator-options',
+  calculators.defaultBatchOptions);
 
-/**
- * The default unit system
+/*
+ * The options for each calculator
  */
-const defaultUnitSystem = useStorage('default-unit-system', detectDefaultUnitSystem());
+const paceOptions = useStorage<PaceOptions>('pace-calculator-options',
+  calculators.defaultPaceOptions);
+const raceOptions = useStorage<RaceOptions>('race-calculator-options',
+  calculators.defaultRaceOptions);
+const workoutOptions = useStorage<WorkoutOptions>('workout-calculator-options',
+  calculators.defaultWorkoutOptions);
 
-/**
- * The current selected target sets for each calculator
- */
-const selectedPaceTargetSet = useStorage('pace-calculator-target-set', '_pace_targets');
-const selectedRaceTargetSet = useStorage('race-calculator-target-set', '_race_targets');
-const selectedWorkoutTargetSet = useStorage('workout-calculator-target-set', '_workout_targets');
-
-/**
+/*
  * The target sets for each calculator
  */
-const paceTargetSets = useStorage('pace-calculator-target-sets', {
-  _pace_targets: defaultTargetSets._pace_targets
-});
-const raceTargetSets = useStorage('race-calculator-target-sets', {
-  _race_targets: defaultTargetSets._race_targets
-});
-const workoutTargetSets = useStorage('workout-calculator-target-sets', {
-  _workout_targets: defaultTargetSets._workout_targets
-});
+const paceTargetSets = useStorage<targetUtils.StandardTargetSets>('pace-calculator-target-sets',
+  targetUtils.defaultPaceTargetSets);
+const raceTargetSets = useStorage<targetUtils.StandardTargetSets>('race-calculator-target-sets',
+  targetUtils.defaultRaceTargetSets);
+const workoutTargetSets = useStorage<targetUtils.WorkoutTargetSets>(
+  'workout-calculator-target-sets', targetUtils.defaultWorkoutTargetSets);
 
-/**
- * The advanced options for each calculator
- */
-const raceOptions = useStorage('race-calculator-options', {
-  model: 'AverageModel',
-  riegelExponent: 1.06,
-});
-const workoutOptions = useStorage('workout-calculator-options', {
-  model: 'AverageModel',
-  riegelExponent: 1.06,
-});
-
-/**
+/*
  * The input distance
  */
-const inputDistance = computed(() => ({
-  distanceValue: input.value.distanceValue,
-  distanceUnit: input.value.distanceUnit,
+const inputDistance = computed<Distance>(() => ({
+  distanceValue: batchOptions.value.input.distanceValue,
+  distanceUnit: batchOptions.value.input.distanceUnit,
 }));
 
-/**
+/*
  * The set of input times
  */
-const inputTimes = computed(() => {
-  let results = [];
-  for (let i = 0; i < options.value.rows; i++) {
-    results.push(input.value.time + options.value.increment * i);
+const inputTimes = computed<Array<number>>(() => {
+  const results = [];
+  for (let i = 0; i < batchOptions.value.rows; i++) {
+    results.push(batchOptions.value.input.time + batchOptions.value.increment * i);
   }
   return results;
 });
 
-/**
- * The selected target set for the current calculator
- */
-const selectedTargetSet = computed({
-  get: () => {
-    if (options.value.calculator === 'pace') {
-      return selectedPaceTargetSet.value;
-    } else if (options.value.calculator === 'race') {
-      return selectedRaceTargetSet.value;
-    } else {
-      return selectedWorkoutTargetSet.value;
-    }
-  },
-  set: (newValue) => {
-    if (options.value.calculator === 'pace') {
-      selectedPaceTargetSet.value = newValue;
-    } else if (options.value.calculator === 'race') {
-      selectedRaceTargetSet.value = newValue;
-    } else {
-      selectedWorkoutTargetSet.value = newValue;
-    }
-  },
-});
-
-/**
+/*
  * The target sets for the current calculator
  */
-const targetSets = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return paceTargetSets.value;
-  } else if (options.value.calculator === 'race') {
-    return raceTargetSets.value;
-  } else {
-    return workoutTargetSets.value;
-  }
+const targetSets = computed<targetUtils.TargetSets>({
+  get: () => {
+    switch (batchOptions.value.calculator) {
+      case (calculators.Calculators.Pace): {
+        return paceTargetSets.value;
+      }
+      case (calculators.Calculators.Race): {
+        return raceTargetSets.value;
+      }
+      default:
+      case (calculators.Calculators.Workout): {
+        return workoutTargetSets.value;
+      }
+    }
+  },
+  set: (newValue: targetUtils.TargetSets) => {
+    switch (batchOptions.value.calculator) {
+      case (calculators.Calculators.Pace): {
+        paceTargetSets.value = newValue as targetUtils.StandardTargetSets;
+        break;
+      }
+      case (calculators.Calculators.Race): {
+        raceTargetSets.value = newValue as targetUtils.StandardTargetSets;
+        break;
+      }
+      default:
+      case (calculators.Calculators.Workout): {
+        workoutTargetSets.value = newValue as targetUtils.WorkoutTargetSets;
+        break;
+      }
+    }
+  },
 });
 
-/**
- * The advanced options for the current calculator
+/*
+ * The options for the current calculator
  */
-const advancedOptions = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return {};
-  } else if (options.value.calculator === 'race') {
-    return raceOptions.value;
-  } else {
-    return workoutOptions.value;
-  }
+const calcOptions = computed<PaceOptions | RaceOptions | WorkoutOptions>({
+  get: () => {
+    switch (batchOptions.value.calculator) {
+      case (calculators.Calculators.Pace): {
+        return paceOptions.value;
+      }
+      case (calculators.Calculators.Race): {
+        return raceOptions.value;
+      }
+      default:
+      case (calculators.Calculators.Workout): {
+        return workoutOptions.value;
+      }
+    }
+  },
+  set: (newValue: PaceOptions | RaceOptions | WorkoutOptions) => {
+    switch(batchOptions.value.calculator) {
+      case (calculators.Calculators.Pace): {
+        paceOptions.value = newValue as PaceOptions;
+        break;
+      }
+      case (calculators.Calculators.Race): {
+        raceOptions.value = newValue as RaceOptions;
+        break;
+      }
+      default:
+      case (calculators.Calculators.Workout): {
+        workoutOptions.value = newValue as WorkoutOptions;
+        break;
+      }
+    }
+  },
 });
 
-/**
+/*
  * The appropriate calculate_results function for the current calculator
  */
-const calculateResult = computed(() => {
-  if (options.value.calculator === 'pace') {
-    return (x,y) => calcUtils.calculatePaceResults(x, y, defaultUnitSystem.value);
-  } else if (options.value.calculator === 'race') {
-    return (x,y) => calcUtils.calculateRaceResults(x, y, raceOptions.value, defaultUnitSystem.value);
+const calculateResult = computed<(x: DistanceTime, y: targetUtils.Target) => TargetResult>(() => {
+  switch(batchOptions.value.calculator) {
+    case (calculators.Calculators.Pace): {
+      return (x,y) => calculators.calculatePaceResults(x, y, globalOptions.value.defaultUnitSystem,
+        false);
+    }
+    case (calculators.Calculators.Race): {
+      return (x,y) => calculators.calculateRaceResults(x, y,
+        globalOptions.value.racePredictionOptions, globalOptions.value.defaultUnitSystem, false);
+    }
+    default:
+    case (calculators.Calculators.Workout): {
+      return (x,y) => calculators.calculateWorkoutResults(x, y as targetUtils.WorkoutTarget,
+        globalOptions.value.racePredictionOptions, workoutOptions.value.customTargetNames, false);
+    }
+  }
+});
+
+/*
+ * The label to render for the batch column
+ */
+const batchColumnLabel = computed<string>(() => {
+  if (batchOptions.value.calculator == calculators.Calculators.Workout &&
+    (calcOptions.value as WorkoutOptions).customTargetNames && batchOptions.value.label) {
+    return batchOptions.value.label;
   } else {
-    return (x,y) => calcUtils.calculateWorkoutResults(x, y, workoutOptions.value);
+    return formatDistance(batchOptions.value.input, false);
   }
 });
 </script>

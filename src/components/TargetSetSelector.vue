@@ -13,59 +13,72 @@
 
     <dialog ref="dialogElement" class="target-set-editor-dialog" aria-label="Edit target set">
       <target-editor @close="sortTargetSet(); dialogElement.close()"
-        @revert="revertTargetSet" :default-unit-system="defaultUnitSystem" :setType="setType"
+        @revert="revertTargetSet" :customWorkoutNames="customWorkoutNames"
+        :default-unit-system="defaultUnitSystem" :setType="setType"
         v-model="targetSets[internalValue]" :isCustomSet="!internalValue.startsWith('_')"/>
     </dialog>
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref } from 'vue';
 
 import VueFeather from 'vue-feather';
 
-import { sort, defaultTargetSets } from '@/utils/targets';
+import { Calculators } from '@/core/calculators';
+import { sort, defaultTargetSets } from '@/core/targets';
+import type { TargetSet, TargetSets } from '@/core/targets';
+import { deepCopy } from '@/core/utils';
+import { UnitSystems } from '@/core/units';
 
 import TargetEditor from '@/components/TargetEditor.vue';
+import useObjectModel from '@/composables/useObjectModel';
 
 /**
  * The selected target set
  */
 const model = defineModel('selectedTargetSet', {
   type: String,
-  default: '_new',
+  required: true,
 });
 
-/**
- * The target sets
- */
-const targetSets = defineModel('targetSets', {
-  type: Object,
-  default: {},
-});
-
-defineProps({
+interface Props {
   /**
-   * The unit system to use when creating distance targets
+   * Whether to allow custom names for workout targets (defaults to false)
    */
-  defaultUnitSystem: {
-    type: String,
-    default: 'metric',
-  },
+  customWorkoutNames?: boolean,
 
   /**
-   * The target set type ('standard', 'split', or 'workout')
+   * The unit system to use when creating distance targets (defaults to metric)
    */
-  setType: {
-    type: String,
-    default: 'standard'
-  },
+  defaultUnitSystem?: UnitSystems,
+
+  /**
+   * The target set type (defaults to pace calculator target sets)
+   */
+  setType?: Calculators,
+
+  /**
+   * The target sets
+   */
+  targetSets: TargetSets,
+};
+
+
+const props = withDefaults(defineProps<Props>(), {
+  customWorkoutNames: false,
+  defaultUnitSystem: UnitSystems.Metric,
+  setType: Calculators.Pace,
 });
+
+// Generate internal ref tied to modelValue prop
+const emit = defineEmits(['update:targetSets']);
+const targetSets = useObjectModel<TargetSets>(() => props.targetSets, (x) => emit('update:targetSets', x));
 
 /**
  * The dialog element
  */
-const dialogElement = ref(null);
+const dialogElement = ref();
 
 /**
  * The internal value
@@ -77,7 +90,7 @@ const internalValue = computed({
     }
     return model.value;
   },
-  set: async (newValue) => {
+  set: async (newValue: string) => {
     if (newValue == '_new') {
       await nextTick(); // <select> won't update if value changed immediately
       newTargetSet();
@@ -101,10 +114,13 @@ function editTargetSet() {
  * Create and select a new target
  */
 function newTargetSet() {
-  let key = Date.now().toString();
-  targetSets.value[key] = {
-    name: 'New target set',
-    targets: [],
+  const key = Date.now().toString();
+  targetSets.value = {
+    ...targetSets.value,
+    [key]: {
+      name: 'New target set',
+      targets: [],
+    },
   };
   model.value = key;
   editTargetSet();
@@ -117,7 +133,7 @@ function revertTargetSet() {
   if (internalValue.value.startsWith('_')) {
     // Revert default set
     targetSets.value[internalValue.value] =
-      JSON.parse(JSON.stringify(defaultTargetSets[internalValue.value]));
+      deepCopy<TargetSet>(defaultTargetSets[internalValue.value]);
     sortTargetSet();
   } else {
     // Remove custom set
