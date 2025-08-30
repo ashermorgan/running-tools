@@ -192,7 +192,7 @@ function removeTarget(index: number) {
 .target-editor th .icon {
   margin-left: 0.3em;
 }
-.target-editor tbody td:first-child:not(.empty-message) {
+.target-editor tbody td:first-child:not(.empty-message td) {
   display: flex;
   gap: 0.2em;
   flex-wrap: wrap;
